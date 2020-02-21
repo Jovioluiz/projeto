@@ -36,6 +36,7 @@ type
     procedure btnPRODUTOCANCELARClick(Sender: TObject);
     procedure btnPRODUTOCADASTRARClick(Sender: TObject);
     procedure edtPRODUTOCD_PRODUTOExit(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
 
   private
     { Private declarations }
@@ -55,10 +56,10 @@ implementation
 procedure TfCadProduto.btnPRODUTOCADASTRARClick(Sender: TObject);
 begin
 
-//verifica se o cÃ³digo, descrÃ§Ã£o e UN estÃ£o vazios
+//verifica se o código, descrção e UN estão vazios
 if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptyStr) or (edtPRODUTOUN_MEDIDA.Text = EmptyStr) then
   begin
-    raise Exception.Create('CÃ³digo, DescriÃ§Ã£o e Unidade de Medida nÃ£o podem ser vazios');
+    raise Exception.Create('Código, Descrição e Unidade de Medida não podem ser vazios');
   end;
 
   Close;
@@ -66,7 +67,7 @@ if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptySt
   comandosql.ParamByName('fl_ativo').AsBoolean := ckPRODUTOATIVO.Checked;
   comandosql.ParamByName('desc_produto').AsString := edtPRODUTODESCRICAO.Text;
   comandosql.ParamByName('un_medida').AsString := edtPRODUTOUN_MEDIDA.Text;
-  comandosql.ParamByName('fator_conversao').AsInteger := StrToInt(edtPRODUTOFATOR_CONVERSAO.Text);
+  comandosql.ParamByName('fator_conversao').AsCurrency := StrToCurr(edtPRODUTOFATOR_CONVERSAO.Text);
   comandosql.ParamByName('peso_liquido').AsCurrency := StrToCurr(edtPRODUTOPESO_LIQUIDO.Text);
   comandosql.ParamByName('peso_bruto').AsCurrency := StrToCurr(edtPRODUTOPESO_BRUTO.Text);
   comandosql.ParamByName('observacao').AsString := memoObservacao.Text;
@@ -74,10 +75,10 @@ if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptySt
   try
     comandosql.Execute;
     comandosql.Close;
-    FreeAndNil(comandosql);
+    //FreeAndNil(comandosql);
     ShowMessage('Produto cadastrado com Sucesso!');
 
-    //limpa os campos apÃ³s inserir
+    //limpa os campos após inserir
     edtPRODUTOCD_PRODUTO.Text := '';
     ckPRODUTOATIVO.Checked := false;
     edtPRODUTODESCRICAO.Text := '';
@@ -108,18 +109,28 @@ end;
 procedure TfCadProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
 begin
   inherited;
-  //verifica se foi clicado no fechar, se clicou, nÃ£o valida o cod. produto vazio
+  //verifica se foi clicado no fechar, se clicou, não valida o cod. produto vazio
   if btnPRODUTOCANCELAR.MouseInClient then
     begin
       exit;
     end
   else if edtPRODUTOCD_PRODUTO.Text = EmptyStr then
     begin
-      raise Exception.Create('CÃ³digo nÃ£o pode ser vazio');
+      raise Exception.Create('Código não pode ser vazio');
       edtPRODUTOCD_PRODUTO.SetFocus;
       Abort;
     end;
 
+end;
+
+//passa pelos campos pressionando enter
+procedure TfCadProduto.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+    Perform(WM_NEXTDLGCTL,0,0)
+  else if Key = #27 then
+    Perform(WM_NEXTDLGCTL,1,0)
 end;
 
 end.

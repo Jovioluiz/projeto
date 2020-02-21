@@ -3,7 +3,7 @@ unit cCTA_COND_PGTO;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,  System.UITypes, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.UITypes, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
@@ -28,8 +28,11 @@ type
     btnFechar: TButton;
     sqlInsertCondPgto: TFDQuery;
     edtCTACONDPGTOFL_ATIVO: TCheckBox;
+    selectCDPGTO: TFDQuery;
     procedure btnSalvarClick(Sender: TObject);
     procedure btnFecharClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCTACONDPGTOCD_CTA_FORMA_PGTOChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -54,15 +57,17 @@ end;
 
 procedure TcadCondPgto.btnSalvarClick(Sender: TObject);
 begin
-   //verifica se o c√≥digo da condi√ß√£o e forma de pagamento est√£o vazias
+   //verifica se o cÛdigo da condiÁ„o e forma de pagamento est„o vazias ao salvar
   if (edtCTACONDPGTOCD_COND.Text = EmptyStr) or (edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text = EmptyStr) or (edtCTACONDPGTODESCRICAO.Text = EmptyStr) then
-    raise Exception.Create('C√≥digo da Condi√ß√£o e Forma n√£o podem ser vazios');
+    raise Exception.Create('CÛdigo da CondiÁ„o e Forma n„o podem ser vazios');
 
-
+   //insert cta_cond_pagamento
   Close;
   sqlInsertCondPgto.Connection := conexao;
-  sqlInsertCondPgto.SQL.Add('insert into cta_cond_pagamento (cd_cond_pag, nm_cond_pag, cd_cta_forma_pagamento, nr_parcelas, vl_minimo_parcela, fl_ativo)');
-  sqlInsertCondPgto.SQL.Add('values (:cd_cond_pag, :nm_cond_pag, :cd_cta_forma_pagamento, :nr_parcelas, :vl_minimo_parcela, :fl_ativo)');
+  sqlInsertCondPgto.SQL.Text := 'insert into cta_cond_pagamento (cd_cond_pag, nm_cond_pag, cd_cta_forma_pagamento, '+
+                              'nr_parcelas, vl_minimo_parcela, fl_ativo)'+
+                              'values (:cd_cond_pag, :nm_cond_pag, :cd_cta_forma_pagamento, :nr_parcelas, '+
+                              ':vl_minimo_parcela, :fl_ativo)';
 
   sqlInsertCondPgto.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_COND.Text);
   sqlInsertCondPgto.ParamByName('nm_cond_pag').AsString := edtCTACONDPGTODESCRICAO.Text;
@@ -71,11 +76,11 @@ begin
   sqlInsertCondPgto.ParamByName('vl_minimo_parcela').AsCurrency := StrToCurr(edtCTACONDPGTOVL_MINIMO.Text);
   sqlInsertCondPgto.ParamByName('fl_ativo').AsBoolean := edtCTACONDPGTOFL_ATIVO.Checked;
 
-    try
-    sqlInsertCondPgto.Execute();
+  try
+    sqlInsertCondPgto.ExecSQL;
     sqlInsertCondPgto.Close;
     FreeAndNil(sqlInsertCondPgto);
-    ShowMessage('Condi√ß√£o de Pagamento cadastrada com Sucesso!');
+    ShowMessage('CondiÁ„o de Pagamento cadastrada com Sucesso!');
 
     edtCTACONDPGTOCD_COND.Text := '';
     edtCTACONDPGTODESCRICAO.Text := '';
@@ -93,6 +98,38 @@ begin
       end;
   end;
 
+end;
+
+//busca o nome da foma de pagamento
+procedure TcadCondPgto.edtCTACONDPGTOCD_CTA_FORMA_PGTOChange(Sender: TObject);
+begin
+  inherited;
+  begin
+    if edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text = '' then
+      begin
+        edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := '';
+        exit;
+      end;
+
+  end;
+
+    selectCDPGTO.Close;
+    selectCDPGTO.SQL.Text := 'select nm_forma_pag from cta_forma_pagamento where cd_forma_pag = :cd_forma_pag ';
+    selectCDPGTO.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text);
+    selectCDPGTO.Open();
+    edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := selectCDPGTO.FieldByName('nm_forma_pag').AsString;
+    selectCDPGTO.Next;
+end;
+
+
+//passa pelos campos pressionando enter
+procedure TcadCondPgto.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+    Perform(WM_NEXTDLGCTL,0,0)
+  else if Key = #27 then
+       Perform(WM_NEXTDLGCTL,1,0)
 end;
 
 end.

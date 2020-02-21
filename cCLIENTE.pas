@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, uValidaDcto, uConexao,
   Data.FMTBcd, Data.DB, Data.SqlExpr, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
-  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client;
+  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client, FireDAC.DApt,
+  FireDAC.Comp.DataSet;
 
 type
   TcadCliente = class(TfConexao)
@@ -43,9 +44,9 @@ type
     btnSalvarCliente: TButton;
     btnCancelarCadCliente: TButton;
     edtCLIENTEDATANASCIMENTO: TMaskEdit;
-    sqlinsert: TSQLQuery;
     sqlInsertCliente: TFDCommand;
     sqlInsertEndereco: TFDCommand;
+    FDQuery1: TFDQuery;
     procedure pFormarCamposPessoa;
     procedure edtCLIENTETP_PESSOAClick(Sender: TObject);
     procedure btnCancelarCadClienteClick(Sender: TObject);
@@ -53,8 +54,10 @@ type
     procedure edtCLIENTERGExit(Sender: TObject);
     procedure btnSalvarClienteClick(Sender: TObject);
     procedure edtCLIENTEcd_clienteExit(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
+    sql_seq : String;
   public
     { Public declarations }
   end;
@@ -77,8 +80,6 @@ begin
       lblCLIENTEIE_RG.Caption    := 'RG';
       lblCLIENTEDTNASCIMENTO.Caption := 'Data Nascimento';
       edtCLIENTEDATANASCIMENTO.Visible := true;
-      //edtCLIENTETP_PESSOA := 'Fisica';
-
     end
   else
     begin
@@ -86,32 +87,27 @@ begin
       edtCLIENTECPF_CNPJ.Width    := 110;
       edtCLIENTECPF_CNPJ.EditMask := uValidaDcto.MASCARA_CNPJ;
       lblCLIENTEIE_RG.Caption    := 'IE';
-      lblCLIENTEDTNASCIMENTO.Caption := 'Data Funda√ß√£o';
-       //edtCLIENTETP_PESSOA.Items := 'Juridica';
+      lblCLIENTEDTNASCIMENTO.Caption := 'Data FundaÁ„o';
+
     end;
 end;
 
 procedure TcadCliente.btnCancelarCadClienteClick(Sender: TObject);
-
 begin
   if MessageDlg('Deseja realmente sair?', mtConfirmation, [mbyes, mbno], 0) = 6 then
     begin
       Close();
     end;
-
 end;
 
 procedure TcadCliente.btnSalvarClienteClick(Sender: TObject);
-var tipo_pessoaF , tipo_pessoaJ : String;
-
+//var tipo_pessoaF , tipo_pessoaJ : String;
 begin
-
-
   //insert na tabela cliente
   sqlInsertCliente.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
   sqlInsertCliente.ParamByName('fl_ativo').AsBoolean := edtCLIENTEFL_ATIVO.Checked;
   sqlInsertCliente.ParamByName('nome').AsString := edtCLIENTENM_CLIENTE.Text;
-  //tipo da pessoa t√° gravando 0 - Fisica, 1 - Juridica
+  //tipo da pessoa t· gravando 0 - Fisica, 1 - Juridica
   sqlInsertCliente.ParamByName('tp_pessoa').AsString := edtCLIENTETP_PESSOA.ItemIndex.ToString;
   sqlInsertCliente.ParamByName('telefone').AsString := edtCLIENTEFONE.Text;
   sqlInsertCliente.ParamByName('celular').AsString := edtCLIENTECELULAR.Text;
@@ -120,13 +116,12 @@ begin
   sqlInsertCliente.ParamByName('rg_ie').AsString := edtCLIENTERG.Text;
   sqlInsertCliente.ParamByName('dtnascimento').AsDate := StrToDate(edtCLIENTEDATANASCIMENTO.Text);
 
-  //insert na tabela endere√ßo
+  //insert na tabela endereÁo
   sqlInsertEndereco.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
   sqlInsertEndereco.ParamByName('logradouro').AsString := edtCLIENTEENDERECO_LOGRADOURO.Text;
   sqlInsertEndereco.ParamByName('num').AsInteger := StrToInt(edtCLIENTEENDERECO_NUMERO.Text);
   sqlInsertEndereco.ParamByName('bairro').AsString := edtCLIENTEENDERECO_BAIRRO.Text;
   sqlInsertEndereco.ParamByName('cidade').AsString := edtCLIENTEENDERECO_CIDADE.Text;
-  //n√£o est√° gravando no banco de dados
   sqlInsertEndereco.ParamByName('uf').AsString := cbESTADO.Text;
 
   try
@@ -138,7 +133,7 @@ begin
     FreeAndNil(sqlInsertEndereco);
     ShowMessage('Cliente cadastrado com sucesso!');
 
-    //limpa os campos ap√≥s inserir
+    //limpa os campos apÛs inserir
     edtCLIENTEcd_cliente.Text := '';
     edtCLIENTENM_CLIENTE.Text := '';
     edtCLIENTEFONE.Text := '';
@@ -159,41 +154,71 @@ begin
       ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
       exit;
     end;
-
   end;
 end;
 
+
+
 procedure TcadCliente.edtCLIENTEcd_clienteExit(Sender: TObject);
+var
+ sql_temp : String;
+
 begin
-//verifica se foi clicado no fechar, se clicou, n√£o valida o cod. cliente vazio
+//incrementa o cÛdigo do cliente
+  begin
+    sql_seq := 'select last_value + 1 as last_value from cliente_seq';
+    FDQuery1.Close;
+    FDQuery1.Open(sql_seq);
+    FDQuery1.First;
+    edtCLIENTEcd_cliente.Text := FDQuery1.FieldByName('last_value').AsString;
+    FDQuery1.Close;
+
+    //incrementa o sequence
+    sql_temp := 'select nextval(''cliente_seq'');';
+    FDQuery1.Open(sql_temp);
+    FDQuery1.Close;
+  end;
+
+//verifica se foi clicado no fechar, se clicou, n„o valida o cod. cliente vazio
   if btnCancelarCadCliente.MouseInClient then
     begin
       exit
     end
   else if edtCLIENTEcd_cliente.Text = '' then
     begin
-      raise Exception.Create('C√≥digo do Cliente n√£o pode ser vazio');
+      raise Exception.Create('CÛdigo do Cliente n„o pode ser vazio');
       edtCLIENTEcd_cliente.SetFocus;
       exit;
     end;
-
 end;
 
+//valida se o cpf/cnpj È vazio
 procedure TcadCliente.edtCLIENTECPF_CNPJExit(Sender: TObject);
 begin
   if edtCLIENTECPF_CNPJ.Text = '' then
-    raise Exception.Create('Campo n√£o pode ser vazio');
+    raise Exception.Create('Campo n„o pode ser vazio');
 end;
 
+//valida se o rg/ie È vazio
 procedure TcadCliente.edtCLIENTERGExit(Sender: TObject);
 begin
   if edtCLIENTERG.Text = '' then
-    raise Exception.Create('Campo n√£o pode ser Vazio');
+    raise Exception.Create('Campo n„o pode ser Vazio');
 end;
 
 procedure TcadCliente.edtCLIENTETP_PESSOAClick(Sender: TObject);
 begin
   pFormarCamposPessoa;
+end;
+
+//passa pelos campos pressionando enter
+procedure TcadCliente.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+    Perform(WM_NEXTDLGCTL,0,0)
+  else if Key = #27 then
+    Perform(WM_NEXTDLGCTL,1,0)
 end;
 
 end.

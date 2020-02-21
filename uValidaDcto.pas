@@ -4,11 +4,11 @@ interface
 
 const
   {
-    MÃ¡scara do CPF
+    Máscara do CPF
   }
   MASCARA_CPF = '!999.999.999-99;0;_';
   {
-    MÃ¡scara do CNPJ
+    Máscara do CNPJ
   }
   MASCARA_CNPJ = '!99.999.999/9999-99;0;_';
 

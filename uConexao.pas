@@ -14,6 +14,7 @@ type
   TfConexao = class(TForm)
     conexao: TFDConnection;
     FDPhysPgDriverLink1: TFDPhysPgDriverLink;
+    transacao: TFDTransaction;
   private
     { Private declarations }
   public
