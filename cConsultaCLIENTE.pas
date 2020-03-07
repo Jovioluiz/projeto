@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.DataSet;
 
 type
-  TconsultaCliente = class(TfConexao)
+  TfrmConsultaCliente = class(TfConexao)
     tpCadCliente: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -61,13 +61,13 @@ type
   end;
 
 var
-  consultaCliente: TconsultaCliente;
+  frmConsultaCliente: TfrmConsultaCliente;
 
 implementation
 
 {$R *.dfm}
 
-procedure TconsultaCliente.pFormarCamposPessoa;
+procedure TfrmConsultaCliente.pFormarCamposPessoa;
 begin
   //Muda o caption do label CPF/CNPJ e RG/IE
   if edtCLIENTETP_PESSOA.ItemIndex = 0 then
@@ -89,7 +89,7 @@ begin
     end;
 end;
 
-procedure TconsultaCliente.btnCancelarCadClienteClick(Sender: TObject);
+procedure TfrmConsultaCliente.btnCancelarCadClienteClick(Sender: TObject);
 begin
   if MessageDlg('Deseja realmente sair?', mtConfirmation, [mbyes, mbno], 0) = 6 then
     begin
@@ -97,7 +97,7 @@ begin
     end;
 end;
 
-procedure TconsultaCliente.btnEditarClick(Sender: TObject);
+procedure TfrmConsultaCliente.btnEditarClick(Sender: TObject);
 begin
   inherited;
   //habilita os campos
@@ -119,14 +119,14 @@ begin
     cbESTADO.Enabled := true;
 end;
 
-procedure TconsultaCliente.btnGravarClick(Sender: TObject);
+procedure TfrmConsultaCliente.btnGravarClick(Sender: TObject);
 begin
   inherited;
   comandoSql.Close;
   comandoSql.SQL.Text;
 end;
 
-procedure TconsultaCliente.edtCLIENTEcd_clienteExit(Sender: TObject);
+procedure TfrmConsultaCliente.edtCLIENTEcd_clienteExit(Sender: TObject);
  //sql para visualizar o cadastro do cliente
 begin
   comandoSql.Close;
@@ -193,7 +193,7 @@ begin
 end;
 
 //passa pelos campos pressionando enter
-procedure TconsultaCliente.edtCLIENTEcd_clienteKeyPress(Sender: TObject;
+procedure TfrmConsultaCliente.edtCLIENTEcd_clienteKeyPress(Sender: TObject;
  var Key: Char);
 
 begin

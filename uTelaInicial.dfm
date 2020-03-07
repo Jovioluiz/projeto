@@ -3,7 +3,7 @@ object frm_Principal: Tfrm_Principal
   Top = 0
   BorderStyle = bsSingle
   Caption = 'Tela Inicial'
-  ClientHeight = 627
+  ClientHeight = 630
   ClientWidth = 1000
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -30,11 +30,26 @@ object frm_Principal: Tfrm_Principal
   TextHeight = 13
   object tpTelaInicial: TPanel
     Left = 0
-    Top = 0
+    Top = 3
     Width = 1000
     Height = 627
-    Align = alClient
+    Align = alBottom
     TabOrder = 0
+    ExplicitTop = -8
+    object Label1: TLabel
+      Left = 2
+      Top = 573
+      Width = 55
+      Height = 13
+      Caption = 'Usu'#225'rio:'
+    end
+    object lblusuarioLogado: TLabel
+      Left = 88
+      Top = 573
+      Width = 89
+      Height = 13
+      Visible = False
+    end
   end
   object MenuCadastro: TMainMenu
     Left = 24
@@ -81,6 +96,10 @@ object frm_Principal: Tfrm_Principal
       object PedidodeVenda1: TMenuItem
         Caption = 'Pedido de Venda'
         OnClick = PedidodeVenda1Click
+      end
+      object VisualizarPedidoVenda1: TMenuItem
+        Caption = 'Visualizar Pedido Venda'
+        OnClick = VisualizarPedidoVenda1Click
       end
     end
     object Sistem1: TMenuItem

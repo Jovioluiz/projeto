@@ -1,4 +1,4 @@
-object cadFormaPagamento: TcadFormaPagamento
+object frmCadFormaPagamento: TfrmCadFormaPagamento
   Left = 0
   Top = 0
   BorderStyle = bsDialog

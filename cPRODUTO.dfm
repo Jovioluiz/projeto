@@ -1,4 +1,4 @@
-object fCadProduto: TfCadProduto
+object frmCadProduto: TfrmCadProduto
   Left = 0
   Top = 0
   BorderStyle = bsDialog

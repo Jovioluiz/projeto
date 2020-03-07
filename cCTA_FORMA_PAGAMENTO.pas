@@ -12,7 +12,7 @@ uses
   Vcl.ComCtrls;
 
 type
-  TcadFormaPagamento = class(TfConexao)
+  TfrmCadFormaPagamento = class(TfConexao)
     tpCadFormaPgto: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -34,14 +34,14 @@ type
   end;
 
 var
-  cadFormaPagamento: TcadFormaPagamento;
+  frmCadFormaPagamento: TfrmCadFormaPagamento;
 
 implementation
 
 {$R *.dfm}
 
 
-procedure TcadFormaPagamento.btnFecharClick(Sender: TObject);
+procedure TfrmCadFormaPagamento.btnFecharClick(Sender: TObject);
 begin
   inherited;
   if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
@@ -50,7 +50,7 @@ begin
     end;
 end;
 
-procedure TcadFormaPagamento.btnSalvarClick(Sender: TObject);
+procedure TfrmCadFormaPagamento.btnSalvarClick(Sender: TObject);
 begin
   //verifica se o código está vazio
   if (edtCTA_FORMA_PGTOCODIGO.Text = EmptyStr) or (edtCTA_FORMA_PGTODESCRICAO.Text = EmptyStr) or (edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex = -1) then
@@ -90,7 +90,7 @@ begin
   end;
 end;
 
-procedure TcadFormaPagamento.edtCTA_FORMA_PGTOCODIGOExit(Sender: TObject);
+procedure TfrmCadFormaPagamento.edtCTA_FORMA_PGTOCODIGOExit(Sender: TObject);
 begin
 //verifica se foi clicado no fechar, se clicou, não valida o cod. da forma vazio
   if btnFechar.MouseInClient then
@@ -107,7 +107,7 @@ begin
 end;
 
 //passa pelos campos pressionando enter
-procedure TcadFormaPagamento.FormKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmCadFormaPagamento.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
     if Key=#13 then

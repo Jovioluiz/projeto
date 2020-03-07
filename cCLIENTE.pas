@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.DataSet;
 
 type
-  TcadCliente = class(TfConexao)
+  TfrmCadCliente = class(TfConexao)
     tpCadCliente: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -63,13 +63,13 @@ type
   end;
 
 var
-  cadCliente: TcadCliente;
+  frmCadCliente: TfrmCadCliente;
 
 implementation
 
 {$R *.dfm}
 
-procedure TcadCliente.pFormarCamposPessoa;
+procedure TfrmCadCliente.pFormarCamposPessoa;
 begin
   //Muda o caption do label CPF/CNPJ e RG/IE
   if edtCLIENTETP_PESSOA.ItemIndex = 0 then
@@ -92,7 +92,7 @@ begin
     end;
 end;
 
-procedure TcadCliente.btnCancelarCadClienteClick(Sender: TObject);
+procedure TfrmCadCliente.btnCancelarCadClienteClick(Sender: TObject);
 begin
   if MessageDlg('Deseja realmente sair?', mtConfirmation, [mbyes, mbno], 0) = 6 then
     begin
@@ -100,7 +100,7 @@ begin
     end;
 end;
 
-procedure TcadCliente.btnSalvarClienteClick(Sender: TObject);
+procedure TfrmCadCliente.btnSalvarClienteClick(Sender: TObject);
 //var tipo_pessoaF , tipo_pessoaJ : String;
 begin
   //insert na tabela cliente
@@ -159,7 +159,7 @@ end;
 
 
 
-procedure TcadCliente.edtCLIENTEcd_clienteExit(Sender: TObject);
+procedure TfrmCadCliente.edtCLIENTEcd_clienteExit(Sender: TObject);
 var
  sql_temp : String;
 
@@ -193,26 +193,26 @@ begin
 end;
 
 //valida se o cpf/cnpj é vazio
-procedure TcadCliente.edtCLIENTECPF_CNPJExit(Sender: TObject);
+procedure TfrmCadCliente.edtCLIENTECPF_CNPJExit(Sender: TObject);
 begin
   if edtCLIENTECPF_CNPJ.Text = '' then
     raise Exception.Create('Campo não pode ser vazio');
 end;
 
 //valida se o rg/ie é vazio
-procedure TcadCliente.edtCLIENTERGExit(Sender: TObject);
+procedure TfrmCadCliente.edtCLIENTERGExit(Sender: TObject);
 begin
   if edtCLIENTERG.Text = '' then
     raise Exception.Create('Campo não pode ser Vazio');
 end;
 
-procedure TcadCliente.edtCLIENTETP_PESSOAClick(Sender: TObject);
+procedure TfrmCadCliente.edtCLIENTETP_PESSOAClick(Sender: TObject);
 begin
   pFormarCamposPessoa;
 end;
 
 //passa pelos campos pressionando enter
-procedure TcadCliente.FormKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmCadCliente.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Key=#13 then

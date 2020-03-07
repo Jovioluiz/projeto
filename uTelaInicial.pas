@@ -5,12 +5,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, System.UITypes,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.StdCtrls, cCLIENTE, cPRODUTO,
-  cCTA_FORMA_PAGAMENTO, Vcl.ExtCtrls, cCTA_COND_PGTO, Vcl.Imaging.jpeg, cConsultaCLIENTE,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.StdCtrls, cCLIENTE,
+  cPRODUTO,
+  cCTA_FORMA_PAGAMENTO, Vcl.ExtCtrls, cCTA_COND_PGTO, Vcl.Imaging.jpeg,
+  cConsultaCLIENTE,
   Vcl.Imaging.pngimage, uCadTABELAPRECO, uPedidoVenda, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda;
 
 type
   Tfrm_Principal = class(TForm)
@@ -30,6 +32,9 @@ type
     TabeladePreo1: TMenuItem;
     PedidoVenda1: TMenuItem;
     PedidodeVenda1: TMenuItem;
+    VisualizarPedidoVenda1: TMenuItem;
+    Label1: TLabel;
+    lblusuarioLogado: TLabel;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -39,6 +44,7 @@ type
     procedure consultaProdutoClick(Sender: TObject);
     procedure TabeladePreo1Click(Sender: TObject);
     procedure PedidodeVenda1Click(Sender: TObject);
+    procedure VisualizarPedidoVenda1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -56,32 +62,37 @@ uses cConsultaPRODUTO;
 
 procedure Tfrm_Principal.Cliente1Click(Sender: TObject);
 begin
-  cadCliente := TcadCliente.Create(Self);
-  cadCliente.ShowModal;
+  frmCadCliente := TfrmCadCliente.Create(Self);
+  try
+    frmCadCliente.ShowModal;
+  finally
+    FreeAndNil(frmCadCliente);
+  end;
+
 end;
 
 procedure Tfrm_Principal.Cliente2Click(Sender: TObject);
 begin
-  consultaCliente := TconsultaCliente.Create(Self);
-  consultaCliente.ShowModal;
+  frmConsultaCliente := TfrmConsultaCliente.Create(Self);
+  frmConsultaCliente.ShowModal;
 end;
 
 procedure Tfrm_Principal.CondicaoPagamento1Click(Sender: TObject);
 begin
-  cadCondPgto := TcadCondPgto.Create(Self);
-  cadCondPgto.ShowModal;
+  frmCadCondPgto := TfrmCadCondPgto.Create(Self);
+  frmCadCondPgto.ShowModal;
 end;
 
 procedure Tfrm_Principal.consultaProdutoClick(Sender: TObject);
 begin
-  fConsultaProduto := TfConsultaProduto.Create(Self);
-  fConsultaProduto.ShowModal;
+  frmConsultaProduto := TfrmConsultaProduto.Create(Self);
+  frmConsultaProduto.ShowModal;
 end;
 
 procedure Tfrm_Principal.FormaPagamento1Click(Sender: TObject);
 begin
-  cadFormaPagamento := TcadFormaPagamento.Create(Self);
-  cadFormaPagamento.ShowModal;
+  frmCadFormaPagamento := TfrmCadFormaPagamento.Create(Self);
+  frmCadFormaPagamento.ShowModal;
 end;
 
 procedure Tfrm_Principal.PedidodeVenda1Click(Sender: TObject);
@@ -92,23 +103,28 @@ end;
 
 procedure Tfrm_Principal.Produto1Click(Sender: TObject);
 begin
-  fCadProduto := TfCadProduto.Create(Self);
-  fCadProduto.ShowModal;
+  frmCadProduto := TfrmCadProduto.Create(Self);
+  frmCadProduto.ShowModal;
 end;
 
 procedure Tfrm_Principal.Sair1Click(Sender: TObject);
 begin
-  if MessageDlg('Deseja sair do Sistema?', mtConfirmation, [mbYes, mbNo],0) = 6 then
-    begin
-      Close;
-    end;
+  if MessageDlg('Deseja sair do Sistema?', mtConfirmation, [mbYes, mbNo], 0) = 6  then
+  begin
+    Close;
+  end;
 end;
 
 procedure Tfrm_Principal.TabeladePreo1Click(Sender: TObject);
 begin
- frmcadTabelaPreco := TfrmcadTabelaPreco.Create(Self);
- frmcadTabelaPreco.ShowModal;
+  frmcadTabelaPreco := TfrmcadTabelaPreco.Create(Self);
+  frmcadTabelaPreco.ShowModal;
+end;
+
+procedure Tfrm_Principal.VisualizarPedidoVenda1Click(Sender: TObject);
+begin
+  frmVisualizaPedidoVenda := TfrmVisualizaPedidoVenda.Create(Self);
+  frmVisualizaPedidoVenda.ShowModal;
 end;
 
 end.
-

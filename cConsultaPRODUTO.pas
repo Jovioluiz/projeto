@@ -11,7 +11,7 @@ uses
   FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ExtCtrls;
 
 type
-  TfConsultaProduto = class(TfConexao)
+  TfrmConsultaProduto = class(TfConexao)
     tpCadProduto: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -49,7 +49,7 @@ type
   end;
 
 var
-  fConsultaProduto: TfConsultaProduto;
+  frmConsultaProduto: TfrmConsultaProduto;
   cd_produto : String;
 
 implementation
@@ -58,7 +58,7 @@ implementation
 
 
 
-procedure TfConsultaProduto.btnEditarClick(Sender: TObject);
+procedure TfrmConsultaProduto.btnEditarClick(Sender: TObject);
 begin
   inherited;
     edtPRODUTOCD_PRODUTO.Enabled := false;
@@ -72,7 +72,7 @@ begin
     btnGravar.Enabled := true;
 end;
 
-procedure TfConsultaProduto.btnGravarClick(Sender: TObject);
+procedure TfrmConsultaProduto.btnGravarClick(Sender: TObject);
 begin
   inherited;
   sqlUpdate.Close;
@@ -118,7 +118,7 @@ begin
   end;
 end;
 
-procedure TfConsultaProduto.btnPRODUTOCANCELARClick(Sender: TObject);
+procedure TfrmConsultaProduto.btnPRODUTOCANCELARClick(Sender: TObject);
 begin
   if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
     begin
@@ -127,7 +127,7 @@ begin
 end;
 
 
-procedure TfConsultaProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
+procedure TfrmConsultaProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
 begin
   comandoSelect.Close;
   comandoSelect.SQL.Text := 'select cd_produto, '+
@@ -172,7 +172,7 @@ begin
 end;
 
 //passa pelos campos pressionando enter
-procedure TfConsultaProduto.FormKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmConsultaProduto.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Key=#13 then
@@ -182,7 +182,7 @@ begin
 end;
 
 
-procedure TfConsultaProduto.verificaClicouFechar();
+procedure TfrmConsultaProduto.verificaClicouFechar();
 begin
   //verifica se foi clicado no fechar, se clicou, não valida o cod. produto vazio
   if btnPRODUTOCANCELAR.MouseInClient then

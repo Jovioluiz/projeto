@@ -1,4 +1,4 @@
-object cadCliente: TcadCliente
+object frmCadCliente: TfrmCadCliente
   Left = 0
   Top = 0
   BorderStyle = bsDialog

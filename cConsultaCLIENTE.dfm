@@ -1,4 +1,4 @@
-object consultaCliente: TconsultaCliente
+object frmConsultaCliente: TfrmConsultaCliente
   Left = 0
   Top = 0
   BorderStyle = bsDialog

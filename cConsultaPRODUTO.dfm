@@ -1,4 +1,4 @@
-object fConsultaProduto: TfConsultaProduto
+object frmConsultaProduto: TfrmConsultaProduto
   Left = 0
   Top = 0
   BorderStyle = bsDialog

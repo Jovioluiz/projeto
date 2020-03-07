@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.Client, uConexao;
 
 type
-  TcadCondPgto = class(TfConexao)
+  TfrmCadCondPgto = class(TfConexao)
     tpCondPgto: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -40,13 +40,13 @@ type
   end;
 
 var
-  cadCondPgto: TcadCondPgto;
+  frmCadCondPgto: TfrmCadCondPgto;
 
 implementation
 
 {$R *.dfm}
 
-procedure TcadCondPgto.btnFecharClick(Sender: TObject);
+procedure TfrmCadCondPgto.btnFecharClick(Sender: TObject);
 begin
   inherited;
   if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
@@ -55,7 +55,7 @@ begin
     end;
 end;
 
-procedure TcadCondPgto.btnSalvarClick(Sender: TObject);
+procedure TfrmCadCondPgto.btnSalvarClick(Sender: TObject);
 begin
    //verifica se o código da condição e forma de pagamento estão vazias ao salvar
   if (edtCTACONDPGTOCD_COND.Text = EmptyStr) or (edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text = EmptyStr) or (edtCTACONDPGTODESCRICAO.Text = EmptyStr) then
@@ -101,7 +101,7 @@ begin
 end;
 
 //busca o nome da foma de pagamento
-procedure TcadCondPgto.edtCTACONDPGTOCD_CTA_FORMA_PGTOChange(Sender: TObject);
+procedure TfrmCadCondPgto.edtCTACONDPGTOCD_CTA_FORMA_PGTOChange(Sender: TObject);
 begin
   inherited;
   begin
@@ -123,7 +123,7 @@ end;
 
 
 //passa pelos campos pressionando enter
-procedure TcadCondPgto.FormKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmCadCondPgto.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Key=#13 then

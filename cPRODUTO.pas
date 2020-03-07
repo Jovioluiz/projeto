@@ -11,7 +11,7 @@ uses
   FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ExtCtrls;
 
 type
-  TfCadProduto = class(TfConexao)
+  TfrmCadProduto = class(TfConexao)
     tpCadProduto: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -45,7 +45,7 @@ type
   end;
 
 var
-  fCadProduto: TfCadProduto;
+  frmCadProduto: TfrmCadProduto;
   cd_produto : String;
 
 implementation
@@ -53,7 +53,7 @@ implementation
 {$R *.dfm}
 
 
-procedure TfCadProduto.btnPRODUTOCADASTRARClick(Sender: TObject);
+procedure TfrmCadProduto.btnPRODUTOCADASTRARClick(Sender: TObject);
 begin
 
 //verifica se o código, descrção e UN estão vazios
@@ -98,7 +98,7 @@ if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptySt
   end;
 end;
 
-procedure TfCadProduto.btnPRODUTOCANCELARClick(Sender: TObject);
+procedure TfrmCadProduto.btnPRODUTOCANCELARClick(Sender: TObject);
 begin
   if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
     begin
@@ -106,7 +106,7 @@ begin
     end;
 end;
 
-procedure TfCadProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
+procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
 begin
   inherited;
   //verifica se foi clicado no fechar, se clicou, não valida o cod. produto vazio
@@ -124,7 +124,7 @@ begin
 end;
 
 //passa pelos campos pressionando enter
-procedure TfCadProduto.FormKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmCadProduto.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Key = #13 then
