@@ -1,39 +1,30 @@
-object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
+object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Visualiza'#231#227'o de Pedido de Venda'
-  ClientHeight = 673
-  ClientWidth = 1026
-  Color = clSilver
+  Caption = 'Edi'#231#227'o do Pedido Venda'
+  ClientHeight = 683
+  ClientWidth = 1036
+  Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  Icon.Data = {
-    0000010001001010100001000400280100001600000028000000100000002000
-    000001000400000000008000000000000000000000001000000000000000B1B1
-    B100FFFFFF003434340044444400F5F5F500B0B0B000FEFEFE002F2F2F003131
-    310033333300EBEBEB0000000000000000000000000000000000000000001111
-    1111111111111111111111111111111111119111111111111111991111111111
-    1111991111111111111191111111119996119991111119999999999111117991
-    9999999411111111118999991111111115912999991111119999113999991111
-    A111111109991111111111111111111111111111111111111111111111110000
-    0000000000000000000000000000000000000000000000000000000000000000
-    000000000000000000000000000000000000000000000000000000000000}
   OldCreateOrder = False
-  Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1026
-    Height = 673
+    Width = 1036
+    Height = 683
     Align = alClient
     BorderStyle = bsSingle
-    TabOrder = 2
+    TabOrder = 0
+    ExplicitWidth = 1026
+    ExplicitHeight = 673
     object Label1: TLabel
       Left = 131
       Top = 32
@@ -136,7 +127,6 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
-      OnDrawColumnCell = dbGridProdutosDrawColumnCell
       Columns = <
         item
           Expanded = False
@@ -227,7 +217,6 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       Height = 32
       Caption = 'Cancelar'
       TabOrder = 6
-      OnClick = btnCancelarClick
     end
   end
   object edtNrPedido: TEdit
@@ -235,8 +224,8 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     Top = 31
     Width = 105
     Height = 21
-    TabOrder = 0
-    OnExit = edtNrPedidoExit
+    Enabled = False
+    TabOrder = 1
   end
   object edtCdCliente: TEdit
     Left = 133
@@ -245,14 +234,13 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     Height = 21
     Enabled = False
     ReadOnly = True
-    TabOrder = 1
+    TabOrder = 2
   end
   object edtNomeCliente: TEdit
     Left = 263
     Top = 87
     Width = 329
     Height = 21
-    Enabled = False
     ReadOnly = True
     TabOrder = 3
   end
@@ -261,7 +249,6 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     Top = 87
     Width = 329
     Height = 21
-    Enabled = False
     ReadOnly = True
     TabOrder = 4
   end
@@ -283,15 +270,6 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     Enabled = False
     TabOrder = 6
   end
-  object btnEditarPedido: TButton
-    Left = 24
-    Top = 48
-    Width = 81
-    Height = 33
-    Caption = 'Editar Pedido'
-    TabOrder = 7
-    OnClick = btnEditarPedidoClick
-  end
   object ClientDataSet1: TClientDataSet
     Aggregates = <>
     Params = <>
@@ -299,13 +277,13 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     Top = 352
   end
   object DataSource1: TDataSource
-    DataSet = sqlVisualizaPedidoVenda
+    DataSet = sqlCarregaPedidoVenda
     Left = 248
     Top = 352
   end
-  object sqlVisualizaPedidoVenda: TFDQuery
+  object sqlCarregaPedidoVenda: TFDQuery
     Connection = fConexao.conexao
-    Left = 424
+    Left = 440
     Top = 352
   end
 end

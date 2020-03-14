@@ -186,7 +186,7 @@ begin
     end
   else if edtCLIENTEcd_cliente.Text = '' then
     begin
-      raise Exception.Create('Código do Cliente não pode ser vazio');
+      ShowMessage('Código do Cliente não pode ser vazio');
       edtCLIENTEcd_cliente.SetFocus;
       exit;
     end;

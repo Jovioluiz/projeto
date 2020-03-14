@@ -46,6 +46,7 @@ type
     comandoSql: TFDQuery;
     btnEditar: TButton;
     btnGravar: TButton;
+    insertEndereco: TFDQuery;
     procedure pFormarCamposPessoa;
     //procedure edtCLIENTETP_PESSOAClick(Sender: TObject);
     procedure btnCancelarCadClienteClick(Sender: TObject);
@@ -119,11 +120,90 @@ begin
     cbESTADO.Enabled := true;
 end;
 
+//update tabela cliente e endereço
 procedure TfrmConsultaCliente.btnGravarClick(Sender: TObject);
+
 begin
   inherited;
   comandoSql.Close;
-  comandoSql.SQL.Text;
+  comandoSql.SQL.Text := 'update  '+
+                                'cliente '+
+                            'set         '+
+                            '    cd_cliente = :cd_cliente,'+
+                             '   fl_ativo = :fl_ativo,'+
+                              '  tp_pessoa = :tp_pessoa,'+
+                              '  telefone = :telefone,'+
+                              '  celular = :celular,'+
+                              '  email = :email,'+
+                              '  cpf_cnpj = :cpf_cnpj,'+
+                              '  rg_ie = :rg_ie,'+
+                              '  dtnascimento = :dtnascimento '+
+                            'where                          '+
+                              '  cd_cliente = :cd_cliente';
+
+  comandoSql.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
+  comandoSql.ParamByName('fl_ativo').AsBoolean := edtCLIENTEFL_ATIVO.Checked;
+  comandoSql.ParamByName('tp_pessoa').AsString := edtCLIENTETP_PESSOA.ItemIndex.ToString;
+  comandoSql.ParamByName('telefone').AsString := edtCLIENTEFONE.Text;
+  comandoSql.ParamByName('celular').AsString := edtCLIENTECELULAR.Text;
+  comandoSql.ParamByName('email').AsString := edtCLIENTEEMAIL.Text;
+  comandoSql.ParamByName('cpf_cnpj').AsString := edtCLIENTECPF_CNPJ.Text;
+  comandoSql.ParamByName('rg_ie').AsString := edtCLIENTERG.Text;
+  comandoSql.ParamByName('dtnascimento').AsDate := StrToDate(edtCLIENTEDATANASCIMENTO.Text);
+
+  //update na tabela endereço
+  insertEndereco.SQL.Text := 'update  '+
+                                'endereco '+
+                            'set         '+
+                             '   cd_cliente = :cd_cliente,'+
+                              '  logradouro = :logradouro,'+
+                              '  num = :num,'+
+                              '  bairro = :bairro,'+
+                              '  cidade = :cidade,'+
+                              '  uf = :uf '+
+                            'where                          '+
+                              '  cd_cliente = :cd_cliente';
+
+
+  insertEndereco.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
+  insertEndereco.ParamByName('logradouro').AsString := edtCLIENTEENDERECO_LOGRADOURO.Text;
+  insertEndereco.ParamByName('num').AsInteger := StrToInt(edtCLIENTEENDERECO_NUMERO.Text);
+  insertEndereco.ParamByName('bairro').AsString := edtCLIENTEENDERECO_BAIRRO.Text;
+  insertEndereco.ParamByName('cidade').AsString := edtCLIENTEENDERECO_CIDADE.Text;
+  insertEndereco.ParamByName('uf').AsString := cbESTADO.Text;
+
+  try
+    comandoSql.ExecSQL;
+    comandoSql.Close;
+    insertEndereco.ExecSQL;
+    insertEndereco.Close;
+    ShowMessage('Cliente alterado com sucesso');
+
+    edtCLIENTEcd_cliente.Clear;
+    edtCLIENTENM_CLIENTE.Clear;
+    edtCLIENTEFL_ATIVO.Checked := false;
+    edtCLIENTEFONE.Clear;
+    edtCLIENTEFONE.Clear;
+    edtCLIENTECELULAR.Clear;
+    edtCLIENTEEMAIL.Clear;
+    edtCLIENTECPF_CNPJ.Clear;
+    edtCLIENTERG.Clear;
+    edtCLIENTEDATANASCIMENTO.Clear;
+    edtCLIENTEENDERECO_LOGRADOURO.Clear;
+    edtCLIENTEENDERECO_NUMERO.Clear;
+    edtCLIENTEENDERECO_BAIRRO.Clear;
+    edtCLIENTEENDERECO_CIDADE.Clear;
+    cbESTADO.Clear;
+
+  except
+    on E:exception do
+      begin
+        ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
+        exit;
+      end;
+
+  end;
+
 end;
 
 procedure TfrmConsultaCliente.edtCLIENTEcd_clienteExit(Sender: TObject);

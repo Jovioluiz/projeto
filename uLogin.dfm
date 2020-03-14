@@ -1,7 +1,7 @@
 object frm_Login: Tfrm_Login
   Left = 0
   Top = 0
-  BorderStyle = bsToolWindow
+  BorderStyle = bsDialog
   Caption = 'Login'
   ClientHeight = 200
   ClientWidth = 522

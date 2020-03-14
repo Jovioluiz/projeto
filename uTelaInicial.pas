@@ -12,7 +12,7 @@ uses
   Vcl.Imaging.pngimage, uCadTABELAPRECO, uPedidoVenda, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda;
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, cConsultaPRODUTO;
 
 type
   Tfrm_Principal = class(TForm)
@@ -58,7 +58,6 @@ implementation
 
 {$R *.dfm}
 
-uses cConsultaPRODUTO;
 
 procedure Tfrm_Principal.Cliente1Click(Sender: TObject);
 begin

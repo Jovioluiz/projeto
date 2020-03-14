@@ -30,23 +30,22 @@ object frm_Principal: Tfrm_Principal
   TextHeight = 13
   object tpTelaInicial: TPanel
     Left = 0
-    Top = 3
+    Top = 0
     Width = 1000
-    Height = 627
+    Height = 630
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = -8
     object Label1: TLabel
-      Left = 2
+      Left = 0
       Top = 573
-      Width = 55
+      Width = 40
       Height = 13
       Caption = 'Usu'#225'rio:'
     end
     object lblusuarioLogado: TLabel
       Left = 88
       Top = 573
-      Width = 89
+      Width = 57
       Height = 13
       Visible = False
     end

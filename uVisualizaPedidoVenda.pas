@@ -34,7 +34,6 @@ type
     edtVlDescTotalPedido: TEdit;
     edtVlAcrescimoTotalPedido: TEdit;
     edtVlTotalPedido: TEdit;
-    btnConfirmarPedido: TButton;
     btnCancelar: TButton;
     ClientDataSet1: TClientDataSet;
     DataSource1: TDataSource;
@@ -46,6 +45,7 @@ type
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure btnCancelarClick(Sender: TObject);
     procedure edtNrPedidoExit(Sender: TObject);
+    procedure btnEditarPedidoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -70,6 +70,16 @@ end;
 
 
 //Faz a linha zebrada no grid dos itens
+procedure TfrmVisualizaPedidoVenda.btnEditarPedidoClick(Sender: TObject);
+begin
+ if edtFl_orcamento.Checked = false then
+  begin
+   MessageDlg('O pedido não pode ser editado', mtWarning, [mbOK],0);
+  end;
+
+end;
+
+//carrega os dados do pedido
 procedure TfrmVisualizaPedidoVenda.dbGridProdutosDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
@@ -84,13 +94,16 @@ begin
     DefaultDrawColumnCell(Rect, DataCol, Column, State);
     end;
 end;
+
 procedure TfrmVisualizaPedidoVenda.edtNrPedidoExit(Sender: TObject);
 var
   tempC, tempU : String;
 begin
+
   sqlVisualizaPedidoVenda.Close;
   sqlVisualizaPedidoVenda.SQL.Text := 'select ' +
-                                         ' pv.cd_cliente, '+
+                                          ' pv.fl_orcamento, '+
+                                          ' pv.cd_cliente, '+
                                           'c.nome, '+
                                           'e.cidade, '+
                                           'e.uf, '+
@@ -128,8 +141,25 @@ begin
 
 
   sqlVisualizaPedidoVenda.ParamByName('nr_pedido').AsInteger := StrToInt(edtNrPedido.Text);
-  //sqlVisualizaPedidoVenda.Open();
+  sqlVisualizaPedidoVenda.Open();
 
+if sqlVisualizaPedidoVenda.IsEmpty then
+  begin
+    if (Application.MessageBox('Pedido não Encontrado! Verifique', 'Atenção', MB_OK) = idOK) then
+       begin
+        edtCdCliente.Clear;
+        edtCidadeCliente.Clear;
+        edtCdFormaPgto.Clear;
+        edtCdCondPgto.Clear;
+        edtNomeCliente.Clear;
+        edtNomeFormaPgto.Clear;
+        edtNomeCondPgto.Clear;
+        edtNrPedido.SetFocus;
+        exit;
+       end;
+  end;
+
+  edtFl_orcamento.Checked := sqlVisualizaPedidoVenda.FieldByName('fl_orcamento').AsBoolean;
   edtCdCliente.Text := IntToStr(sqlVisualizaPedidoVenda.FieldByName('cd_cliente').AsInteger);
   edtNomeCliente.Text := sqlVisualizaPedidoVenda.FieldByName('nome').AsString;
   tempC := sqlVisualizaPedidoVenda.FieldByName('cidade').Text;
@@ -140,18 +170,15 @@ begin
   edtCdCondPgto.Text := IntToStr(sqlVisualizaPedidoVenda.FieldByName('cd_cond_pag').AsInteger);
   edtNomeCondPgto.Text := sqlVisualizaPedidoVenda.FieldByName('nm_cond_pag').AsString;
 
-
-
   edtVlDescTotalPedido.Text := CurrToStr(sqlVisualizaPedidoVenda.FieldByName('vl_desconto_pedido').AsCurrency);
   edtVlAcrescimoTotalPedido.Text := CurrToStr(sqlVisualizaPedidoVenda.FieldByName('vl_acrescimo').AsCurrency);
   edtVlTotalPedido.Text := CurrToStr(sqlVisualizaPedidoVenda.FieldByName('vl_total').AsCurrency);
 
-  sqlVisualizaPedidoVenda.Open();
-
+  //lista os itens do pedido
   dbGridProdutos.DataSource := DataSource1;
   dbGridProdutos.Columns[0].Title.Caption := 'Cód. Produto';
   dbGridProdutos.Columns[0].FieldName := 'cd_produto';
-  dbGridProdutos.Columns[1].Title.Caption := 'Nome Produto';
+  dbGridProdutos.Columns[1].Title.Caption := 'Descricao';
   dbGridProdutos.Columns[1].FieldName := 'desc_produto';
   dbGridProdutos.Columns[2].Title.Caption := 'Qtdade';
   dbGridProdutos.Columns[2].FieldName := 'qtd_venda';
@@ -163,16 +190,8 @@ begin
   dbGridProdutos.Columns[5].FieldName := 'vl_unitario';
   dbGridProdutos.Columns[6].Title.Caption := 'Valor Desconto';
   dbGridProdutos.Columns[6].FieldName := 'vl_desconto';
-  dbGridProdutos.Columns[7].Title.Caption := 'Valor Desconto';
-  dbGridProdutos.Columns[7].FieldName := 'vl_desconto';
-  dbGridProdutos.Columns[8].Title.Caption := 'Valor Total';
-  dbGridProdutos.Columns[8].FieldName := 'vl_total_item';
-
-
-
-
-
-
+  dbGridProdutos.Columns[7].Title.Caption := 'Valor Total';
+  dbGridProdutos.Columns[7].FieldName := 'vl_total_item';
 
 end;
 

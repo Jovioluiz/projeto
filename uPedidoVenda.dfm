@@ -211,6 +211,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       Height = 21
       TabOrder = 4
       OnChange = edtQtdadeChange
+      OnExit = edtQtdadeExit
     end
     object edtUnMedida: TComboBox
       Left = 661
@@ -244,7 +245,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object btnAdicionar: TButton
       Left = 792
-      Top = 329
+      Top = 323
       Width = 63
       Height = 25
       Caption = 'Adicionar'
@@ -264,6 +265,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
       OnDrawColumnCell = dbGridProdutosDrawColumnCell
+      OnKeyDown = dbGridProdutosKeyDown
       Columns = <
         item
           Expanded = False
@@ -419,6 +421,14 @@ object frmPedidoVenda: TfrmPedidoVenda
     Enabled = False
     TabOrder = 6
   end
+  object edtFl_orcamento: TCheckBox
+    Left = 280
+    Top = 33
+    Width = 73
+    Height = 17
+    Caption = 'Or'#231'amento'
+    TabOrder = 7
+  end
   object sqlPedidoVendaCliente: TFDQuery
     Connection = fConexao.conexao
     Left = 776
@@ -462,17 +472,22 @@ object frmPedidoVenda: TfrmPedidoVenda
   end
   object sqlNrPedido: TFDQuery
     Connection = fConexao.conexao
-    Left = 248
+    Left = 520
     Top = 8
   end
   object sqlIdGeral: TFDQuery
     Connection = fConexao.conexao
-    Left = 312
+    Left = 568
     Top = 8
   end
   object sqlIdGeralPVI: TFDQuery
     Connection = fConexao.conexao
-    Left = 376
+    Left = 624
     Top = 8
+  end
+  object FDQuery1: TFDQuery
+    Connection = fConexao.conexao
+    Left = 464
+    Top = 200
   end
 end

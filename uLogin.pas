@@ -37,11 +37,7 @@ implementation
 
 procedure Tfrm_Login.btnCancelarClick(Sender: TObject);
 begin
-if MessageDlg('Deseja Fechar?', mtConfirmation, [mbYes, mbNo], 0) = 6
-  then
-  begin
-    Close;
-  end;
+  Close;
 end;
 
 procedure Tfrm_Login.btnEntrarClick(Sender: TObject);
@@ -59,18 +55,16 @@ senha :=  sql_login.FieldByName('senha').Text;
 
 if (edtUsuario.Text = EmptyStr) or (edtSenha.Text = EmptyStr) then
   begin
-   ShowMessage('Digite usuário e Senha');
+   ShowMessage('Digite Usuário e Senha válidos');
    exit;
   end;
 if (edtUsuario.Text = usuario) and (edtSenha.Text = senha) then
   begin
   try
-    frm_Principal.lblusuarioLogado.Visible := true;
-    frm_Principal.lblusuarioLogado.Caption := usuario;
-
     frm_Principal := Tfrm_Principal.Create(Self);
     frm_Principal.ShowModal;
-
+   // frm_Principal.lblusuarioLogado.Visible := true;
+    //frm_Principal.lblusuarioLogado.Caption := edtUsuario.Text;
   finally
     frm_Login.Close;
   end;
