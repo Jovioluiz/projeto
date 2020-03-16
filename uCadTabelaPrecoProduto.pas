@@ -57,7 +57,6 @@ begin
   try
     sqlTabelaPrecoProduto.ExecSQL;
     sqlTabelaPrecoProduto.Close;
-    //FreeAndNil(sqlTabelaPrecoProduto);
     ShowMessage('Dados Gravados com Sucesso');
 
     edtCodProduto.Text := '';
@@ -69,7 +68,7 @@ begin
     on E:exception do
         begin
            ShowMessage('Erro ao gravar os dados'+ E.Message);
-            exit;
+           exit;
         end;
   end;
 end;
@@ -99,7 +98,6 @@ begin
       sqlTabelaPrecoProduto.Open();
       edtNomeProduto.Text := sqlTabelaPrecoProduto.FieldByName('desc_produto').AsString;
       edtUNMedida.Text := sqlTabelaPrecoProduto.FieldByName('un_medida').AsString;
-      //FreeAndNil(sqlTabelaPrecoProduto);
   end;
 
 
@@ -113,7 +111,6 @@ begin
   sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
   sqlTabelaPrecoProduto.Open();
   edtNomeTabela.Text := sqlTabelaPrecoProduto.FieldByName('nm_tabela').AsString;
-  //FreeAndNil(sqlTabelaPrecoProduto);
 end;
 
 procedure TfrmCadTabelaPrecoProduto.FormKeyPress(Sender: TObject;

@@ -163,67 +163,6 @@ object frmCadProduto: TfrmCadProduto
     Left = 24
     Top = 80
   end
-  object comandosql: TFDCommand
-    Connection = fConexao.conexao
-    CommandText.Strings = (
-      
-        'insert into produto(cd_produto,fl_ativo,desc_produto,un_medida,f' +
-        'ator_conversao,peso_liquido,peso_bruto,observacao)'
-      
-        '  values (:cd_produto,:fl_ativo,:desc_produto,:un_medida,:fator_' +
-        'conversao,:peso_liquido,:peso_bruto, :observacao);')
-    ParamData = <
-      item
-        Name = 'CD_PRODUTO'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'FL_ATIVO'
-        DataType = ftBoolean
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'DESC_PRODUTO'
-        DataType = ftString
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'UN_MEDIDA'
-        DataType = ftString
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'FATOR_CONVERSAO'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'PESO_LIQUIDO'
-        DataType = ftCurrency
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'PESO_BRUTO'
-        DataType = ftCurrency
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'OBSERVACAO'
-        DataType = ftString
-        ParamType = ptInput
-        Value = Null
-      end>
-    Left = 648
-    Top = 176
-  end
   object comandoSelect: TFDQuery
     Connection = fConexao.conexao
     SQL.Strings = (
@@ -235,5 +174,10 @@ object frmCadProduto: TfrmCadProduto
         Name = 'CD_PRODUTO'
         ParamType = ptInput
       end>
+  end
+  object comandosql: TFDQuery
+    Connection = fConexao.conexao
+    Left = 640
+    Top = 200
   end
 end

@@ -161,6 +161,13 @@ object frmPedidoVenda: TfrmPedidoVenda
       Height = 13
       Caption = 'Valor Total'
     end
+    object Label19: TLabel
+      Left = 663
+      Top = 32
+      Width = 64
+      Height = 13
+      Caption = 'Data Emiss'#227'o'
+    end
     object edtCdFormaPgto: TEdit
       Left = 24
       Top = 167
@@ -371,6 +378,16 @@ object frmPedidoVenda: TfrmPedidoVenda
       TabOrder = 15
       OnClick = btnCancelarClick
     end
+    object edtDataEmissao: TMaskEdit
+      Left = 753
+      Top = 29
+      Width = 70
+      Height = 21
+      EditMask = '!99/99/0000;1;_'
+      MaxLength = 10
+      TabOrder = 18
+      Text = '  /  /    '
+    end
   end
   object edtNrPedido: TEdit
     Left = 112
@@ -431,8 +448,8 @@ object frmPedidoVenda: TfrmPedidoVenda
   end
   object sqlPedidoVendaCliente: TFDQuery
     Connection = fConexao.conexao
-    Left = 776
-    Top = 24
+    Left = 552
+    Top = 16
   end
   object sqlPedidoVendaFormaPgto: TFDQuery
     Connection = fConexao.conexao
@@ -472,18 +489,18 @@ object frmPedidoVenda: TfrmPedidoVenda
   end
   object sqlNrPedido: TFDQuery
     Connection = fConexao.conexao
-    Left = 520
-    Top = 8
+    Left = 384
+    Top = 16
   end
   object sqlIdGeral: TFDQuery
     Connection = fConexao.conexao
-    Left = 568
-    Top = 8
+    Left = 440
+    Top = 16
   end
   object sqlIdGeralPVI: TFDQuery
     Connection = fConexao.conexao
-    Left = 624
-    Top = 8
+    Left = 488
+    Top = 16
   end
   object FDQuery1: TFDQuery
     Connection = fConexao.conexao

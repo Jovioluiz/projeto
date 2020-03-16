@@ -255,8 +255,8 @@ object frmCadCliente: TfrmCadCliente
       OnExit = edtCLIENTECPF_CNPJExit
     end
     object edtCLIENTEFL_ATIVO: TCheckBox
-      Left = 296
-      Top = 23
+      Left = 297
+      Top = 30
       Width = 48
       Height = 17
       Caption = 'Ativo'
@@ -298,99 +298,28 @@ object frmCadCliente: TfrmCadCliente
       TabOrder = 7
       Text = '  /  /    '
     end
-  end
-  object sqlInsertCliente: TFDCommand
-    Connection = fConexao.conexao
-    CommandText.Strings = (
-      
-        'INSERT INTO cliente (cd_cliente, fl_ativo, nome, tp_pessoa, tele' +
-        'fone,celular, email, cpf_cnpj, rg_ie, dtnascimento) '
-      
-        'VALUES (:cd_cliente, :fl_ativo, :nome, :tp_pessoa, :telefone, :c' +
-        'elular, :email, :cpf_cnpj, :rg_ie, :dtnascimento);')
-    ParamData = <
-      item
-        Name = 'CD_CLIENTE'
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'FL_ATIVO'
-        ParamType = ptInput
-      end
-      item
-        Name = 'NOME'
-        ParamType = ptInput
-      end
-      item
-        Name = 'TP_PESSOA'
-        ParamType = ptInput
-      end
-      item
-        Name = 'TELEFONE'
-        ParamType = ptInput
-      end
-      item
-        Name = 'CELULAR'
-        ParamType = ptInput
-      end
-      item
-        Name = 'EMAIL'
-        ParamType = ptInput
-      end
-      item
-        Name = 'CPF_CNPJ'
-        ParamType = ptInput
-      end
-      item
-        Name = 'RG_IE'
-        ParamType = ptInput
-      end
-      item
-        Name = 'DTNASCIMENTO'
-        ParamType = ptInput
-      end>
-    Left = 760
-    Top = 80
-  end
-  object sqlInsertEndereco: TFDCommand
-    Connection = fConexao.conexao
-    CommandText.Strings = (
-      
-        'INSERT INTO endereco (cd_cliente, logradouro, num, bairro, cidad' +
-        'e, uf) '
-      'VALUES (:cd_cliente, :logradouro, :num, :bairro, :cidade, :uf);')
-    ParamData = <
-      item
-        Name = 'CD_CLIENTE'
-        ParamType = ptInput
-      end
-      item
-        Name = 'LOGRADOURO'
-        ParamType = ptInput
-      end
-      item
-        Name = 'NUM'
-        ParamType = ptInput
-      end
-      item
-        Name = 'BAIRRO'
-        ParamType = ptInput
-      end
-      item
-        Name = 'CIDADE'
-        ParamType = ptInput
-      end
-      item
-        Name = 'UF'
-        ParamType = ptInput
-      end>
-    Left = 760
-    Top = 144
+    object edtCLIENTEFL_FORNECEDOR: TCheckBox
+      Left = 360
+      Top = 30
+      Width = 97
+      Height = 17
+      Caption = 'Fornecedor'
+      TabOrder = 14
+    end
   end
   object FDQuery1: TFDQuery
     Connection = fConexao.conexao
     Left = 760
     Top = 230
+  end
+  object sqlInsertCliente: TFDQuery
+    Connection = fConexao.conexao
+    Left = 752
+    Top = 80
+  end
+  object sqlInsertEndereco: TFDQuery
+    Connection = fConexao.conexao
+    Left = 744
+    Top = 136
   end
 end

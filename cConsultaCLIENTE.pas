@@ -137,7 +137,7 @@ begin
                               '  email = :email,'+
                               '  cpf_cnpj = :cpf_cnpj,'+
                               '  rg_ie = :rg_ie,'+
-                              '  dtnascimento = :dtnascimento '+
+                              '  dt_nasc_fundacao = :dt_nasc_fundacao '+
                             'where                          '+
                               '  cd_cliente = :cd_cliente';
 
@@ -149,7 +149,7 @@ begin
   comandoSql.ParamByName('email').AsString := edtCLIENTEEMAIL.Text;
   comandoSql.ParamByName('cpf_cnpj').AsString := edtCLIENTECPF_CNPJ.Text;
   comandoSql.ParamByName('rg_ie').AsString := edtCLIENTERG.Text;
-  comandoSql.ParamByName('dtnascimento').AsDate := StrToDate(edtCLIENTEDATANASCIMENTO.Text);
+  comandoSql.ParamByName('dt_nasc_fundacao').AsDate := StrToDate(edtCLIENTEDATANASCIMENTO.Text);
 
   //update na tabela endereço
   insertEndereco.SQL.Text := 'update  '+
@@ -211,7 +211,7 @@ procedure TfrmConsultaCliente.edtCLIENTEcd_clienteExit(Sender: TObject);
 begin
   comandoSql.Close;
   comandoSql.SQL.Text := 'select c.cd_cliente, nome,fl_ativo,tp_pessoa,'+
-                      'telefone,celular,email,cpf_cnpj,rg_ie,dtnascimento,'+
+                      'telefone,celular,email,cpf_cnpj,rg_ie,dt_nasc_fundacao,'+
                       'logradouro,num,bairro,cidade,uf '+
                       'from cliente c '+
                       'join endereco e on '+
@@ -245,7 +245,7 @@ begin
       edtCLIENTEEMAIL.Text := comandoSql.FieldByName('email').AsString;
       edtCLIENTECPF_CNPJ.Text := comandoSql.FieldByName('cpf_cnpj').AsString;
       edtCLIENTERG.Text := comandoSql.FieldByName('rg_ie').AsString;
-      edtCLIENTEDATANASCIMENTO.Text := DateToStr(comandoSql.FieldByName('dtnascimento').AsDateTime);
+      edtCLIENTEDATANASCIMENTO.Text := DateToStr(comandoSql.FieldByName('dt_nasc_fundacao').AsDateTime);
       edtCLIENTEENDERECO_LOGRADOURO.Text := comandoSql.FieldByName('logradouro').AsString;
       edtCLIENTEENDERECO_NUMERO.Text := IntToStr(comandoSql.FieldByName('num').AsInteger);
       edtCLIENTEENDERECO_BAIRRO.Text := comandoSql.FieldByName('bairro').AsString;

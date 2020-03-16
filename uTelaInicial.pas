@@ -12,7 +12,8 @@ uses
   Vcl.Imaging.pngimage, uCadTABELAPRECO, uPedidoVenda, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, cConsultaPRODUTO;
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, cConsultaPRODUTO, UfrmRelVendaDiaria,
+  uLancamentoNotaEntrada;
 
 type
   Tfrm_Principal = class(TForm)
@@ -33,8 +34,10 @@ type
     PedidoVenda1: TMenuItem;
     PedidodeVenda1: TMenuItem;
     VisualizarPedidoVenda1: TMenuItem;
-    Label1: TLabel;
-    lblusuarioLogado: TLabel;
+    Relatrios1: TMenuItem;
+    VendaDiria1: TMenuItem;
+    LanamentoNotas1: TMenuItem;
+    NotaEntrada1: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -45,6 +48,8 @@ type
     procedure TabeladePreo1Click(Sender: TObject);
     procedure PedidodeVenda1Click(Sender: TObject);
     procedure VisualizarPedidoVenda1Click(Sender: TObject);
+    procedure VendaDiria1Click(Sender: TObject);
+    procedure NotaEntrada1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -94,6 +99,12 @@ begin
   frmCadFormaPagamento.ShowModal;
 end;
 
+procedure Tfrm_Principal.NotaEntrada1Click(Sender: TObject);
+begin
+  frmLancamentoNotaEntrada := TfrmLancamentoNotaEntrada.Create(Self);
+  frmLancamentoNotaEntrada.Show;
+end;
+
 procedure Tfrm_Principal.PedidodeVenda1Click(Sender: TObject);
 begin
   frmPedidoVenda := TfrmPedidoVenda.Create(Self);
@@ -118,6 +129,12 @@ procedure Tfrm_Principal.TabeladePreo1Click(Sender: TObject);
 begin
   frmcadTabelaPreco := TfrmcadTabelaPreco.Create(Self);
   frmcadTabelaPreco.ShowModal;
+end;
+
+procedure Tfrm_Principal.VendaDiria1Click(Sender: TObject);
+begin
+  frmRelVendaDiaria := TfrmRelVendaDiaria.Create(Self);
+  frmRelVendaDiaria.Show;
 end;
 
 procedure Tfrm_Principal.VisualizarPedidoVenda1Click(Sender: TObject);

@@ -178,13 +178,13 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
     Left = 464
     Top = 112
   end
-  object FDQuery1: TFDQuery
+  object sqlTabelaPrecoProduto: TFDQuery
     Connection = fConexao.conexao
     Left = 472
     Top = 304
   end
   object DataSource1: TDataSource
-    DataSet = FDQuery1
+    DataSet = sqlTabelaPrecoProduto
     Left = 472
     Top = 232
   end

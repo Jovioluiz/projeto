@@ -27,7 +27,7 @@ type
     btnSalvar: TButton;
     btnFechar: TButton;
     sqlTabelaPreco: TFDQuery;
-    FDQuery1: TFDQuery;
+    sqlTabelaPrecoProduto: TFDQuery;
     DataSource1: TDataSource;
     ClientDataSet1: TClientDataSet;
     btnLimpar: TButton;
@@ -70,7 +70,6 @@ end;
 procedure TfrmcadTabelaPreco.btnSalvarClick(Sender: TObject);
 begin
   sqlTabelaPreco.Close;
-  //sqlTabelaPreco.SQL.Clear;
   //verifica se possui tabela com o mesmo código
   sqlTabelaPreco.SQL.Text := 'select cd_tabela from tabela_preco where cd_tabela = :cd_tabela';
   sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
@@ -113,7 +112,7 @@ begin
       begin
         sqlTabelaPreco.Close;
         sqlTabelaPreco.SQL.Text := 'insert into tabela_preco (cd_tabela, nm_tabela,fl_ativo,dt_inicio,dt_fim) '+
-                                'values (:cd_tabela,:nm_tabela,:fl_ativo,:dt_inicio,:dt_fim)';
+                                      'values (:cd_tabela,:nm_tabela,:fl_ativo,:dt_inicio,:dt_fim)';
 
         sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
         sqlTabelaPreco.ParamByName('nm_tabela').AsString := edtNomeTabela.Text;
@@ -183,25 +182,14 @@ begin
   edtDtFinal.Text := DateToStr(sqlTabelaPreco.FieldByName('dt_fim').AsDateTime);
   btnAdicionarProduto.Enabled := true;
 
-FDQuery1.Close;
-FDQuery1.SQL.Text := 'select p.cd_produto,p.desc_produto,valor,p.un_medida '+
+sqlTabelaPrecoProduto.Close;
+sqlTabelaPrecoProduto.SQL.Text := 'select p.cd_produto,p.desc_produto,valor,p.un_medida '+
                         'from produto p '+
                         'join tabela_preco_produto tpp on '+
                         'p.cd_produto = tpp.cd_produto '+
                         'where tpp.cd_tabela = :cd_tabela';
-FDQuery1.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-FDQuery1.Open();
-
-
-{
-  ClientDataSet1.CommandText := 'select p.cd_produto,p.desc_produto,valor,p.un_medida '+
-                        'from produto p '+
-                        'join tabela_preco_produto tpp on '+
-                        'p.cd_produto = tpp.cd_produto '+
-                        'where tpp.cd_tabela = :cd_tabela';  }
-
-  //FDQuery1.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-  //FDQuery1.Open();
+sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
+sqlTabelaPrecoProduto.Open();
 
   DBGridProduto.DataSource := DataSource1;
   DBGridProduto.Columns[0].Title.Caption := 'Cod. Produto';
@@ -212,7 +200,6 @@ FDQuery1.Open();
   DBGridProduto.Columns[2].FieldName := 'valor';
   DBGridProduto.Columns[3].Title.Caption := 'UN Medida';
   DBGridProduto.Columns[3].FieldName := 'un_medida';
-  //ClientDataSet1.Open;
 
 
 end;

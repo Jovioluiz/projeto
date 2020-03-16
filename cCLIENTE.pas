@@ -44,9 +44,10 @@ type
     btnSalvarCliente: TButton;
     btnCancelarCadCliente: TButton;
     edtCLIENTEDATANASCIMENTO: TMaskEdit;
-    sqlInsertCliente: TFDCommand;
-    sqlInsertEndereco: TFDCommand;
     FDQuery1: TFDQuery;
+    sqlInsertCliente: TFDQuery;
+    sqlInsertEndereco: TFDQuery;
+    edtCLIENTEFL_FORNECEDOR: TCheckBox;
     procedure pFormarCamposPessoa;
     procedure edtCLIENTETP_PESSOAClick(Sender: TObject);
     procedure btnCancelarCadClienteClick(Sender: TObject);
@@ -104,8 +105,13 @@ procedure TfrmCadCliente.btnSalvarClienteClick(Sender: TObject);
 //var tipo_pessoaF , tipo_pessoaJ : String;
 begin
   //insert na tabela cliente
+
+  sqlInsertCliente.SQL.Add('INSERT INTO cliente (cd_cliente, fl_ativo, fl_fornecedor, nome, tp_pessoa, telefone,celular, email, cpf_cnpj, rg_ie, dt_nasc_fundacao)');
+  sqlInsertCliente.SQL.Add('VALUES (:cd_cliente, :fl_ativo, :fl_fornecedor, :nome, :tp_pessoa, :telefone, :celular, :email, :cpf_cnpj, :rg_ie, :dt_nasc_fundacao)');
+
   sqlInsertCliente.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
   sqlInsertCliente.ParamByName('fl_ativo').AsBoolean := edtCLIENTEFL_ATIVO.Checked;
+  sqlInsertCliente.ParamByName('fl_fornecedor').AsBoolean := edtCLIENTEFL_FORNECEDOR.Checked;
   sqlInsertCliente.ParamByName('nome').AsString := edtCLIENTENM_CLIENTE.Text;
   //tipo da pessoa tá gravando 0 - Fisica, 1 - Juridica
   sqlInsertCliente.ParamByName('tp_pessoa').AsString := edtCLIENTETP_PESSOA.ItemIndex.ToString;
@@ -114,9 +120,12 @@ begin
   sqlInsertCliente.ParamByName('email').AsString := edtCLIENTEEMAIL.Text;
   sqlInsertCliente.ParamByName('cpf_cnpj').AsString := edtCLIENTECPF_CNPJ.Text;
   sqlInsertCliente.ParamByName('rg_ie').AsString := edtCLIENTERG.Text;
-  sqlInsertCliente.ParamByName('dtnascimento').AsDate := StrToDate(edtCLIENTEDATANASCIMENTO.Text);
+  sqlInsertCliente.ParamByName('dt_nasc_fundacao').AsDate := StrToDate(edtCLIENTEDATANASCIMENTO.Text);
 
   //insert na tabela endereço
+  sqlInsertEndereco.SQL.Add('INSERT INTO endereco (cd_cliente, logradouro, num, bairro, cidade, uf)');
+  sqlInsertEndereco.SQL.Add('VALUES (:cd_cliente, :logradouro, :num, :bairro, :cidade, :uf)');
+
   sqlInsertEndereco.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
   sqlInsertEndereco.ParamByName('logradouro').AsString := edtCLIENTEENDERECO_LOGRADOURO.Text;
   sqlInsertEndereco.ParamByName('num').AsInteger := StrToInt(edtCLIENTEENDERECO_NUMERO.Text);

@@ -31,8 +31,8 @@ type
     btnPRODUTOCADASTRAR: TButton;
     btnPRODUTOCANCELAR: TButton;
     sqlInsertProduto: TSQLQuery;
-    comandosql: TFDCommand;
     comandoSelect: TFDQuery;
+    comandosql: TFDQuery;
     procedure btnPRODUTOCANCELARClick(Sender: TObject);
     procedure btnPRODUTOCADASTRARClick(Sender: TObject);
     procedure edtPRODUTOCD_PRODUTOExit(Sender: TObject);
@@ -62,7 +62,11 @@ if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptySt
     raise Exception.Create('Código, Descrição e Unidade de Medida não podem ser vazios');
   end;
 
-  Close;
+  comandosql.Close;
+  comandosql.SQL.Add('insert into produto(cd_produto,fl_ativo,desc_produto,un_medida,fator_conversao,peso_liquido,peso_bruto,observacao)');
+  comandosql.SQL.Add('values (:cd_produto,:fl_ativo,:desc_produto,:un_medida,:fator_conversao,:peso_liquido,:peso_bruto, :observacao)');
+
+
   comandosql.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
   comandosql.ParamByName('fl_ativo').AsBoolean := ckPRODUTOATIVO.Checked;
   comandosql.ParamByName('desc_produto').AsString := edtPRODUTODESCRICAO.Text;
@@ -75,7 +79,6 @@ if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptySt
   try
     comandosql.Execute;
     comandosql.Close;
-    //FreeAndNil(comandosql);
     ShowMessage('Produto cadastrado com Sucesso!');
 
     //limpa os campos após inserir

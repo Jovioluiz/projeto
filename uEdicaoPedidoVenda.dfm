@@ -12,6 +12,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -23,8 +24,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     Align = alClient
     BorderStyle = bsSingle
     TabOrder = 0
-    ExplicitWidth = 1026
-    ExplicitHeight = 673
     object Label1: TLabel
       Left = 131
       Top = 32
@@ -93,7 +92,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Top = 167
       Width = 87
       Height = 21
-      Enabled = False
       ReadOnly = True
       TabOrder = 1
     end
@@ -188,7 +186,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Top = 627
       Width = 61
       Height = 21
-      Enabled = False
       ReadOnly = True
       TabOrder = 3
     end
@@ -197,7 +194,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Top = 627
       Width = 61
       Height = 21
-      Enabled = False
       ReadOnly = True
       TabOrder = 4
     end
@@ -206,7 +202,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Top = 627
       Width = 61
       Height = 21
-      Enabled = False
       ReadOnly = True
       TabOrder = 5
     end
@@ -217,6 +212,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Height = 32
       Caption = 'Cancelar'
       TabOrder = 6
+      OnClick = btnCancelarClick
     end
   end
   object edtNrPedido: TEdit
@@ -232,7 +228,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     Top = 87
     Width = 87
     Height = 21
-    Enabled = False
     ReadOnly = True
     TabOrder = 2
   end
@@ -267,7 +262,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     Width = 73
     Height = 17
     Caption = 'Or'#231'amento'
-    Enabled = False
     TabOrder = 6
   end
   object ClientDataSet1: TClientDataSet

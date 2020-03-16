@@ -35,26 +35,12 @@ object frm_Principal: Tfrm_Principal
     Height = 630
     Align = alBottom
     TabOrder = 0
-    object Label1: TLabel
-      Left = 0
-      Top = 573
-      Width = 40
-      Height = 13
-      Caption = 'Usu'#225'rio:'
-    end
-    object lblusuarioLogado: TLabel
-      Left = 88
-      Top = 573
-      Width = 57
-      Height = 13
-      Visible = False
-    end
   end
   object MenuCadastro: TMainMenu
     Left = 24
     Top = 16
     object MenuItemCad: TMenuItem
-      Caption = 'Arquivo'
+      Caption = 'Cadastro'
       object Cadastro1: TMenuItem
         Caption = 'Cadastro'
         object Cliente1: TMenuItem
@@ -99,6 +85,20 @@ object frm_Principal: Tfrm_Principal
       object VisualizarPedidoVenda1: TMenuItem
         Caption = 'Visualizar Pedido Venda'
         OnClick = VisualizarPedidoVenda1Click
+      end
+    end
+    object Relatrios1: TMenuItem
+      Caption = 'Relat'#243'rios'
+      object VendaDiria1: TMenuItem
+        Caption = 'Venda Di'#225'ria'
+        OnClick = VendaDiria1Click
+      end
+    end
+    object LanamentoNotas1: TMenuItem
+      Caption = 'Lan'#231'amento Notas'
+      object NotaEntrada1: TMenuItem
+        Caption = 'Nota Entrada'
+        OnClick = NotaEntrada1Click
       end
     end
     object Sistem1: TMenuItem
