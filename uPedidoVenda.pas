@@ -94,6 +94,7 @@ type
       Shift: TShiftState);
     procedure valida_qtdade_item();
     procedure edtQtdadeExit(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -167,7 +168,7 @@ begin
 
     edtVlDescTotalPedido.Text := '0,00';
     edtVlAcrescimoTotalPedido.Text := '0,00';
-    edtDataEmissao.Text := DateToStr(Date());
+    //edtDataEmissao.Text := DateToStr(Date());
 end;
 
 
@@ -357,7 +358,6 @@ procedure TfrmPedidoVenda.edtCdClienteChange(Sender: TObject);
 var
   tempC, tempU : String;
 begin
-
 if edtCdCliente.Text = EmptyStr then
   begin
     edtNomeCliente.Text := '';
@@ -474,7 +474,7 @@ begin
   end;
 end;
 
-//fazer tratamento ao trocar a tabela de preço, trocar os valores e a un_medida(se for diferente)
+
 procedure TfrmPedidoVenda.edtCdProdutoChange(Sender: TObject);
 begin
   if edtCdProduto.Text = EmptyStr then
@@ -707,6 +707,13 @@ procedure TfrmPedidoVenda.edtVlDescTotalPedidoExit(Sender: TObject);
           edtVlTotalPedido.Text := CurrToStr(vl_total_com_desconto);
         end;
     end;
+
+//seta a data atual na data de emissão
+procedure TfrmPedidoVenda.FormCreate(Sender: TObject);
+begin
+  edtDataEmissao.Text := DateToStr(Date());
+end;
+
 
 //passa pelos campos com enter (não tá funcionando)
 procedure TfrmPedidoVenda.FormKeyPress(Sender: TObject; var Key: Char);

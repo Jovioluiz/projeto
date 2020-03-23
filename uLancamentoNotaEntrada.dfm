@@ -13,6 +13,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -22,10 +23,6 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     Height = 720
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = -8
-    ExplicitTop = -8
-    ExplicitWidth = 856
-    ExplicitHeight = 683
     object Label1: TLabel
       Left = 216
       Top = 85
@@ -224,9 +221,9 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     object Label28: TLabel
       Left = 596
       Top = 312
-      Width = 24
+      Width = 49
       Height = 13
-      Caption = 'Total'
+      Caption = 'Qtd. Total'
     end
     object Label29: TLabel
       Left = 208
@@ -241,6 +238,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 129
       Height = 21
       TabOrder = 4
+      OnExit = edtNroNotaExit
     end
     object edtSerie: TEdit
       Left = 77
@@ -248,6 +246,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 52
       Height = 21
       TabOrder = 3
+      OnExit = edtSerieExit
     end
     object edtCdFornecedor: TEdit
       Left = 77
@@ -255,6 +254,8 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 52
       Height = 21
       TabOrder = 2
+      OnChange = edtCdFornecedorChange
+      OnExit = edtCdFornecedorExit
     end
     object edtOperacao: TEdit
       Left = 77
@@ -262,6 +263,8 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 52
       Height = 21
       TabOrder = 0
+      OnChange = edtOperacaoChange
+      OnExit = edtOperacaoExit
     end
     object edtModelo: TEdit
       Left = 510
@@ -269,6 +272,8 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 44
       Height = 21
       TabOrder = 1
+      OnChange = edtModeloChange
+      OnExit = edtModeloExit
     end
     object edtNomeOperacao: TEdit
       Left = 144
@@ -300,7 +305,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 100
       Height = 21
       Date = 43905.000000000000000000
-      Time = 0.812984606483951200
+      Time = 43905.000000000000000000
       TabOrder = 5
     end
     object edtDataRecebimento: TDateTimePicker
@@ -309,7 +314,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 100
       Height = 21
       Date = 43905.000000000000000000
-      Time = 0.812984606483951200
+      Time = 43905.000000000000000000
       TabOrder = 6
     end
     object edtVlServico: TEdit
@@ -319,6 +324,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 11
       Text = '0,00'
+      OnExit = edtVlServicoExit
     end
     object edtVlProduto: TEdit
       Left = 120
@@ -327,6 +333,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 12
       Text = '0,00'
+      OnExit = edtVlProdutoExit
     end
     object edtBaseIcms: TEdit
       Left = 216
@@ -343,6 +350,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 14
       Text = '0,00'
+      OnExit = edtAliqIcmsExit
     end
     object edtValorIcms: TEdit
       Left = 414
@@ -359,6 +367,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 16
       Text = '0,00'
+      OnExit = edtValorFreteExit
     end
     object edtValorIPI: TEdit
       Left = 606
@@ -367,6 +376,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 17
       Text = '0,00'
+      OnExit = edtValorIPIExit
     end
     object edtValorISS: TEdit
       Left = 704
@@ -383,6 +393,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 19
       Text = '0,00'
+      OnExit = edtValorDescontoExit
     end
     object edtValorAcrescimo: TEdit
       Left = 120
@@ -391,12 +402,14 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 20
       Text = '0,00'
+      OnExit = edtValorAcrescimoExit
     end
     object edtValorTotalNota: TEdit
       Left = 316
       Top = 251
       Width = 73
       Height = 21
+      Enabled = False
       TabOrder = 22
       Text = '0,00'
     end
@@ -406,6 +419,9 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 73
       Height = 21
       TabOrder = 23
+      OnChange = edtCodProdutoChange
+      OnEnter = edtCodProdutoEnter
+      OnExit = edtCodProdutoExit
     end
     object edtDescricaoProduto: TEdit
       Left = 103
@@ -456,6 +472,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Top = 339
       Width = 51
       Height = 21
+      Enabled = False
       TabOrder = 28
     end
     object edtDataLancamento: TDateTimePicker
@@ -463,8 +480,8 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Top = 53
       Width = 100
       Height = 21
-      Date = 43905.000000000000000000
-      Time = 0.881549317127792200
+      Date = 43907.000000000000000000
+      Time = 43907.000000000000000000
       TabOrder = 7
     end
     object edtValorOutrasDespesas: TEdit
@@ -474,6 +491,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 21
       Text = '0,00'
+      OnExit = edtValorOutrasDespesasExit
     end
     object btnAddItens: TButton
       Left = 799
@@ -511,5 +529,10 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Caption = 'Cancelar'
       TabOrder = 34
     end
+  end
+  object sqlCabecalho: TFDQuery
+    Connection = fConexao.conexao
+    Left = 112
+    Top = 8
   end
 end

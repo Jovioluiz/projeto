@@ -22,7 +22,6 @@ object fConexao: TfConexao
       'Port=5433'
       'DriverID=PG')
     TxOptions.AutoStop = False
-    Connected = True
     Transaction = transacao
     Left = 64
     Top = 104
