@@ -13,7 +13,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, cConsultaPRODUTO, UfrmRelVendaDiaria,
-  uLancamentoNotaEntrada;
+  uLancamentoNotaEntrada, uCadastroTributacaoItem;
 
 type
   Tfrm_Principal = class(TForm)
@@ -38,6 +38,8 @@ type
     VendaDiria1: TMenuItem;
     LanamentoNotas1: TMenuItem;
     NotaEntrada1: TMenuItem;
+    ipoTributao1: TMenuItem;
+    Cadastro2: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -50,6 +52,7 @@ type
     procedure VisualizarPedidoVenda1Click(Sender: TObject);
     procedure VendaDiria1Click(Sender: TObject);
     procedure NotaEntrada1Click(Sender: TObject);
+    procedure Cadastro2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -63,6 +66,12 @@ implementation
 
 {$R *.dfm}
 
+
+procedure Tfrm_Principal.Cadastro2Click(Sender: TObject);
+begin
+  frmCadastraTributacaoItem := TfrmCadastraTributacaoItem.Create(Self);
+  frmCadastraTributacaoItem.ShowModal;
+end;
 
 procedure Tfrm_Principal.Cliente1Click(Sender: TObject);
 begin

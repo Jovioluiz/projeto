@@ -253,7 +253,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object btnAdicionar: TButton
       Left = 792
-      Top = 323
+      Top = 329
       Width = 63
       Height = 25
       Caption = 'Adicionar'

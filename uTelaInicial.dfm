@@ -101,6 +101,13 @@ object frm_Principal: Tfrm_Principal
         OnClick = NotaEntrada1Click
       end
     end
+    object ipoTributao1: TMenuItem
+      Caption = 'Tributa'#231#227'o'
+      object Cadastro2: TMenuItem
+        Caption = 'Cadastro'
+        OnClick = Cadastro2Click
+      end
+    end
     object Sistem1: TMenuItem
       Caption = 'Sistema'
       object Sair1: TMenuItem

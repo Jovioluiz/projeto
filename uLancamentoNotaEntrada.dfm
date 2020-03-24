@@ -305,7 +305,6 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 100
       Height = 21
       Date = 43905.000000000000000000
-      Time = 43905.000000000000000000
       TabOrder = 5
     end
     object edtDataRecebimento: TDateTimePicker
@@ -314,7 +313,6 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 100
       Height = 21
       Date = 43905.000000000000000000
-      Time = 43905.000000000000000000
       TabOrder = 6
     end
     object edtVlServico: TEdit
@@ -481,7 +479,6 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 100
       Height = 21
       Date = 43907.000000000000000000
-      Time = 43907.000000000000000000
       TabOrder = 7
     end
     object edtValorOutrasDespesas: TEdit
@@ -503,9 +500,9 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     end
     object DBGridProdutos: TDBGrid
       Left = 24
-      Top = 464
+      Top = 400
       Width = 817
-      Height = 201
+      Height = 265
       TabOrder = 32
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -534,5 +531,21 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     Connection = fConexao.conexao
     Left = 112
     Top = 8
+  end
+  object DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 184
+    Top = 472
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 264
+    Top = 472
+  end
+  object FDQuery1: TFDQuery
+    Connection = fConexao.conexao
+    Left = 336
+    Top = 472
   end
 end

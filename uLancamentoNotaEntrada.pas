@@ -8,7 +8,7 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, Datasnap.DBClient;
 
 type
   TfrmLancamentoNotaEntrada = class(TForm)
@@ -78,6 +78,9 @@ type
     btnConfirmar: TButton;
     btnCancelar: TButton;
     sqlCabecalho: TFDQuery;
+    DataSource1: TDataSource;
+    ClientDataSet1: TClientDataSet;
+    FDQuery1: TFDQuery;
     procedure edtOperacaoChange(Sender: TObject);
     procedure edtOperacaoExit(Sender: TObject);
     procedure edtModeloChange(Sender: TObject);
@@ -375,6 +378,7 @@ edtDataEmissao.Date := now;
 edtDataRecebimento.Date := now;
 edtDataLancamento.Date := now;
 end;
+
 
 procedure TfrmLancamentoNotaEntrada.edtAliqIcmsExit(Sender: TObject);
 var base_icms, aliq_icms, vl_icms : Currency;

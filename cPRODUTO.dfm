@@ -3,7 +3,7 @@ object frmCadProduto: TfrmCadProduto
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Cadastro de Produto'
-  ClientHeight = 428
+  ClientHeight = 480
   ClientWidth = 718
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,9 +21,12 @@ object frmCadProduto: TfrmCadProduto
     Left = 0
     Top = 0
     Width = 718
-    Height = 428
+    Height = 480
     Align = alClient
     TabOrder = 0
+    ExplicitLeft = -8
+    ExplicitTop = -8
+    ExplicitHeight = 428
     object Label1: TLabel
       Left = 73
       Top = 40
@@ -68,7 +71,7 @@ object frmCadProduto: TfrmCadProduto
     end
     object Label7: TLabel
       Left = 20
-      Top = 208
+      Top = 256
       Width = 58
       Height = 13
       Caption = 'Observa'#231#227'o'
@@ -131,7 +134,7 @@ object frmCadProduto: TfrmCadProduto
     end
     object memoObservacao: TMemo
       Left = 20
-      Top = 227
+      Top = 291
       Width = 587
       Height = 89
       CharCase = ecUpperCase
@@ -140,8 +143,8 @@ object frmCadProduto: TfrmCadProduto
       TabOrder = 7
     end
     object btnPRODUTOCADASTRAR: TButton
-      Left = 204
-      Top = 344
+      Left = 220
+      Top = 408
       Width = 101
       Height = 41
       Caption = 'Cadastrar'
@@ -149,8 +152,8 @@ object frmCadProduto: TfrmCadProduto
       OnClick = btnPRODUTOCADASTRARClick
     end
     object btnPRODUTOCANCELAR: TButton
-      Left = 320
-      Top = 344
+      Left = 344
+      Top = 408
       Width = 95
       Height = 41
       Caption = 'Fechar'
@@ -160,15 +163,15 @@ object frmCadProduto: TfrmCadProduto
   end
   object sqlInsertProduto: TSQLQuery
     Params = <>
-    Left = 24
-    Top = 80
+    Left = 16
+    Top = 72
   end
   object comandoSelect: TFDQuery
     Connection = fConexao.conexao
     SQL.Strings = (
       'select cd_produto from produto where cd_produto = :cd_produto;')
-    Left = 648
-    Top = 272
+    Left = 640
+    Top = 120
     ParamData = <
       item
         Name = 'CD_PRODUTO'
@@ -178,6 +181,6 @@ object frmCadProduto: TfrmCadProduto
   object comandosql: TFDQuery
     Connection = fConexao.conexao
     Left = 640
-    Top = 200
+    Top = 64
   end
 end

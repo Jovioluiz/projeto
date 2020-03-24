@@ -52,9 +52,11 @@ implementation
 
 {$R *.dfm}
 
+//ALTERAR ESTE CADASTRO PARA FICAR COMO O uCadastroTributacaoItem COM VÁRIAS PageControl
 
 procedure TfrmCadProduto.btnPRODUTOCADASTRARClick(Sender: TObject);
 begin
+//realizar o update do produto neste form e excluir o form cConsultaPRODUTO (verCadTABELAPRECO como fazer)
 
 //verifica se o código, descrção e UN estão vazios
 if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptyStr) or (edtPRODUTOUN_MEDIDA.Text = EmptyStr) then
