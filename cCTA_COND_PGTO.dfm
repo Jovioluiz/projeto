@@ -72,14 +72,14 @@ object frmCadCondPgto: TfrmCadCondPgto
       Width = 345
       Height = 21
       CharCase = ecUpperCase
-      TabOrder = 1
+      TabOrder = 2
     end
     object edtCTACONDPGTOCD_CTA_FORMA_PGTO: TEdit
       Left = 96
       Top = 110
       Width = 65
       Height = 21
-      TabOrder = 2
+      TabOrder = 3
       OnChange = edtCTACONDPGTOCD_CTA_FORMA_PGTOChange
     end
     object edtCTACONDPGTO_DESC_CTA_FORMA_PGTO: TEdit
@@ -88,7 +88,7 @@ object frmCadCondPgto: TfrmCadCondPgto
       Width = 274
       Height = 21
       Enabled = False
-      TabOrder = 3
+      TabOrder = 4
     end
     object edtCTACONDPGTONR_PARCELAS: TEdit
       Left = 94
@@ -96,14 +96,14 @@ object frmCadCondPgto: TfrmCadCondPgto
       Width = 67
       Height = 21
       NumbersOnly = True
-      TabOrder = 4
+      TabOrder = 5
     end
     object edtCTACONDPGTOVL_MINIMO: TEdit
       Left = 320
       Top = 173
       Width = 81
       Height = 21
-      TabOrder = 5
+      TabOrder = 6
     end
     object btnSalvar: TButton
       Left = 128
@@ -111,7 +111,7 @@ object frmCadCondPgto: TfrmCadCondPgto
       Width = 75
       Height = 25
       Caption = 'Salvar'
-      TabOrder = 6
+      TabOrder = 7
       OnClick = btnSalvarClick
     end
     object btnFechar: TButton
@@ -120,7 +120,7 @@ object frmCadCondPgto: TfrmCadCondPgto
       Width = 75
       Height = 25
       Caption = 'Fechar'
-      TabOrder = 7
+      TabOrder = 8
       OnClick = btnFecharClick
     end
     object edtCTACONDPGTOFL_ATIVO: TCheckBox
@@ -129,16 +129,16 @@ object frmCadCondPgto: TfrmCadCondPgto
       Width = 97
       Height = 17
       Caption = 'Ativo'
-      TabOrder = 8
+      TabOrder = 1
     end
   end
   object sqlInsertCondPgto: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 352
     Top = 240
   end
   object selectCDPGTO: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 424
     Top = 208
   end

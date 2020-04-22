@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, uTelaInicial, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
+  FireDAC.Comp.Client, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
 
 type
   Tfrm_Login = class(TForm)
@@ -35,6 +35,8 @@ implementation
 
 {$R *.dfm}
 
+uses uTelaInicial;
+
 procedure Tfrm_Login.btnCancelarClick(Sender: TObject);
 begin
   Close;
@@ -44,7 +46,13 @@ procedure Tfrm_Login.btnEntrarClick(Sender: TObject);
 var usuario, senha : String;
 begin
 sql_login.Close;
-sql_login.SQL.Text := 'select login, senha from login_usuario where (login = :login) and (senha = :senha)';
+sql_login.SQL.Text := 'select '+
+                            'login, '+
+                            'senha '+
+                      'from '+
+                            'login_usuario '+
+                      'where '+
+                          '(login = :login) and (senha = :senha)';
 
 sql_login.ParamByName('login').AsString := edtUsuario.Text;
 sql_login.ParamByName('senha').AsString := edtSenha.Text;
@@ -63,8 +71,6 @@ if (edtUsuario.Text = usuario) and (edtSenha.Text = senha) then
   try
     frm_Principal := Tfrm_Principal.Create(Self);
     frm_Principal.ShowModal;
-   // frm_Principal.lblusuarioLogado.Visible := true;
-    //frm_Principal.lblusuarioLogado.Caption := edtUsuario.Text;
   finally
     frm_Login.Close;
   end;

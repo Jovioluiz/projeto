@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.Client, uConexao;
 
 type
-  TfrmCadCondPgto = class(TfConexao)
+  TfrmCadCondPgto = class(TfrmConexao)
     tpCondPgto: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -49,7 +49,7 @@ implementation
 procedure TfrmCadCondPgto.btnFecharClick(Sender: TObject);
 begin
   inherited;
-  if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
+  if (Application.MessageBox('Deseja realmente fechar?','Atenção', MB_YESNO) = IDYES) then
     begin
       Close;
     end;
@@ -62,12 +62,23 @@ begin
     raise Exception.Create('Código da Condição e Forma não podem ser vazios');
 
    //insert cta_cond_pagamento
-  Close;
-  sqlInsertCondPgto.Connection := conexao;
-  sqlInsertCondPgto.SQL.Text := 'insert into cta_cond_pagamento (cd_cond_pag, nm_cond_pag, cd_cta_forma_pagamento, '+
-                              'nr_parcelas, vl_minimo_parcela, fl_ativo)'+
-                              'values (:cd_cond_pag, :nm_cond_pag, :cd_cta_forma_pagamento, :nr_parcelas, '+
-                              ':vl_minimo_parcela, :fl_ativo)';
+  sqlInsertCondPgto.Close;
+  //sqlInsertCondPgto.Connection := conexao;
+  conexao.StartTransaction;
+  sqlInsertCondPgto.SQL.Text := 'insert                               '+
+                                    'into                             '+
+                                    'cta_cond_pagamento (cd_cond_pag, '+
+                                    'nm_cond_pag,                     '+
+                                    'cd_cta_forma_pagamento,          '+
+                                    'nr_parcelas,                     '+
+                                    'vl_minimo_parcela,               '+
+                                    'fl_ativo)                        '+
+                                'values (:cd_cond_pag,                '+
+                                    ':nm_cond_pag,                    '+
+                                    ':cd_cta_forma_pagamento,         '+
+                                    ':nr_parcelas,                    '+
+                                    ':vl_minimo_parcela,              '+
+                                    ':fl_ativo)';
 
   sqlInsertCondPgto.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_COND.Text);
   sqlInsertCondPgto.ParamByName('nm_cond_pag').AsString := edtCTACONDPGTODESCRICAO.Text;
@@ -78,10 +89,9 @@ begin
 
   try
     sqlInsertCondPgto.ExecSQL;
-    sqlInsertCondPgto.Close;
-    FreeAndNil(sqlInsertCondPgto);
+    conexao.Commit;
     ShowMessage('Condição de Pagamento cadastrada com Sucesso!');
-
+    sqlInsertCondPgto.Close;
     edtCTACONDPGTOCD_COND.Text := '';
     edtCTACONDPGTODESCRICAO.Text := '';
     edtCTACONDPGTOFL_ATIVO.Checked := false;
@@ -93,8 +103,9 @@ begin
   except
     on E : exception do
       begin
+        conexao.Rollback;
         ShowMessage('Erro ao gravar os dados '+ E.Message);
-        exit;
+        Exit;
       end;
   end;
 
@@ -114,7 +125,12 @@ begin
   end;
 
     selectCDPGTO.Close;
-    selectCDPGTO.SQL.Text := 'select nm_forma_pag from cta_forma_pagamento where cd_forma_pag = :cd_forma_pag ';
+    selectCDPGTO.SQL.Text := 'select '+
+                                  'nm_forma_pag '+
+                             'from '+
+                                  'cta_forma_pagamento '+
+                             'where '+
+                                  'cd_forma_pag = :cd_forma_pag ';
     selectCDPGTO.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text);
     selectCDPGTO.Open();
     edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := selectCDPGTO.FieldByName('nm_forma_pag').AsString;
@@ -129,7 +145,7 @@ begin
   if Key=#13 then
     Perform(WM_NEXTDLGCTL,0,0)
   else if Key = #27 then
-       Perform(WM_NEXTDLGCTL,1,0)
+    Perform(WM_NEXTDLGCTL,1,0)
 end;
 
 end.

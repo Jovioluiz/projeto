@@ -20,11 +20,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     Top = 16
     Width = 537
     Height = 161
-    ActivePage = TabSheet1
+    ActivePage = TabSheetPISCOFINS
     TabOrder = 2
     object TabSheetICMS: TTabSheet
       Caption = 'ICMS'
-      ExplicitHeight = 225
       object Label1: TLabel
         Left = 11
         Top = 16
@@ -46,18 +45,20 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
         Height = 13
         Caption = 'Aliquota ICMS'
       end
-      object edtGrupoTributacaoICMS: TEdit
+      object edtCdGrupoTributacaoICMS: TEdit
         Left = 136
         Top = 13
         Width = 73
         Height = 21
         TabOrder = 0
+        OnExit = edtCdGrupoTributacaoICMSExit
       end
       object edtNomeGrupoTributacaoICMS: TEdit
         Left = 136
         Top = 45
         Width = 337
         Height = 21
+        CharCase = ecUpperCase
         TabOrder = 1
       end
       object edtAliqICMS: TEdit
@@ -71,8 +72,6 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetIPI: TTabSheet
       Caption = 'IPI'
       ImageIndex = 1
-      ExplicitWidth = 521
-      ExplicitHeight = 429
       object Label6: TLabel
         Left = 15
         Top = 80
@@ -99,27 +98,28 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
         Top = 72
         Width = 73
         Height = 21
-        TabOrder = 0
+        TabOrder = 2
       end
       object edtNomeGrupoTributacaoIPI: TEdit
         Left = 140
         Top = 45
         Width = 337
         Height = 21
+        CharCase = ecUpperCase
         TabOrder = 1
       end
-      object edtGrupoTributacaoIPI: TEdit
+      object edtCdGrupoTributacaoIPI: TEdit
         Left = 140
         Top = 13
         Width = 73
         Height = 21
-        TabOrder = 2
+        TabOrder = 0
+        OnExit = edtCdGrupoTributacaoIPIExit
       end
     end
     object TabSheetISS: TTabSheet
       Caption = 'ISS'
       ImageIndex = 2
-      ExplicitHeight = 153
       object Label9: TLabel
         Left = 11
         Top = 16
@@ -141,18 +141,20 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
         Height = 13
         Caption = 'Aliquota ISS'
       end
-      object edtGrupoTributacaoISS: TEdit
+      object edtCdGrupoTributacaoISS: TEdit
         Left = 136
         Top = 13
         Width = 73
         Height = 21
         TabOrder = 0
+        OnExit = edtCdGrupoTributacaoISSExit
       end
       object edtNomeGrupoTributacaoISS: TEdit
         Left = 136
         Top = 45
         Width = 337
         Height = 21
+        CharCase = ecUpperCase
         TabOrder = 1
       end
       object edtAliqISS: TEdit
@@ -163,7 +165,7 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
         TabOrder = 2
       end
     end
-    object TabSheet1: TTabSheet
+    object TabSheetPISCOFINS: TTabSheet
       Caption = 'PIS/COFINS'
       ImageIndex = 3
       object Label4: TLabel
@@ -187,18 +189,20 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
         Height = 13
         Caption = 'Aliquota PIS/COFINS'
       end
-      object edtGrupoTributacaoPISCOFINS: TEdit
+      object edtCdGrupoTributacaoPISCOFINS: TEdit
         Left = 136
         Top = 13
         Width = 73
         Height = 21
         TabOrder = 0
+        OnExit = edtCdGrupoTributacaoPISCOFINSExit
       end
       object edtNomeGrupoTributacaoPISCOFINS: TEdit
         Left = 136
         Top = 45
         Width = 337
         Height = 21
+        CharCase = ecUpperCase
         TabOrder = 1
       end
       object edtAliqPISCOFINS: TEdit
@@ -218,8 +222,6 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     AutoHint = True
     Panels = <>
     SimplePanel = True
-    ExplicitTop = 0
-    ExplicitWidth = 8
   end
   object btnSalvar: TButton
     Left = 184
@@ -229,6 +231,7 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     Hint = 'Salvar Registro'
     Caption = 'Salvar'
     TabOrder = 0
+    OnClick = btnSalvarClick
   end
   object btnCancelar: TButton
     Left = 280
@@ -237,5 +240,15 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     Height = 25
     Caption = 'Cancelar'
     TabOrder = 1
+  end
+  object comandoSQL: TFDQuery
+    Connection = fConexao.conexao
+    Left = 60
+    Top = 184
+  end
+  object comandoselect: TFDQuery
+    Connection = fConexao.conexao
+    Left = 424
+    Top = 184
   end
 end

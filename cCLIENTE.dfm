@@ -308,17 +308,14 @@ object frmCadCliente: TfrmCadCliente
     end
   end
   object FDQuery1: TFDQuery
-    Connection = fConexao.conexao
     Left = 760
     Top = 230
   end
   object sqlInsertCliente: TFDQuery
-    Connection = fConexao.conexao
     Left = 752
     Top = 80
   end
   object sqlInsertEndereco: TFDQuery
-    Connection = fConexao.conexao
     Left = 744
     Top = 136
   end

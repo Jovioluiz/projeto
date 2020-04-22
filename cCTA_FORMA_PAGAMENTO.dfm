@@ -96,7 +96,6 @@ object frmCadFormaPagamento: TfrmCadFormaPagamento
     OnClick = btnFecharClick
   end
   object sqlInsertFormaPgto: TFDQuery
-    Connection = fConexao.conexao
     Left = 384
     Top = 80
   end

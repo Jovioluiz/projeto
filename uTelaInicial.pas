@@ -12,12 +12,11 @@ uses
   Vcl.Imaging.pngimage, uCadTABELAPRECO, uPedidoVenda, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, cConsultaPRODUTO, UfrmRelVendaDiaria,
-  uLancamentoNotaEntrada, uCadastroTributacaoItem;
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, UfrmRelVendaDiaria,
+  uLancamentoNotaEntrada, uCadastroTributacaoItem, Vcl.ComCtrls, uLogin, uConsultaProduto;
 
 type
   Tfrm_Principal = class(TForm)
-    tpTelaInicial: TPanel;
     MenuCadastro: TMainMenu;
     MenuItemCad: TMenuItem;
     Cadastro1: TMenuItem;
@@ -29,7 +28,6 @@ type
     Sair1: TMenuItem;
     Consulta1: TMenuItem;
     Cliente2: TMenuItem;
-    consultaProduto: TMenuItem;
     TabeladePreo1: TMenuItem;
     PedidoVenda1: TMenuItem;
     PedidodeVenda1: TMenuItem;
@@ -40,19 +38,24 @@ type
     NotaEntrada1: TMenuItem;
     ipoTributao1: TMenuItem;
     Cadastro2: TMenuItem;
+    StatusBar1: TStatusBar;
+    Timer1: TTimer;
+    Produtos1: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
     procedure CondicaoPagamento1Click(Sender: TObject);
     procedure Sair1Click(Sender: TObject);
     procedure Cliente2Click(Sender: TObject);
-    procedure consultaProdutoClick(Sender: TObject);
     procedure TabeladePreo1Click(Sender: TObject);
     procedure PedidodeVenda1Click(Sender: TObject);
     procedure VisualizarPedidoVenda1Click(Sender: TObject);
     procedure VendaDiria1Click(Sender: TObject);
     procedure NotaEntrada1Click(Sender: TObject);
     procedure Cadastro2Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure Produtos1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -96,16 +99,16 @@ begin
   frmCadCondPgto.ShowModal;
 end;
 
-procedure Tfrm_Principal.consultaProdutoClick(Sender: TObject);
-begin
-  frmConsultaProduto := TfrmConsultaProduto.Create(Self);
-  frmConsultaProduto.ShowModal;
-end;
-
 procedure Tfrm_Principal.FormaPagamento1Click(Sender: TObject);
 begin
   frmCadFormaPagamento := TfrmCadFormaPagamento.Create(Self);
   frmCadFormaPagamento.ShowModal;
+end;
+
+//mostra o usuário logado
+procedure Tfrm_Principal.FormCreate(Sender: TObject);
+begin
+  StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frm_Login.edtUsuario.Text);
 end;
 
 procedure Tfrm_Principal.NotaEntrada1Click(Sender: TObject);
@@ -126,9 +129,15 @@ begin
   frmCadProduto.ShowModal;
 end;
 
+procedure Tfrm_Principal.Produtos1Click(Sender: TObject);
+begin
+  frmConsultaProdutos := TfrmConsultaProdutos.Create(Self);
+  frmConsultaProdutos.Show;
+end;
+
 procedure Tfrm_Principal.Sair1Click(Sender: TObject);
 begin
-  if MessageDlg('Deseja sair do Sistema?', mtConfirmation, [mbYes, mbNo], 0) = 6  then
+  if (Application.MessageBox('Deseja realmente sair do Sistema?','Atenção', MB_YESNO) = IDYES) then
   begin
     Close;
   end;
@@ -138,6 +147,11 @@ procedure Tfrm_Principal.TabeladePreo1Click(Sender: TObject);
 begin
   frmcadTabelaPreco := TfrmcadTabelaPreco.Create(Self);
   frmcadTabelaPreco.ShowModal;
+end;
+
+procedure Tfrm_Principal.Timer1Timer(Sender: TObject);
+begin
+  StatusBar1.Panels.Items[1].Text := DateTimeToStr(Now);
 end;
 
 procedure Tfrm_Principal.VendaDiria1Click(Sender: TObject);

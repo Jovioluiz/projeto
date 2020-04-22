@@ -12,7 +12,7 @@ uses
   Vcl.ComCtrls;
 
 type
-  TfrmCadFormaPagamento = class(TfConexao)
+  TfrmCadFormaPagamento = class(TfrmConexao)
     tpCadFormaPgto: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -62,8 +62,16 @@ begin
   Close;
   //sqlInsertFormaPgto.Connection := conexao;
   sqlInsertFormaPgto.SQL.Clear;
-  sqlInsertFormaPgto.SQL.Add('insert into cta_forma_pagamento (cd_forma_pag, nm_forma_pag, fl_ativo, tp_classificacao)');
-  sqlInsertFormaPgto.SQL.Add('values (:cd_forma_pag, :nm_forma_pag, :fl_ativo, :tp_classificacao)');
+  sqlInsertFormaPgto.SQL.Add('insert                                  '+
+                                  'into                               '+
+                                  'cta_forma_pagamento (cd_forma_pag, '+
+                                  'nm_forma_pag,                      '+
+                                  'fl_ativo,                          '+
+                                  'tp_classificacao)                  '+
+                              'values (:cd_forma_pag,                 '+
+                                  ':nm_forma_pag,                     '+
+                                  ':fl_ativo,                         '+
+                                  ':tp_classificacao)');
 
   sqlInsertFormaPgto.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCTA_FORMA_PGTOCODIGO.Text);
   sqlInsertFormaPgto.ParamByName('nm_forma_pag').AsString := edtCTA_FORMA_PGTODESCRICAO.Text;

@@ -8,10 +8,10 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet, System.UITypes,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, uConexao;
 
 type
-  TfrmCadTabelaPrecoProduto = class(TForm)
+  TfrmCadTabelaPrecoProduto = class(TfrmConexao)
     Panel1: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -35,20 +35,29 @@ type
     { Private declarations }
   public
     { Public declarations }
+
   end;
 
 var
   frmCadTabelaPrecoProduto: TfrmCadTabelaPrecoProduto;
-
-implementation
+  implementation
 
 {$R *.dfm}
 
 procedure TfrmCadTabelaPrecoProduto.btnAdicionarClick(Sender: TObject);
 begin
   sqlTabelaPrecoProduto.Close;
-  sqlTabelaPrecoProduto.SQL.Text := 'insert into tabela_preco_produto(cd_tabela,cd_produto,valor,un_medida) '+
-                                    'values (:cd_tabela, :cd_produto, :valor, :un_medida)';
+  frmConexao.conexao.StartTransaction;
+  sqlTabelaPrecoProduto.SQL.Text := 'insert '+
+                                        'into '+
+                                        'tabela_preco_produto(cd_tabela, '+
+                                        'cd_produto, '+
+                                        'valor, '+
+                                        'un_medida)'+
+                                    'values (:cd_tabela, '+
+                                        ':cd_produto, '+
+                                        ':valor, '+
+                                        ':un_medida)';
   sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
   sqlTabelaPrecoProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
   sqlTabelaPrecoProduto.ParamByName('valor').AsCurrency := StrToCurr(edtValor.Text);
@@ -56,9 +65,9 @@ begin
 
   try
     sqlTabelaPrecoProduto.ExecSQL;
-    sqlTabelaPrecoProduto.Close;
+    frmConexao.conexao.Commit;
     ShowMessage('Dados Gravados com Sucesso');
-
+    sqlTabelaPrecoProduto.Close;
     edtCodProduto.Text := '';
     edtValor.Text := '';
     edtNomeProduto.Text := '';
@@ -67,15 +76,17 @@ begin
   except
     on E:exception do
         begin
-           ShowMessage('Erro ao gravar os dados'+ E.Message);
-           exit;
+          frmConexao.conexao.Rollback;
+          ShowMessage('Erro ao gravar os dados'+ E.Message);
+          Exit;
         end;
   end;
+  frmConexao.conexao.Close;
 end;
 
 procedure TfrmCadTabelaPrecoProduto.btnCancelarClick(Sender: TObject);
 begin
-  if MessageDlg('Deseja fechar?', mtConfirmation, [mbYes,mbNo],0) = 6 then
+  if (Application.MessageBox('Deseja Cancelar o Lançamento?','Atenção', MB_YESNO) = IDYES) then
     begin
       close;
     end;
@@ -88,12 +99,18 @@ begin
     if edtCodProduto.Text = '' then
       begin
         edtNomeProduto.Text := '';
-        exit;
+        Exit;
       end
     else
 
       sqlTabelaPrecoProduto.Close;
-      sqlTabelaPrecoProduto.SQL.Text := 'select desc_produto, un_medida from produto where cd_produto = :cd_produto';
+      sqlTabelaPrecoProduto.SQL.Text := 'select               '+
+                                              'desc_produto,  '+
+                                              'un_medida      '+
+                                        'from                 '+
+                                              'produto        '+
+                                        'where                '+
+                                              'cd_produto = :cd_produto';
       sqlTabelaPrecoProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
       sqlTabelaPrecoProduto.Open();
       edtNomeProduto.Text := sqlTabelaPrecoProduto.FieldByName('desc_produto').AsString;
@@ -107,7 +124,13 @@ procedure TfrmCadTabelaPrecoProduto.edtCodTabelaChange(Sender: TObject);
 begin
   //retorna a tabela de preço
   sqlTabelaPrecoProduto.Close;
-  sqlTabelaPrecoProduto.SQL.Text := 'select cd_tabela, nm_tabela from tabela_preco where cd_tabela = :cd_tabela';
+  sqlTabelaPrecoProduto.SQL.Text := 'select '+
+                                        'cd_tabela, '+
+                                        'nm_tabela '+
+                                    'from '+
+                                        'tabela_preco '+
+                                    'where '+
+                                        'cd_tabela = :cd_tabela';
   sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
   sqlTabelaPrecoProduto.Open();
   edtNomeTabela.Text := sqlTabelaPrecoProduto.FieldByName('nm_tabela').AsString;

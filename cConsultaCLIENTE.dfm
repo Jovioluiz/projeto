@@ -320,12 +320,10 @@ object frmConsultaCliente: TfrmConsultaCliente
     end
   end
   object comandoSql: TFDQuery
-    Connection = fConexao.conexao
     Left = 760
     Top = 214
   end
   object insertEndereco: TFDQuery
-    Connection = fConexao.conexao
     Left = 760
     Top = 270
   end

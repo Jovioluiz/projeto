@@ -3,8 +3,8 @@ object frmCadProduto: TfrmCadProduto
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Cadastro de Produto'
-  ClientHeight = 480
-  ClientWidth = 718
+  ClientHeight = 579
+  ClientWidth = 715
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,161 +17,324 @@ object frmCadProduto: TfrmCadProduto
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
-  object tpCadProduto: TPanel
+  object Label1: TLabel
+    Left = 69
+    Top = 16
+    Width = 33
+    Height = 13
+    Caption = 'C'#243'digo'
+  end
+  object Label2: TLabel
+    Left = 34
+    Top = 56
+    Width = 68
+    Height = 13
+    Caption = 'Nome Produto'
+  end
+  object PageControl1: TPageControl
     Left = 0
-    Top = 0
-    Width = 718
-    Height = 480
-    Align = alClient
-    TabOrder = 0
-    ExplicitLeft = -8
-    ExplicitTop = -8
-    ExplicitHeight = 428
-    object Label1: TLabel
-      Left = 73
-      Top = 40
-      Width = 33
-      Height = 13
-      Caption = 'C'#243'digo'
+    Top = 96
+    Width = 721
+    Height = 427
+    ActivePage = TabSheetCadastroProduto
+    TabOrder = 3
+    object TabSheetCadastroProduto: TTabSheet
+      Caption = 'Produto'
+      ExplicitHeight = 382
+      object Label3: TLabel
+        Left = 3
+        Top = 40
+        Width = 76
+        Height = 13
+        Caption = 'Unidade Medida'
+      end
+      object Label4: TLabel
+        Left = 172
+        Top = 40
+        Width = 81
+        Height = 13
+        Caption = 'Fator Convers'#227'o'
+      end
+      object Label5: TLabel
+        Left = 358
+        Top = 40
+        Width = 52
+        Height = 13
+        Caption = 'Peso Bruto'
+      end
+      object Label6: TLabel
+        Left = 510
+        Top = 40
+        Width = 59
+        Height = 13
+        Caption = 'Peso Liquido'
+      end
+      object Label7: TLabel
+        Left = 3
+        Top = 80
+        Width = 58
+        Height = 13
+        Caption = 'Observa'#231#227'o'
+      end
+      object Label8: TLabel
+        Left = 3
+        Top = 176
+        Width = 104
+        Height = 14
+        Caption = 'C'#243'digo de Barras'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label9: TLabel
+        Left = 3
+        Top = 208
+        Width = 105
+        Height = 13
+        Caption = 'Tipo C'#243'digo de Barras'
+      end
+      object edtPRODUTOUN_MEDIDA: TEdit
+        Left = 85
+        Top = 37
+        Width = 65
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 0
+      end
+      object edtPRODUTOFATOR_CONVERSAO: TEdit
+        Left = 272
+        Top = 37
+        Width = 65
+        Height = 21
+        TabOrder = 1
+      end
+      object edtPRODUTOPESO_BRUTO: TEdit
+        Left = 424
+        Top = 37
+        Width = 65
+        Height = 21
+        TabOrder = 2
+      end
+      object edtPRODUTOPESO_LIQUIDO: TEdit
+        Left = 584
+        Top = 37
+        Width = 65
+        Height = 21
+        TabOrder = 3
+      end
+      object memoObservacao: TMemo
+        Left = 3
+        Top = 99
+        Width = 698
+        Height = 71
+        CharCase = ecUpperCase
+        TabOrder = 4
+      end
+      object DBGridCodigoBarras: TDBGrid
+        Left = 3
+        Top = 276
+        Width = 407
+        Height = 120
+        DataSource = DataSource1
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+        TabOrder = 7
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'Tipo'
+            Width = 75
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'Codigo de Barras'
+            ReadOnly = True
+            Width = 229
+            Visible = True
+          end>
+      end
+      object edtCodigoBarras: TEdit
+        Left = 200
+        Top = 235
+        Width = 165
+        Height = 21
+        TabOrder = 5
+      end
+      object btnAddCodBarras: TButton
+        Left = 376
+        Top = 233
+        Width = 34
+        Height = 25
+        Caption = '+'
+        TabOrder = 6
+        OnClick = btnAddCodBarrasClick
+      end
+      object edtCodBarrasInterno: TRadioButton
+        Left = 3
+        Top = 237
+        Width = 63
+        Height = 17
+        Caption = 'Interno'
+        TabOrder = 8
+      end
+      object edtCodBarrasGTIN: TRadioButton
+        Left = 72
+        Top = 237
+        Width = 63
+        Height = 17
+        Caption = 'GTIN'
+        TabOrder = 9
+      end
+      object edtCodBarrasOutro: TRadioButton
+        Left = 131
+        Top = 237
+        Width = 63
+        Height = 17
+        Caption = 'Outro'
+        TabOrder = 10
+      end
     end
-    object Label2: TLabel
-      Left = 60
-      Top = 80
-      Width = 46
-      Height = 13
-      Caption = 'Descri'#231#227'o'
-    end
-    object Label3: TLabel
-      Left = 20
-      Top = 152
-      Width = 91
-      Height = 13
-      Caption = 'Unidade de Medida'
-    end
-    object Label4: TLabel
-      Left = 183
-      Top = 152
-      Width = 96
-      Height = 13
-      Caption = 'Fator de Convers'#227'o'
-    end
-    object Label5: TLabel
-      Left = 356
-      Top = 152
-      Width = 59
-      Height = 13
-      Caption = 'Peso Liquido'
-    end
-    object Label6: TLabel
-      Left = 492
-      Top = 152
-      Width = 52
-      Height = 13
-      Caption = 'Peso Bruto'
-    end
-    object Label7: TLabel
-      Left = 20
-      Top = 256
-      Width = 58
-      Height = 13
-      Caption = 'Observa'#231#227'o'
-    end
-    object edtPRODUTOCD_PRODUTO: TEdit
-      Left = 112
-      Top = 37
-      Width = 121
-      Height = 21
-      TabOrder = 0
-      OnExit = edtPRODUTOCD_PRODUTOExit
-    end
-    object edtPRODUTODESCRICAO: TEdit
-      Left = 112
-      Top = 77
-      Width = 497
-      Height = 21
-      CharCase = ecUpperCase
-      TabOrder = 1
-    end
-    object ckPRODUTOATIVO: TCheckBox
-      Left = 280
-      Top = 39
-      Width = 97
-      Height = 17
-      Caption = 'Ativo'
-      TabOrder = 2
-    end
-    object edtPRODUTOUN_MEDIDA: TEdit
-      Left = 117
-      Top = 149
-      Width = 49
-      Height = 21
-      CharCase = ecUpperCase
-      TabOrder = 3
-    end
-    object edtPRODUTOFATOR_CONVERSAO: TEdit
-      Left = 285
-      Top = 149
-      Width = 57
-      Height = 21
-      NumbersOnly = True
-      TabOrder = 4
-    end
-    object edtPRODUTOPESO_LIQUIDO: TEdit
-      Left = 421
-      Top = 149
-      Width = 52
-      Height = 21
-      NumbersOnly = True
-      TabOrder = 5
-    end
-    object edtPRODUTOPESO_BRUTO: TEdit
-      Left = 550
-      Top = 149
-      Width = 57
-      Height = 21
-      NumbersOnly = True
-      TabOrder = 6
-    end
-    object memoObservacao: TMemo
-      Left = 20
-      Top = 291
-      Width = 587
-      Height = 89
-      CharCase = ecUpperCase
-      Lines.Strings = (
-        '')
-      TabOrder = 7
-    end
-    object btnPRODUTOCADASTRAR: TButton
-      Left = 220
-      Top = 408
-      Width = 101
-      Height = 41
-      Caption = 'Cadastrar'
-      TabOrder = 8
-      OnClick = btnPRODUTOCADASTRARClick
-    end
-    object btnPRODUTOCANCELAR: TButton
-      Left = 344
-      Top = 408
-      Width = 95
-      Height = 41
-      Caption = 'Fechar'
-      TabOrder = 9
-      OnClick = btnPRODUTOCANCELARClick
+    object TabSheet1: TTabSheet
+      Caption = 'Tributa'#231#227'o'
+      ImageIndex = 1
+      ExplicitHeight = 382
+      object Label10: TLabel
+        Left = 49
+        Top = 24
+        Width = 111
+        Height = 13
+        Caption = 'Grupo Tributa'#231#227'o ICMS'
+      end
+      object Label11: TLabel
+        Left = 60
+        Top = 64
+        Width = 100
+        Height = 13
+        Caption = 'Grupo Tributa'#231#227'o IPI'
+      end
+      object Label12: TLabel
+        Left = 16
+        Top = 104
+        Width = 144
+        Height = 13
+        Caption = 'Grupo Tributa'#231#227'o PIS/COFINS'
+      end
+      object edtProdutoGrupoTributacaoICMS: TEdit
+        Left = 176
+        Top = 21
+        Width = 49
+        Height = 21
+        TabOrder = 0
+        OnChange = edtProdutoGrupoTributacaoICMSChange
+      end
+      object edtProdutoGrupoTributacaoIPI: TEdit
+        Left = 176
+        Top = 61
+        Width = 49
+        Height = 21
+        TabOrder = 1
+        OnChange = edtProdutoGrupoTributacaoIPIChange
+      end
+      object edtProdutoGrupoTributacaoPISCOFINS: TEdit
+        Left = 176
+        Top = 101
+        Width = 49
+        Height = 21
+        TabOrder = 2
+        OnChange = edtProdutoGrupoTributacaoPISCOFINSChange
+      end
+      object edtProdutoNomeGrupoTributacaoICMS: TEdit
+        Left = 248
+        Top = 21
+        Width = 305
+        Height = 21
+        TabOrder = 3
+      end
+      object edtProdutoNomeGrupoTributacaoIPI: TEdit
+        Left = 248
+        Top = 61
+        Width = 305
+        Height = 21
+        TabOrder = 4
+      end
+      object edtProdutoNomeGrupoTributacaoPISCOFINS: TEdit
+        Left = 248
+        Top = 101
+        Width = 305
+        Height = 21
+        TabOrder = 5
+      end
     end
   end
-  object sqlInsertProduto: TSQLQuery
-    Params = <>
-    Left = 16
-    Top = 72
+  object edtPRODUTOCD_PRODUTO: TEdit
+    Left = 119
+    Top = 13
+    Width = 66
+    Height = 21
+    Hint = 'C'#243'digo do Produto'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 0
+    OnExit = edtPRODUTOCD_PRODUTOExit
+  end
+  object edtPRODUTODESCRICAO: TEdit
+    Left = 119
+    Top = 53
+    Width = 586
+    Height = 21
+    CharCase = ecUpperCase
+    TabOrder = 1
+  end
+  object ckPRODUTOATIVO: TCheckBox
+    Left = 224
+    Top = 15
+    Width = 97
+    Height = 17
+    Hint = 'Define se o item est'#225' ativo'
+    Caption = 'Ativo'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
+  end
+  object btnPRODUTOCADASTRAR: TButton
+    Left = 276
+    Top = 529
+    Width = 75
+    Height = 25
+    Caption = 'Salvar'
+    TabOrder = 4
+    OnClick = btnPRODUTOCADASTRARClick
+  end
+  object btnPRODUTOCANCELAR: TButton
+    Left = 362
+    Top = 529
+    Width = 75
+    Height = 25
+    Caption = 'Cancelar'
+    TabOrder = 5
+    OnClick = btnPRODUTOCANCELARClick
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 560
+    Width = 715
+    Height = 19
+    Panels = <>
   end
   object comandoSelect: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     SQL.Strings = (
       'select cd_produto from produto where cd_produto = :cd_produto;')
-    Left = 640
-    Top = 120
+    Left = 648
+    Top = 80
     ParamData = <
       item
         Name = 'CD_PRODUTO'
@@ -179,8 +342,34 @@ object frmCadProduto: TfrmCadProduto
       end>
   end
   object comandosql: TFDQuery
-    Connection = fConexao.conexao
-    Left = 640
-    Top = 64
+    Connection = frmConexao.conexao
+    Left = 568
+    Top = 80
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 180
+    Top = 440
+  end
+  object DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 92
+    Top = 440
+  end
+  object DataSource2: TDataSource
+    DataSet = comandoSelect
+    Left = 268
+    Top = 432
+  end
+  object sqltributacao: TFDQuery
+    Connection = frmConexao.conexao
+    Left = 648
+    Top = 144
+  end
+  object sqlVerificaTributacao: TFDQuery
+    Connection = frmConexao.conexao
+    Left = 644
+    Top = 208
   end
 end

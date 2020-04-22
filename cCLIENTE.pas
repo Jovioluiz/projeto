@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.DataSet;
 
 type
-  TfrmCadCliente = class(TfConexao)
+  TfrmCadCliente = class(TfrmConexao)
     tpCadCliente: TPanel;
     Label1: TLabel;
     Label2: TLabel;

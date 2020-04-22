@@ -109,43 +109,43 @@ var
 begin
 
   sqlVisualizaPedidoVenda.Close;
-  sqlVisualizaPedidoVenda.SQL.Text := 'select ' +
-                                          ' pv.fl_orcamento, '+
-                                          ' pv.cd_cliente, '+
-                                          'c.nome, '+
-                                          'e.cidade, '+
-                                          'e.uf, '+
-                                          'pv.cd_forma_pag, '+
-                                          'cfp.nm_forma_pag, '+
-                                          'pv.cd_cond_pag,    '+
-                                          'ccp.nm_cond_pag,    '+
-                                          'pvi.cd_produto,      '+
-                                          'p.desc_produto,         '+
-                                          'pvi.qtd_venda,          '+
-                                          'pvi.cd_tabela_preco,    '+
-                                          'p.un_medida,            '+
-                                          'pvi.vl_unitario,        '+
-                                          'pvi.vl_desconto,        '+
-                                          'pvi.vl_total_item,      '+
-                                          'pv.vl_desconto_pedido,         '+
-                                          'pv.vl_acrescimo,                     '+
-                                          'pv.vl_total                          '+
-                                      'from                                     '+
-                                       '   pedido_venda pv                      '+
-                                      'join pedido_venda_item pvi on            '+
-                                       '   pv.id_geral = pvi.id_pedido_venda    '+
-                                       'join cta_forma_pagamento cfp on          '+
-                                          'pv.cd_forma_pag = cfp.cd_forma_pag    '+
-                                      'join cta_cond_pagamento ccp on            '+
-                                          'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento '+
-                                      'join cliente c on                        '+
-                                       '   pv.cd_cliente = c.cd_cliente         '+
-                                       'join endereco e on '+
-                                          'c.cd_cliente = e.cd_cliente '+
-                                      'join produto p on                        '+
-                                       '   pvi.cd_produto = p.cd_produto        '+
-                                      'where                                    '+
-                                       '   pv.nr_pedido = :nr_pedido            ';
+  sqlVisualizaPedidoVenda.SQL.Text := 'select                                             '+
+                                          'pv.fl_orcamento,                               '+
+                                          'pv.cd_cliente,                                 '+
+                                          'c.nome,                                        '+
+                                          'e.cidade,                                      '+
+                                          'e.uf,                                          '+
+                                          'pv.cd_forma_pag,                               '+
+                                          'cfp.nm_forma_pag,                              '+
+                                          'pv.cd_cond_pag,                                '+
+                                          'ccp.nm_cond_pag,                               '+
+                                          'pvi.cd_produto,                                '+
+                                          'p.desc_produto,                                '+
+                                          'pvi.qtd_venda,                                 '+
+                                          'pvi.cd_tabela_preco,                           '+
+                                          'p.un_medida,                                   '+
+                                          'pvi.vl_unitario,                               '+
+                                          'pvi.vl_desconto,                               '+
+                                          'pvi.vl_total_item,                             '+
+                                          'pv.vl_desconto_pedido,                         '+
+                                          'pv.vl_acrescimo,                               '+
+                                          'pv.vl_total                                    '+
+                                      'from                                               '+
+                                       '   pedido_venda pv                                '+
+                                      'join pedido_venda_item pvi on                      '+
+                                       '   pv.id_geral = pvi.id_pedido_venda              '+
+                                       'join cta_forma_pagamento cfp on                   '+
+                                          'pv.cd_forma_pag = cfp.cd_forma_pag             '+
+                                      'join cta_cond_pagamento ccp on                     '+
+                                          'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento  '+
+                                      'join cliente c on                                  '+
+                                       '   pv.cd_cliente = c.cd_cliente                   '+
+                                       'join endereco e on                                '+
+                                          'c.cd_cliente = e.cd_cliente                    '+
+                                      'join produto p on                                  '+
+                                       '   pvi.cd_produto = p.cd_produto                  '+
+                                      'where                                              '+
+                                       '   pv.nr_pedido = :nr_pedido';
 
   sqlVisualizaPedidoVenda.ParamByName('nr_pedido').AsInteger := StrToInt(edtNrPedido.Text);
   sqlVisualizaPedidoVenda.Open();

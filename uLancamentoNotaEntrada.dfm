@@ -305,6 +305,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 100
       Height = 21
       Date = 43905.000000000000000000
+      Time = 0.811114513890061100
       TabOrder = 5
     end
     object edtDataRecebimento: TDateTimePicker
@@ -313,6 +314,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 100
       Height = 21
       Date = 43905.000000000000000000
+      Time = 0.811114641204767400
       TabOrder = 6
     end
     object edtVlServico: TEdit
@@ -442,6 +444,8 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 56
       Height = 21
       TabOrder = 26
+      OnChange = edtQuantidadeChange
+      OnExit = edtQuantidadeExit
     end
     object edtFatorConversao: TEdit
       Left = 532
@@ -454,14 +458,15 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     object edtValorUnitario: TEdit
       Left = 656
       Top = 339
-      Width = 51
+      Width = 64
       Height = 21
       TabOrder = 29
+      OnChange = edtValorUnitarioChange
     end
     object edtValorTotalProduto: TEdit
       Left = 726
       Top = 339
-      Width = 51
+      Width = 67
       Height = 21
       TabOrder = 30
     end
@@ -479,6 +484,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 100
       Height = 21
       Date = 43907.000000000000000000
+      Time = 0.811114780095522300
       TabOrder = 7
     end
     object edtValorOutrasDespesas: TEdit
@@ -497,18 +503,82 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 26
       Caption = '+'
       TabOrder = 31
+      OnClick = btnAddItensClick
     end
     object DBGridProdutos: TDBGrid
       Left = 24
-      Top = 400
+      Top = 409
       Width = 817
       Height = 265
+      DataSource = DataSource1
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 32
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'Sequencia'
+          ReadOnly = True
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'C'#243'd. Produto'
+          ReadOnly = True
+          Width = 80
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Descri'#231#227'o'
+          ReadOnly = True
+          Width = 250
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Un. Medida'
+          ReadOnly = True
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Quantidade'
+          ReadOnly = True
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Fator Convers'#227'o'
+          ReadOnly = True
+          Width = 90
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Quantidade Total'
+          ReadOnly = True
+          Width = 90
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Unit'#225'rio'
+          ReadOnly = True
+          Width = 75
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Total'
+          ReadOnly = True
+          Width = 80
+          Visible = True
+        end>
     end
     object btnConfirmar: TButton
       Left = 632
@@ -517,6 +587,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 25
       Caption = 'Confirmar'
       TabOrder = 33
+      OnClick = btnConfirmarClick
     end
     object btnCancelar: TButton
       Left = 726
@@ -525,10 +596,11 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 25
       Caption = 'Cancelar'
       TabOrder = 34
+      OnClick = btnCancelarClick
     end
   end
   object sqlCabecalho: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 112
     Top = 8
   end
@@ -543,9 +615,19 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     Left = 264
     Top = 472
   end
-  object FDQuery1: TFDQuery
-    Connection = fConexao.conexao
-    Left = 336
+  object sqlIdGeral: TFDQuery
+    Connection = frmConexao.conexao
+    Left = 352
+    Top = 472
+  end
+  object sqlInsert: TFDQuery
+    Connection = frmConexao.conexao
+    Left = 424
+    Top = 472
+  end
+  object sqlUpdate: TFDQuery
+    Connection = frmConexao.conexao
+    Left = 496
     Top = 472
   end
 end

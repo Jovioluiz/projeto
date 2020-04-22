@@ -11,10 +11,9 @@ uses
   FireDAC.Phys.PG, FireDAC.Phys.PGDef;
 
 type
-  TfConexao = class(TForm)
+  TfrmConexao = class(TForm)
     conexao: TFDConnection;
     FDPhysPgDriverLink1: TFDPhysPgDriverLink;
-    transacao: TFDTransaction;
   private
     { Private declarations }
   public
@@ -22,7 +21,7 @@ type
   end;
 
 var
-  fConexao: TfConexao;
+  frmConexao: TfrmConexao;
 
 implementation
 

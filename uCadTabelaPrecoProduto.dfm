@@ -118,7 +118,7 @@ object frmCadTabelaPrecoProduto: TfrmCadTabelaPrecoProduto
     OnClick = btnCancelarClick
   end
   object sqlTabelaPrecoProduto: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 424
     Top = 104
   end

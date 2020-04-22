@@ -1,4 +1,4 @@
-object fConexao: TfConexao
+object frmConexao: TfrmConexao
   Left = 0
   Top = 0
   Caption = 'Conexao'
@@ -22,7 +22,7 @@ object fConexao: TfConexao
       'Port=5433'
       'DriverID=PG')
     TxOptions.AutoStop = False
-    Transaction = transacao
+    Connected = True
     Left = 64
     Top = 104
   end
@@ -30,11 +30,5 @@ object fConexao: TfConexao
     VendorHome = 'C:\Users\jovio\Documents\codigos_fontes\Delphi\CRUD\Win32\Debug'
     Left = 168
     Top = 104
-  end
-  object transacao: TFDTransaction
-    Options.AutoStop = False
-    Connection = conexao
-    Left = 280
-    Top = 112
   end
 end

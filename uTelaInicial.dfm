@@ -3,7 +3,7 @@ object frm_Principal: Tfrm_Principal
   Top = 0
   BorderStyle = bsSingle
   Caption = 'Tela Inicial'
-  ClientHeight = 630
+  ClientHeight = 665
   ClientWidth = 1000
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -26,15 +26,23 @@ object frm_Principal: Tfrm_Principal
   OldCreateOrder = False
   Position = poScreenCenter
   WindowState = wsMaximized
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object tpTelaInicial: TPanel
+  object StatusBar1: TStatusBar
     Left = 0
-    Top = 0
+    Top = 646
     Width = 1000
-    Height = 630
-    Align = alBottom
-    TabOrder = 0
+    Height = 19
+    Panels = <
+      item
+        Text = 'Usuario'
+        Width = 200
+      end
+      item
+        Text = 'tempo logado'
+        Width = 50
+      end>
   end
   object MenuCadastro: TMainMenu
     Left = 24
@@ -71,9 +79,9 @@ object frm_Principal: Tfrm_Principal
         Caption = 'Cliente'
         OnClick = Cliente2Click
       end
-      object consultaProduto: TMenuItem
-        Caption = 'Produto'
-        OnClick = consultaProdutoClick
+      object Produtos1: TMenuItem
+        Caption = 'Produtos'
+        OnClick = Produtos1Click
       end
     end
     object PedidoVenda1: TMenuItem
@@ -115,5 +123,10 @@ object frm_Principal: Tfrm_Principal
         OnClick = Sair1Click
       end
     end
+  end
+  object Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 304
+    Top = 616
   end
 end

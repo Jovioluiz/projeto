@@ -8,7 +8,7 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, uCadTabelaPrecoProduto, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao;
 
 type
   TfrmcadTabelaPreco = class(TForm)
@@ -60,7 +60,7 @@ end;
 
 procedure TfrmcadTabelaPreco.btnFecharClick(Sender: TObject);
 begin
-  if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
+  if (Application.MessageBox('Deseja realmente fechar?','Atenção', MB_YESNO) = IDYES) then
     begin
       Close;
     end;
@@ -71,7 +71,12 @@ procedure TfrmcadTabelaPreco.btnSalvarClick(Sender: TObject);
 begin
   sqlTabelaPreco.Close;
   //verifica se possui tabela com o mesmo código
-  sqlTabelaPreco.SQL.Text := 'select cd_tabela from tabela_preco where cd_tabela = :cd_tabela';
+  sqlTabelaPreco.SQL.Text := 'select '+
+                                  'cd_tabela '+
+                              'from '+
+                                  'tabela_preco '+
+                              'where '+
+                                    'cd_tabela = :cd_tabela';
   sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
   sqlTabelaPreco.Open();
   
@@ -79,8 +84,15 @@ begin
     //update
      begin
         sqlTabelaPreco.Close;
-        sqlTabelaPreco.SQL.Text := 'update tabela_preco set nm_tabela = :nm_tabela, fl_ativo = :fl_ativo, '+
-                                    'dt_inicio = :dt_inicio, dt_fim = :dt_fim where cd_tabela = :cd_tabela';
+        frmConexao.conexao.StartTransaction;
+        sqlTabelaPreco.SQL.Text := 'update                          '+
+                                        'tabela_preco               '+
+                                  'set                              '+
+                                        'nm_tabela = :nm_tabela,    '+
+                                        'fl_ativo = :fl_ativo,      '+
+                                        'dt_inicio = :dt_inicio,    '+
+                                        'dt_fim = :dt_fim           '+
+                                  'where cd_tabela = :cd_tabela';
 
         sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
         sqlTabelaPreco.ParamByName('nm_tabela').AsString := edtNomeTabela.Text;
@@ -90,10 +102,9 @@ begin
 
         try
           sqlTabelaPreco.ExecSQL;
-          sqlTabelaPreco.Close;
-          //FreeAndNil(sqlTabelaPreco);
+          frmConexao.conexao.Commit;
           ShowMessage('Dados Alterados com Sucesso');
-
+          sqlTabelaPreco.Close;
           edtCodTabela.Text := '';
           edtNomeTabela.Text := '';
           edtFl_ativo.Checked := false;
@@ -103,16 +114,28 @@ begin
         except
           on E:exception do
             begin
-               ShowMessage('Erro ao gravar os dados'+ E.Message);
-                exit;
+              frmConexao.conexao.Rollback;
+              ShowMessage('Erro ao gravar os dados'+ E.Message);
+              Exit;
             end;
         end;
      end
     else
       begin
         sqlTabelaPreco.Close;
-        sqlTabelaPreco.SQL.Text := 'insert into tabela_preco (cd_tabela, nm_tabela,fl_ativo,dt_inicio,dt_fim) '+
-                                      'values (:cd_tabela,:nm_tabela,:fl_ativo,:dt_inicio,:dt_fim)';
+        frmConexao.conexao.StartTransaction;
+        sqlTabelaPreco.SQL.Text := 'insert                        '+
+                                        'into                     '+
+                                        'tabela_preco (cd_tabela, '+
+                                        'nm_tabela,               '+
+                                        'fl_ativo,                '+
+                                        'dt_inicio,               '+
+                                        'dt_fim)                  '+
+                                    'values (:cd_tabela,          '+
+                                        ':nm_tabela,              '+
+                                        ':fl_ativo,               '+
+                                        ':dt_inicio,              '+
+                                        ':dt_fim)';
 
         sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
         sqlTabelaPreco.ParamByName('nm_tabela').AsString := edtNomeTabela.Text;
@@ -122,11 +145,10 @@ begin
 
         try
           sqlTabelaPreco.ExecSQL;
-          sqlTabelaPreco.Close;
-          //FreeAndNil(sqlTabelaPreco);
+          frmConexao.conexao.Commit;
           ShowMessage('Tabela de Preço cadastrada com Sucesso!');
+          sqlTabelaPreco.Close;
           btnAdicionarProduto.Enabled := false;
-
           edtFl_ativo.Checked := false;
           edtCodTabela.Text := '';
           edtNomeTabela.Text := '';
@@ -136,13 +158,14 @@ begin
         except
           on E : exception do
             begin
+              frmConexao.conexao.Rollback;
               ShowMessage('Erro ao gravar os dados '+ E.Message);
-              exit;
+              Exit;
             end;
 
         end;
       end;
-
+  frmConexao.conexao.Close;
   DBGridProduto.DataSource.Destroy;
 end;
 
@@ -158,20 +181,24 @@ begin
 end;
 
 procedure TfrmcadTabelaPreco.edtCodTabelaExit(Sender: TObject);
-
 begin
   if edtCodTabela.Text = EmptyStr then
     begin
      btnAdicionarProduto.Enabled := false;
-     exit;
+     Exit;
     end;
 
-
   sqlTabelaPreco.Close;
-  sqlTabelaPreco.SQL.Text := 'select cd_tabela, nm_tabela, fl_ativo, dt_inicio, dt_fim '+
-                              'from '+
-                              'tabela_preco '+
-                              'where cd_tabela = :cd_tabela';
+  sqlTabelaPreco.SQL.Text := 'select                '+
+                                  'cd_tabela,       '+
+                                  'nm_tabela,       '+
+                                  'fl_ativo,        '+
+                                  'dt_inicio,       '+
+                                  'dt_fim           '+
+                              'from                 '+
+                                  'tabela_preco     '+
+                              'where                '+
+                                  'cd_tabela = :cd_tabela';
 
   sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
   sqlTabelaPreco.Open();
@@ -183,11 +210,17 @@ begin
   btnAdicionarProduto.Enabled := true;
 
 sqlTabelaPrecoProduto.Close;
-sqlTabelaPrecoProduto.SQL.Text := 'select p.cd_produto,p.desc_produto,valor,p.un_medida '+
-                        'from produto p '+
-                        'join tabela_preco_produto tpp on '+
-                        'p.cd_produto = tpp.cd_produto '+
-                        'where tpp.cd_tabela = :cd_tabela';
+sqlTabelaPrecoProduto.SQL.Text := 'select                           '+
+                                      'p.cd_produto,                '+
+                                      'p.desc_produto,              '+
+                                      'valor,                       '+
+                                      'p.un_medida                  '+
+                                  'from                             '+
+                                      'produto p                    '+
+                                  'join tabela_preco_produto tpp on '+
+                                      'p.cd_produto = tpp.cd_produto'+
+                                  'where                            '+
+                                      'tpp.cd_tabela = :cd_tabela';
 sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
 sqlTabelaPrecoProduto.Open();
 

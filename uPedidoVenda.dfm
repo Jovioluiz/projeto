@@ -266,6 +266,8 @@ object frmPedidoVenda: TfrmPedidoVenda
       Width = 831
       Height = 201
       DataSource = DataSource1
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      ReadOnly = True
       TabOrder = 17
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -278,7 +280,6 @@ object frmPedidoVenda: TfrmPedidoVenda
         item
           Expanded = False
           FieldName = 'C'#243'd. Produto'
-          ReadOnly = True
           Title.Color = clWhite
           Width = 73
           Visible = True
@@ -286,47 +287,90 @@ object frmPedidoVenda: TfrmPedidoVenda
         item
           Expanded = False
           FieldName = 'Descri'#231#227'o'
-          ReadOnly = True
           Width = 300
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Qtdade'
-          ReadOnly = True
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Tabela Pre'#231'o'
-          ReadOnly = True
           Width = 70
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'UN Medida'
-          ReadOnly = True
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Valor Unit'#225'rio'
-          ReadOnly = True
           Width = 70
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Valor Desconto'
-          ReadOnly = True
           Width = 80
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Valor Total'
-          ReadOnly = True
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Base ICMS '
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq ICMS'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor ICMS'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Base IPI'
+          Width = 75
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq IPI'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor IPI'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Base PIS/COFINS'
+          Width = 120
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq PIS/COFINS'
+          Width = 90
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor PIS/COFINS'
+          Width = 90
           Visible = True
         end>
     end
@@ -448,27 +492,27 @@ object frmPedidoVenda: TfrmPedidoVenda
     TabOrder = 7
   end
   object sqlPedidoVendaCliente: TFDQuery
-    Connection = fConexao.conexao
-    Left = 552
+    Connection = frmConexao.conexao
+    Left = 600
     Top = 16
   end
   object sqlPedidoVendaFormaPgto: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 184
     Top = 136
   end
   object sqlPedidoVendaCondPgto: TFDQuery
-    Connection = fConexao.conexao
-    Left = 672
-    Top = 128
+    Connection = frmConexao.conexao
+    Left = 664
+    Top = 120
   end
   object sqlPedidoVendaProduto: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 208
     Top = 224
   end
   object sqlPedidoVendaTabPreco: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 216
     Top = 304
   end
@@ -484,27 +528,27 @@ object frmPedidoVenda: TfrmPedidoVenda
     Top = 448
   end
   object sqlPedidoVendaInsert: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 432
     Top = 448
   end
   object sqlNrPedido: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 384
     Top = 16
   end
   object sqlIdGeral: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 440
     Top = 16
   end
   object sqlIdGeralPVI: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 488
     Top = 16
   end
   object FDQuery1: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 464
     Top = 200
   end
