@@ -11,9 +11,13 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  Visible = True
+  OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -518,6 +522,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnKeyDown = DBGridProdutosKeyDown
       Columns = <
         item
           Expanded = False

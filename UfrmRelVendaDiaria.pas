@@ -28,6 +28,8 @@ type
     edtValorDesconto: TEdit;
     edtValorAcrescimo: TEdit;
     procedure btnPesquisarClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -52,7 +54,7 @@ begin
 
   if sqlListaVendaDiaria.IsEmpty then
     begin
-      ShowMessage('Nenhuma venda realizada no período informado ');
+      ShowMessage('Nenhuma venda realizada no período informado');
     end
   else
     begin
@@ -90,6 +92,21 @@ begin
   edtValorTotal.Text := CurrToStr(sqlSoma.FieldByName('total').AsCurrency);
   edtValorAcrescimo.Text := CurrToStr(sqlSoma.FieldByName('acrescimo').AsCurrency);
   edtValorDesconto.Text := CurrToStr(sqlSoma.FieldByName('desconto').AsCurrency);
+end;
+
+procedure TfrmRelVendaDiaria.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  frmRelVendaDiaria := nil;
+end;
+
+procedure TfrmRelVendaDiaria.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+    begin
+      Key := #0;
+       Perform(WM_NEXTDLGCTL,0,0)
+    end;
 end;
 
 end.

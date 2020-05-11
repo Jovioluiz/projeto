@@ -22,8 +22,10 @@ object frmPedidoVenda: TfrmPedidoVenda
     A111111109991111111111111111111111111111111111111111111111110000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
@@ -222,7 +224,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       OnExit = edtQtdadeExit
     end
     object edtUnMedida: TComboBox
-      Left = 661
+      Left = 662
       Top = 259
       Width = 65
       Height = 21
@@ -275,6 +277,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
       OnDrawColumnCell = dbGridProdutosDrawColumnCell
+      OnDblClick = dbGridProdutosDblClick
       OnKeyDown = dbGridProdutosKeyDown
       Columns = <
         item

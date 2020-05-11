@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao;
 
 type
-  TfrmcadTabelaPreco = class(TForm)
+  TfrmcadTabelaPreco = class(TfrmConexao)
     Panel1: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -36,11 +36,15 @@ type
     procedure btnFecharClick(Sender: TObject);
     procedure edtCodTabelaExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnLimparClick(Sender: TObject);
+    procedure DBGridProdutoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
     { Public declarations }
+    procedure LimparCampos;
   end;
 
 var
@@ -66,6 +70,11 @@ begin
     end;
 end;
 
+
+procedure TfrmcadTabelaPreco.btnLimparClick(Sender: TObject);
+begin
+  LimparCampos;
+end;
 
 procedure TfrmcadTabelaPreco.btnSalvarClick(Sender: TObject);
 begin
@@ -166,18 +175,30 @@ begin
         end;
       end;
   frmConexao.conexao.Close;
-  DBGridProduto.DataSource.Destroy;
+  DBGridProduto.DataSource := nil;
 end;
 
-procedure TfrmcadTabelaPreco.btnLimparClick(Sender: TObject);
+procedure TfrmcadTabelaPreco.DBGridProdutoKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
 begin
-  edtFl_ativo.Checked := false;
-  edtCodTabela.Text := '';
-  edtNomeTabela.Text := '';
-  edtDtInicial.Text := '';
-  edtDtFinal.Text := '';
-  DBGridProduto.DataSource.Destroy;
-
+  if KEY = VK_DELETE then
+    begin
+      if (Application.MessageBox('Deseja Excluir o produto da Tabela?', 'Atenção', MB_YESNO) = IDYES) then
+        begin
+          try
+            conexao.ExecSQL('delete '+
+                            '   from '+
+                            'tabela_preco_produto '+
+                            '   where '+
+                            'cd_produto = :cd_produto',
+                            [ClientDataSet1.FieldByName('Produto').AsInteger]); //erro aqui
+          except
+            on E : exception do
+              ShowMessage('Erro ao Excluir o produto ' + IntToStr(ClientDataSet1.FieldByName('Produto').AsInteger) +
+                        ' da tabela de preço' + E.Message);
+          end;
+        end;
+    end;
 end;
 
 procedure TfrmcadTabelaPreco.edtCodTabelaExit(Sender: TObject);
@@ -218,14 +239,14 @@ sqlTabelaPrecoProduto.SQL.Text := 'select                           '+
                                   'from                             '+
                                       'produto p                    '+
                                   'join tabela_preco_produto tpp on '+
-                                      'p.cd_produto = tpp.cd_produto'+
+                                      'p.cd_produto = tpp.cd_produto '+
                                   'where                            '+
                                       'tpp.cd_tabela = :cd_tabela';
 sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
 sqlTabelaPrecoProduto.Open();
 
   DBGridProduto.DataSource := DataSource1;
-  DBGridProduto.Columns[0].Title.Caption := 'Cod. Produto';
+  DBGridProduto.Columns[0].Title.Caption := 'Produto';
   DBGridProduto.Columns[0].FieldName := 'cd_produto';
   DBGridProduto.Columns[1].Title.Caption := 'Nome Produto';
   DBGridProduto.Columns[1].FieldName := 'desc_produto';
@@ -237,13 +258,30 @@ sqlTabelaPrecoProduto.Open();
 
 end;
 
+procedure TfrmcadTabelaPreco.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  frmcadTabelaPreco := nil;
+end;
+
 procedure TfrmcadTabelaPreco.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-  inherited;
   if Key = #13 then
-    Perform(WM_NEXTDLGCTL,0,0)
-  else if Key = #27 then
-    Perform(WM_NEXTDLGCTL,1,0)
+    begin
+      Key := #0;
+      Perform(WM_NEXTDLGCTL,0,0)
+    end;
+end;
+
+procedure TfrmcadTabelaPreco.LimparCampos;
+begin
+  edtFl_ativo.Checked := false;
+  edtCodTabela.Clear;
+  edtNomeTabela.Clear;
+  edtDtInicial.Clear;
+  edtDtFinal.Clear;
+  DBGridProduto.DataSource := nil;
+  edtCodTabela.SetFocus;
 end;
 
 end.

@@ -96,8 +96,11 @@ type
     procedure valida_qtdade_item();
     procedure edtQtdadeExit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure dbGridProdutosDblClick(Sender: TObject);
   private
     { Private declarations }
+    edicaoItem : Boolean;
   public
     { Public declarations }
   end;
@@ -163,29 +166,53 @@ begin
       ClientDataSet1.FieldDefs.Add('Valor PIS/COFINS', ftCurrency);
 
       ClientDataSet1.CreateDataSet;
+
     end;
 
-    ClientDataSet1.Append;
-    ClientDataSet1.FieldByName('Cód. Produto').AsInteger := StrToInt(edtCdProduto.Text);
-    ClientDataSet1.FieldByName('Descrição').AsString := edtDescProduto.Text;
-    ClientDataSet1.FieldByName('Qtdade').AsInteger := StrToInt(edtQtdade.Text);
-    ClientDataSet1.FieldByName('Tabela Preço').AsInteger := StrToInt(edtCdtabelaPreco.Text);
-    ClientDataSet1.FieldByName('UN Medida').AsString := edtUnMedida.Text;
-    ClientDataSet1.FieldByName('Valor Unitário').AsCurrency := StrToCurr(edtVlUnitario.Text);
-    ClientDataSet1.FieldByName('Valor Desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
-    ClientDataSet1.FieldByName('Valor Total').AsCurrency := StrToCurr(edtVlTotal.Text);
-    ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := StrToCurr(edtVlTotal.Text);
-    ClientDataSet1.FieldByName('Aliq ICMS').AsFloat := aliq_icms;
-    ClientDataSet1.FieldByName('Valor ICMS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
-    ClientDataSet1.FieldByName('Valor Base IPI').AsCurrency := StrToCurr(edtVlTotal.Text);
-    ClientDataSet1.FieldByName('Aliq IPI').AsFloat := aliq_ipi;
-    ClientDataSet1.FieldByName('Valor IPI').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
-    ClientDataSet1.FieldByName('Valor Base PIS/COFINS').AsCurrency := StrToCurr(edtVlTotal.Text);
-    ClientDataSet1.FieldByName('Aliq PIS/COFINS').AsFloat := aliq_pis_cofins;
-    ClientDataSet1.FieldByName('Valor PIS/COFINS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
+  if edicaoItem = True then
+    begin
+      try
+        ClientDataSet1.Edit;//entra em modo de edição
+        ClientDataSet1.FieldByName('Cód. Produto').AsInteger := StrToInt(edtCdProduto.Text);
+        ClientDataSet1.FieldByName('Qtdade').AsInteger := StrToInt(edtQtdade.Text);
+        ClientDataSet1.FieldByName('UN Medida').AsString := edtUnMedida.Text;
+        ClientDataSet1.FieldByName('Valor Unitário').AsCurrency := StrToCurr(edtVlUnitario.Text);
+        ClientDataSet1.FieldByName('Valor Desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
+        ClientDataSet1.FieldByName('Valor Total').AsCurrency := StrToCurr(edtVlTotal.Text);
+        //ClientDataSet1.UpdateRecord;
+      finally
+        ClientDataSet1.Insert;
+        edicaoItem := False;
+      end;
 
-    ClientDataSet1.Post;
+    end
+  else
+    begin
+      ClientDataSet1.Append;
+      ClientDataSet1.FieldByName('Cód. Produto').AsInteger := StrToInt(edtCdProduto.Text);
+      ClientDataSet1.FieldByName('Descrição').AsString := edtDescProduto.Text;
+      ClientDataSet1.FieldByName('Qtdade').AsInteger := StrToInt(edtQtdade.Text);
+      ClientDataSet1.FieldByName('Tabela Preço').AsInteger := StrToInt(edtCdtabelaPreco.Text);
+      ClientDataSet1.FieldByName('UN Medida').AsString := edtUnMedida.Text;
+      ClientDataSet1.FieldByName('Valor Unitário').AsCurrency := StrToCurr(edtVlUnitario.Text);
+      ClientDataSet1.FieldByName('Valor Desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
+      ClientDataSet1.FieldByName('Valor Total').AsCurrency := StrToCurr(edtVlTotal.Text);
+      ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := StrToCurr(edtVlTotal.Text);
+      ClientDataSet1.FieldByName('Aliq ICMS').AsFloat := aliq_icms;
+      ClientDataSet1.FieldByName('Valor ICMS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
+      ClientDataSet1.FieldByName('Valor Base IPI').AsCurrency := StrToCurr(edtVlTotal.Text);
+      ClientDataSet1.FieldByName('Aliq IPI').AsFloat := aliq_ipi;
+      ClientDataSet1.FieldByName('Valor IPI').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
+      ClientDataSet1.FieldByName('Valor Base PIS/COFINS').AsCurrency := StrToCurr(edtVlTotal.Text);
+      ClientDataSet1.FieldByName('Aliq PIS/COFINS').AsFloat := aliq_pis_cofins;
+      ClientDataSet1.FieldByName('Valor PIS/COFINS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
 
+
+      ClientDataSet1.Post;
+    end;
+
+
+    //ClientDataSet1.Refresh;
     //soma os valores totais dos itens e preenche o valor total do pedido
     vl_total_itens := 0;
     with ClientDataSet1 do
@@ -369,7 +396,8 @@ begin
                                                 'ipi_valor,                   '+
                                                 'pis_cofins_vl_base,          '+
                                                 'pis_cofins_pc_aliq,          '+
-                                                'pis_cofins_valor)            '+
+                                                'pis_cofins_valor,             '+
+                                                'un_medida)                   '+
                                             'values (:id_geral,               '+
                                                 ':id_pedido_venda,            '+
                                                 ':cd_produto,                 '+
@@ -386,7 +414,8 @@ begin
                                                 ':ipi_valor,                  '+
                                                 ':pis_cofins_vl_base,         '+
                                                 ':pis_cofins_pc_aliq,         '+
-                                                ':pis_cofins_valor)';
+                                                ':pis_cofins_valor,           '+
+                                                ':un_medida)';
 
           sqlPedidoVendaInsert.ParamByName('id_geral').AsInteger := id_geral_pvi;
           sqlPedidoVendaInsert.ParamByName('id_pedido_venda').AsInteger := id_geral;
@@ -405,6 +434,7 @@ begin
           sqlPedidoVendaInsert.ParamByName('pis_cofins_vl_base').AsCurrency := ClientDataSet1.FieldByName('Valor Base PIS/COFINS').AsCurrency;
           sqlPedidoVendaInsert.ParamByName('pis_cofins_pc_aliq').AsCurrency := ClientDataSet1.FieldByName('Aliq PIS/COFINS').AsCurrency;
           sqlPedidoVendaInsert.ParamByName('pis_cofins_valor').AsCurrency := ClientDataSet1.FieldByName('Valor PIS/COFINS').AsCurrency;
+          sqlPedidoVendaInsert.ParamByName('un_medida').AsString := ClientDataSet1.FieldByName('UN Medida').AsString;
 
 
           //atualiza a qtd_estoque do produto na tabela produto
@@ -451,6 +481,20 @@ begin
 
 end;
 
+
+procedure TfrmPedidoVenda.dbGridProdutosDblClick(Sender: TObject);
+begin
+  edtCdProduto.Text := dbGridProdutos.Fields[0].AsString;
+  edtDescProduto.Text := dbGridProdutos.Fields[1].AsString;
+  edtQtdade.Text := dbGridProdutos.Fields[2].AsString;
+  edtCdtabelaPreco.Text := dbGridProdutos.Fields[3].AsString;
+  edtUnMedida.Text := dbGridProdutos.Fields[4].AsString;
+  edtVlUnitario.Text := dbGridProdutos.Fields[5].AsString;
+  edtVlDescontoItem.Text := dbGridProdutos.Fields[6].AsString;
+  edtVlTotal.Text := dbGridProdutos.Fields[7].AsString;
+  edicaoItem := true;
+end;
+
 //Faz a linha zebrada no grid dos itens
 procedure TfrmPedidoVenda.dbGridProdutosDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
@@ -475,8 +519,8 @@ begin
     begin
       if MessageDlg('Deseja excluir o item do pedido?',mtConfirmation,[mbYes,mbNo],0) = mrYes then
          begin
-              ClientDataSet1.Delete;
-              edtCdProduto.SetFocus;
+          ClientDataSet1.Delete;
+          edtCdProduto.SetFocus;
          end;
     end;
 end;
@@ -842,6 +886,12 @@ procedure TfrmPedidoVenda.edtVlDescTotalPedidoExit(Sender: TObject);
     end;
 
 //seta a data atual na data de emissão
+procedure TfrmPedidoVenda.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  frmPedidoVenda := nil;
+end;
+
 procedure TfrmPedidoVenda.FormCreate(Sender: TObject);
 begin
   edtDataEmissao.Text := DateToStr(Date());
@@ -851,17 +901,17 @@ end;
 //passa pelos campos com enter (não tá funcionando)
 procedure TfrmPedidoVenda.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-  inherited;
   if Key = #13 then
-    Perform(WM_NEXTDLGCTL,0,0)
-  else if Key = #27 then
-    Perform(WM_NEXTDLGCTL,1,0)
+    begin
+      Key := #0;
+       Perform(WM_NEXTDLGCTL,0,0)
+    end;
 end;
 
 
 procedure TfrmPedidoVenda.valida_qtdade_item;
 var
-  qtdade : Integer;
+  qtdade : Double;
 begin
   FDQuery1.Close;
   FDQuery1.SQL.Text := 'select            '+
@@ -880,9 +930,9 @@ begin
       edtCdProduto.SetFocus;
     end;
   
-  if (edtQtdade.Text > IntToStr(qtdade)) then
+  if (edtQtdade.Text > FloatToStr(qtdade)) then
     begin
-      ShowMessage('Quantidade informada maior que a disponível.' + #13 +'Quantidade disponível: ' + IntToStr(qtdade));
+      ShowMessage('Quantidade informada maior que a disponível.' + #13 +'Quantidade disponível: ' + FloatToStr(qtdade));
       edtQtdade.SetFocus;
       Exit;
     end;

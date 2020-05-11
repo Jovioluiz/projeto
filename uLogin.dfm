@@ -1,7 +1,8 @@
 object frm_Login: Tfrm_Login
   Left = 0
   Top = 0
-  BorderStyle = bsDialog
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = 'Login'
   ClientHeight = 200
   ClientWidth = 522
@@ -13,6 +14,8 @@ object frm_Login: Tfrm_Login
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel

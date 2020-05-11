@@ -41,6 +41,7 @@ type
     sqlCarregaPedidoVenda: TFDQuery;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -62,6 +63,12 @@ begin
     begin
       Close;
     end;
+end;
+
+procedure Tfrm_Edicao_Pedido_Venda.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+frm_Edicao_Pedido_Venda := nil;
 end;
 
 procedure Tfrm_Edicao_Pedido_Venda.FormCreate(Sender: TObject);
@@ -107,7 +114,7 @@ begin
                                        '   pv.nr_pedido = :nr_pedido            ';
 
   //como trazer o numero do pedido?
-  sqlCarregaPedidoVenda.ParamByName('nr_pedido').AsInteger := 0;
+  sqlCarregaPedidoVenda.ParamByName('nr_pedido').AsInteger := StrToInt(uVisualizaPedidoVenda.frmVisualizaPedidoVenda.edtNrPedido.Text);
   //sqlCarregaPedidoVenda.ParamByName('nr_pedido').AsInteger := StrToInt(uVisualizaPedidoVenda.frmVisualizaPedidoVenda.edtNrPedido.Text);
   sqlCarregaPedidoVenda.Open();
   //edtNrPedido.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('nr_pedido').AsInteger);

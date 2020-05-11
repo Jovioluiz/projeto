@@ -11,8 +11,10 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -276,7 +278,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     Top = 352
   end
   object sqlCarregaPedidoVenda: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 440
     Top = 352
   end

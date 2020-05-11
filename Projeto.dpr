@@ -11,13 +11,17 @@ uses
   cPRODUTO in 'cPRODUTO.pas' {frmCadProduto},
   cCTA_COND_PGTO in 'cCTA_COND_PGTO.pas' {frmCadCondPgto},
   cCLIENTE in 'cCLIENTE.pas' {frmCadCliente},
-  cConsultaCLIENTE in 'cConsultaCLIENTE.pas' {frmConsultaCliente},
   uVisualizaPedidoVenda in 'uVisualizaPedidoVenda.pas' {frmVisualizaPedidoVenda},
   uPedidoVenda in 'uPedidoVenda.pas' {frmPedidoVenda},
   uLogin in 'uLogin.pas' {frm_Login},
   uCadastroTributacaoItem in 'uCadastroTributacaoItem.pas' {frmCadastraTributacaoItem},
   uLancamentoNotaEntrada in 'uLancamentoNotaEntrada.pas' {frmLancamentoNotaEntrada},
-  uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos};
+  uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos},
+  UfrmRelVendaDiaria in 'UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
+  Vcl.Themes,
+  Vcl.Styles,
+  uDataModule in 'uDataModule.pas' {dm: TDataModule},
+  uEdicaoPedidoVenda in 'uEdicaoPedidoVenda.pas' {frm_Edicao_Pedido_Venda};
 
 {$R *.res}
 
@@ -25,23 +29,8 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(Tfrm_Login, frm_Login);
-  Application.CreateForm(Tfrm_Principal, frm_Principal);
   Application.CreateForm(TfrmConexao, frmConexao);
-  Application.CreateForm(TfrmCadFormaPagamento, frmCadFormaPagamento);
-  Application.CreateForm(TfrmCadCondPgto, frmCadCondPgto);
-  Application.CreateForm(TfrmcadTabelaPreco, frmcadTabelaPreco);
-  Application.CreateForm(TfrmCadTabelaPrecoProduto, frmCadTabelaPrecoProduto);
-  Application.CreateForm(TfrmCadProduto, frmCadProduto);
-  Application.CreateForm(TfrmCadCondPgto, frmCadCondPgto);
-  Application.CreateForm(TfrmCadCliente, frmCadCliente);
-  Application.CreateForm(TfrmConsultaCliente, frmConsultaCliente);
-  Application.CreateForm(TfrmVisualizaPedidoVenda, frmVisualizaPedidoVenda);
-  Application.CreateForm(TfrmPedidoVenda, frmPedidoVenda);
-  Application.CreateForm(TfrmPedidoVenda, frmPedidoVenda);
-  Application.CreateForm(TfrmCadastraTributacaoItem, frmCadastraTributacaoItem);
-  Application.CreateForm(TfrmLancamentoNotaEntrada, frmLancamentoNotaEntrada);
-  Application.CreateForm(TfrmConsultaProdutos, frmConsultaProdutos);
-  Application.CreateForm(TfrmConsultaProdutos, frmConsultaProdutos);
+  Application.CreateForm(Tdm, dm);
   Application.Run;
 
 end.

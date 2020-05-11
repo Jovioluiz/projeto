@@ -13,6 +13,7 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
@@ -100,16 +101,19 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
       Top = 192
       Width = 512
       Height = 289
+      DataSource = DataSource1
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 5
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnKeyDown = DBGridProdutoKeyDown
       Columns = <
         item
           Expanded = False
-          FieldName = 'Cod. Produto'
+          FieldName = 'Produto'
           ReadOnly = True
           Width = 76
           Visible = True
@@ -190,8 +194,6 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
   end
   object ClientDataSet1: TClientDataSet
     Aggregates = <>
-    MasterSource = DataSource1
-    PacketRecords = 0
     Params = <>
     Left = 464
     Top = 376

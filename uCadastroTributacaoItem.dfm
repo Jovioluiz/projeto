@@ -13,6 +13,8 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  OnClose = FormClose
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
@@ -20,7 +22,7 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     Top = 16
     Width = 537
     Height = 161
-    ActivePage = TabSheetPISCOFINS
+    ActivePage = TabSheetICMS
     TabOrder = 2
     object TabSheetICMS: TTabSheet
       Caption = 'ICMS'
@@ -72,6 +74,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetIPI: TTabSheet
       Caption = 'IPI'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label6: TLabel
         Left = 15
         Top = 80
@@ -120,6 +126,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetISS: TTabSheet
       Caption = 'ISS'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label9: TLabel
         Left = 11
         Top = 16
@@ -168,6 +178,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetPISCOFINS: TTabSheet
       Caption = 'PIS/COFINS'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 11
         Top = 16
@@ -242,12 +256,12 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     TabOrder = 1
   end
   object comandoSQL: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 60
     Top = 184
   end
   object comandoselect: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 424
     Top = 184
   end

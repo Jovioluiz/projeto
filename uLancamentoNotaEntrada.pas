@@ -8,7 +8,7 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Datasnap.DBClient, uConexao;
+  FireDAC.Comp.Client, Datasnap.DBClient, uConexao, System.UITypes;
 
 type
   TfrmLancamentoNotaEntrada = class(TForm)
@@ -112,8 +112,13 @@ type
     procedure btnAddItensClick(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure btnConfirmarClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridProdutosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
+    procedure validaValoresNota;
   public
     { Public declarations }
   end;
@@ -402,6 +407,12 @@ begin
   valorTotalNota();
 end;
 
+procedure TfrmLancamentoNotaEntrada.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  frmLancamentoNotaEntrada := nil;
+end;
+
 procedure TfrmLancamentoNotaEntrada.FormCreate(Sender: TObject);
 begin
 edtDataEmissao.Date := now;
@@ -409,6 +420,16 @@ edtDataRecebimento.Date := now;
 edtDataLancamento.Date := now;
 seq := 1;
 end;
+
+procedure TfrmLancamentoNotaEntrada.FormKeyPress(Sender: TObject;
+  var Key: Char);
+  begin
+    if Key = #13 then
+      begin
+        Key := #0;
+         Perform(WM_NEXTDLGCTL,0,0)
+      end;
+  end;
 
 procedure TfrmLancamentoNotaEntrada.btnAddItensClick(Sender: TObject);
 begin
@@ -467,6 +488,10 @@ var
   id_geral_nfc, id_geral_nfi : Integer;
   vl_icms_rateado, vl_ipi_rateado, vl_iss_rateado, vl_frete_rateado, vl_desconto_rateado, vl_acrescimo_rateado, soma, qtdade, qt_total: Currency;
 begin
+
+  validaValoresNota;
+
+
   frmConexao.conexao.StartTransaction;
   //id_geral nfc
   sqlIdGeral.Close;
@@ -783,6 +808,19 @@ if edtValorUnitario.Text = EmptyStr then
   edtValorTotalProduto.Text := CurrToStr(valor);
 end;
 
+procedure TfrmLancamentoNotaEntrada.DBGridProdutosKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_DELETE then
+    begin
+      if (Application.MessageBox('Deseja realmente fechar?','Atenção', MB_YESNO) = IDYES) then
+         begin
+          ClientDataSet1.Delete;
+          edtCodProduto.SetFocus;
+         end;
+    end;
+end;
+
 procedure TfrmLancamentoNotaEntrada.edtAliqIcmsExit(Sender: TObject);
 var base_icms, aliq_icms, vl_icms : Currency;
 begin
@@ -825,8 +863,33 @@ begin
   calcula_valor_total_item();
 end;
 
-//calcula o valor total da nota
+
+procedure TfrmLancamentoNotaEntrada.validaValoresNota;
+var vl_total_itens : Double;
+begin
+  vl_total_itens := 0;
+
+  with ClientDataSet1 do
+      begin
+        ClientDataSet1.DisableControls;
+        ClientDataSet1.First;
+        while not ClientDataSet1.Eof do
+          begin
+            vl_total_itens := (vl_total_itens + ClientDataSet1.FieldByName('Valor Total').AsCurrency);
+            ClientDataSet1.Next;
+          end;
+          ClientDataSet1.EnableControls;
+      end;
+
+  if (vl_total_itens <> StrToFloat(edtVlProduto.Text)) then
+    begin
+      raise Exception.Create('O valor total dos itens não fecha com o valor total da nota! Verifique');
+    end;
+
+end;
+
 procedure TfrmLancamentoNotaEntrada.valorTotalNota();
+//calcula o valor total da nota
 var vl_total, vl_servico, vl_produto, vl_frete, vl_ipi, vl_desconto, vl_acrescimo, vl_outras_despesas : Currency;
 begin
  vl_servico := StrToCurr(edtVlServico.Text);

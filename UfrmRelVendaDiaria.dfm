@@ -13,6 +13,8 @@ object frmRelVendaDiaria: TfrmRelVendaDiaria
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -203,12 +205,12 @@ object frmRelVendaDiaria: TfrmRelVendaDiaria
     Top = 296
   end
   object sqlListaVendaDiaria: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 248
     Top = 296
   end
   object sqlSoma: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 336
     Top = 296
   end

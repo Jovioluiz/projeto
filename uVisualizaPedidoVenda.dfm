@@ -24,6 +24,8 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     000000000000000000000000000000000000000000000000000000000000}
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -229,6 +231,15 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       TabOrder = 6
       OnClick = btnCancelarClick
     end
+    object btnImprimir: TButton
+      Left = 22
+      Top = 85
+      Width = 81
+      Height = 36
+      Caption = 'Imprimir'
+      TabOrder = 8
+      OnClick = btnImprimirClick
+    end
   end
   object edtNrPedido: TEdit
     Left = 233
@@ -287,7 +298,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     Left = 24
     Top = 48
     Width = 81
-    Height = 33
+    Height = 36
     Caption = 'Editar Pedido'
     TabOrder = 7
     OnClick = btnEditarPedidoClick
@@ -304,7 +315,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     Top = 352
   end
   object sqlVisualizaPedidoVenda: TFDQuery
-    Connection = fConexao.conexao
+    Connection = frmConexao.conexao
     Left = 424
     Top = 352
   end

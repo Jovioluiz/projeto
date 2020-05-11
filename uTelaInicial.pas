@@ -27,7 +27,6 @@ type
     Sistem1: TMenuItem;
     Sair1: TMenuItem;
     Consulta1: TMenuItem;
-    Cliente2: TMenuItem;
     TabeladePreo1: TMenuItem;
     PedidoVenda1: TMenuItem;
     PedidodeVenda1: TMenuItem;
@@ -56,6 +55,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Produtos1Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -73,36 +73,38 @@ implementation
 procedure Tfrm_Principal.Cadastro2Click(Sender: TObject);
 begin
   frmCadastraTributacaoItem := TfrmCadastraTributacaoItem.Create(Self);
-  frmCadastraTributacaoItem.ShowModal;
+  frmCadastraTributacaoItem.Show;
 end;
 
 procedure Tfrm_Principal.Cliente1Click(Sender: TObject);
 begin
   frmCadCliente := TfrmCadCliente.Create(Self);
-  try
-    frmCadCliente.ShowModal;
-  finally
-    FreeAndNil(frmCadCliente);
-  end;
+  frmCadCliente.Show;
 
 end;
 
 procedure Tfrm_Principal.Cliente2Click(Sender: TObject);
 begin
   frmConsultaCliente := TfrmConsultaCliente.Create(Self);
-  frmConsultaCliente.ShowModal;
+  frmConsultaCliente.Show;
 end;
 
 procedure Tfrm_Principal.CondicaoPagamento1Click(Sender: TObject);
 begin
   frmCadCondPgto := TfrmCadCondPgto.Create(Self);
-  frmCadCondPgto.ShowModal;
+  frmCadCondPgto.Show;
 end;
 
 procedure Tfrm_Principal.FormaPagamento1Click(Sender: TObject);
 begin
   frmCadFormaPagamento := TfrmCadFormaPagamento.Create(Self);
-  frmCadFormaPagamento.ShowModal;
+  frmCadFormaPagamento.Show;
+end;
+
+
+procedure Tfrm_Principal.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  frm_Principal := nil;
 end;
 
 //mostra o usuário logado
@@ -120,13 +122,13 @@ end;
 procedure Tfrm_Principal.PedidodeVenda1Click(Sender: TObject);
 begin
   frmPedidoVenda := TfrmPedidoVenda.Create(Self);
-  frmPedidoVenda.ShowModal;
+  frmPedidoVenda.Show;
 end;
 
 procedure Tfrm_Principal.Produto1Click(Sender: TObject);
 begin
   frmCadProduto := TfrmCadProduto.Create(Self);
-  frmCadProduto.ShowModal;
+  frmCadProduto.Show;
 end;
 
 procedure Tfrm_Principal.Produtos1Click(Sender: TObject);
@@ -163,7 +165,7 @@ end;
 procedure Tfrm_Principal.VisualizarPedidoVenda1Click(Sender: TObject);
 begin
   frmVisualizaPedidoVenda := TfrmVisualizaPedidoVenda.Create(Self);
-  frmVisualizaPedidoVenda.ShowModal;
+  frmVisualizaPedidoVenda.Show;
 end;
 
 end.

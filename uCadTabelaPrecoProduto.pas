@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet, System.UITypes,
-  FireDAC.Comp.Client, uConexao;
+  FireDAC.Comp.Client, uConexao, Vcl.Buttons;
 
 type
   TfrmCadTabelaPrecoProduto = class(TfrmConexao)
@@ -19,22 +19,27 @@ type
     edtCodProduto: TEdit;
     edtValor: TEdit;
     edtUNMedida: TEdit;
-    btnAdicionar: TButton;
-    btnCancelar: TButton;
     edtNomeProduto: TEdit;
     sqlTabelaPrecoProduto: TFDQuery;
     Label5: TLabel;
     edtCodTabela: TEdit;
     edtNomeTabela: TEdit;
+    btnFechar: TSpeedButton;
+    btnExcluir: TSpeedButton;
+    btnLimpar: TSpeedButton;
+    btnSalvar: TSpeedButton;
     procedure edtCodProdutoChange(Sender: TObject);
-    procedure btnCancelarClick(Sender: TObject);
-    procedure btnAdicionarClick(Sender: TObject);
     procedure edtCodTabelaChange(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnFecharClick(Sender: TObject);
+    procedure btnLimparClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    procedure LimpaCampos;
 
   end;
 
@@ -44,8 +49,26 @@ var
 
 {$R *.dfm}
 
-procedure TfrmCadTabelaPrecoProduto.btnAdicionarClick(Sender: TObject);
+
+procedure TfrmCadTabelaPrecoProduto.btnFecharClick(Sender: TObject);
 begin
+  inherited;
+  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      close;
+    end;
+end;
+
+procedure TfrmCadTabelaPrecoProduto.btnLimparClick(Sender: TObject);
+begin
+  inherited;
+  LimpaCampos;
+end;
+
+procedure TfrmCadTabelaPrecoProduto.btnSalvarClick(Sender: TObject);
+//ajustar isso daqui como nos outros forms
+begin
+  inherited;
   sqlTabelaPrecoProduto.Close;
   frmConexao.conexao.StartTransaction;
   sqlTabelaPrecoProduto.SQL.Text := 'insert '+
@@ -84,25 +107,15 @@ begin
   frmConexao.conexao.Close;
 end;
 
-procedure TfrmCadTabelaPrecoProduto.btnCancelarClick(Sender: TObject);
-begin
-  if (Application.MessageBox('Deseja Cancelar o Lançamento?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      close;
-    end;
-
-end;
-
 procedure TfrmCadTabelaPrecoProduto.edtCodProdutoChange(Sender: TObject);
 begin
-  begin
-    if edtCodProduto.Text = '' then
-      begin
-        edtNomeProduto.Text := '';
-        Exit;
-      end
-    else
-
+  if edtCodProduto.Text = '' then
+    begin
+      edtNomeProduto.Text := '';
+      Exit;
+    end
+  else
+    begin
       sqlTabelaPrecoProduto.Close;
       sqlTabelaPrecoProduto.SQL.Text := 'select               '+
                                               'desc_produto,  '+
@@ -115,9 +128,7 @@ begin
       sqlTabelaPrecoProduto.Open();
       edtNomeProduto.Text := sqlTabelaPrecoProduto.FieldByName('desc_produto').AsString;
       edtUNMedida.Text := sqlTabelaPrecoProduto.FieldByName('un_medida').AsString;
-  end;
-
-
+    end;
 end;
 
 procedure TfrmCadTabelaPrecoProduto.edtCodTabelaChange(Sender: TObject);
@@ -136,14 +147,32 @@ begin
   edtNomeTabela.Text := sqlTabelaPrecoProduto.FieldByName('nm_tabela').AsString;
 end;
 
+procedure TfrmCadTabelaPrecoProduto.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  frmCadTabelaPrecoProduto := nil;
+end;
+
 procedure TfrmCadTabelaPrecoProduto.FormKeyPress(Sender: TObject;
   var Key: Char);
 begin
-  inherited;
   if Key = #13 then
-    Perform(WM_NEXTDLGCTL,0,0)
-  else if Key = #27 then
-    Perform(WM_NEXTDLGCTL,1,0)
+    begin
+      Key := #0;
+      Perform(WM_NEXTDLGCTL,0,0)
+    end;
+end;
+
+procedure TfrmCadTabelaPrecoProduto.LimpaCampos;
+begin
+  edtCodProduto.Clear;
+  edtValor.Clear;
+  edtUNMedida.Clear;
+  edtNomeProduto.Clear;
+  edtCodTabela.Clear;
+  edtNomeTabela.Clear;
+  edtCodProduto.SetFocus;
 end;
 
 end.

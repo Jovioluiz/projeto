@@ -51,6 +51,8 @@ type
     procedure edtCdGrupoTributacaoIPIExit(Sender: TObject);
     procedure edtCdGrupoTributacaoISSExit(Sender: TObject);
     procedure edtCdGrupoTributacaoPISCOFINSExit(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -77,7 +79,7 @@ begin
       comandoselect.Close;
       comandoselect.SQL.Text := 'select                             '+
                                 '    cd_tributacao,                 '+
-                                '    nm_tributacao,                 '+
+                                '    nm_tributacao_icms,            '+
                                 '    aliquota_icms                  '+
                                 'from                               '+
                                 '    grupo_tributacao_icms          '+
@@ -88,7 +90,7 @@ begin
       if comandoselect <> nil then
         begin
           //edtCdGrupoTributacaoICMS.Text := IntToStr(comandoselect.FieldByName('cd_tributacao').AsInteger);
-          edtNomeGrupoTributacaoICMS.Text := comandoselect.FieldByName('nm_tributacao').AsString;
+          edtNomeGrupoTributacaoICMS.Text := comandoselect.FieldByName('nm_tributacao_icms').AsString;
           edtAliqICMS.Text := CurrToStr(comandoselect.FieldByName('aliquota_icms').AsCurrency);
         end;
     end;
@@ -108,7 +110,7 @@ begin
       comandoselect.Close;
       comandoselect.SQL.Text := 'select                             '+
                                 '    cd_tributacao,                 '+
-                                '    nm_tributacao,                 '+
+                                '    nm_tributacao_ipi,             '+
                                 '    aliquota_ipi                   '+
                                 'from                               '+
                                 '    grupo_tributacao_ipi           '+
@@ -119,7 +121,7 @@ begin
       if comandoselect <> nil then
         begin
           //edtCdGrupoTributacaoIPI.Text := IntToStr(comandoselect.FieldByName('cd_tributacao').AsInteger);
-          edtNomeGrupoTributacaoIPI.Text := comandoselect.FieldByName('nm_tributacao').AsString;
+          edtNomeGrupoTributacaoIPI.Text := comandoselect.FieldByName('nm_tributacao_ipi').AsString;
           edtAliqIPI.Text := CurrToStr(comandoselect.FieldByName('aliquota_ipi').AsCurrency);
         end;
     end;
@@ -138,7 +140,7 @@ begin
       comandoselect.Close;
       comandoselect.SQL.Text := 'select                             '+
                                 '    cd_tributacao,                 '+
-                                '    nm_tributacao,                 '+
+                                '    nm_tributacao_iss,             '+
                                 '    aliquota_iss                   '+
                                 'from                               '+
                                 '    grupo_tributacao_iss           '+
@@ -149,7 +151,7 @@ begin
       if comandoselect <> nil then
         begin
           //edtCdGrupoTributacaoISS.Text := IntToStr(comandoselect.FieldByName('cd_tributacao').AsInteger);
-          edtNomeGrupoTributacaoISS.Text := comandoselect.FieldByName('nm_tributacao').AsString;
+          edtNomeGrupoTributacaoISS.Text := comandoselect.FieldByName('nm_tributacao_iss').AsString;
           edtAliqISS.Text := CurrToStr(comandoselect.FieldByName('aliquota_iss').AsCurrency);
         end;
     end;
@@ -168,7 +170,7 @@ begin
       comandoselect.Close;
       comandoselect.SQL.Text := 'select                             '+
                                 '    cd_tributacao,                 '+
-                                '    nm_tributacao,                 '+
+                                '    nm_tributacao_pis_cofins,                 '+
                                 '    aliquota_pis_cofins            '+
                                 'from                               '+
                                 '    grupo_tributacao_pis_cofins    '+
@@ -179,9 +181,25 @@ begin
       if comandoselect <> nil then
         begin
           //edtCdGrupoTributacaoPISCOFINS.Text := IntToStr(comandoselect.FieldByName('cd_tributacao').AsInteger);
-          edtNomeGrupoTributacaoPISCOFINS.Text := comandoselect.FieldByName('nm_tributacao').AsString;
+          edtNomeGrupoTributacaoPISCOFINS.Text := comandoselect.FieldByName('nm_tributacao_pis_cofins').AsString;
           edtAliqPISCOFINS.Text := CurrToStr(comandoselect.FieldByName('aliquota_pis_cofins').AsCurrency);
         end;
+    end;
+end;
+
+procedure TfrmCadastraTributacaoItem.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  frmCadastraTributacaoItem := nil;
+end;
+
+procedure TfrmCadastraTributacaoItem.FormKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if Key = #13 then
+    begin
+      Key := #0;
+       Perform(WM_NEXTDLGCTL,0,0)
     end;
 end;
 

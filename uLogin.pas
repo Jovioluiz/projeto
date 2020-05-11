@@ -22,6 +22,8 @@ type
     Image1: TImage;
     procedure btnCancelarClick(Sender: TObject);
     procedure btnEntrarClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -35,7 +37,7 @@ implementation
 
 {$R *.dfm}
 
-uses uTelaInicial;
+uses uTelaInicial, uDataModule;
 
 procedure Tfrm_Login.btnCancelarClick(Sender: TObject);
 begin
@@ -57,6 +59,24 @@ sql_login.SQL.Text := 'select '+
 sql_login.ParamByName('login').AsString := edtUsuario.Text;
 sql_login.ParamByName('senha').AsString := edtSenha.Text;
 sql_login.Open();
+
+ {
+with dm.sqlLogin do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select login, senha from login_usuario ');
+
+    Open();
+
+    if RecordCount > 0 then
+      begin
+        SQL.Add('where login = :login and senha = :senha');
+        ParamByName('login').Value := edtUsuario.Text;
+        ParamByName('senha').Value := edtSenha.Text;
+      end;
+  end;}
+
 
 usuario := sql_login.FieldByName('login').Text;
 senha :=  sql_login.FieldByName('senha').Text;
@@ -80,6 +100,20 @@ else
   begin
    ShowMessage('Usuário ou Senha Inválidos');
   end;
+end;
+
+procedure Tfrm_Login.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+ frm_Login := nil;
+end;
+
+procedure Tfrm_Login.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+    begin
+      Key := #0;
+      Perform(WM_NEXTDLGCTL,0,0)
+    end;
 end;
 
 end.
