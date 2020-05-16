@@ -31,7 +31,6 @@ begin
   Application.CreateForm(Tfrm_Login, frm_Login);
   Application.CreateForm(TfrmConexao, frmConexao);
   Application.CreateForm(Tdm, dm);
-  Application.CreateForm(TfrmConfiguracoes, frmConfiguracoes);
   Application.Run;
 
 end.
