@@ -85,7 +85,7 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Icon_MainIcon>Projeto_Icon2.ico</Icon_MainIcon>
+        <Icon_MainIcon>Projeto_Icon.ico</Icon_MainIcon>
         <UWP_DelphiLogo44>imagens\logo48.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>imagens\logo150.png</UWP_DelphiLogo150>
     </PropertyGroup>
