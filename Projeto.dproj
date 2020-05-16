@@ -159,10 +159,6 @@
             <Form>frmLancamentoNotaEntrada</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="uConsultaProduto.pas">
-            <Form>frmConsultaProdutos</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="UfrmRelVendaDiaria.pas">
             <Form>frmRelVendaDiaria</Form>
             <FormType>dfm</FormType>
@@ -174,7 +170,6 @@
         </DCCReference>
         <DCCReference Include="uEdicaoPedidoVenda.pas">
             <Form>frm_Edicao_Pedido_Venda</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

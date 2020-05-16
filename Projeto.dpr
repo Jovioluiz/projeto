@@ -16,7 +16,6 @@ uses
   uLogin in 'uLogin.pas' {frm_Login},
   uCadastroTributacaoItem in 'uCadastroTributacaoItem.pas' {frmCadastraTributacaoItem},
   uLancamentoNotaEntrada in 'uLancamentoNotaEntrada.pas' {frmLancamentoNotaEntrada},
-  uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos},
   UfrmRelVendaDiaria in 'UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
   Vcl.Themes,
   Vcl.Styles,
