@@ -78,6 +78,8 @@ type
     procedure btnPRODUTOLimparClick(Sender: TObject);
     procedure btnPRODUTOExcluirClick(Sender: TObject);
     procedure btnCarregarImagemClick(Sender: TObject);
+    procedure imagemMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -523,6 +525,23 @@ begin
       Key := #0;
        Perform(WM_NEXTDLGCTL,0,0)
     end;
+end;
+
+procedure TfrmCadProduto.imagemMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  if Button = mbRight then
+    if (Application.MessageBox('Deseja Excluir a Imagem do Produto?', 'Aviso', MB_YESNO) = IDYES) then
+      begin
+        imagem.Picture := nil;
+        conexao.ExecSQL('update produto set imagem = NULL where cd_produto = :cd_produto',
+                                                        [StrToInt(edtPRODUTOCD_PRODUTO.Text)]);
+      end
+    else
+      begin
+        exit;
+      end;
 end;
 
 procedure TfrmCadProduto.limpaCampos;

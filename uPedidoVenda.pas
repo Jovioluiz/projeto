@@ -197,6 +197,7 @@ begin
       ClientDataSet1.FieldByName('Valor Unitário').AsCurrency := StrToCurr(edtVlUnitario.Text);
       ClientDataSet1.FieldByName('Valor Desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
       ClientDataSet1.FieldByName('Valor Total').AsCurrency := StrToCurr(edtVlTotal.Text);
+      //ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := ClientDataSet1.FieldByName('Valor Total').AsCurrency;
       ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := StrToCurr(edtVlTotal.Text);
       ClientDataSet1.FieldByName('Aliq ICMS').AsFloat := aliq_icms;
       ClientDataSet1.FieldByName('Valor ICMS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;

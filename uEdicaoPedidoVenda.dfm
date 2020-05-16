@@ -4,7 +4,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
   BorderStyle = bsDialog
   Caption = 'Edi'#231#227'o do Pedido Venda'
   ClientHeight = 683
-  ClientWidth = 1036
+  ClientWidth = 961
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,49 +21,51 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1036
+    Width = 961
     Height = 683
     Align = alClient
     BorderStyle = bsSingle
     TabOrder = 0
+    ExplicitLeft = 8
+    ExplicitWidth = 1035
     object Label1: TLabel
-      Left = 131
+      Left = 86
       Top = 32
       Width = 72
       Height = 13
       Caption = 'N'#250'mero Pedido'
     end
     object Label2: TLabel
-      Left = 131
+      Left = 86
       Top = 66
       Width = 33
       Height = 13
       Caption = 'Cliente'
     end
     object Label3: TLabel
-      Left = 261
+      Left = 189
       Top = 66
       Width = 75
       Height = 13
       Caption = 'Nome Completo'
     end
     object Label4: TLabel
-      Left = 672
+      Left = 550
       Top = 66
       Width = 50
       Height = 13
       Caption = 'Cidade/UF'
     end
     object Label5: TLabel
-      Left = 131
-      Top = 136
+      Left = 86
+      Top = 128
       Width = 87
       Height = 13
       Caption = 'Forma Pagamento'
     end
     object Label6: TLabel
-      Left = 630
-      Top = 136
+      Left = 551
+      Top = 128
       Width = 86
       Height = 13
       Caption = 'Cond. Pagamento'
@@ -89,17 +91,108 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Height = 13
       Caption = 'Valor Total'
     end
+    object Label7: TLabel
+      Left = 760
+      Top = 27
+      Width = 64
+      Height = 13
+      Caption = 'Data Emiss'#227'o'
+    end
+    object Label8: TLabel
+      Left = 86
+      Top = 184
+      Width = 38
+      Height = 13
+      Caption = 'Produto'
+    end
+    object Label9: TLabel
+      Left = 189
+      Top = 184
+      Width = 46
+      Height = 13
+      Caption = 'Descri'#231#227'o'
+    end
+    object Label10: TLabel
+      Left = 550
+      Top = 184
+      Width = 36
+      Height = 13
+      Caption = 'Qtdade'
+    end
+    object Label11: TLabel
+      Left = 634
+      Top = 184
+      Width = 41
+      Height = 13
+      Caption = 'UN Med.'
+    end
+    object Label12: TLabel
+      Left = 86
+      Top = 240
+      Width = 62
+      Height = 13
+      Caption = 'Tabela Pre'#231'o'
+    end
+    object Label13: TLabel
+      Left = 189
+      Top = 240
+      Width = 46
+      Height = 13
+      Caption = 'Descri'#231#227'o'
+    end
+    object Label14: TLabel
+      Left = 551
+      Top = 240
+      Width = 64
+      Height = 13
+      Caption = 'Valor Unit'#225'rio'
+    end
+    object Label15: TLabel
+      Left = 643
+      Top = 240
+      Width = 45
+      Height = 13
+      Caption = 'Desconto'
+    end
+    object Label19: TLabel
+      Left = 724
+      Top = 240
+      Width = 51
+      Height = 13
+      Caption = 'Valor Total'
+    end
+    object SpeedButton1: TSpeedButton
+      Left = 801
+      Top = 259
+      Width = 63
+      Height = 25
+      Caption = 'Adicionar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object btnConfirmar: TSpeedButton
+      Left = 715
+      Top = 622
+      Width = 95
+      Height = 32
+      Caption = 'Confirmar'
+    end
     object edtCdFormaPgto: TEdit
-      Left = 131
-      Top = 167
-      Width = 87
+      Left = 86
+      Top = 147
+      Width = 65
       Height = 21
+      Enabled = False
       ReadOnly = True
       TabOrder = 1
     end
     object edtCdCondPgto: TEdit
-      Left = 630
-      Top = 167
+      Left = 550
+      Top = 147
       Width = 87
       Height = 21
       Enabled = False
@@ -107,19 +200,19 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       TabOrder = 2
     end
     object edtNomeCondPgto: TEdit
-      Left = 765
-      Top = 167
-      Width = 236
+      Left = 643
+      Top = 147
+      Width = 268
       Height = 21
       Enabled = False
       ReadOnly = True
       TabOrder = 0
     end
     object dbGridProdutos: TDBGrid
-      Left = 128
-      Top = 264
-      Width = 873
-      Height = 321
+      Left = 86
+      Top = 304
+      Width = 825
+      Height = 281
       DataSource = DataSource1
       TabOrder = 7
       TitleFont.Charset = DEFAULT_CHARSET
@@ -208,7 +301,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       TabOrder = 5
     end
     object btnCancelar: TButton
-      Left = 864
+      Left = 816
       Top = 622
       Width = 95
       Height = 32
@@ -216,9 +309,84 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       TabOrder = 6
       OnClick = btnCancelarClick
     end
+    object edtDataEmissao: TMaskEdit
+      Left = 844
+      Top = 24
+      Width = 67
+      Height = 21
+      EditMask = '!99/99/0000;1;_'
+      MaxLength = 10
+      TabOrder = 8
+      Text = '  /  /    '
+    end
+    object edtCdProduto: TEdit
+      Left = 86
+      Top = 203
+      Width = 65
+      Height = 21
+      TabOrder = 9
+    end
+    object edtNomeProduto: TEdit
+      Left = 189
+      Top = 203
+      Width = 329
+      Height = 21
+      Enabled = False
+      TabOrder = 10
+    end
+    object edtQtdade: TEdit
+      Left = 550
+      Top = 203
+      Width = 65
+      Height = 21
+      TabOrder = 11
+    end
+    object edtTabelaPreco: TEdit
+      Left = 86
+      Top = 259
+      Width = 65
+      Height = 21
+      TabOrder = 12
+    end
+    object edtDescTabPreco: TEdit
+      Left = 189
+      Top = 259
+      Width = 329
+      Height = 21
+      Enabled = False
+      TabOrder = 13
+    end
+    object edtVlUnitario: TEdit
+      Left = 550
+      Top = 259
+      Width = 65
+      Height = 21
+      TabOrder = 14
+    end
+    object edtVlDesconto: TEdit
+      Left = 644
+      Top = 259
+      Width = 65
+      Height = 21
+      TabOrder = 15
+    end
+    object edtVlTotal: TEdit
+      Left = 724
+      Top = 259
+      Width = 65
+      Height = 21
+      TabOrder = 16
+    end
+    object edtUnMedida: TComboBox
+      Left = 643
+      Top = 203
+      Width = 66
+      Height = 21
+      TabOrder = 17
+    end
   end
   object edtNrPedido: TEdit
-    Left = 233
+    Left = 191
     Top = 31
     Width = 105
     Height = 21
@@ -226,32 +394,35 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     TabOrder = 1
   end
   object edtCdCliente: TEdit
-    Left = 133
+    Left = 88
     Top = 87
-    Width = 87
+    Width = 65
     Height = 21
+    Enabled = False
     ReadOnly = True
     TabOrder = 2
   end
   object edtNomeCliente: TEdit
-    Left = 263
+    Left = 191
     Top = 87
     Width = 329
     Height = 21
+    Enabled = False
     ReadOnly = True
     TabOrder = 3
   end
   object edtCidadeCliente: TEdit
-    Left = 674
+    Left = 552
     Top = 87
-    Width = 329
+    Width = 361
     Height = 21
+    Enabled = False
     ReadOnly = True
     TabOrder = 4
   end
   object edtNomeFormaPgto: TEdit
-    Left = 263
-    Top = 169
+    Left = 191
+    Top = 149
     Width = 329
     Height = 21
     Enabled = False
@@ -259,7 +430,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     TabOrder = 5
   end
   object edtFl_orcamento: TCheckBox
-    Left = 384
+    Left = 344
     Top = 33
     Width = 73
     Height = 17
@@ -270,16 +441,16 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     Aggregates = <>
     Params = <>
     Left = 328
-    Top = 352
+    Top = 416
   end
   object DataSource1: TDataSource
     DataSet = sqlCarregaPedidoVenda
     Left = 248
-    Top = 352
+    Top = 416
   end
   object sqlCarregaPedidoVenda: TFDQuery
     Connection = frmConexao.conexao
-    Left = 440
-    Top = 352
+    Left = 432
+    Top = 416
   end
 end

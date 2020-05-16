@@ -20,7 +20,8 @@ uses
   Vcl.Themes,
   Vcl.Styles,
   uDataModule in 'uDataModule.pas' {dm: TDataModule},
-  uEdicaoPedidoVenda in 'uEdicaoPedidoVenda.pas' {frm_Edicao_Pedido_Venda};
+  uEdicaoPedidoVenda in 'uEdicaoPedidoVenda.pas' {frm_Edicao_Pedido_Venda},
+  uConfiguracoes in 'uConfiguracoes.pas' {frmConfiguracoes};
 
 {$R *.res}
 
@@ -30,6 +31,7 @@ begin
   Application.CreateForm(Tfrm_Login, frm_Login);
   Application.CreateForm(TfrmConexao, frmConexao);
   Application.CreateForm(Tdm, dm);
+  Application.CreateForm(TfrmConfiguracoes, frmConfiguracoes);
   Application.Run;
 
 end.

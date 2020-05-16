@@ -104,6 +104,10 @@ object frm_Principal: Tfrm_Principal
     end
     object Sistem1: TMenuItem
       Caption = 'Sistema'
+      object Configuraes1: TMenuItem
+        Caption = 'Configura'#231#245'es'
+        OnClick = Configuraes1Click
+      end
       object Sair1: TMenuItem
         Caption = 'Sair'
         OnClick = Sair1Click

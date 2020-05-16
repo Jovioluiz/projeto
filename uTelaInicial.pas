@@ -13,7 +13,8 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, UfrmRelVendaDiaria,
-  uLancamentoNotaEntrada, uCadastroTributacaoItem, Vcl.ComCtrls, uLogin, uConsultaProduto;
+  uLancamentoNotaEntrada, uCadastroTributacaoItem, Vcl.ComCtrls, uLogin, uConsultaProduto,
+  uConfiguracoes;
 
 type
   Tfrm_Principal = class(TForm)
@@ -40,6 +41,7 @@ type
     StatusBar1: TStatusBar;
     Timer1: TTimer;
     Produtos1: TMenuItem;
+    Configuraes1: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -56,6 +58,7 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Produtos1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Configuraes1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -93,6 +96,12 @@ procedure Tfrm_Principal.CondicaoPagamento1Click(Sender: TObject);
 begin
   frmCadCondPgto := TfrmCadCondPgto.Create(Self);
   frmCadCondPgto.Show;
+end;
+
+procedure Tfrm_Principal.Configuraes1Click(Sender: TObject);
+begin
+  frmConfiguracoes := TfrmConfiguracoes.Create(Self);
+  frmConfiguracoes.ShowModal;
 end;
 
 procedure Tfrm_Principal.FormaPagamento1Click(Sender: TObject);

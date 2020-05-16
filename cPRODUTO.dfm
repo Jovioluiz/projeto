@@ -1353,6 +1353,7 @@ object frmCadProduto: TfrmCadProduto
         Top = 207
         Width = 277
         Height = 244
+        OnMouseDown = imagemMouseDown
       end
       object Label13: TLabel
         Left = 424

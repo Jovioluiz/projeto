@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Datasnap.DBClient, Vcl.StdCtrls,
-  Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, System.UITypes;
+  Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, System.UITypes, Vcl.Mask, Vcl.Buttons;
 
 type
   Tfrm_Edicao_Pedido_Venda = class(TForm)
@@ -39,6 +39,28 @@ type
     ClientDataSet1: TClientDataSet;
     DataSource1: TDataSource;
     sqlCarregaPedidoVenda: TFDQuery;
+    edtDataEmissao: TMaskEdit;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label19: TLabel;
+    edtCdProduto: TEdit;
+    edtNomeProduto: TEdit;
+    edtQtdade: TEdit;
+    edtTabelaPreco: TEdit;
+    edtDescTabPreco: TEdit;
+    edtVlUnitario: TEdit;
+    edtVlDesconto: TEdit;
+    edtVlTotal: TEdit;
+    edtUnMedida: TComboBox;
+    SpeedButton1: TSpeedButton;
+    btnConfirmar: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -55,7 +77,7 @@ implementation
 
 {$R *.dfm}
 
-uses uVisualizaPedidoVenda;
+uses uVisualizaPedidoVenda, uConfiguracoes;
 
 procedure Tfrm_Edicao_Pedido_Venda.btnCancelarClick(Sender: TObject);
 begin
@@ -73,84 +95,98 @@ end;
 
 procedure Tfrm_Edicao_Pedido_Venda.FormCreate(Sender: TObject);
 var tempC, tempU : String;
+edicao : TfrmConfiguracoes;
 begin
-  sqlCarregaPedidoVenda.Close;
-  sqlCarregaPedidoVenda.SQL.Text := 'select ' +
-                                          'pv.fl_orcamento, '+
-                                          'pv.cd_cliente, '+
-                                          'c.nome, '+
-                                          'e.cidade, '+
-                                          'e.uf, '+
-                                          'pv.cd_forma_pag, '+
-                                          'cfp.nm_forma_pag, '+
-                                          'pv.cd_cond_pag,    '+
-                                          'ccp.nm_cond_pag,    '+
-                                          'pvi.cd_produto,      '+
-                                          'p.desc_produto,         '+
-                                          'pvi.qtd_venda,          '+
-                                          'pvi.cd_tabela_preco,    '+
-                                          'p.un_medida,            '+
-                                          'pvi.vl_unitario,        '+
-                                          'pvi.vl_desconto,        '+
-                                          'pvi.vl_total_item,      '+
-                                          'pv.vl_desconto_pedido,         '+
-                                          'pv.vl_acrescimo,                     '+
-                                          'pv.vl_total                          '+
-                                      'from                                     '+
-                                       '   pedido_venda pv                      '+
-                                      'join pedido_venda_item pvi on            '+
-                                       '   pv.id_geral = pvi.id_pedido_venda    '+
-                                       'join cta_forma_pagamento cfp on          '+
-                                          'pv.cd_forma_pag = cfp.cd_forma_pag    '+
-                                      'join cta_cond_pagamento ccp on            '+
-                                          'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento '+
-                                      'join cliente c on                        '+
-                                       '   pv.cd_cliente = c.cd_cliente         '+
-                                       'join endereco e on '+
-                                          'c.cd_cliente = e.cd_cliente '+
-                                      'join produto p on                        '+
-                                       '   pvi.cd_produto = p.cd_produto        '+
-                                      'where                                    '+
-                                       '   pv.nr_pedido = :nr_pedido            ';
+  try
+    edicao := TfrmConfiguracoes.Create(Self);
+    sqlCarregaPedidoVenda.Close;
+    sqlCarregaPedidoVenda.SQL.Text := 'select ' +
+                                            'pv.nr_pedido,    '+
+                                            'pv.fl_orcamento, '+
+                                            'pv.cd_cliente, '+
+                                            'c.nome, '+
+                                            'e.cidade, '+
+                                            'e.uf, '+
+                                            'pv.cd_forma_pag, '+
+                                            'cfp.nm_forma_pag, '+
+                                            'pv.cd_cond_pag,    '+
+                                            'ccp.nm_cond_pag,    '+
+                                            'pvi.cd_produto,      '+
+                                            'p.desc_produto,         '+
+                                            'pvi.qtd_venda,          '+
+                                            'pvi.cd_tabela_preco,    '+
+                                            'p.un_medida,            '+
+                                            'pvi.vl_unitario,        '+
+                                            'pvi.vl_desconto,        '+
+                                            'pvi.vl_total_item,      '+
+                                            'pv.vl_desconto_pedido,         '+
+                                            'pv.vl_acrescimo,                     '+
+                                            'pv.vl_total                          '+
+                                        'from                                     '+
+                                         '   pedido_venda pv                      '+
+                                        'join pedido_venda_item pvi on            '+
+                                         '   pv.id_geral = pvi.id_pedido_venda    '+
+                                         'join cta_forma_pagamento cfp on          '+
+                                            'pv.cd_forma_pag = cfp.cd_forma_pag    '+
+                                        'join cta_cond_pagamento ccp on            '+
+                                            'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento '+
+                                        'join cliente c on                        '+
+                                         '   pv.cd_cliente = c.cd_cliente         '+
+                                         'join endereco e on '+
+                                            'c.cd_cliente = e.cd_cliente '+
+                                        'join produto p on                        '+
+                                         '   pvi.cd_produto = p.cd_produto        '+
+                                        'where                                    '+
+                                         '   pv.nr_pedido = :nr_pedido            ';
 
-  //como trazer o numero do pedido?
-  sqlCarregaPedidoVenda.ParamByName('nr_pedido').AsInteger := StrToInt(uVisualizaPedidoVenda.frmVisualizaPedidoVenda.edtNrPedido.Text);
-  //sqlCarregaPedidoVenda.ParamByName('nr_pedido').AsInteger := StrToInt(uVisualizaPedidoVenda.frmVisualizaPedidoVenda.edtNrPedido.Text);
-  sqlCarregaPedidoVenda.Open();
-  //edtNrPedido.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('nr_pedido').AsInteger);
-  edtFl_orcamento.Checked := sqlCarregaPedidoVenda.FieldByName('fl_orcamento').AsBoolean;
-  edtCdCliente.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('cd_cliente').AsInteger);
-  edtNomeCliente.Text := sqlCarregaPedidoVenda.FieldByName('nome').AsString;
-  tempC := sqlCarregaPedidoVenda.FieldByName('cidade').Text;
-  tempU := sqlCarregaPedidoVenda.FieldByName('uf').Text;
-  edtCidadeCliente.Text := Concat(tempC + ' / ' + tempU);
-  edtCdFormaPgto.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('cd_forma_pag').AsInteger);
-  edtNomeFormaPgto.Text := sqlCarregaPedidoVenda.FieldByName('nm_forma_pag').AsString;
-  edtCdCondPgto.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('cd_cond_pag').AsInteger);
-  edtNomeCondPgto.Text := sqlCarregaPedidoVenda.FieldByName('nm_cond_pag').AsString;
+    //como trazer o numero do pedido?
+    sqlCarregaPedidoVenda.ParamByName('nr_pedido').AsInteger := StrToInt(uVisualizaPedidoVenda.frmVisualizaPedidoVenda.edtNrPedido.Text);
+    //sqlCarregaPedidoVenda.ParamByName('nr_pedido').AsInteger := StrToInt(uVisualizaPedidoVenda.frmVisualizaPedidoVenda.edtNrPedido.Text);
+    sqlCarregaPedidoVenda.Open();
+    edtNrPedido.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('nr_pedido').AsInteger);
+    edtFl_orcamento.Checked := sqlCarregaPedidoVenda.FieldByName('fl_orcamento').AsBoolean;
+    if edicao.rgEditaClientePV.ItemIndex = 0 then
+      begin
+        edtCdCliente.Enabled := True;
+      end;
 
-  edtVlDescTotalPedido.Text := CurrToStr(sqlCarregaPedidoVenda.FieldByName('vl_desconto_pedido').AsCurrency);
-  edtVlAcrescimoTotalPedido.Text := CurrToStr(sqlCarregaPedidoVenda.FieldByName('vl_acrescimo').AsCurrency);
-  edtVlTotalPedido.Text := CurrToStr(sqlCarregaPedidoVenda.FieldByName('vl_total').AsCurrency);
+    edtCdCliente.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('cd_cliente').AsInteger);
+    edtNomeCliente.Text := sqlCarregaPedidoVenda.FieldByName('nome').AsString;
+    tempC := sqlCarregaPedidoVenda.FieldByName('cidade').Text;
+    tempU := sqlCarregaPedidoVenda.FieldByName('uf').Text;
+    edtCidadeCliente.Text := Concat(tempC + ' / ' + tempU);
+    edtCdFormaPgto.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('cd_forma_pag').AsInteger);
+    edtNomeFormaPgto.Text := sqlCarregaPedidoVenda.FieldByName('nm_forma_pag').AsString;
+    edtCdCondPgto.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('cd_cond_pag').AsInteger);
+    edtNomeCondPgto.Text := sqlCarregaPedidoVenda.FieldByName('nm_cond_pag').AsString;
 
-  //lista os itens do pedido
-  dbGridProdutos.DataSource := DataSource1;
-  dbGridProdutos.Columns[0].Title.Caption := 'Cód. Produto';
-  dbGridProdutos.Columns[0].FieldName := 'cd_produto';
-  dbGridProdutos.Columns[1].Title.Caption := 'Descricao';
-  dbGridProdutos.Columns[1].FieldName := 'desc_produto';
-  dbGridProdutos.Columns[2].Title.Caption := 'Qtdade';
-  dbGridProdutos.Columns[2].FieldName := 'qtd_venda';
-  dbGridProdutos.Columns[3].Title.Caption := 'Tabela Preço';
-  dbGridProdutos.Columns[3].FieldName := 'cd_tabela_preco';
-  dbGridProdutos.Columns[4].Title.Caption := 'UN Medida';
-  dbGridProdutos.Columns[4].FieldName := 'un_medida';
-  dbGridProdutos.Columns[5].Title.Caption := 'Valor Unitário';
-  dbGridProdutos.Columns[5].FieldName := 'vl_unitario';
-  dbGridProdutos.Columns[6].Title.Caption := 'Valor Desconto';
-  dbGridProdutos.Columns[6].FieldName := 'vl_desconto';
-  dbGridProdutos.Columns[7].Title.Caption := 'Valor Total';
-  dbGridProdutos.Columns[7].FieldName := 'vl_total_item';
+    edtVlDescTotalPedido.Text := CurrToStr(sqlCarregaPedidoVenda.FieldByName('vl_desconto_pedido').AsCurrency);
+    edtVlAcrescimoTotalPedido.Text := CurrToStr(sqlCarregaPedidoVenda.FieldByName('vl_acrescimo').AsCurrency);
+    edtVlTotalPedido.Text := CurrToStr(sqlCarregaPedidoVenda.FieldByName('vl_total').AsCurrency);
+    edtDataEmissao.Text := DateToStr(Date());
+
+    //lista os itens do pedido
+    dbGridProdutos.DataSource := DataSource1;
+    dbGridProdutos.Columns[0].Title.Caption := 'Cód. Produto';
+    dbGridProdutos.Columns[0].FieldName := 'cd_produto';
+    dbGridProdutos.Columns[1].Title.Caption := 'Descricao';
+    dbGridProdutos.Columns[1].FieldName := 'desc_produto';
+    dbGridProdutos.Columns[2].Title.Caption := 'Qtdade';
+    dbGridProdutos.Columns[2].FieldName := 'qtd_venda';
+    dbGridProdutos.Columns[3].Title.Caption := 'Tabela Preço';
+    dbGridProdutos.Columns[3].FieldName := 'cd_tabela_preco';
+    dbGridProdutos.Columns[4].Title.Caption := 'UN Medida';
+    dbGridProdutos.Columns[4].FieldName := 'un_medida';
+    dbGridProdutos.Columns[5].Title.Caption := 'Valor Unitário';
+    dbGridProdutos.Columns[5].FieldName := 'vl_unitario';
+    dbGridProdutos.Columns[6].Title.Caption := 'Valor Desconto';
+    dbGridProdutos.Columns[6].FieldName := 'vl_desconto';
+    dbGridProdutos.Columns[7].Title.Caption := 'Valor Total';
+    dbGridProdutos.Columns[7].FieldName := 'vl_total_item';
+
+  finally
+    edicao.Free;
+  end;
 end;
 
 end.
