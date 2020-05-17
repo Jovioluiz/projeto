@@ -195,6 +195,16 @@ begin
                                           'pvi.vl_unitario,                               '+
                                           'pvi.vl_desconto,                               '+
                                           'pvi.vl_total_item,                             '+
+                                          'pvi.vl_total_item as icms_vl_base,             '+
+                                          'pvi.icms_pc_aliq,                              '+
+                                          '((pvi.vl_total_item * pvi.icms_pc_aliq) / 100) as icms_valor, '+
+                                          'pvi.vl_total_item as ipi_vl_base,              '+
+                                          'pvi.ipi_pc_aliq,                               '+
+                                          '((pvi.vl_total_item * pvi.ipi_pc_aliq) / 100) as ipi_valor,   '+
+                                          'pvi.vl_total_item as pis_cofins_vl_base,       '+
+                                          'pvi.pis_cofins_pc_aliq,                        '+
+                                          '((pvi.vl_total_item * pvi.pis_cofins_pc_aliq) / 100) as pis_cofins_valor, '+
+                                          'pvi.vl_total_item,                             '+
                                           'pv.vl_desconto_pedido,                         '+
                                           'pv.vl_acrescimo,                               '+
                                           'pv.vl_total                                    '+
@@ -268,6 +278,24 @@ else
     dbGridProdutos.Columns[6].FieldName := 'vl_desconto';
     dbGridProdutos.Columns[7].Title.Caption := 'Valor Total';
     dbGridProdutos.Columns[7].FieldName := 'vl_total_item';
+    dbGridProdutos.Columns[8].Title.Caption := 'Valor Base ICMS';
+    dbGridProdutos.Columns[8].FieldName := 'icms_vl_base';
+    dbGridProdutos.Columns[9].Title.Caption := 'Aliq ICMS';
+    dbGridProdutos.Columns[9].FieldName := 'icms_pc_aliq';
+    dbGridProdutos.Columns[10].Title.Caption := 'Valor ICMS';
+    dbGridProdutos.Columns[10].FieldName := 'icms_valor';
+    dbGridProdutos.Columns[11].Title.Caption := 'Valor Base IPI';
+    dbGridProdutos.Columns[11].FieldName := 'ipi_vl_base';
+    dbGridProdutos.Columns[12].Title.Caption := 'Aliq IPI';
+    dbGridProdutos.Columns[12].FieldName := 'ipi_pc_aliq';
+    dbGridProdutos.Columns[13].Title.Caption := 'Valor IPI';
+    dbGridProdutos.Columns[13].FieldName := 'ipi_valor';
+    dbGridProdutos.Columns[14].Title.Caption := 'Valor Base PIS/COFINS';
+    dbGridProdutos.Columns[14].FieldName := 'pis_cofins_vl_base';
+    dbGridProdutos.Columns[15].Title.Caption := 'Aliq PIS/COFINS';
+    dbGridProdutos.Columns[15].FieldName := 'pis_cofins_pc_aliq';
+    dbGridProdutos.Columns[16].Title.Caption := 'Valor PIS/COFINS';
+    dbGridProdutos.Columns[16].FieldName := 'pis_cofins_valor';
   end;
 end;
 

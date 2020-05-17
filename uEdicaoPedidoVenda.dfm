@@ -16,6 +16,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -26,8 +27,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     Align = alClient
     BorderStyle = bsSingle
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitWidth = 1035
     object Label1: TLabel
       Left = 86
       Top = 32
@@ -220,6 +219,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnDblClick = dbGridProdutosDblClick
       Columns = <
         item
           Expanded = False
@@ -274,6 +274,60 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
           FieldName = 'Valor Total'
           ReadOnly = True
           Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Base ICMS '
+          Width = 85
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq ICMS'
+          Width = 53
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq ICMS'
+          Width = 52
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Base IPI'
+          Width = 76
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq IPI'
+          Width = 48
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor IPI'
+          Width = 48
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Base PIS/COFINS'
+          Width = 120
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq PIS/COFINS'
+          Width = 85
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor PIS/COFINS'
+          Width = 91
+          Visible = True
         end>
     end
     object edtVlDescTotalPedido: TEdit
@@ -325,6 +379,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 65
       Height = 21
       TabOrder = 9
+      OnChange = edtCdProdutoChange
     end
     object edtNomeProduto: TEdit
       Left = 189
@@ -347,6 +402,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 65
       Height = 21
       TabOrder = 12
+      OnChange = edtTabelaPrecoChange
     end
     object edtDescTabPreco: TEdit
       Left = 189

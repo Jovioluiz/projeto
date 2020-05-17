@@ -132,6 +132,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       Width = 873
       Height = 321
       DataSource = DataSource1
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 7
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -158,7 +159,6 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
         item
           Expanded = False
           FieldName = 'Qtdade'
-          ReadOnly = True
           Visible = True
         end
         item
@@ -192,6 +192,57 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
           Expanded = False
           FieldName = 'Valor Total'
           ReadOnly = True
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Base ICMS '
+          Width = 92
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq ICMS'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor ICMS'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Base IPI'
+          Width = 81
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq IPI'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor IPI'
+          Width = 58
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor Base PIS/COFINS'
+          Width = 124
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq PIS/COFINS'
+          Width = 86
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor PIS/COFINS'
+          Width = 96
           Visible = True
         end>
     end

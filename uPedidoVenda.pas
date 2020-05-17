@@ -898,14 +898,12 @@ begin
   edtDataEmissao.Text := DateToStr(Date());
 end;
 
-
-//passa pelos campos com enter (não tá funcionando)
 procedure TfrmPedidoVenda.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
     begin
       Key := #0;
-       Perform(WM_NEXTDLGCTL,0,0)
+      Perform(WM_NEXTDLGCTL,0,0)
     end;
 end;
 
