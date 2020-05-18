@@ -160,7 +160,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Height = 13
       Caption = 'Valor Total'
     end
-    object SpeedButton1: TSpeedButton
+    object btnAdicionarItem: TSpeedButton
       Left = 801
       Top = 259
       Width = 63
@@ -172,6 +172,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      OnClick = btnAdicionarItemClick
     end
     object btnConfirmar: TSpeedButton
       Left = 715
@@ -185,7 +186,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Top = 147
       Width = 65
       Height = 21
-      Enabled = False
       ReadOnly = True
       TabOrder = 1
     end
@@ -194,7 +194,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Top = 147
       Width = 87
       Height = 21
-      Enabled = False
       ReadOnly = True
       TabOrder = 2
     end
@@ -213,7 +212,8 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 825
       Height = 281
       DataSource = DataSource1
-      TabOrder = 7
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      TabOrder = 14
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
@@ -244,15 +244,15 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
         end
         item
           Expanded = False
-          FieldName = 'Tabela Pre'#231'o'
+          FieldName = 'UN Medida'
           ReadOnly = True
-          Width = 70
           Visible = True
         end
         item
           Expanded = False
-          FieldName = 'UN Medida'
+          FieldName = 'Tabela Pre'#231'o'
           ReadOnly = True
+          Width = 70
           Visible = True
         end
         item
@@ -336,7 +336,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 61
       Height = 21
       ReadOnly = True
-      TabOrder = 3
+      TabOrder = 10
     end
     object edtVlAcrescimoTotalPedido: TEdit
       Left = 221
@@ -344,7 +344,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 61
       Height = 21
       ReadOnly = True
-      TabOrder = 4
+      TabOrder = 11
     end
     object edtVlTotalPedido: TEdit
       Left = 309
@@ -352,7 +352,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 61
       Height = 21
       ReadOnly = True
-      TabOrder = 5
+      TabOrder = 13
     end
     object btnCancelar: TButton
       Left = 816
@@ -360,7 +360,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 95
       Height = 32
       Caption = 'Cancelar'
-      TabOrder = 6
+      TabOrder = 12
       OnClick = btnCancelarClick
     end
     object edtDataEmissao: TMaskEdit
@@ -370,7 +370,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Height = 21
       EditMask = '!99/99/0000;1;_'
       MaxLength = 10
-      TabOrder = 8
+      TabOrder = 15
       Text = '  /  /    '
     end
     object edtCdProduto: TEdit
@@ -378,7 +378,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Top = 203
       Width = 65
       Height = 21
-      TabOrder = 9
+      TabOrder = 3
       OnChange = edtCdProdutoChange
     end
     object edtNomeProduto: TEdit
@@ -387,21 +387,21 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 329
       Height = 21
       Enabled = False
-      TabOrder = 10
+      TabOrder = 16
     end
     object edtQtdade: TEdit
       Left = 550
       Top = 203
       Width = 65
       Height = 21
-      TabOrder = 11
+      TabOrder = 4
     end
     object edtTabelaPreco: TEdit
       Left = 86
       Top = 259
       Width = 65
       Height = 21
-      TabOrder = 12
+      TabOrder = 6
       OnChange = edtTabelaPrecoChange
     end
     object edtDescTabPreco: TEdit
@@ -410,35 +410,35 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 329
       Height = 21
       Enabled = False
-      TabOrder = 13
+      TabOrder = 17
     end
     object edtVlUnitario: TEdit
       Left = 550
       Top = 259
       Width = 65
       Height = 21
-      TabOrder = 14
+      TabOrder = 7
     end
     object edtVlDesconto: TEdit
       Left = 644
       Top = 259
       Width = 65
       Height = 21
-      TabOrder = 15
+      TabOrder = 8
     end
     object edtVlTotal: TEdit
       Left = 724
       Top = 259
       Width = 65
       Height = 21
-      TabOrder = 16
+      TabOrder = 9
     end
     object edtUnMedida: TComboBox
       Left = 643
       Top = 203
       Width = 66
       Height = 21
-      TabOrder = 17
+      TabOrder = 5
     end
   end
   object edtNrPedido: TEdit
@@ -447,16 +447,15 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     Width = 105
     Height = 21
     Enabled = False
-    TabOrder = 1
+    TabOrder = 2
   end
   object edtCdCliente: TEdit
     Left = 88
     Top = 87
     Width = 65
     Height = 21
-    Enabled = False
     ReadOnly = True
-    TabOrder = 2
+    TabOrder = 1
   end
   object edtNomeCliente: TEdit
     Left = 191
@@ -507,6 +506,11 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
   object sqlCarregaPedidoVenda: TFDQuery
     Connection = frmConexao.conexao
     Left = 432
+    Top = 416
+  end
+  object DataSource2: TDataSource
+    DataSet = ClientDataSet1
+    Left = 552
     Top = 416
   end
 end

@@ -179,7 +179,6 @@ begin
         ClientDataSet1.FieldByName('Valor Unitário').AsCurrency := StrToCurr(edtVlUnitario.Text);
         ClientDataSet1.FieldByName('Valor Desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
         ClientDataSet1.FieldByName('Valor Total').AsCurrency := StrToCurr(edtVlTotal.Text);
-        //ClientDataSet1.UpdateRecord;
       finally
         ClientDataSet1.Insert;
         edicaoItem := False;
@@ -212,8 +211,6 @@ begin
       ClientDataSet1.Post;
     end;
 
-
-    //ClientDataSet1.Refresh;
     //soma os valores totais dos itens e preenche o valor total do pedido
     vl_total_itens := 0;
     with ClientDataSet1 do
