@@ -543,7 +543,7 @@ if edtCdCliente.Text = EmptyStr then
                                         'e.uf '+
                                    'from '+
                                       'cliente c '+
-                                   'join endereco e on '+
+                                   'join endereco_cliente e on '+
                                       'c.cd_cliente = e.cd_cliente '+
                                    'where '+
                                       '(c.cd_cliente = :cd_cliente) and (c.fl_ativo = true)';

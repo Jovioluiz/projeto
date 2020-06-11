@@ -236,7 +236,7 @@ begin
                                           'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento  '+
                                       'join cliente c on                                  '+
                                        '   pv.cd_cliente = c.cd_cliente                   '+
-                                       'join endereco e on                                '+
+                                       'join endereco_cliente e on                        '+
                                           'c.cd_cliente = e.cd_cliente                    '+
                                       'join produto p on                                  '+
                                        '   pvi.cd_produto = p.cd_produto                  '+

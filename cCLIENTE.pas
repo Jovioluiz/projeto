@@ -28,7 +28,6 @@ type
     Label8: TLabel;
     Label9: TLabel;
     Label10: TLabel;
-    cbESTADO: TComboBox;
     edtCLIENTEENDERECO_BAIRRO: TEdit;
     edtCLIENTEENDERECO_CIDADE: TEdit;
     edtCLIENTEENDERECO_NUMERO: TEdit;
@@ -48,8 +47,11 @@ type
     btnSalvar: TSpeedButton;
     edtCLIENTEcd_cliente: TEdit;
     btnCancelarCadCliente: TSpeedButton;
-    SpeedButton1: TSpeedButton;
+    btnExcluir: TSpeedButton;
     btnCLIENTELimpar: TSpeedButton;
+    edtEstado: TEdit;
+    Label5: TLabel;
+    edtCep: TEdit;
     procedure pFormarCamposPessoa;
     procedure edtCLIENTETP_PESSOAClick(Sender: TObject);
     procedure btnCancelarCadClienteClick(Sender: TObject);
@@ -59,8 +61,10 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnSalvarClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
     procedure btnCLIENTELimparClick(Sender: TObject);
+    procedure edtCepExit(Sender: TObject);
+    procedure edtCLIENTECELULARExit(Sender: TObject);
   private
     { Private declarations }
     sql_seq : String;
@@ -108,7 +112,7 @@ begin
 end;
 
 
-procedure TfrmCadCliente.SpeedButton1Click(Sender: TObject);
+procedure TfrmCadCliente.btnExcluirClick(Sender: TObject);
 begin
   if (Application.MessageBox('Deseja Excluir o Cliente?','Atenção', MB_YESNO) = IDYES) then
     begin
@@ -183,7 +187,7 @@ begin
             sqlInsertCliente.ParamByName('tp_pessoa').AsString := 'J';
           end;
         end;
-        //sqlInsertCliente.ParamByName('tp_pessoa').AsString := edtCLIENTETP_PESSOA.ItemIndex.ToString;
+
         sqlInsertCliente.ParamByName('telefone').AsString := edtCLIENTEFONE.Text;
         sqlInsertCliente.ParamByName('celular').AsString := edtCLIENTECELULAR.Text;
         sqlInsertCliente.ParamByName('email').AsString := edtCLIENTEEMAIL.Text;
@@ -192,14 +196,15 @@ begin
         sqlInsertCliente.ParamByName('dt_nasc_fundacao').AsDate := StrToDate(edtCLIENTEDATANASCIMENTO.Text);
 
         sqlInsertEndereco.SQL.Text := 'update                           '+
-                                            'endereco                   '+
+                                            'endereco_cliente           '+
                                       'set                              '+
                                        '   cd_cliente = :cd_cliente,    '+
                                         '  logradouro = :logradouro,    '+
                                         '  num = :num,                  '+
                                         '  bairro = :bairro,            '+
                                         '  cidade = :cidade,            '+
-                                        '  uf = :uf                     '+
+                                        '  uf = :uf,                    '+
+                                        'cep = :cep                     '+
                                       'where                            '+
                                         '  cd_cliente = :cd_cliente';
 
@@ -208,7 +213,8 @@ begin
         sqlInsertEndereco.ParamByName('num').AsInteger := StrToInt(edtCLIENTEENDERECO_NUMERO.Text);
         sqlInsertEndereco.ParamByName('bairro').AsString := edtCLIENTEENDERECO_BAIRRO.Text;
         sqlInsertEndereco.ParamByName('cidade').AsString := edtCLIENTEENDERECO_CIDADE.Text;
-        sqlInsertEndereco.ParamByName('uf').AsString := cbESTADO.Text;
+        sqlInsertEndereco.ParamByName('uf').AsString := edtEstado.Text;
+        sqlInsertEndereco.ParamByName('cep').AsString := edtCep.Text;
 
         try
           sqlInsertCliente.ExecSQL;
@@ -256,7 +262,7 @@ begin
         sqlInsertCliente.ParamByName('fl_ativo').AsBoolean := edtCLIENTEFL_ATIVO.Checked;
         sqlInsertCliente.ParamByName('fl_fornecedor').AsBoolean := edtCLIENTEFL_FORNECEDOR.Checked;
         sqlInsertCliente.ParamByName('nome').AsString := edtCLIENTENM_CLIENTE.Text;
-        //tipo da pessoa tá gravando 0 - Fisica, 1 - Juridica
+        //tipo da pessoa tá gravando F - Fisica, J - Juridica
         case edtCLIENTETP_PESSOA.ItemIndex of
         0:
           begin
@@ -267,7 +273,7 @@ begin
             sqlInsertCliente.ParamByName('tp_pessoa').AsString := 'J';
           end;
         end;
-        //sqlInsertCliente.ParamByName('tp_pessoa').AsString := edtCLIENTETP_PESSOA.ItemIndex.ToString;
+
         sqlInsertCliente.ParamByName('telefone').AsString := edtCLIENTEFONE.Text;
         sqlInsertCliente.ParamByName('celular').AsString := edtCLIENTECELULAR.Text;
         sqlInsertCliente.ParamByName('email').AsString := edtCLIENTEEMAIL.Text;
@@ -278,25 +284,29 @@ begin
         sqlInsertEndereco.Close;
         sqlInsertEndereco.SQL.Text := 'insert                     '+
                                       '    into                   '+
-                                      '    endereco (cd_cliente,  '+
+                                      '    endereco_cliente       '+
+                                      '   (cd_cliente,            '+
                                       '    logradouro,            '+
                                       '    num,                   '+
                                       '    bairro,                '+
                                       '    cidade,                '+
-                                      '    uf)                    '+
+                                      '    uf,                    '+
+                                      '    cep)                   '+
                                       'values (:cd_cliente,       '+
                                       ':logradouro,               '+
                                       ':num,                      '+
                                       ':bairro,                   '+
                                       ':cidade,                   '+
-                                      ':uf)';
+                                      ':uf,                       '+
+                                      ':cep)';
 
         sqlInsertEndereco.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
         sqlInsertEndereco.ParamByName('logradouro').AsString := edtCLIENTEENDERECO_LOGRADOURO.Text;
         sqlInsertEndereco.ParamByName('num').AsInteger := StrToInt(edtCLIENTEENDERECO_NUMERO.Text);
         sqlInsertEndereco.ParamByName('bairro').AsString := edtCLIENTEENDERECO_BAIRRO.Text;
         sqlInsertEndereco.ParamByName('cidade').AsString := edtCLIENTEENDERECO_CIDADE.Text;
-        sqlInsertEndereco.ParamByName('uf').AsString := cbESTADO.Text;
+        sqlInsertEndereco.ParamByName('uf').AsString := edtEstado.Text;
+        sqlInsertEndereco.ParamByName('cep').AsString := edtCep.Text;
 
         try
           sqlInsertCliente.ExecSQL;
@@ -329,6 +339,46 @@ begin
     end;
 end;
 
+procedure TfrmCadCliente.edtCepExit(Sender: TObject);
+var sql : String;
+begin
+  inherited;
+  FDQuery1.Close;
+  FDQuery1.SQL.Text := 'select                                  '+
+                        '    e.endereco_logradouro,             '+
+                        '    b.bairro_descricao,                '+
+                        '    c.nm_cidade,                       '+
+                        '    es.uf                              '+
+                        '    from endereco e                    '+
+                        'join bairro b on                       '+
+                        '    e.bairro_codigo = b.bairro_codigo  '+
+                        'join cidade c on                       '+
+                        '    b.cidade_codigo = c.cd_cidade      '+
+                        'join estado es on                      '+
+                        '    c.uf = es.uf                       '+
+                        'where e.endereco_cep = :endereco_cep		';
+
+  FDQuery1.ParamByName('endereco_cep').AsString := edtCep.Text;
+
+  if not FDQuery1.IsEmpty then
+  begin
+    FDQuery1.Open();
+  end
+  else
+  begin
+    FDQuery1.SQL.Add('or c.cep = :cep limit 1');
+    FDQuery1.ParamByName('cep').AsString := edtCep.Text;
+    FDQuery1.SQL.Add(sql);
+    FDQuery1.Open();
+  end;
+
+  edtCLIENTEENDERECO_LOGRADOURO.Text := FDQuery1.FieldByName('endereco_logradouro').AsString;
+  edtCLIENTEENDERECO_BAIRRO.Text := FDQuery1.FieldByName('bairro_descricao').AsString;
+  edtCLIENTEENDERECO_CIDADE.Text := FDQuery1.FieldByName('nm_cidade').AsString;
+  edtEstado.Text := FDQuery1.FieldByName('uf').AsString;
+
+end;
+
 procedure TfrmCadCliente.edtCLIENTEcd_clienteExit(Sender: TObject);
 var
  sql_temp : String;
@@ -357,13 +407,28 @@ begin
       begin
         Close;
         SQL.Clear;
-        SQL.Add('select c.cd_cliente, nome,fl_ativo,tp_pessoa,'+
-                      'telefone,celular,email,cpf_cnpj,rg_ie,dt_nasc_fundacao,'+
-                      'logradouro,num,bairro,cidade,uf '+
-                      'from cliente c '+
-                      'join endereco e on '+
-                      'c.cd_cliente = e.cd_cliente '+
-                      'where c.cd_cliente = :cd_cliente');
+        SQL.Add('select '+
+                    'c.cd_cliente, '+
+                    'nome, '+
+                    'fl_ativo, '+
+                    'tp_pessoa,'+
+                    'telefone, '+
+                    'celular, '+
+                    'email, '+
+                    'cpf_cnpj, '+
+                    'rg_ie, '+
+                    'dt_nasc_fundacao,'+
+                    'logradouro, '+
+                    'num, '+
+                    'bairro, '+
+                    'cidade, '+
+                    'uf, '+
+                    'cep '+
+              'from '+
+                    'cliente c '+
+              'join endereco_cliente e on '+
+                    'c.cd_cliente = e.cd_cliente '+
+              'where c.cd_cliente = :cd_cliente');
         ParamByName('cd_cliente').Value := StrToInt(edtCLIENTEcd_cliente.Text);
 
         Open();
@@ -394,7 +459,6 @@ begin
               pFormarCamposPessoa;
             end;
             end;
-            //edtCLIENTETP_PESSOA.Items.Text := FieldByName('tp_pessoa').AsInteger;
             edtCLIENTEFONE.Text := FieldByName('telefone').AsString;
             edtCLIENTECELULAR.Text := FieldByName('celular').AsString;
             edtCLIENTEEMAIL.Text := FieldByName('email').AsString;
@@ -405,7 +469,8 @@ begin
             edtCLIENTEENDERECO_NUMERO.Text := IntToStr(FieldByName('num').AsInteger);
             edtCLIENTEENDERECO_BAIRRO.Text := FieldByName('bairro').AsString;
             edtCLIENTEENDERECO_CIDADE.Text := FieldByName('cidade').AsString;
-            cbESTADO.Text := FieldByName('uf').AsString;
+            edtEstado.Text := FieldByName('uf').AsString;
+            edtCep.Text := FieldByName('cep').AsString;
           end;
 
       end;
@@ -417,6 +482,12 @@ begin
 end;
 
 //valida se o cpf/cnpj é vazio
+procedure TfrmCadCliente.edtCLIENTECELULARExit(Sender: TObject);
+begin
+  inherited;
+  edtCep.SetFocus;
+end;
+
 procedure TfrmCadCliente.edtCLIENTECPF_CNPJExit(Sender: TObject);
 begin
   if edtCLIENTECPF_CNPJ.Text = '' then
@@ -464,11 +535,13 @@ begin
   edtCLIENTEENDERECO_BAIRRO.Clear;
   edtCLIENTEENDERECO_CIDADE.Clear;
   edtCLIENTEENDERECO_NUMERO.Clear;
-  edtCLIENTEFL_ATIVO.Checked := True;
+  edtCLIENTEFL_ATIVO.Checked := false;
+  edtCLIENTEFL_FORNECEDOR.Checked := false;
   edtCLIENTERG.Clear;
   edtCLIENTEDATANASCIMENTO.Clear;
   edtCLIENTEcd_cliente.SetFocus;
   edtCLIENTETP_PESSOA.ItemIndex := -1;
+  edtCep.Clear;
 end;
 
 end.

@@ -169,7 +169,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Left = 24
       Top = 72
       Width = 873
-      Height = 31
+      Height = 21
       CharCase = ecUpperCase
       TabOrder = 0
     end
@@ -205,11 +205,6 @@ object frmConsultaProdutos: TfrmConsultaProdutos
         end
         item
           Expanded = False
-          FieldName = 'Item'
-          Visible = True
-        end
-        item
-          Expanded = False
           FieldName = 'Quantidade'
           Visible = True
         end
@@ -235,7 +230,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     Aggregates = <>
     FieldDefs = <
       item
-        Name = 'ClientDataSet1Field2'
+        Name = 'Codigo'
       end>
     IndexDefs = <>
     Params = <>

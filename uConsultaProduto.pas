@@ -116,33 +116,34 @@ begin
 
   //edtPesquisa.Text := IntToStr(ClientDataSet1.FieldByName('Codigo').AsInteger);
   sqlUltEntrada.Close;
-  sqlUltEntrada.SQL.Text := 'select                              '+
-                                'nfc.dcto_numero,                '+
-                                'p.cd_produto,                   '+
-                                'nfc.cd_fornecedor,              '+
-                                'nfc.dt_lancamento,              '+
-                                'nfi.un_medida,                  '+
-                                'nfi.vl_unitario,                '+
-                                'nfi.qtd_estoque                 '+
-                            'from                                '+
-                            '    produto p                       '+
-                            'join nfi on                         '+
-                            '    p.cd_produto = nfi.cd_produto   '+
-                            'join nfc on                         '+
-                            '    nfc.id_geral = nfi.id_nfc       '+
-                            'where                               '+
-                            '    p.cd_produto in (               '+
-                            '    select                          '+
-                            '        nfi.cd_produto              '+
-                            '    from                            '+
-                            '        nfc                         '+
-                            '    join nfi on                     '+
-                            '        nfc.id_geral = nfi.id_nfc   '+
-                            '    where                           '+
-                            '        nfc.dcto_numero > 0         '+
+  sqlUltEntrada.SQL.Text := 'select                                  '+
+                            '    nfc.dcto_numero,                    '+
+                            '    c.nome as fornecedor,               '+
+                            '    nfc.dt_lancamento,                  '+
+                            '    nfi.un_medida,                      '+
+                            '    nfi.vl_unitario,                    '+
+                            '    nfi.qtd_estoque as quantidade       '+
+                            'from                                    '+
+                            '    produto p                           '+
+                            'join nfi on                             '+
+                            '    p.cd_produto = nfi.cd_produto       '+
+                            'join nfc on                             '+
+                            '    nfc.id_geral = nfi.id_nfc           '+
+                            'join cliente c on                       '+
+                            '    nfc.cd_fornecedor = c.cd_cliente    '+
+                            'where                                   '+
+                            '    p.cd_produto in (                   '+
+                            '    select                              '+
+                            '        nfi.cd_produto                  '+
+                            '    from                                '+
+                            '        nfc                             '+
+                            '    join nfi on                         '+
+                            '        nfc.id_geral = nfi.id_nfc       '+
+                            '    where                               '+
+                            '        nfc.dcto_numero > 0             '+
                             '        and p.cd_produto = :cd_produto)';
 
-  sqlUltEntrada.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Codigo').AsInteger;
+  sqlUltEntrada.ParamByName('cd_produto').AsInteger := StrToInt(dbGridProduto.Columns[0].Field.Text);
   sqlUltEntrada.Open();
 
   if sqlUltEntrada.IsEmpty then
@@ -155,17 +156,15 @@ begin
       dbGridUltimasEntradas.Columns[0].Title.Caption := 'Nota';
       dbGridUltimasEntradas.Columns[0].FieldName :=  'dcto_numero';
       dbGridUltimasEntradas.Columns[1].Title.Caption := 'Fornecedor';
-      dbGridUltimasEntradas.Columns[1].FieldName :=  'cd_fornecedor';
+      dbGridUltimasEntradas.Columns[1].FieldName :=  'fornecedor';
       dbGridUltimasEntradas.Columns[2].Title.Caption := 'Data Lançamento';
       dbGridUltimasEntradas.Columns[2].FieldName :=  'dt_lancamento';
-      dbGridUltimasEntradas.Columns[3].Title.Caption := 'Item';
-      dbGridUltimasEntradas.Columns[3].FieldName :=  'cd_produto';
-      dbGridUltimasEntradas.Columns[4].Title.Caption := 'Quantidade';
-      dbGridUltimasEntradas.Columns[4].FieldName :=  'qtd_estoque';
-      dbGridUltimasEntradas.Columns[5].Title.Caption := 'Valor Unitário';
-      dbGridUltimasEntradas.Columns[5].FieldName :=  'vl_unitario';
-      dbGridUltimasEntradas.Columns[6].Title.Caption := 'Un Medida';
-      dbGridUltimasEntradas.Columns[6].FieldName :=  'un_medida';
+      dbGridUltimasEntradas.Columns[3].Title.Caption := 'Quantidade';
+      dbGridUltimasEntradas.Columns[3].FieldName :=  'quantidade';
+      dbGridUltimasEntradas.Columns[4].Title.Caption := 'Valor Unitário';
+      dbGridUltimasEntradas.Columns[4].FieldName :=  'vl_unitario';
+      dbGridUltimasEntradas.Columns[5].Title.Caption := 'Un Medida';
+      dbGridUltimasEntradas.Columns[5].FieldName :=  'un_medida';
     end;
 end;
 

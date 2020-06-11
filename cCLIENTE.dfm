@@ -3,8 +3,8 @@ object frmCadCliente: TfrmCadCliente
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Cadastro de Cliente'
-  ClientHeight = 417
-  ClientWidth = 848
+  ClientHeight = 433
+  ClientWidth = 849
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,8 +21,8 @@ object frmCadCliente: TfrmCadCliente
   object tpCadCliente: TPanel
     Left = 0
     Top = 0
-    Width = 848
-    Height = 417
+    Width = 849
+    Height = 433
     Align = alClient
     TabOrder = 0
     object Label1: TLabel
@@ -83,7 +83,7 @@ object frmCadCliente: TfrmCadCliente
     end
     object btnSalvar: TSpeedButton
       Left = 330
-      Top = 349
+      Top = 373
       Width = 48
       Height = 48
       Hint = 'Salvar'
@@ -480,7 +480,7 @@ object frmCadCliente: TfrmCadCliente
     end
     object btnCancelarCadCliente: TSpeedButton
       Left = 513
-      Top = 349
+      Top = 373
       Width = 48
       Height = 48
       Hint = 'Fechar'
@@ -875,9 +875,9 @@ object frmCadCliente: TfrmCadCliente
       ShowHint = True
       OnClick = btnCancelarCadClienteClick
     end
-    object SpeedButton1: TSpeedButton
+    object btnExcluir: TSpeedButton
       Left = 452
-      Top = 349
+      Top = 373
       Width = 48
       Height = 48
       Hint = 'Excluir'
@@ -1102,11 +1102,11 @@ object frmCadCliente: TfrmCadCliente
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
       ParentShowHint = False
       ShowHint = True
-      OnClick = SpeedButton1Click
+      OnClick = btnExcluirClick
     end
     object btnCLIENTELimpar: TSpeedButton
       Left = 392
-      Top = 349
+      Top = 373
       Width = 48
       Height = 48
       Hint = 'Limpar Campos'
@@ -1339,107 +1339,95 @@ object frmCadCliente: TfrmCadCliente
       Width = 390
       Height = 21
       CharCase = ecUpperCase
-      TabOrder = 2
+      TabOrder = 4
     end
     object gbENDERECO: TGroupBox
-      Left = 8
+      Left = 7
       Top = 190
       Width = 820
-      Height = 153
+      Height = 177
       Caption = 'Endere'#231'o'
-      TabOrder = 9
+      TabOrder = 11
       object Label6: TLabel
-        Left = 16
-        Top = 32
+        Left = 41
+        Top = 56
         Width = 52
         Height = 13
         Caption = 'logradouro'
       end
       object Label7: TLabel
-        Left = 444
-        Top = 24
+        Left = 420
+        Top = 56
         Width = 37
         Height = 13
         Caption = 'Numero'
       end
       object Label8: TLabel
-        Left = 40
-        Top = 64
+        Left = 65
+        Top = 96
         Width = 28
         Height = 13
         Caption = 'Bairro'
       end
       object Label9: TLabel
-        Left = 35
-        Top = 96
+        Left = 60
+        Top = 144
         Width = 33
         Height = 13
         Caption = 'Cidade'
       end
       object Label10: TLabel
-        Left = 448
-        Top = 64
+        Left = 424
+        Top = 96
         Width = 33
         Height = 13
         Caption = 'Estado'
       end
-      object cbESTADO: TComboBox
-        Left = 505
-        Top = 64
-        Width = 73
-        Height = 21
-        TabOrder = 3
-        Items.Strings = (
-          'AC'
-          'AL'
-          'AP'
-          'AM'
-          'BA'
-          'CE'
-          'DF'
-          'ES'
-          'GO'
-          'MA'
-          'MT'
-          'MS'
-          'MG'
-          'PA'
-          'PB'
-          'PR'
-          'PE'
-          'PI'
-          'RJ'
-          'RN'
-          'RS'
-          'RO'
-          'RR'
-          'SC'
-          'SP'
-          'SE'
-          'TO')
+      object Label5: TLabel
+        Left = 74
+        Top = 24
+        Width = 19
+        Height = 13
+        Caption = 'CEP'
       end
       object edtCLIENTEENDERECO_BAIRRO: TEdit
-        Left = 136
-        Top = 64
+        Left = 115
+        Top = 96
         Width = 273
-        Height = 21
-        CharCase = ecUpperCase
-        TabOrder = 1
-      end
-      object edtCLIENTEENDERECO_CIDADE: TEdit
-        Left = 135
-        Top = 99
-        Width = 274
         Height = 21
         CharCase = ecUpperCase
         TabOrder = 2
       end
+      object edtCLIENTEENDERECO_CIDADE: TEdit
+        Left = 114
+        Top = 139
+        Width = 274
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 3
+      end
       object edtCLIENTEENDERECO_NUMERO: TEdit
-        Left = 505
-        Top = 24
+        Left = 480
+        Top = 56
         Width = 73
         Height = 21
+        TabOrder = 1
+      end
+      object edtEstado: TEdit
+        Left = 480
+        Top = 96
+        Width = 73
+        Height = 21
+        TabOrder = 4
+      end
+      object edtCep: TEdit
+        Left = 114
+        Top = 20
+        Width = 95
+        Height = 21
+        CharCase = ecUpperCase
         TabOrder = 0
+        OnExit = edtCepExit
       end
     end
     object edtCLIENTETP_PESSOA: TRadioGroup
@@ -1452,50 +1440,51 @@ object frmCadCliente: TfrmCadCliente
       Items.Strings = (
         'Pessoa Fisica     '
         'Pessoa Juridica')
-      TabOrder = 1
+      TabOrder = 3
       OnClick = edtCLIENTETP_PESSOAClick
     end
     object edtCLIENTEFONE: TMaskEdit
       Left = 605
       Top = 93
-      Width = 110
+      Width = 106
       Height = 21
-      EditMask = '!\(99\)0000-0000;1;_'
+      EditMask = '!\(99\)0000-0000;0;_'
       MaxLength = 13
-      TabOrder = 7
-      Text = '(  )    -    '
+      TabOrder = 9
+      Text = ''
     end
     object edtCLIENTECELULAR: TMaskEdit
       Left = 605
       Top = 120
-      Width = 118
+      Width = 114
       Height = 21
-      EditMask = '!\(99\)00000-0000;1;_'
+      EditMask = '!\(99\)00000-0000;0;_'
       MaxLength = 14
-      TabOrder = 8
-      Text = '(  )     -    '
+      TabOrder = 10
+      Text = ''
+      OnExit = edtCLIENTECELULARExit
     end
     object edtCLIENTEEMAIL: TEdit
       Left = 351
       Top = 93
       Width = 186
       Height = 21
-      TabOrder = 5
+      TabOrder = 7
     end
     object edtCLIENTEENDERECO_LOGRADOURO: TEdit
-      Left = 143
-      Top = 213
+      Left = 123
+      Top = 243
       Width = 273
       Height = 21
       CharCase = ecUpperCase
-      TabOrder = 10
+      TabOrder = 12
     end
     object edtCLIENTECPF_CNPJ: TMaskEdit
       Left = 131
       Top = 93
       Width = 112
       Height = 21
-      TabOrder = 3
+      TabOrder = 5
       Text = ''
       OnExit = edtCLIENTECPF_CNPJExit
     end
@@ -1504,7 +1493,7 @@ object frmCadCliente: TfrmCadCliente
       Top = 125
       Width = 119
       Height = 21
-      TabOrder = 4
+      TabOrder = 6
       OnExit = edtCLIENTERGExit
     end
     object edtCLIENTEDATANASCIMENTO: TMaskEdit
@@ -1514,7 +1503,7 @@ object frmCadCliente: TfrmCadCliente
       Height = 21
       EditMask = '!99/99/0000;1;_'
       MaxLength = 10
-      TabOrder = 6
+      TabOrder = 8
       Text = '  /  /    '
     end
     object edtCLIENTEFL_FORNECEDOR: TCheckBox
@@ -1523,7 +1512,7 @@ object frmCadCliente: TfrmCadCliente
       Width = 97
       Height = 17
       Caption = 'Fornecedor'
-      TabOrder = 11
+      TabOrder = 2
     end
     object edtCLIENTEFL_ATIVO: TCheckBox
       Left = 272
@@ -1531,7 +1520,7 @@ object frmCadCliente: TfrmCadCliente
       Width = 90
       Height = 17
       Caption = 'Ativo'
-      TabOrder = 12
+      TabOrder = 1
     end
     object edtCLIENTEcd_cliente: TEdit
       Left = 131
