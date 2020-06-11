@@ -176,7 +176,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     object dbGridUltimasEntradas: TDBGrid
       Left = 24
       Top = 487
-      Width = 665
+      Width = 593
       Height = 120
       DataSource = DataSourceUltEntradas
       TabOrder = 8

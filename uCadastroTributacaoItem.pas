@@ -46,6 +46,7 @@ type
     Label12: TLabel;
     comandoSQL: TFDQuery;
     comandoselect: TFDQuery;
+    btnLimpar: TButton;
     procedure btnSalvarClick(Sender: TObject);
     procedure edtCdGrupoTributacaoICMSExit(Sender: TObject);
     procedure edtCdGrupoTributacaoIPIExit(Sender: TObject);
@@ -53,8 +54,11 @@ type
     procedure edtCdGrupoTributacaoPISCOFINSExit(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure btnCancelarClick(Sender: TObject);
+    procedure btnLimparClick(Sender: TObject);
   private
     { Private declarations }
+    procedure limparCampos;
   public
     { Public declarations }
   end;
@@ -203,6 +207,32 @@ begin
     end;
 end;
 
+procedure TfrmCadastraTributacaoItem.limparCampos;
+begin
+  edtCdGrupoTributacaoICMS.Clear;
+  edtNomeGrupoTributacaoICMS.Clear;
+  edtAliqICMS.Clear;
+  edtCdGrupoTributacaoIPI.Clear;
+  edtNomeGrupoTributacaoIPI.Clear;
+  edtAliqIPI.Clear;
+  edtCdGrupoTributacaoISS.Clear;
+  edtNomeGrupoTributacaoISS.Clear;
+  edtAliqISS.Clear;
+  edtCdGrupoTributacaoPISCOFINS.Clear;
+  edtNomeGrupoTributacaoPISCOFINS.Clear;
+  edtAliqPISCOFINS.Clear;
+end;
+
+procedure TfrmCadastraTributacaoItem.btnCancelarClick(Sender: TObject);
+begin
+ Close;
+end;
+
+procedure TfrmCadastraTributacaoItem.btnLimparClick(Sender: TObject);
+begin
+  limparCampos;
+end;
+
 procedure TfrmCadastraTributacaoItem.btnSalvarClick(Sender: TObject);
 begin
   if TabSheetICMS.Showing = true then      //ICMS
@@ -225,12 +255,12 @@ begin
                                       'grupo_tributacao_icms           '+
                                   'set                                 '+
                                       'cd_tributacao = :cd_tributacao, '+
-                                      'nm_tributacao = :nm_tributacao, '+
+                                      'nm_tributacao_icms = :nm_tributacao_icms, '+
                                       'aliquota_icms = :aliquota_icms  '+
                                   'where                               '+
                                       'cd_tributacao = :cd_tributacao';
           comandoSQL.ParamByName('cd_tributacao').AsInteger := StrToInt(edtCdGrupoTributacaoICMS.Text);
-          comandoSQL.ParamByName('nm_tributacao').AsString := edtNomeGrupoTributacaoICMS.Text;
+          comandoSQL.ParamByName('nm_tributacao_icms').AsString := edtNomeGrupoTributacaoICMS.Text;
           comandoSQL.ParamByName('aliquota_icms').AsCurrency := StrToCurr(edtAliqICMS.Text);
 
          try
@@ -254,13 +284,13 @@ begin
           comandoSQL.SQL.Text := 'insert                                      '+
                                       'into                                   '+
                                       'grupo_tributacao_icms (cd_tributacao,  '+
-                                      'nm_tributacao,                         '+
+                                      'nm_tributacao_icms,                    '+
                                       'aliquota_icms)                         '+
                                   'values (:cd_tributacao,                    '+
-                                      ':nm_tributacao,                        '+
+                                      ':nm_tributacao_icms,                   '+
                                       ':aliquota_icms)';
           comandoSQL.ParamByName('cd_tributacao').AsInteger := StrToInt(edtCdGrupoTributacaoICMS.Text);
-          comandoSQL.ParamByName('nm_tributacao').AsString := edtNomeGrupoTributacaoICMS.Text;
+          comandoSQL.ParamByName('nm_tributacao_icms').AsString := edtNomeGrupoTributacaoICMS.Text;
           comandoSQL.ParamByName('aliquota_icms').AsCurrency := StrToCurr(edtAliqICMS.Text);
 
          try
@@ -299,12 +329,12 @@ begin
                                       'grupo_tributacao_ipi            '+
                                   'set                                 '+
                                       'cd_tributacao = :cd_tributacao, '+
-                                      'nm_tributacao = :nm_tributacao, '+
+                                      'nm_tributacao_ipi = :nm_tributacao_ipi, '+
                                       'aliquota_ipi = :aliquota_ipi    '+
                                   'where                               '+
                                       'cd_tributacao = :cd_tributacao';
           comandoSQL.ParamByName('cd_tributacao').AsInteger := StrToInt(edtCdGrupoTributacaoIPI.Text);
-          comandoSQL.ParamByName('nm_tributacao').AsString := edtNomeGrupoTributacaoIPI.Text;
+          comandoSQL.ParamByName('nm_tributacao_ipi').AsString := edtNomeGrupoTributacaoIPI.Text;
           comandoSQL.ParamByName('aliquota_ipi').AsCurrency := StrToCurr(edtAliqIPI.Text);
          try
            comandoSQL.ExecSQL;
@@ -327,13 +357,13 @@ begin
           comandoSQL.SQL.Text := 'insert                                    '+
                                       'into                                 '+
                                       'grupo_tributacao_ipi (cd_tributacao, '+
-                                      'nm_tributacao,                       '+
+                                      'nm_tributacao_ipi,                   '+
                                       'aliquota_ipi)                        '+
                                   'values (:cd_tributacao,                  '+
-                                      ':nm_tributacao,                      '+
+                                      ':nm_tributacao_ipi,                  '+
                                       ':aliquota_ipi)';
           comandoSQL.ParamByName('cd_tributacao').AsInteger := StrToInt(edtCdGrupoTributacaoIPI.Text);
-          comandoSQL.ParamByName('nm_tributacao').AsString := edtNomeGrupoTributacaoIPI.Text;
+          comandoSQL.ParamByName('nm_tributacao_ipi').AsString := edtNomeGrupoTributacaoIPI.Text;
           comandoSQL.ParamByName('aliquota_ipi').AsCurrency := StrToCurr(edtAliqIPI.Text);
 
          try
@@ -372,12 +402,12 @@ begin
                                       'grupo_tributacao_iss            '+
                                   'set                                 '+
                                       'cd_tributacao = :cd_tributacao, '+
-                                      'nm_tributacao = :nm_tributacao, '+
+                                      'nm_tributacao_iss = :nm_tributacao_iss, '+
                                       'aliquota_iss = :aliquota_iss    '+
                                   'where                               '+
                                       'cd_tributacao = :cd_tributacao';
           comandoSQL.ParamByName('cd_tributacao').AsInteger := StrToInt(edtCdGrupoTributacaoISS.Text);
-          comandoSQL.ParamByName('nm_tributacao').AsString := edtNomeGrupoTributacaoISS.Text;
+          comandoSQL.ParamByName('nm_tributacao_iss').AsString := edtNomeGrupoTributacaoISS.Text;
           comandoSQL.ParamByName('aliquota_iss').AsCurrency := StrToCurr(edtAliqISS.Text);
          try
            comandoSQL.ExecSQL;
@@ -400,13 +430,13 @@ begin
           comandoSQL.SQL.Text := 'insert                                    '+
                                       'into                                 '+
                                       'grupo_tributacao_iss (cd_tributacao, '+
-                                      'nm_tributacao,                       '+
+                                      'nm_tributacao_iss,                       '+
                                       'aliquota_iss)                        '+
                                   'values (:cd_tributacao,                  '+
-                                      ':nm_tributacao,                      '+
+                                      ':nm_tributacao_iss,                      '+
                                       ':aliquota_iss)';
           comandoSQL.ParamByName('cd_tributacao').AsInteger := StrToInt(edtCdGrupoTributacaoISS.Text);
-          comandoSQL.ParamByName('nm_tributacao').AsString := edtNomeGrupoTributacaoISS.Text;
+          comandoSQL.ParamByName('nm_tributacao_iss').AsString := edtNomeGrupoTributacaoISS.Text;
           comandoSQL.ParamByName('aliquota_iss').AsCurrency := StrToCurr(edtAliqISS.Text);
 
          try
@@ -445,12 +475,12 @@ begin
                                       'grupo_tributacao_pis_cofins                  '+
                                   'set                                              '+
                                       'cd_tributacao = :cd_tributacao,              '+
-                                      'nm_tributacao = :nm_tributacao,              '+
+                                      'nm_tributacao_pis_cofins = :nm_tributacao_pis_cofins,              '+
                                       'aliquota_pis_cofins = :aliquota_pis_cofins   '+
                                   'where                                            '+
                                       'cd_tributacao = :cd_tributacao';
           comandoSQL.ParamByName('cd_tributacao').AsInteger := StrToInt(edtCdGrupoTributacaoPISCOFINS.Text);
-          comandoSQL.ParamByName('nm_tributacao').AsString := edtNomeGrupoTributacaoPISCOFINS.Text;
+          comandoSQL.ParamByName('nm_tributacao_pis_cofins').AsString := edtNomeGrupoTributacaoPISCOFINS.Text;
           comandoSQL.ParamByName('aliquota_pis_cofins').AsCurrency := StrToCurr(edtAliqPISCOFINS.Text);
          try
            comandoSQL.ExecSQL;
@@ -473,13 +503,13 @@ begin
           comandoSQL.SQL.Text := 'insert                                          '+
                                       'into                                       '+
                                       'grupo_tributacao_pis_cofins (cd_tributacao,'+
-                                      'nm_tributacao,                             '+
+                                      'nm_tributacao_pis_cofins,                  '+
                                       'aliquota_pis_cofins)                       '+
                                   'values (:cd_tributacao,                        '+
-                                      ':nm_tributacao,                            '+
+                                      ':nm_tributacao_pis_cofins,                 '+
                                       ':aliquota_pis_cofins)';
           comandoSQL.ParamByName('cd_tributacao').AsInteger := StrToInt(edtCdGrupoTributacaoPISCOFINS.Text);
-          comandoSQL.ParamByName('nm_tributacao').AsString := edtNomeGrupoTributacaoPISCOFINS.Text;
+          comandoSQL.ParamByName('nm_tributacao_pis_cofins').AsString := edtNomeGrupoTributacaoPISCOFINS.Text;
           comandoSQL.ParamByName('aliquota_pis_cofins').AsCurrency := StrToCurr(edtAliqPISCOFINS.Text);
 
          try

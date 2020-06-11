@@ -1486,7 +1486,6 @@ object frmCadCliente: TfrmCadCliente
       Height = 21
       TabOrder = 5
       Text = ''
-      OnExit = edtCLIENTECPF_CNPJExit
     end
     object edtCLIENTERG: TEdit
       Left = 131
@@ -1494,7 +1493,6 @@ object frmCadCliente: TfrmCadCliente
       Width = 119
       Height = 21
       TabOrder = 6
-      OnExit = edtCLIENTERGExit
     end
     object edtCLIENTEDATANASCIMENTO: TMaskEdit
       Left = 351

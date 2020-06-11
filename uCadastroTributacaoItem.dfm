@@ -22,7 +22,7 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     Top = 16
     Width = 537
     Height = 161
-    ActivePage = TabSheetICMS
+    ActivePage = TabSheetIPI
     TabOrder = 2
     object TabSheetICMS: TTabSheet
       Caption = 'ICMS'
@@ -74,10 +74,6 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetIPI: TTabSheet
       Caption = 'IPI'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label6: TLabel
         Left = 15
         Top = 80
@@ -126,10 +122,6 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetISS: TTabSheet
       Caption = 'ISS'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label9: TLabel
         Left = 11
         Top = 16
@@ -178,10 +170,6 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetPISCOFINS: TTabSheet
       Caption = 'PIS/COFINS'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 11
         Top = 16
@@ -238,8 +226,8 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     SimplePanel = True
   end
   object btnSalvar: TButton
-    Left = 184
-    Top = 195
+    Left = 146
+    Top = 197
     Width = 75
     Height = 25
     Hint = 'Salvar Registro'
@@ -248,12 +236,22 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     OnClick = btnSalvarClick
   end
   object btnCancelar: TButton
-    Left = 280
-    Top = 195
+    Left = 320
+    Top = 197
     Width = 75
     Height = 25
     Caption = 'Cancelar'
     TabOrder = 1
+    OnClick = btnCancelarClick
+  end
+  object btnLimpar: TButton
+    Left = 231
+    Top = 197
+    Width = 75
+    Height = 25
+    Caption = 'Limpar'
+    TabOrder = 4
+    OnClick = btnLimparClick
   end
   object comandoSQL: TFDQuery
     Connection = frmConexao.conexao

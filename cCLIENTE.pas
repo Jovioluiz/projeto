@@ -55,8 +55,6 @@ type
     procedure pFormarCamposPessoa;
     procedure edtCLIENTETP_PESSOAClick(Sender: TObject);
     procedure btnCancelarCadClienteClick(Sender: TObject);
-    procedure edtCLIENTECPF_CNPJExit(Sender: TObject);
-    procedure edtCLIENTERGExit(Sender: TObject);
     procedure edtCLIENTEcd_clienteExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -68,9 +66,10 @@ type
   private
     { Private declarations }
     sql_seq : String;
+    procedure limpaCampos;
+    procedure validaCampos;
   public
     { Public declarations }
-    procedure limpaCampos;
   end;
 
 var
@@ -111,6 +110,12 @@ begin
     end;
 end;
 
+procedure TfrmCadCliente.validaCampos;
+begin
+ if (Trim(edtCLIENTEcd_cliente.Text) = '') and (Trim(edtCLIENTENM_CLIENTE.Text) = '') and
+    (Trim(edtCLIENTECPF_CNPJ.Text) = '') then
+    raise Exception.Create('Código, nome e CPF/CNPJ não podem ser vazios');
+end;
 
 procedure TfrmCadCliente.btnExcluirClick(Sender: TObject);
 begin
@@ -147,6 +152,8 @@ end;
 procedure TfrmCadCliente.btnSalvarClick(Sender: TObject);
 begin
   try
+    validaCampos;
+
     FDQuery1.Close;
     FDQuery1.SQL.Text := 'select        '+
                               '*        '+
@@ -481,24 +488,11 @@ begin
     end;
 end;
 
-//valida se o cpf/cnpj é vazio
+
 procedure TfrmCadCliente.edtCLIENTECELULARExit(Sender: TObject);
 begin
   inherited;
   edtCep.SetFocus;
-end;
-
-procedure TfrmCadCliente.edtCLIENTECPF_CNPJExit(Sender: TObject);
-begin
-  if edtCLIENTECPF_CNPJ.Text = '' then
-    raise Exception.Create('Campo não pode ser vazio');
-end;
-
-//valida se o rg/ie é vazio
-procedure TfrmCadCliente.edtCLIENTERGExit(Sender: TObject);
-begin
-  if edtCLIENTERG.Text = '' then
-    raise Exception.Create('Campo não pode ser Vazio');
 end;
 
 procedure TfrmCadCliente.edtCLIENTETP_PESSOAClick(Sender: TObject);

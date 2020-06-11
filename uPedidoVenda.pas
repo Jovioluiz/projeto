@@ -197,6 +197,8 @@ begin
       ClientDataSet1.FieldByName('Valor Desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
       ClientDataSet1.FieldByName('Valor Total').AsCurrency := StrToCurr(edtVlTotal.Text);
       //ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := ClientDataSet1.FieldByName('Valor Total').AsCurrency;
+      if aliq_icms = 0 then
+        ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := 0;
       ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := StrToCurr(edtVlTotal.Text);
       ClientDataSet1.FieldByName('Aliq ICMS').AsFloat := aliq_icms;
       ClientDataSet1.FieldByName('Valor ICMS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
@@ -689,6 +691,13 @@ end;
 
 procedure TfrmPedidoVenda.edtCdProdutoExit(Sender: TObject);
 begin
+{
+  if (not dbGridProdutos.DataSource.DataSet.IsEmpty) or (ClientDataSet1.State in [dsEdit]) then
+  begin
+    edtVlDescTotalPedido.SetFocus;
+  end;  }
+
+
  if sqlPedidoVendaProduto.IsEmpty then
   begin
     ShowMessage('Produto sem preço Cadastrado ou Inativo! Verifique');
@@ -779,7 +788,6 @@ procedure TfrmPedidoVenda.edtVlAcrescimoTotalPedidoExit(Sender: TObject);
 var
   vl_total_com_acrescimo, vl_acrescimo, vl_total_pedido, valor_total, valor_desconto : Currency;
 begin
-//fazer o calculo para adicionar o valor de acrescimo ao valor total do pedido
   if (edtVlAcrescimoTotalPedido.Text = '0') or (edtVlAcrescimoTotalPedido.Text = '0,00') then
     begin
       edtVlAcrescimoTotalPedido.Text := CurrToStr(0);
