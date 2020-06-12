@@ -714,9 +714,12 @@ begin
             end;
           sqlInsert.ParamByName('seq_item_nfi').AsInteger := ClientDataSet1.FieldByName('Sequencia').AsInteger;
 
+          sqlInsert.ExecSQL;
 
           //atualiza a qtd_estoque do produto na tabela produto
-          sqlUpdate.Close;
+          //a func_estoque_nota() atualiza o estoque na tabela produto
+
+          {sqlUpdate.Close;
           sqlUpdate.SQL.Text := 'select '+
                                     'qtd_estoque '+
                                 'from '+
@@ -734,9 +737,9 @@ begin
                                 'where cd_produto = :cd_produto';
           sqlUpdate.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
           sqlUpdate.ParamByName('qtd_estoque').AsCurrency := qt_total;
-          sqlUpdate.ExecSQL;
+          sqlUpdate.ExecSQL;  }
 
-          sqlInsert.ExecSQL;
+
           ClientDataSet1.Next;
         end;
 

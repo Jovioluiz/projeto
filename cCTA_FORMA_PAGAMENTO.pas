@@ -241,7 +241,7 @@ begin
   edtCTA_FORMA_PGTODESCRICAO.Clear;
   edtCTA_FORMA_PGTOFL_ATIVO.Checked := false;
   edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := -1;
-  edtCTA_FORMA_PGTOCODIGO.SetFocus;
+  //edtCTA_FORMA_PGTOCODIGO.SetFocus;
 end;
 
 end.

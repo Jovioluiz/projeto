@@ -23,6 +23,7 @@ uses
   uEdicaoPedidoVenda in 'uEdicaoPedidoVenda.pas' {frm_Edicao_Pedido_Venda},
   uConfiguracoes in 'uConfiguracoes.pas' {frmConfiguracoes},
   uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos};
+  //TestuLogin in 'Teste\TestuLogin.pas';
 
 {$R *.res}
 

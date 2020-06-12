@@ -3,8 +3,8 @@ object frmConsultaProdutos: TfrmConsultaProdutos
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Consulta de Produtos'
-  ClientHeight = 633
-  ClientWidth = 1045
+  ClientHeight = 821
+  ClientWidth = 1208
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,13 +22,15 @@ object frmConsultaProdutos: TfrmConsultaProdutos
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1045
-    Height = 633
+    Width = 1208
+    Height = 821
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 1045
+    ExplicitHeight = 633
     object Label1: TLabel
-      Left = 24
-      Top = 448
+      Left = 16
+      Top = 653
       Width = 96
       Height = 16
       Caption = #218'ltimas Entradas'
@@ -78,10 +80,10 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       TabOrder = 3
     end
     object dbGridProduto: TDBGrid
-      Left = 24
+      Left = 16
       Top = 150
-      Width = 1001
-      Height = 275
+      Width = 721
+      Height = 475
       DataSource = DataSource1
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 4
@@ -107,19 +109,19 @@ object frmConsultaProdutos: TfrmConsultaProdutos
         item
           Expanded = False
           FieldName = 'Un. medida'
-          Width = 70
+          Width = 58
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Fator Convers'#227'o'
-          Width = 92
+          Width = 85
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Qtdade Estoque'
-          Width = 85
+          Width = 81
           Visible = True
         end
         item
@@ -159,26 +161,29 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     end
     object StatusBar1: TStatusBar
       Left = 1
-      Top = 613
-      Width = 1043
+      Top = 801
+      Width = 1206
       Height = 19
       AutoHint = True
       Panels = <>
+      ExplicitTop = 613
+      ExplicitWidth = 1043
     end
     object edtPesquisa: TEdit
-      Left = 24
+      Left = 16
       Top = 72
-      Width = 873
-      Height = 21
+      Width = 881
+      Height = 31
       CharCase = ecUpperCase
       TabOrder = 0
     end
     object dbGridUltimasEntradas: TDBGrid
-      Left = 24
-      Top = 487
+      Left = 16
+      Top = 675
       Width = 593
       Height = 120
       DataSource = DataSourceUltEntradas
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 8
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -200,7 +205,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
         item
           Expanded = False
           FieldName = 'Data Lan'#231'amento'
-          Width = 100
+          Width = 90
           Visible = True
         end
         item
@@ -211,12 +216,50 @@ object frmConsultaProdutos: TfrmConsultaProdutos
         item
           Expanded = False
           FieldName = 'Valor Unit'#225'rio'
-          Width = 80
+          Width = 70
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Un Medida'
+          Visible = True
+        end>
+    end
+    object dbgriPrecos: TDBGrid
+      Left = 760
+      Top = 150
+      Width = 425
+      Height = 275
+      DataSource = dsPrecos
+      TabOrder = 9
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'Tabela'
+          Width = 40
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Desc. Tabela'
+          Width = 250
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Valor'
+          Width = 50
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Un. Medida'
+          Width = 57
           Visible = True
         end>
     end
@@ -249,8 +292,8 @@ object frmConsultaProdutos: TfrmConsultaProdutos
   end
   object DataSourceUltEntradas: TDataSource
     DataSet = sqlUltEntrada
-    Left = 72
-    Top = 536
+    Left = 104
+    Top = 728
   end
   object ClientDataSetUltEntradas: TClientDataSet
     Aggregates = <>
@@ -258,12 +301,28 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     IndexDefs = <>
     Params = <>
     StoreDefs = True
-    Left = 200
-    Top = 536
+    Left = 248
+    Top = 728
   end
   object sqlUltEntrada: TFDQuery
     Connection = frmConexao.conexao
-    Left = 312
-    Top = 536
+    Left = 336
+    Top = 720
+  end
+  object dsPrecos: TDataSource
+    DataSet = sqlPrecos
+    Left = 944
+    Top = 240
+  end
+  object cdPrecos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 1040
+    Top = 240
+  end
+  object sqlPrecos: TFDQuery
+    Connection = frmConexao.conexao
+    Left = 1112
+    Top = 240
   end
 end

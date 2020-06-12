@@ -30,6 +30,10 @@ type
     DataSourceUltEntradas: TDataSource;
     ClientDataSetUltEntradas: TClientDataSet;
     sqlUltEntrada: TFDQuery;
+    dbgriPrecos: TDBGrid;
+    dsPrecos: TDataSource;
+    cdPrecos: TClientDataSet;
+    sqlPrecos: TFDQuery;
     procedure btnPesquisarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -75,10 +79,10 @@ begin
     begin
       sqlConsulta.SQL.Add(' where cast(cd_produto as varchar) ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));
       sqlConsulta.SQL.Add(sql);
-      sqlConsulta.Open();
+      //sqlConsulta.Open();
     end;
   if edtDescricao.Checked then
-    sqlConsulta.SQL.Add(' where desc_produto ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));
+    sqlConsulta.SQL.Add(' or desc_produto ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));
   if edtAtivo.Checked then
     sqlConsulta.SQL.Add(' and fl_ativo = true');
   if edtEstoque.Checked then
@@ -105,16 +109,9 @@ begin
 
 end;
 
-
-{ não funciona
-
-  Ajustar para buscar os dados da última nota quando digitado o nome do produto
-}
 procedure TfrmConsultaProdutos.dbGridProdutoCellClick(Column: TColumn);
 begin
 //dados da última compra do item
-
-  //edtPesquisa.Text := IntToStr(ClientDataSet1.FieldByName('Codigo').AsInteger);
   sqlUltEntrada.Close;
   sqlUltEntrada.SQL.Text := 'select                                  '+
                             '    nfc.dcto_numero,                    '+
@@ -166,6 +163,39 @@ begin
       dbGridUltimasEntradas.Columns[5].Title.Caption := 'Un Medida';
       dbGridUltimasEntradas.Columns[5].FieldName :=  'un_medida';
     end;
+
+   sqlPrecos.Close;
+   sqlPrecos.SQL.Text := 'select                             '+
+                          '    tpp.cd_tabela,                '+
+                          '    tp.nm_tabela,                 '+
+                          '    tpp.valor,                    '+
+                          '    tpp.un_medida                 '+
+                          '    from tabela_preco_produto tpp '+
+                          'join tabela_preco tp on           '+
+                          '    tpp.cd_tabela = tp.cd_tabela  '+
+                          'where tpp.cd_produto = :cd_produto';
+   sqlPrecos.ParamByName('cd_produto').AsInteger := StrToInt(dbGridProduto.Columns[0].Field.Text);
+   sqlPrecos.Open();
+
+   if sqlPrecos.IsEmpty then
+   begin
+     dbgriPrecos.DataSource := nil;
+   end
+   else
+   begin
+     dbgriPrecos.DataSource := dsPrecos;
+     dbgriPrecos.Columns[0].Title.Caption := 'Tabela';
+     dbgriPrecos.Columns[0].FieldName := 'cd_tabela';
+     dbgriPrecos.Columns[1].Title.Caption := 'Desc. Tabela';
+     dbgriPrecos.Columns[1].FieldName := 'nm_tabela';
+     dbgriPrecos.Columns[2].Title.Caption := 'Valor';
+     dbgriPrecos.Columns[2].FieldName := 'valor';
+     dbgriPrecos.Columns[3].Title.Caption := 'Un. Medida';
+     dbgriPrecos.Columns[3].FieldName := 'un_medida';
+   end;
+
+
+
 end;
 
 procedure TfrmConsultaProdutos.FormClose(Sender: TObject;
@@ -179,6 +209,7 @@ procedure TfrmConsultaProdutos.FormCreate(Sender: TObject);
 begin
   inherited;
   edtCodigo.Checked := True;
+  edtDescricao.Checked := True;
   //edtPesquisa.SetFocus;
 end;
 

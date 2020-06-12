@@ -1332,7 +1332,6 @@ object frmCadFormaPagamento: TfrmCadFormaPagamento
     end
   end
   object sqlFormaPgto: TFDQuery
-    Connection = frmConexao.conexao
     Left = 384
     Top = 80
   end

@@ -1530,17 +1530,14 @@ object frmCadCliente: TfrmCadCliente
     end
   end
   object FDQuery1: TFDQuery
-    Connection = dm.FDConnection1
     Left = 760
     Top = 230
   end
   object sqlInsertCliente: TFDQuery
-    Connection = dm.FDConnection1
     Left = 752
     Top = 80
   end
   object sqlInsertEndereco: TFDQuery
-    Connection = dm.FDConnection1
     Left = 744
     Top = 136
   end
