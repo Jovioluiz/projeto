@@ -17,6 +17,7 @@ object frm_Principal: Tfrm_Principal
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
   object StatusBar1: TStatusBar

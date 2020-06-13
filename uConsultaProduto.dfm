@@ -26,8 +26,6 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     Height = 821
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 1045
-    ExplicitHeight = 633
     object Label1: TLabel
       Left = 16
       Top = 653
@@ -166,14 +164,12 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Height = 19
       AutoHint = True
       Panels = <>
-      ExplicitTop = 613
-      ExplicitWidth = 1043
     end
     object edtPesquisa: TEdit
       Left = 16
       Top = 72
       Width = 881
-      Height = 31
+      Height = 21
       CharCase = ecUpperCase
       TabOrder = 0
     end
@@ -241,24 +237,28 @@ object frmConsultaProdutos: TfrmConsultaProdutos
         item
           Expanded = False
           FieldName = 'Tabela'
+          ReadOnly = True
           Width = 40
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Desc. Tabela'
+          ReadOnly = True
           Width = 250
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Valor'
+          ReadOnly = True
           Width = 50
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'Un. Medida'
+          ReadOnly = True
           Width = 57
           Visible = True
         end>
@@ -311,18 +311,18 @@ object frmConsultaProdutos: TfrmConsultaProdutos
   end
   object dsPrecos: TDataSource
     DataSet = sqlPrecos
-    Left = 944
+    Left = 864
     Top = 240
   end
   object cdPrecos: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 1040
+    Left = 944
     Top = 240
   end
   object sqlPrecos: TFDQuery
     Connection = frmConexao.conexao
-    Left = 1112
+    Left = 992
     Top = 240
   end
 end

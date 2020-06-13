@@ -55,17 +55,12 @@ type
     DataSource2: TDataSource;
     sqltributacao: TFDQuery;
     sqlVerificaTributacao: TFDQuery;
-    btnPRODUTOCadastrar: TSpeedButton;
-    btnPRODUTOCANCELAR: TSpeedButton;
-    btnPRODUTOExcluir: TSpeedButton;
-    btnPRODUTOLimpar: TSpeedButton;
     imagem: TImage;
     Label13: TLabel;
     Button1: TButton;
     btnCarregarImagem: TButton;
     OpenDialog1: TOpenDialog;
     procedure btnPRODUTOCANCELARClick(Sender: TObject);
-    procedure btnPRODUTOCADASTRARClick(Sender: TObject);
     procedure edtPRODUTOCD_PRODUTOExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure btnAddCodBarrasClick(Sender: TObject);
@@ -73,18 +68,19 @@ type
     procedure edtProdutoGrupoTributacaoIPIChange(Sender: TObject);
     procedure edtProdutoGrupoTributacaoPISCOFINSChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    //procedure btnPRODUTOSalvarClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
-    procedure btnPRODUTOLimparClick(Sender: TObject);
-    procedure btnPRODUTOExcluirClick(Sender: TObject);
     procedure btnCarregarImagemClick(Sender: TObject);
     procedure imagemMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
+    procedure limpaCampos;
+    procedure salvar;
+    procedure excluir;
+    procedure validaCampos;
   public
     { Public declarations }
-    procedure limpaCampos;
+
     var NomeImg : string;
   end;
 
@@ -144,228 +140,12 @@ begin
     end;
 end;
 
-procedure TfrmCadProduto.btnPRODUTOCADASTRARClick(Sender: TObject);
-begin
-//verifica se o código, descrição e UN estão vazios
-if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptyStr) or (edtPRODUTOUN_MEDIDA.Text = EmptyStr) then
-  begin
-    raise Exception.Create('Código, Descrição e Unidade de Medida não podem ser vazios');
-  end;
-  //verifica se já esta cadastrado
-  comandoSelect.Close;
-  comandoSelect.SQL.Text := 'select         '+
-                            '    *          '+
-                            'from           '+
-                            '    produto p  '+
-                            'where          '+
-                            '    p.cd_produto = :cd_produto';
-  comandoSelect.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-  comandoSelect.Open();
-
-  if not comandoSelect.IsEmpty then
-    begin
-      comandosql.Close;
-      conexao.StartTransaction;
-      comandosql.SQL.Text := 'update                                  '+
-                                'produto                              '+
-                             'set                                     '+
-                                  'fl_ativo = :fl_ativo,              '+
-                                  'desc_produto = :desc_produto,      '+
-                                  'un_medida = :un_medida,            '+
-                                  'fator_conversao = :fator_conversao,'+
-                                  'peso_liquido = :peso_liquido,      '+
-                                  'peso_bruto = :peso_bruto,          '+
-                                  'observacao = :observacao,           '+
-                                  //'tipo_cod_barras = :tipo_cod_barras, '+
-                                  //'codigo_barras = :codigo_barras,     '+
-                                  'imagem = :imagem                    '+
-                             'where                                    '+
-                                  'cd_produto = :cd_produto';
-
-      comandosql.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-      comandosql.ParamByName('fl_ativo').AsBoolean := ckPRODUTOATIVO.Checked;
-      comandosql.ParamByName('desc_produto').AsString := edtPRODUTODESCRICAO.Text;
-      comandosql.ParamByName('un_medida').AsString := edtPRODUTOUN_MEDIDA.Text;
-      comandosql.ParamByName('fator_conversao').AsCurrency := StrToCurr(edtPRODUTOFATOR_CONVERSAO.Text);
-      comandosql.ParamByName('peso_liquido').AsCurrency := StrToCurr(edtPRODUTOPESO_LIQUIDO.Text);
-      comandosql.ParamByName('peso_bruto').AsCurrency := StrToCurr(edtPRODUTOPESO_BRUTO.Text);
-      comandosql.ParamByName('observacao').AsString := memoObservacao.Text;
-      //comandosql.ParamByName('tipo_cod_barras').AsString := ClientDataSet1.FieldByName('Tipo').AsString;
-      //comandosql.ParamByName('codigo_barras').AsString := ClientDataSet1.FieldByName('Codigo de Barras').AsString;
-      //comandosql.ParamByName('codigo_barras').AsString := edtCodigoBarras.Text;
-      comandosql.ParamByName('imagem').AsString := NomeImg;
-
-
-
-      sqlVerificaTributacao.Close;
-      sqlVerificaTributacao.SQL.Text := 'select * from produto_tributacao pt '+
-                            'left join grupo_tributacao_icms gti on '+
-                            '    pt.cd_tributacao_icms = gti.cd_tributacao '+
-                            'left join grupo_tributacao_ipi gtipi on '+
-                            '    pt.cd_tributacao_ipi = gtipi.cd_tributacao '+
-                            'left join grupo_tributacao_pis_cofins gtpc on '+
-                            '    pt.cd_tributacao_pis_cofins = gtpc.cd_tributacao '+
-                            'where pt.cd_produto = :cd_produto';
-      sqlVerificaTributacao.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-      sqlVerificaTributacao.Open();
-
-      if not sqlVerificaTributacao.IsEmpty then
-        begin
-          sqltributacao.Close;
-          sqltributacao.SQL.Text := 'update                                                     '+
-                                        'produto_tributacao                                     '+
-                                     'set                                                       '+
-                                          'cd_produto = :cd_produto,                            '+
-                                          'cd_tributacao_icms = :cd_tributacao_icms,            '+
-                                          'cd_tributacao_ipi = :cd_tributacao_ipi,              '+
-                                          'cd_tributacao_pis_cofins = :cd_tributacao_pis_cofins '+
-                                     'where                                   '+
-                                          'cd_produto = :cd_produto';
-          sqltributacao.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-          sqltributacao.ParamByName('cd_tributacao_icms').AsInteger := StrToInt(edtProdutoGrupoTributacaoICMS.Text);
-          sqltributacao.ParamByName('cd_tributacao_ipi').AsInteger := StrToInt(edtProdutoGrupoTributacaoIPI.Text);
-          sqltributacao.ParamByName('cd_tributacao_pis_cofins').AsInteger := StrToInt(edtProdutoGrupoTributacaoPISCOFINS.Text);
-        end
-      else
-        begin
-          sqltributacao.Close;
-          sqltributacao.SQL.Text := 'insert into                      '+
-                                      'produto_tributacao(cd_produto, '+
-                                      'cd_tributacao_icms,            '+
-                                      'cd_tributacao_ipi,             '+
-                                      'cd_tributacao_pis_cofins)      '+
-                              'values (:cd_produto,                   '+
-                                      ':cd_tributacao_icms,           '+
-                                      ':cd_tributacao_ipi,            '+
-                                      ':cd_tributacao_pis_cofins)';
-          sqltributacao.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-          sqltributacao.ParamByName('cd_tributacao_icms').AsInteger := StrToInt(edtProdutoGrupoTributacaoICMS.Text);
-          sqltributacao.ParamByName('cd_tributacao_ipi').AsInteger := StrToInt(edtProdutoGrupoTributacaoIPI.Text);
-          sqltributacao.ParamByName('cd_tributacao_pis_cofins').AsInteger := StrToInt(edtProdutoGrupoTributacaoPISCOFINS.Text);
-        end;
-
-      try
-        comandosql.ExecSQL;
-        sqltributacao.ExecSQL;
-        conexao.Commit;
-        ShowMessage('Produto Alterado com Sucesso');
-        comandosql.Close;
-
-        limpaCampos;
-
-      except
-        on E:exception do
-          begin
-            frmConexao.conexao.Rollback;
-            ShowMessage('Erro ao gravar os dados'+ E.Message);
-            Exit;
-          end;
-      end;
-    end
-  else
-    begin
-      comandosql.Close;
-      conexao.StartTransaction;
-      comandosql.SQL.Add('insert into                   '+
-                                  'produto(cd_produto,  '+
-                                  'fl_ativo,            '+
-                                  'desc_produto,        '+
-                                  'un_medida,           '+
-                                  'fator_conversao,     '+
-                                  'peso_liquido,        '+
-                                  'peso_bruto,          '+
-                                  'observacao,          '+
-                                 // 'tipo_cod_barras,     '+
-                                  //'codigo_barras,       '+
-                                  'imagem)              '+
-                          'values (:cd_produto,         '+
-                                  ':fl_ativo,           '+
-                                  ':desc_produto,       '+
-                                  ':un_medida,          '+
-                                  ':fator_conversao,    '+
-                                  ':peso_liquido,       '+
-                                  ':peso_bruto,         '+
-                                  ':observacao,         '+
-                                  //':tipo_cod_barras,    '+
-                                  //':codigo_barras,      '+
-                                  ':imagem)');
-
-      comandosql.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-      comandosql.ParamByName('fl_ativo').AsBoolean := ckPRODUTOATIVO.Checked;
-      comandosql.ParamByName('desc_produto').AsString := edtPRODUTODESCRICAO.Text;
-      comandosql.ParamByName('un_medida').AsString := edtPRODUTOUN_MEDIDA.Text;
-      comandosql.ParamByName('fator_conversao').AsCurrency := StrToCurr(edtPRODUTOFATOR_CONVERSAO.Text);
-      comandosql.ParamByName('peso_liquido').AsCurrency := StrToCurr(edtPRODUTOPESO_LIQUIDO.Text);
-      comandosql.ParamByName('peso_bruto').AsCurrency := StrToCurr(edtPRODUTOPESO_BRUTO.Text);
-      comandosql.ParamByName('observacao').AsString := memoObservacao.Text;
-      //comandosql.ParamByName('tipo_cod_barras').AsString := ClientDataSet1.FieldByName('Tipo').AsString;
-      //comandosql.ParamByName('codigo_barras').AsString := ClientDataSet1.FieldByName('Codigo de Barras').AsString;
-      comandosql.ParamByName('imagem').AsString := NomeImg;
-
-      try
-        comandosql.ExecSQL;
-        sqltributacao.ExecSQL;
-        conexao.Commit;
-        ShowMessage('Produto cadastrado com Sucesso!');
-        comandosql.Close;
-        sqltributacao.Close;
-
-        limpaCampos;
-
-      except
-        on E:exception do
-        begin
-          conexao.Rollback;
-          ShowMessage('Erro ao gravar os dados do produto '+ E.Message);
-          Exit;
-        end;
-
-      end;
-    end;
-end;
-
 procedure TfrmCadProduto.btnPRODUTOCANCELARClick(Sender: TObject);
 begin
   if (Application.MessageBox('Deseja realmente fechar?','Atenção', MB_YESNO) = IDYES) then
     begin
       Close;
     end;
-end;
-
-procedure TfrmCadProduto.btnPRODUTOExcluirClick(Sender: TObject);
-begin
-  if (Application.MessageBox('Deseja Excluir o Produto?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      comandosql.Close;
-      comandosql.SQL.Text := 'delete                    '+
-                             '  from                    '+
-                             'produto                   '+
-                             '  where                   '+
-                             'cd_produto = :cd_produto';
-      comandosql.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-
-      try
-        comandosql.ExecSQL;
-        comandosql.Close;
-        ShowMessage('Produto Excluído com Sucesso!');
-        limpaCampos;
-      except
-        on E:Exception do
-          begin
-            ShowMessage('Erro ao excluir o produto ' + edtPRODUTOCD_PRODUTO.Text + E.Message);
-          end;
-      end;
-    end
-  else
-    begin
-      Exit;
-    end;
-
-end;
-
-procedure TfrmCadProduto.btnPRODUTOLimparClick(Sender: TObject);
-begin
-  limpaCampos;
 end;
 
 procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
@@ -511,15 +291,69 @@ begin
 end;
 
 
+procedure TfrmCadProduto.excluir;
+begin
+  if (Application.MessageBox('Deseja Excluir o Produto?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      comandosql.Close;
+      comandosql.SQL.Text := 'delete                    '+
+                             '  from                    '+
+                             'produto                   '+
+                             '  where                   '+
+                             'cd_produto = :cd_produto';
+      comandosql.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+
+      try
+        comandosql.ExecSQL;
+        comandosql.Close;
+        ShowMessage('Produto Excluído com Sucesso!');
+        limpaCampos;
+      except
+        on E:Exception do
+          begin
+            ShowMessage('Erro ao excluir o produto ' + edtPRODUTOCD_PRODUTO.Text + E.Message);
+          end;
+      end;
+    end
+  else
+    begin
+      Exit;
+    end;
+end;
+
 procedure TfrmCadProduto.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
   frmCadProduto := nil;
 end;
 
-//passa pelos campos pressionando enter
+procedure TfrmCadProduto.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_F3 then //F3
+  begin
+    limpaCampos;
+  end
+  else if key = VK_F2 then  //F2
+  begin
+    salvar;
+  end
+  else if key = VK_F4 then    //F4
+  begin
+    excluir;
+  end
+  else if key = VK_ESCAPE then //ESC
+  begin
+  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      Close;
+    end;
+  end;
+end;
+
 procedure TfrmCadProduto.FormKeyPress(Sender: TObject; var Key: Char);
 begin
+//passa pelos campos pressionando enter
   if Key = #13 then
     begin
       Key := #0;
@@ -568,13 +402,180 @@ begin
   imagem.Picture := nil;
 end;
 
-procedure TfrmCadProduto.SpeedButton1Click(Sender: TObject);
+procedure TfrmCadProduto.salvar;
 begin
-  inherited;
-  if (Application.MessageBox('Deseja realmente Fechar?','Atenção', MB_YESNO) = IDYES) then
+  validaCampos;
+  //verifica se já esta cadastrado
+  comandoSelect.Close;
+  comandoSelect.SQL.Text := 'select         '+
+                            '    *          '+
+                            'from           '+
+                            '    produto p  '+
+                            'where          '+
+                            '    p.cd_produto = :cd_produto';
+  comandoSelect.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+  comandoSelect.Open();
+
+  sqlVerificaTributacao.Close;
+  sqlVerificaTributacao.SQL.Text := 'select * from produto_tributacao pt '+
+                        'left join grupo_tributacao_icms gti on '+
+                        '    pt.cd_tributacao_icms = gti.cd_tributacao '+
+                        'left join grupo_tributacao_ipi gtipi on '+
+                        '    pt.cd_tributacao_ipi = gtipi.cd_tributacao '+
+                        'left join grupo_tributacao_pis_cofins gtpc on '+
+                        '    pt.cd_tributacao_pis_cofins = gtpc.cd_tributacao '+
+                        'where pt.cd_produto = :cd_produto';
+  sqlVerificaTributacao.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+  sqlVerificaTributacao.Open();
+
+  if not comandoSelect.IsEmpty then
     begin
-      Close;
+      comandosql.Close;
+      conexao.StartTransaction;
+      comandosql.SQL.Text := 'update                                  '+
+                                'produto                              '+
+                             'set                                     '+
+                                  'fl_ativo = :fl_ativo,              '+
+                                  'desc_produto = :desc_produto,      '+
+                                  'un_medida = :un_medida,            '+
+                                  'fator_conversao = :fator_conversao,'+
+                                  'peso_liquido = :peso_liquido,      '+
+                                  'peso_bruto = :peso_bruto,          '+
+                                  'observacao = :observacao,           '+
+                                  //'tipo_cod_barras = :tipo_cod_barras, '+
+                                  //'codigo_barras = :codigo_barras,     '+
+                                  'imagem = :imagem                    '+
+                             'where                                    '+
+                                  'cd_produto = :cd_produto';
+
+      comandosql.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+      comandosql.ParamByName('fl_ativo').AsBoolean := ckPRODUTOATIVO.Checked;
+      comandosql.ParamByName('desc_produto').AsString := edtPRODUTODESCRICAO.Text;
+      comandosql.ParamByName('un_medida').AsString := edtPRODUTOUN_MEDIDA.Text;
+      comandosql.ParamByName('fator_conversao').AsCurrency := StrToCurr(edtPRODUTOFATOR_CONVERSAO.Text);
+      comandosql.ParamByName('peso_liquido').AsCurrency := StrToCurr(edtPRODUTOPESO_LIQUIDO.Text);
+      comandosql.ParamByName('peso_bruto').AsCurrency := StrToCurr(edtPRODUTOPESO_BRUTO.Text);
+      comandosql.ParamByName('observacao').AsString := memoObservacao.Text;
+      //comandosql.ParamByName('tipo_cod_barras').AsString := ClientDataSet1.FieldByName('Tipo').AsString;
+      //comandosql.ParamByName('codigo_barras').AsString := ClientDataSet1.FieldByName('Codigo de Barras').AsString;
+      //comandosql.ParamByName('codigo_barras').AsString := edtCodigoBarras.Text;
+      comandosql.ParamByName('imagem').AsString := NomeImg;
+
+      sqltributacao.Close;
+      sqltributacao.SQL.Text := 'update                                                     '+
+                                    'produto_tributacao                                     '+
+                                 'set                                                       '+
+                                      'cd_produto = :cd_produto,                            '+
+                                      'cd_tributacao_icms = :cd_tributacao_icms,            '+
+                                      'cd_tributacao_ipi = :cd_tributacao_ipi,              '+
+                                      'cd_tributacao_pis_cofins = :cd_tributacao_pis_cofins '+
+                                 'where                                   '+
+                                      'cd_produto = :cd_produto';
+      sqltributacao.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+      sqltributacao.ParamByName('cd_tributacao_icms').AsInteger := StrToInt(edtProdutoGrupoTributacaoICMS.Text);
+      sqltributacao.ParamByName('cd_tributacao_ipi').AsInteger := StrToInt(edtProdutoGrupoTributacaoIPI.Text);
+      sqltributacao.ParamByName('cd_tributacao_pis_cofins').AsInteger := StrToInt(edtProdutoGrupoTributacaoPISCOFINS.Text);
+
+
+      try
+        comandosql.ExecSQL;
+        sqltributacao.ExecSQL;
+        conexao.Commit;
+        ShowMessage('Produto Alterado com Sucesso');
+        comandosql.Close;
+        sqltributacao.Close;
+        limpaCampos;
+
+      except
+        on E:exception do
+          begin
+            frmConexao.conexao.Rollback;
+            ShowMessage('Erro ao gravar os dados'+ E.Message);
+            Exit;
+          end;
+      end;
+    end
+  else
+    begin
+      comandosql.Close;
+      conexao.StartTransaction;
+      comandosql.SQL.Text := 'insert into               '+
+                                  'produto (cd_produto, '+
+                                  'fl_ativo,            '+
+                                  'desc_produto,        '+
+                                  'un_medida,           '+
+                                  'fator_conversao,     '+
+                                  'peso_liquido,        '+
+                                  'peso_bruto,          '+
+                                  'observacao,          '+
+                                  'imagem)              '+
+                          ' values (:cd_produto,         '+
+                                  ':fl_ativo,           '+
+                                  ':desc_produto,       '+
+                                  ':un_medida,          '+
+                                  ':fator_conversao,    '+
+                                  ':peso_liquido,       '+
+                                  ':peso_bruto,         '+
+                                  ':observacao,         '+
+                                  ':imagem)';
+
+      comandosql.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+      comandosql.ParamByName('fl_ativo').AsBoolean := ckPRODUTOATIVO.Checked;
+      comandosql.ParamByName('desc_produto').AsString := edtPRODUTODESCRICAO.Text;
+      comandosql.ParamByName('un_medida').AsString := edtPRODUTOUN_MEDIDA.Text;
+      comandosql.ParamByName('fator_conversao').AsCurrency := StrToCurr(edtPRODUTOFATOR_CONVERSAO.Text);
+      comandosql.ParamByName('peso_liquido').AsCurrency := StrToCurr(edtPRODUTOPESO_LIQUIDO.Text);
+      comandosql.ParamByName('peso_bruto').AsCurrency := StrToCurr(edtPRODUTOPESO_BRUTO.Text);
+      comandosql.ParamByName('observacao').AsString := memoObservacao.Text;
+      //comandosql.ParamByName('tipo_cod_barras').AsString := ClientDataSet1.FieldByName('Tipo').AsString;
+      //comandosql.ParamByName('codigo_barras').AsString := ClientDataSet1.FieldByName('Codigo de Barras').AsString;
+      comandosql.ParamByName('imagem').AsString := NomeImg;
+
+      sqltributacao.Close;
+      sqltributacao.SQL.Text := 'insert into                      '+
+                                  'produto_tributacao(cd_produto, '+
+                                  'cd_tributacao_icms,            '+
+                                  'cd_tributacao_ipi,             '+
+                                  'cd_tributacao_pis_cofins)      '+
+                          'values (:cd_produto,                   '+
+                                  ':cd_tributacao_icms,           '+
+                                  ':cd_tributacao_ipi,            '+
+                                  ':cd_tributacao_pis_cofins)';
+      sqltributacao.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+      sqltributacao.ParamByName('cd_tributacao_icms').AsInteger := StrToInt(edtProdutoGrupoTributacaoICMS.Text);
+      sqltributacao.ParamByName('cd_tributacao_ipi').AsInteger := StrToInt(edtProdutoGrupoTributacaoIPI.Text);
+      sqltributacao.ParamByName('cd_tributacao_pis_cofins').AsInteger := StrToInt(edtProdutoGrupoTributacaoPISCOFINS.Text);
+
+      try
+        comandosql.ExecSQL;
+        sqltributacao.ExecSQL;
+        conexao.Commit;
+        ShowMessage('Produto cadastrado com Sucesso!');
+        comandosql.Close;
+        sqltributacao.Close;
+
+        limpaCampos;
+
+      except
+        on E:exception do
+        begin
+          conexao.Rollback;
+          ShowMessage('Erro ao gravar os dados do produto '+ E.Message);
+          Exit;
+        end;
+
+      end;
     end;
+end;
+
+procedure TfrmCadProduto.validaCampos;
+//validar os campos de tipo de tributação para não permitir adicionar sem valor
+begin
+if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptyStr)
+    or (edtPRODUTOUN_MEDIDA.Text = EmptyStr) then
+  begin
+    raise Exception.Create('Código, Descrição e Unidade de Medida não podem ser vazios');
+  end;
 end;
 
 end.

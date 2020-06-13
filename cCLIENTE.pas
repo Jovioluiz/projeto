@@ -44,30 +44,25 @@ type
     sqlInsertEndereco: TFDQuery;
     edtCLIENTEFL_FORNECEDOR: TCheckBox;
     edtCLIENTEFL_ATIVO: TCheckBox;
-    btnSalvar: TSpeedButton;
     edtCLIENTEcd_cliente: TEdit;
-    btnCancelarCadCliente: TSpeedButton;
-    btnExcluir: TSpeedButton;
-    btnCLIENTELimpar: TSpeedButton;
     edtEstado: TEdit;
     Label5: TLabel;
     edtCep: TEdit;
     procedure pFormarCamposPessoa;
     procedure edtCLIENTETP_PESSOAClick(Sender: TObject);
-    procedure btnCancelarCadClienteClick(Sender: TObject);
     procedure edtCLIENTEcd_clienteExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure btnSalvarClick(Sender: TObject);
-    procedure btnExcluirClick(Sender: TObject);
-    procedure btnCLIENTELimparClick(Sender: TObject);
     procedure edtCepExit(Sender: TObject);
     procedure edtCLIENTECELULARExit(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     sql_seq : String;
     procedure limpaCampos;
     procedure validaCampos;
+    procedure salvar;
+    procedure excluir;
   public
     { Public declarations }
   end;
@@ -110,51 +105,13 @@ begin
     end;
 end;
 
-procedure TfrmCadCliente.validaCampos;
+procedure TfrmCadCliente.salvar;
 begin
- if (Trim(edtCLIENTEcd_cliente.Text) = '') and (Trim(edtCLIENTENM_CLIENTE.Text) = '') and
-    (Trim(edtCLIENTECPF_CNPJ.Text) = '') then
-    raise Exception.Create('Código, nome e CPF/CNPJ não podem ser vazios');
-end;
-
-procedure TfrmCadCliente.btnExcluirClick(Sender: TObject);
-begin
-  if (Application.MessageBox('Deseja Excluir o Cliente?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      try
-        conexao.ExecSQL('delete                   '+
-                        ' from                    '+
-                        'cliente                  '+
-                        ' where                   '+
-                        'cd_cliente = :cd_cliente',
-                        [StrToInt(edtCLIENTEcd_cliente.Text)]);//parametros
-        ShowMessage('Cliente excluído com sucesso!');
-        limpaCampos;
-      except
-        on E:exception do
-          begin
-            ShowMessage('Erro ao excluir os dados do cliente ' +edtCLIENTEcd_cliente.Text + E.Message);
-          end;
-      end;
-    end
-  else
-    begin
-      Exit;
-    end;
-end;
-
-procedure TfrmCadCliente.btnCLIENTELimparClick(Sender: TObject);
-begin
-  inherited;
-  limpaCampos;
-end;
-
-procedure TfrmCadCliente.btnSalvarClick(Sender: TObject);
-begin
-  try
+ try
     validaCampos;
 
     FDQuery1.Close;
+    FDQuery1.SQL.Clear;
     FDQuery1.SQL.Text := 'select        '+
                               '*        '+
                           'from         '+
@@ -166,11 +123,11 @@ begin
 
     if not FDQuery1.IsEmpty then
       begin
-        sqlInsertCliente.Close;
+        sqlInsertCliente.SQL.Clear;
         sqlInsertCliente.SQL.Text := 'update                                  '+
                                         'cliente                              '+
                                     'set                                      '+
-                                    '    cd_cliente = :cd_cliente,            '+
+                                    '    nome = :nome,                        '+
                                      '   fl_ativo = :fl_ativo,                '+
                                       '  tp_pessoa = :tp_pessoa,              '+
                                       '  telefone = :telefone,                '+
@@ -183,6 +140,7 @@ begin
                                       '  cd_cliente = :cd_cliente';
 
         sqlInsertCliente.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
+        sqlInsertCliente.ParamByName('nome').AsString := edtCLIENTENM_CLIENTE.Text;
         sqlInsertCliente.ParamByName('fl_ativo').AsBoolean := edtCLIENTEFL_ATIVO.Checked;
         case edtCLIENTETP_PESSOA.ItemIndex of
         0:
@@ -331,19 +289,15 @@ begin
       end;
 
   finally
-    FreeAndNil(sqlInsertCliente);
-    FreeAndNil(sqlInsertEndereco);
     limpaCampos;
   end;
-
 end;
 
-procedure TfrmCadCliente.btnCancelarCadClienteClick(Sender: TObject);
+procedure TfrmCadCliente.validaCampos;
 begin
-  if (Application.MessageBox('Deseja Cancelar?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      Close;
-    end;
+ if (Trim(edtCLIENTEcd_cliente.Text) = '') and (Trim(edtCLIENTENM_CLIENTE.Text) = '') and
+    (Trim(edtCLIENTECPF_CNPJ.Text) = '') then
+    raise Exception.Create('Código, nome e CPF/CNPJ não podem ser vazios');
 end;
 
 procedure TfrmCadCliente.edtCepExit(Sender: TObject);
@@ -418,6 +372,7 @@ begin
                     'c.cd_cliente, '+
                     'nome, '+
                     'fl_ativo, '+
+                    'fl_fornecedor, '+
                     'tp_pessoa,'+
                     'telefone, '+
                     'celular, '+
@@ -445,6 +400,7 @@ begin
             edtCLIENTEcd_cliente.Text := IntToStr(FieldByName('cd_cliente').AsInteger);
             edtCLIENTENM_CLIENTE.Text := FieldByName('nome').AsString;
             edtCLIENTEFL_ATIVO.Checked := FieldByName('fl_ativo').AsBoolean;
+            edtCLIENTEFL_FORNECEDOR.Checked := FieldByName('fl_fornecedor').AsBoolean;
             if FieldByName('tp_pessoa').AsString = 'F' then
               begin
                 f := 0;
@@ -501,13 +457,65 @@ begin
 end;
 
 
+procedure TfrmCadCliente.excluir;
+begin
+  if (Application.MessageBox('Deseja Excluir o Cliente?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      try
+        conexao.ExecSQL('delete                   '+
+                        ' from                    '+
+                        'cliente                  '+
+                        ' where                   '+
+                        'cd_cliente = :cd_cliente',
+                        [StrToInt(edtCLIENTEcd_cliente.Text)]);//parametros
+        ShowMessage('Cliente excluído com sucesso!');
+        limpaCampos;
+      except
+        on E:exception do
+          begin
+            ShowMessage('Erro ao excluir os dados do cliente ' +edtCLIENTEcd_cliente.Text + E.Message);
+          end;
+      end;
+    end
+  else
+    begin
+      Exit;
+    end;
+end;
+
 procedure TfrmCadCliente.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   frmCadCliente := nil;
 end;
 
-//passa pelos campos pressionando enter
+
+procedure TfrmCadCliente.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if key = VK_F3 then //F3
+  begin
+    limpaCampos;
+  end
+  else if key = VK_F2 then  //F2
+  begin
+    salvar;
+  end
+  else if key = VK_F4 then    //F4
+  begin
+    excluir;
+  end
+  else if key = VK_ESCAPE then //ESC
+  begin
+  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      Close;
+    end;
+  end;
+end;
+
 procedure TfrmCadCliente.FormKeyPress(Sender: TObject; var Key: Char);
+//passa pelos campos pressionando enter
 begin
   if Key = #13 then
     begin
@@ -536,6 +544,7 @@ begin
   edtCLIENTEcd_cliente.SetFocus;
   edtCLIENTETP_PESSOA.ItemIndex := -1;
   edtCep.Clear;
+  edtEstado.Clear;
 end;
 
 end.

@@ -11,6 +11,7 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
@@ -22,7 +23,7 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     Top = 16
     Width = 537
     Height = 161
-    ActivePage = TabSheetIPI
+    ActivePage = TabSheetICMS
     TabOrder = 2
     object TabSheetICMS: TTabSheet
       Caption = 'ICMS'
@@ -122,6 +123,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetISS: TTabSheet
       Caption = 'ISS'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label9: TLabel
         Left = 11
         Top = 16
@@ -170,6 +175,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetPISCOFINS: TTabSheet
       Caption = 'PIS/COFINS'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 11
         Top = 16

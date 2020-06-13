@@ -59,6 +59,7 @@ type
     procedure Produtos1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Configuraes1Click(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -120,6 +121,18 @@ end;
 procedure Tfrm_Principal.FormCreate(Sender: TObject);
 begin
   StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frm_Login.edtUsuario.Text);
+end;
+
+procedure Tfrm_Principal.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+if key = VK_ESCAPE then //ESC
+  begin
+  if (Application.MessageBox('Deseja realmente sair do sistema?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      Close;
+    end;
+  end;
 end;
 
 procedure Tfrm_Principal.NotaEntrada1Click(Sender: TObject);
