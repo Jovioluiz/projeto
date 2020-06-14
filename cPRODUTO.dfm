@@ -38,7 +38,7 @@ object frmCadProduto: TfrmCadProduto
     Top = 96
     Width = 721
     Height = 482
-    ActivePage = TabSheetCadastroProduto
+    ActivePage = TabSheet1
     TabOrder = 3
     object TabSheetCadastroProduto: TTabSheet
       Caption = 'Produto'

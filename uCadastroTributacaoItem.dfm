@@ -3,8 +3,8 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Cadastro de Tributa'#231#227'o'
-  ClientHeight = 250
-  ClientWidth = 549
+  ClientHeight = 205
+  ClientWidth = 556
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,9 +12,11 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsStayOnTop
+  KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
@@ -24,7 +26,7 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     Width = 537
     Height = 161
     ActivePage = TabSheetICMS
-    TabOrder = 2
+    TabOrder = 0
     object TabSheetICMS: TTabSheet
       Caption = 'ICMS'
       object Label1: TLabel
@@ -123,10 +125,6 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetISS: TTabSheet
       Caption = 'ISS'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label9: TLabel
         Left = 11
         Top = 16
@@ -175,10 +173,6 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetPISCOFINS: TTabSheet
       Caption = 'PIS/COFINS'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label4: TLabel
         Left = 11
         Top = 16
@@ -227,49 +221,23 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 228
-    Width = 549
+    Top = 183
+    Width = 556
     Height = 22
     AutoHint = True
     Panels = <>
     SimplePanel = True
-  end
-  object btnSalvar: TButton
-    Left = 146
-    Top = 197
-    Width = 75
-    Height = 25
-    Hint = 'Salvar Registro'
-    Caption = 'Salvar'
-    TabOrder = 0
-    OnClick = btnSalvarClick
-  end
-  object btnCancelar: TButton
-    Left = 320
-    Top = 197
-    Width = 75
-    Height = 25
-    Caption = 'Cancelar'
-    TabOrder = 1
-    OnClick = btnCancelarClick
-  end
-  object btnLimpar: TButton
-    Left = 231
-    Top = 197
-    Width = 75
-    Height = 25
-    Caption = 'Limpar'
-    TabOrder = 4
-    OnClick = btnLimparClick
+    ExplicitTop = 228
+    ExplicitWidth = 549
   end
   object comandoSQL: TFDQuery
     Connection = frmConexao.conexao
-    Left = 60
-    Top = 184
+    Left = 468
+    Top = 48
   end
   object comandoselect: TFDQuery
     Connection = frmConexao.conexao
-    Left = 424
-    Top = 184
+    Left = 464
+    Top = 112
   end
 end

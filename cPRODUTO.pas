@@ -198,11 +198,32 @@ begin
   edtPRODUTOPESO_LIQUIDO.Text := CurrToStr(comandoSelect.FieldByName('peso_liquido').AsCurrency);
   edtPRODUTOPESO_BRUTO.Text := CurrToStr(comandoSelect.FieldByName('peso_bruto').AsCurrency);
   memoObservacao.Text := comandoSelect.FieldByName('observacao').AsString;
-  edtProdutoGrupoTributacaoICMS.Text := IntToStr(comandoSelect.FieldByName('cd_tributacao_icms').AsInteger);
+  if comandoSelect.FieldByName('cd_tributacao_icms').Value = null then
+  begin
+    edtProdutoGrupoTributacaoICMS.Text := '';
+  end
+  else
+  begin
+    edtProdutoGrupoTributacaoICMS.Text := comandoSelect.FieldByName('cd_tributacao_icms').Value;
+  end;
   edtProdutoNomeGrupoTributacaoICMS.Text := comandoSelect.FieldByName('nm_tributacao_icms').AsString;
-  edtProdutoGrupoTributacaoIPI.Text := IntToStr(comandoSelect.FieldByName('cd_tributacao_ipi').AsInteger);
+  if comandoSelect.FieldByName('cd_tributacao_ipi').Value = null then
+  begin
+    edtProdutoGrupoTributacaoIPI.Text := '';
+  end
+  else
+  begin
+    edtProdutoGrupoTributacaoIPI.Text := comandoSelect.FieldByName('cd_tributacao_ipi').Value;
+  end;
   edtProdutoNomeGrupoTributacaoIPI.Text := comandoSelect.FieldByName('nm_tributacao_ipi').AsString;
-  edtProdutoGrupoTributacaoPISCOFINS.Text := IntToStr(comandoSelect.FieldByName('cd_tributacao_pis_cofins').AsInteger);
+  if comandoSelect.FieldByName('cd_tributacao_pis_cofins').Value = null then
+  begin
+    edtProdutoGrupoTributacaoPISCOFINS.Text := '';
+  end
+  else
+  begin
+    edtProdutoGrupoTributacaoPISCOFINS.Text := comandoSelect.FieldByName('cd_tributacao_pis_cofins').Value;
+  end;
   edtProdutoNomeGrupoTributacaoPISCOFINS.Text := comandoSelect.FieldByName('nm_tributacao_pis_cofins').AsString;
   if comandoSelect.FieldByName('imagem').AsString = '' then
     begin
@@ -569,13 +590,18 @@ begin
 end;
 
 procedure TfrmCadProduto.validaCampos;
-//validar os campos de tipo de tributação para não permitir adicionar sem valor
 begin
-if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptyStr)
+  if (edtPRODUTOCD_PRODUTO.Text = EmptyStr) or (edtPRODUTODESCRICAO.Text = EmptyStr)
     or (edtPRODUTOUN_MEDIDA.Text = EmptyStr) then
   begin
     raise Exception.Create('Código, Descrição e Unidade de Medida não podem ser vazios');
+  end
+  else if (edtProdutoGrupoTributacaoICMS.Text = EmptyStr) or (edtProdutoGrupoTributacaoIPI.Text = EmptyStr) 
+        or (edtProdutoGrupoTributacaoPISCOFINS.Text = EmptyStr) then
+  begin
+    raise Exception.Create('Preencha os tipos de Tributação do produto!');
   end;
+       
 end;
 
 end.

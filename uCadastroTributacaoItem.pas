@@ -35,8 +35,6 @@ type
     Label10: TLabel;
     Label11: TLabel;
     edtAliqISS: TEdit;
-    btnSalvar: TButton;
-    btnCancelar: TButton;
     TabSheetPISCOFINS: TTabSheet;
     Label4: TLabel;
     edtCdGrupoTributacaoPISCOFINS: TEdit;
@@ -46,19 +44,17 @@ type
     Label12: TLabel;
     comandoSQL: TFDQuery;
     comandoselect: TFDQuery;
-    btnLimpar: TButton;
-    procedure btnSalvarClick(Sender: TObject);
     procedure edtCdGrupoTributacaoICMSExit(Sender: TObject);
     procedure edtCdGrupoTributacaoIPIExit(Sender: TObject);
     procedure edtCdGrupoTributacaoISSExit(Sender: TObject);
     procedure edtCdGrupoTributacaoPISCOFINSExit(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure btnCancelarClick(Sender: TObject);
-    procedure btnLimparClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
-    procedure limparCampos;
+    procedure limpaCampos;
+    procedure salvar;
   public
     { Public declarations }
   end;
@@ -76,7 +72,6 @@ begin
     begin
       raise Exception.Create('Campo não pode ser vazio');
       edtCdGrupoTributacaoICMS.SetFocus;
-      Abort;
     end
   else
     begin
@@ -107,7 +102,6 @@ begin
     begin
       raise Exception.Create('Campo não pode ser vazio');
       edtCdGrupoTributacaoIPI.SetFocus;
-      Abort;
     end
   else
     begin
@@ -137,7 +131,6 @@ begin
     begin
       raise Exception.Create('Campo não pode ser vazio');
       edtCdGrupoTributacaoISS.SetFocus;
-      Abort;
     end
   else
     begin
@@ -167,7 +160,6 @@ begin
     begin
       raise Exception.Create('Campo não pode ser vazio');
       edtCdGrupoTributacaoPISCOFINS.SetFocus;
-      Abort;
     end
   else
     begin
@@ -197,6 +189,26 @@ begin
   frmCadastraTributacaoItem := nil;
 end;
 
+procedure TfrmCadastraTributacaoItem.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_F3 then //F3
+  begin
+    limpaCampos;
+  end
+  else if key = VK_F2 then  //F2
+  begin
+    salvar;
+  end
+  else if key = VK_ESCAPE then //ESC
+  begin
+  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      Close;
+    end;
+  end;
+end;
+
 procedure TfrmCadastraTributacaoItem.FormKeyPress(Sender: TObject;
   var Key: Char);
 begin
@@ -207,7 +219,7 @@ begin
     end;
 end;
 
-procedure TfrmCadastraTributacaoItem.limparCampos;
+procedure TfrmCadastraTributacaoItem.limpaCampos;
 begin
   edtCdGrupoTributacaoICMS.Clear;
   edtNomeGrupoTributacaoICMS.Clear;
@@ -223,19 +235,9 @@ begin
   edtAliqPISCOFINS.Clear;
 end;
 
-procedure TfrmCadastraTributacaoItem.btnCancelarClick(Sender: TObject);
+procedure TfrmCadastraTributacaoItem.salvar;
 begin
- Close;
-end;
-
-procedure TfrmCadastraTributacaoItem.btnLimparClick(Sender: TObject);
-begin
-  limparCampos;
-end;
-
-procedure TfrmCadastraTributacaoItem.btnSalvarClick(Sender: TObject);
-begin
-  if TabSheetICMS.Showing = true then      //ICMS
+if TabSheetICMS.Showing = true then      //ICMS
     begin
       comandoSelect.Close;
       comandoSelect.SQL.Text := 'select                             '+

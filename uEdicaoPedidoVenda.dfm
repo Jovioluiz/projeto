@@ -180,6 +180,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 95
       Height = 32
       Caption = 'Confirmar'
+      OnClick = btnConfirmarClick
     end
     object edtCdFormaPgto: TEdit
       Left = 86

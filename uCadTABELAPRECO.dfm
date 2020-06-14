@@ -11,10 +11,11 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  FormStyle = fsStayOnTop
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
@@ -99,7 +100,7 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
     end
     object DBGridProduto: TDBGrid
       Left = 8
-      Top = 192
+      Top = 240
       Width = 512
       Height = 289
       DataSource = DataSource1
@@ -142,40 +143,13 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
         end>
     end
     object btnAdicionarProduto: TButton
-      Left = 57
-      Top = 503
+      Left = 8
+      Top = 201
       Width = 113
       Height = 25
       Caption = 'Adicionar Produto'
       TabOrder = 6
       OnClick = btnAdicionarProdutoClick
-    end
-    object btnSalvar: TButton
-      Left = 176
-      Top = 503
-      Width = 81
-      Height = 25
-      Caption = 'Salvar'
-      TabOrder = 7
-      OnClick = btnSalvarClick
-    end
-    object btnFechar: TButton
-      Left = 344
-      Top = 503
-      Width = 75
-      Height = 25
-      Caption = 'Fechar'
-      TabOrder = 8
-      OnClick = btnFecharClick
-    end
-    object btnLimpar: TButton
-      Left = 263
-      Top = 503
-      Width = 75
-      Height = 25
-      Caption = 'Limpar'
-      TabOrder = 9
-      OnClick = btnLimparClick
     end
   end
   object sqlTabelaPreco: TFDQuery
@@ -185,18 +159,18 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
   end
   object sqlTabelaPrecoProduto: TFDQuery
     Connection = frmConexao.conexao
-    Left = 472
-    Top = 304
+    Left = 456
+    Top = 392
   end
   object DataSource1: TDataSource
     DataSet = sqlTabelaPrecoProduto
-    Left = 472
-    Top = 232
+    Left = 456
+    Top = 328
   end
   object ClientDataSet1: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 464
-    Top = 376
+    Left = 456
+    Top = 448
   end
 end

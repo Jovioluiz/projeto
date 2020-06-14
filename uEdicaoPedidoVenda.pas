@@ -70,6 +70,7 @@ type
     procedure edtTabelaPrecoChange(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure btnAdicionarItemClick(Sender: TObject);
+    procedure btnConfirmarClick(Sender: TObject);
     //procedure edtTabelaPrecoChange(Sender: TObject);
   private
     { Private declarations }
@@ -93,6 +94,11 @@ begin
     begin
       Close;
     end;
+end;
+
+procedure Tfrm_Edicao_Pedido_Venda.btnConfirmarClick(Sender: TObject);
+begin
+
 end;
 
 //da erro aqui, não carrega os campos certos e limpa o grid
