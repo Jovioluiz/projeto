@@ -8,6 +8,18 @@ BEGIN
 END;
 $function$
 ;
+
+--------------------------------------------------------------
+
+-- DROP TABLE public.log;
+
+CREATE TABLE public.log (
+	autor varchar(20) NULL,
+	alteracao varchar(10) NULL,
+	nome_tabela varchar(50) NULL,
+	"data" timestamp NULL
+);
+
 ------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.gera_log()
@@ -91,17 +103,6 @@ $function$
 ;
 
 ------------------------------------------------------------------------------------------------------------------------------------------
-
--- DROP TABLE public.log;
-
-CREATE TABLE public.log (
-	autor varchar(20) NULL,
-	alteracao varchar(10) NULL,
-	nome_tabela varchar(50) NULL,
-	"data" timestamp NULL
-);
-
---------------------------------------------------
 
 -- DROP TABLE public.login_usuario;
 
