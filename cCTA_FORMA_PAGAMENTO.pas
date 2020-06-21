@@ -46,6 +46,8 @@ implementation
 procedure TfrmCadFormaPagamento.edtCTA_FORMA_PGTOCODIGOExit(Sender: TObject);
 Var tipo : Integer;
 begin
+  tipo := 0;
+
   if edtCTA_FORMA_PGTOCODIGO.Text = EmptyStr then
     begin
       raise Exception.Create('Código não pode ser vazio');
@@ -193,6 +195,8 @@ procedure TfrmCadFormaPagamento.salvar;
 var resultado : String;
 begin
   try
+    validaCampos;
+
     resultado := conexao.ExecSQLScalar('select cd_forma_pag from cta_forma_pagamento where cd_forma_pag = :cd_forma_pag',
                                         [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text)]);
     if not resultado.IsEmpty then

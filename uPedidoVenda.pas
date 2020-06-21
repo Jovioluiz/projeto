@@ -101,6 +101,7 @@ type
   private
     { Private declarations }
     edicaoItem : Boolean;
+    procedure limpaCampos;
   public
     { Public declarations }
   end;
@@ -166,7 +167,6 @@ begin
       ClientDataSet1.FieldDefs.Add('Valor PIS/COFINS', ftCurrency);
 
       ClientDataSet1.CreateDataSet;
-
     end;
 
   if edicaoItem = True then
@@ -183,7 +183,6 @@ begin
         ClientDataSet1.Insert;
         edicaoItem := False;
       end;
-
     end
   else
     begin
@@ -198,7 +197,7 @@ begin
       ClientDataSet1.FieldByName('Valor Total').AsCurrency := StrToCurr(edtVlTotal.Text);
       //ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := ClientDataSet1.FieldByName('Valor Total').AsCurrency;
       if aliq_icms = 0 then
-        ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := 0;
+      ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := 0;
       ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := StrToCurr(edtVlTotal.Text);
       ClientDataSet1.FieldByName('Aliq ICMS').AsFloat := aliq_icms;
       ClientDataSet1.FieldByName('Valor ICMS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
@@ -208,7 +207,6 @@ begin
       ClientDataSet1.FieldByName('Valor Base PIS/COFINS').AsCurrency := StrToCurr(edtVlTotal.Text);
       ClientDataSet1.FieldByName('Aliq PIS/COFINS').AsFloat := aliq_pis_cofins;
       ClientDataSet1.FieldByName('Valor PIS/COFINS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
-
 
       ClientDataSet1.Post;
     end;
@@ -228,19 +226,7 @@ begin
           ClientDataSet1.EnableControls;
       end;
 
-    edtCdProduto.Clear;
-    edtDescProduto.Clear;
-    edtQtdade.Clear;
-    edtCdtabelaPreco.Clear;
-    edtUnMedida.Clear;
-    edtVlUnitario.Clear;
-    edtVlDescontoItem.Clear;
-    edtVlTotal.Clear;
-
-    edtCdProduto.SetFocus;
-
-    edtVlDescTotalPedido.Text := '0,00';
-    edtVlAcrescimoTotalPedido.Text := '0,00';
+    limpaCampos;
 end;
 
 
@@ -257,6 +243,8 @@ procedure TfrmPedidoVenda.btnConfirmarPedidoClick(Sender: TObject);
 var nr_pedido, id_geral, id_geral_pvi, qtdade, qttotal : Integer;
 var Tempo : Integer;
 begin
+  nr_pedido := 0;
+  id_geral := 0;
   //id_geral do pedido_venda
   sqlIdGeral.Close;
   sqlIdGeral.SQL.Text := 'select '+
@@ -912,6 +900,21 @@ begin
     end;
 end;
 
+
+procedure TfrmPedidoVenda.limpaCampos;
+begin
+  edtCdProduto.Clear;
+  edtDescProduto.Clear;
+  edtQtdade.Clear;
+  edtCdtabelaPreco.Clear;
+  edtUnMedida.Clear;
+  edtVlUnitario.Clear;
+  edtVlDescontoItem.Clear;
+  edtVlTotal.Clear;
+  edtCdProduto.SetFocus;
+  edtVlDescTotalPedido.Text := '0,00';
+  edtVlAcrescimoTotalPedido.Text := '0,00';
+end;
 
 procedure TfrmPedidoVenda.valida_qtdade_item;
 var

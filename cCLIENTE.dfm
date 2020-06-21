@@ -27,7 +27,6 @@ object frmCadCliente: TfrmCadCliente
     Height = 390
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 425
     object Label1: TLabel
       Left = 92
       Top = 24

@@ -3,8 +3,8 @@ object frmCadProduto: TfrmCadProduto
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Cadastro de Produto'
-  ClientHeight = 653
-  ClientWidth = 724
+  ClientHeight = 595
+  ClientWidth = 723
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -38,7 +38,7 @@ object frmCadProduto: TfrmCadProduto
     Top = 96
     Width = 721
     Height = 482
-    ActivePage = TabSheet1
+    ActivePage = TabSheetCadastroProduto
     TabOrder = 3
     object TabSheetCadastroProduto: TTabSheet
       Caption = 'Produto'

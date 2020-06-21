@@ -345,7 +345,7 @@ var
  sql_temp : String;
  f : Integer;
 begin
-//verifica se foi clicado no fechar, se clicou, não valida o cod. cliente vazio
+  f := 0;
 
   if edtCLIENTEcd_cliente.Text = '' then
     begin

@@ -97,36 +97,29 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 13
       Caption = 'Base ICMS'
     end
-    object Label11: TLabel
-      Left = 316
-      Top = 160
-      Width = 67
-      Height = 13
-      Caption = 'Aliquota ICMS'
-    end
     object Label12: TLabel
-      Left = 414
+      Left = 316
       Top = 160
       Width = 52
       Height = 13
       Caption = 'Valor ICMS'
     end
     object Label13: TLabel
-      Left = 510
+      Left = 412
       Top = 160
       Width = 26
       Height = 13
       Caption = 'Frete'
     end
     object Label14: TLabel
-      Left = 606
+      Left = 508
       Top = 160
       Width = 14
       Height = 13
       Caption = 'IPI'
     end
     object Label15: TLabel
-      Left = 704
+      Left = 606
       Top = 160
       Width = 16
       Height = 13
@@ -347,47 +340,38 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       TabOrder = 13
       Text = '0,00'
     end
-    object edtAliqIcms: TEdit
+    object edtValorIcms: TEdit
       Left = 316
       Top = 179
       Width = 73
       Height = 21
       TabOrder = 14
       Text = '0,00'
-      OnExit = edtAliqIcmsExit
     end
-    object edtValorIcms: TEdit
-      Left = 414
+    object edtValorFrete: TEdit
+      Left = 412
       Top = 179
       Width = 73
       Height = 21
       TabOrder = 15
       Text = '0,00'
+      OnExit = edtValorFreteExit
     end
-    object edtValorFrete: TEdit
-      Left = 510
+    object edtValorIPI: TEdit
+      Left = 508
       Top = 179
       Width = 73
       Height = 21
       TabOrder = 16
       Text = '0,00'
-      OnExit = edtValorFreteExit
+      OnExit = edtValorIPIExit
     end
-    object edtValorIPI: TEdit
+    object edtValorISS: TEdit
       Left = 606
       Top = 179
       Width = 73
       Height = 21
       TabOrder = 17
-      Text = '0,00'
-      OnExit = edtValorIPIExit
-    end
-    object edtValorISS: TEdit
-      Left = 704
-      Top = 179
-      Width = 73
-      Height = 21
-      TabOrder = 18
       Text = '0,00'
     end
     object edtValorDesconto: TEdit
@@ -395,7 +379,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Top = 251
       Width = 73
       Height = 21
-      TabOrder = 19
+      TabOrder = 18
       Text = '0,00'
       OnExit = edtValorDescontoExit
     end
@@ -404,7 +388,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Top = 251
       Width = 73
       Height = 21
-      TabOrder = 20
+      TabOrder = 19
       Text = '0,00'
       OnExit = edtValorAcrescimoExit
     end
@@ -414,7 +398,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 73
       Height = 21
       Enabled = False
-      TabOrder = 22
+      TabOrder = 21
       Text = '0,00'
     end
     object edtCodProduto: TEdit
@@ -422,7 +406,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Top = 339
       Width = 73
       Height = 21
-      TabOrder = 23
+      TabOrder = 22
       OnChange = edtCodProdutoChange
       OnEnter = edtCodProdutoEnter
       OnExit = edtCodProdutoExit
@@ -433,21 +417,21 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 269
       Height = 21
       Enabled = False
-      TabOrder = 24
+      TabOrder = 23
     end
     object edtUnMedida: TEdit
       Left = 395
       Top = 339
       Width = 51
       Height = 21
-      TabOrder = 25
+      TabOrder = 24
     end
     object edtQuantidade: TEdit
       Left = 456
       Top = 339
       Width = 56
       Height = 21
-      TabOrder = 26
+      TabOrder = 25
       OnChange = edtQuantidadeChange
       OnExit = edtQuantidadeExit
     end
@@ -457,14 +441,14 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 51
       Height = 21
       Enabled = False
-      TabOrder = 27
+      TabOrder = 26
     end
     object edtValorUnitario: TEdit
       Left = 656
       Top = 339
       Width = 64
       Height = 21
-      TabOrder = 29
+      TabOrder = 28
       OnChange = edtValorUnitarioChange
     end
     object edtValorTotalProduto: TEdit
@@ -472,7 +456,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Top = 339
       Width = 67
       Height = 21
-      TabOrder = 30
+      TabOrder = 29
     end
     object edtQuantidadeTotalProduto: TEdit
       Left = 596
@@ -480,7 +464,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 51
       Height = 21
       Enabled = False
-      TabOrder = 28
+      TabOrder = 27
     end
     object edtDataLancamento: TDateTimePicker
       Left = 709
@@ -496,7 +480,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Top = 251
       Width = 73
       Height = 21
-      TabOrder = 21
+      TabOrder = 20
       Text = '0,00'
       OnExit = edtValorOutrasDespesasExit
     end
@@ -506,7 +490,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 42
       Height = 26
       Caption = '+'
-      TabOrder = 31
+      TabOrder = 30
       OnClick = btnAddItensClick
     end
     object DBGridProdutos: TDBGrid
@@ -516,7 +500,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 265
       DataSource = DataSource1
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-      TabOrder = 32
+      TabOrder = 31
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
@@ -583,6 +567,59 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
           ReadOnly = True
           Width = 80
           Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Vl Base ICMS'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq. ICMS'
+          Width = 55
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Vl ICMS'
+          Width = 50
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Vl Base IPI'
+          Width = 60
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq. IPI'
+          Width = 50
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Vl IPI'
+          Width = 50
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Vl Base PIS/COFINS'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Aliq. PIS/COFINS'
+          Width = 85
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Vl PIS/COFINS'
+          Width = 75
+          Visible = True
         end>
     end
     object btnConfirmar: TButton
@@ -591,7 +628,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 75
       Height = 25
       Caption = 'Confirmar'
-      TabOrder = 33
+      TabOrder = 32
       OnClick = btnConfirmarClick
     end
     object btnCancelar: TButton
@@ -600,7 +637,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Width = 75
       Height = 25
       Caption = 'Cancelar'
-      TabOrder = 34
+      TabOrder = 33
       OnClick = btnCancelarClick
     end
   end
@@ -630,9 +667,9 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     Left = 424
     Top = 472
   end
-  object sqlUpdate: TFDQuery
+  object sqlInsertiNfi: TFDQuery
     Connection = frmConexao.conexao
-    Left = 496
-    Top = 472
+    Left = 600
+    Top = 480
   end
 end
