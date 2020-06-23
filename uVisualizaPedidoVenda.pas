@@ -149,8 +149,8 @@ begin
 
       Open();
 
-      dm.reportPedidoVenda.LoadFromFile(GetCurrentDir + '\rel\rel_pedido_venda.fr3');
-      dm.reportPedidoVenda.ShowReport();
+     // dm.reportPedidoVenda.LoadFromFile(GetCurrentDir + '\rel\rel_pedido_venda.fr3');
+     // dm.reportPedidoVenda.ShowReport();
     end;
 end;
 

@@ -1,3 +1,6 @@
+create database trabalho_engenharia
+
+
 CREATE OR REPLACE FUNCTION public.func_grava_dt_atz()
  RETURNS trigger
  LANGUAGE plpgsql
@@ -396,56 +399,6 @@ delete
 update
     on
     public.produto for each row execute procedure gera_log();
--- DROP TRIGGER verifica_estoque_produto ON public.produto;
-
-create trigger verifica_estoque_produto after
-insert
-    or
-delete
-    or
-update
-    on
-    public.produto for each row execute procedure func_verifica_quantidade_produto();
-
----------------------------------------------------------------------------------------
-
--- DROP TABLE public.produto_tributacao;
-
-CREATE TABLE public.produto_tributacao (
-	cd_produto int4 NOT NULL,
-	cd_tributacao_icms int4 NOT NULL,
-	cd_tributacao_ipi int4 NOT NULL,
-	cd_tributacao_iss int4 NULL,
-	cd_tributacao_pis_cofins int4 NOT NULL,
-	dt_atz timestamp NULL,
-	CONSTRAINT pk_grupo_tributacao_produto PRIMARY KEY (cd_produto),
-	CONSTRAINT fk_grupo_tributacao_icms FOREIGN KEY (cd_tributacao_icms) REFERENCES grupo_tributacao_icms(cd_tributacao),
-	CONSTRAINT fk_grupo_tributacao_ipi FOREIGN KEY (cd_tributacao_ipi) REFERENCES grupo_tributacao_ipi(cd_tributacao),
-	CONSTRAINT fk_grupo_tributacao_iss FOREIGN KEY (cd_tributacao_iss) REFERENCES grupo_tributacao_iss(cd_tributacao),
-	CONSTRAINT fk_grupo_tributacao_pis_cofins FOREIGN KEY (cd_tributacao_pis_cofins) REFERENCES grupo_tributacao_pis_cofins(cd_tributacao),
-	CONSTRAINT produto_tributacao_fk FOREIGN KEY (cd_produto) REFERENCES produto(cd_produto) ON DELETE CASCADE
-);
-
--- Table Triggers
-
--- DROP TRIGGER tr_dt_atz ON public.produto_tributacao;
-
-create trigger tr_dt_atz before
-insert
-    or
-update
-    on
-    public.produto_tributacao for each row execute procedure func_grava_dt_atz();
--- DROP TRIGGER tr_gera_log ON public.produto_tributacao;
-
-create trigger tr_gera_log after
-insert
-    or
-delete
-    or
-update
-    on
-    public.produto_tributacao for each row execute procedure gera_log();
 
 ---------------------------------------------------------------------------
 
@@ -481,39 +434,6 @@ update
     public.grupo_tributacao_icms for each row execute procedure gera_log();
 
 ---------------------------------------------------------------------------------
-
--- DROP TABLE public.grupo_tributacao_ipi;
-
-CREATE TABLE public.grupo_tributacao_ipi (
-	cd_tributacao int4 NOT NULL,
-	nm_tributacao_ipi varchar(50) NOT NULL,
-	aliquota_ipi numeric(12,4) NOT NULL,
-	dt_atz timestamp NULL,
-	CONSTRAINT pk_grupo_tributacao_ipi PRIMARY KEY (cd_tributacao)
-);
-
--- Table Triggers
-
--- DROP TRIGGER tr_dt_atz ON public.grupo_tributacao_ipi;
-
-create trigger tr_dt_atz before
-insert
-    or
-update
-    on
-    public.grupo_tributacao_ipi for each row execute procedure func_grava_dt_atz();
--- DROP TRIGGER tr_gera_log ON public.grupo_tributacao_ipi;
-
-create trigger tr_gera_log after
-insert
-    or
-delete
-    or
-update
-    on
-    public.grupo_tributacao_ipi for each row execute procedure gera_log();
-
------------------------------------------------------------------------------
 
 -- DROP TABLE public.grupo_tributacao_ipi;
 
@@ -611,6 +531,46 @@ delete
 update
     on
     public.grupo_tributacao_pis_cofins for each row execute procedure gera_log();
+
+---------------------------------------------------------------------------------------
+
+-- DROP TABLE public.produto_tributacao;
+
+CREATE TABLE public.produto_tributacao (
+	cd_produto int4 NOT NULL,
+	cd_tributacao_icms int4 NOT NULL,
+	cd_tributacao_ipi int4 NOT NULL,
+	cd_tributacao_iss int4 NULL,
+	cd_tributacao_pis_cofins int4 NOT NULL,
+	dt_atz timestamp NULL,
+	CONSTRAINT pk_grupo_tributacao_produto PRIMARY KEY (cd_produto),
+	CONSTRAINT fk_grupo_tributacao_icms FOREIGN KEY (cd_tributacao_icms) REFERENCES grupo_tributacao_icms(cd_tributacao),
+	CONSTRAINT fk_grupo_tributacao_ipi FOREIGN KEY (cd_tributacao_ipi) REFERENCES grupo_tributacao_ipi(cd_tributacao),
+	CONSTRAINT fk_grupo_tributacao_iss FOREIGN KEY (cd_tributacao_iss) REFERENCES grupo_tributacao_iss(cd_tributacao),
+	CONSTRAINT fk_grupo_tributacao_pis_cofins FOREIGN KEY (cd_tributacao_pis_cofins) REFERENCES grupo_tributacao_pis_cofins(cd_tributacao),
+	CONSTRAINT produto_tributacao_fk FOREIGN KEY (cd_produto) REFERENCES produto(cd_produto) ON DELETE CASCADE
+);
+
+-- Table Triggers
+
+-- DROP TRIGGER tr_dt_atz ON public.produto_tributacao;
+
+create trigger tr_dt_atz before
+insert
+    or
+update
+    on
+    public.produto_tributacao for each row execute procedure func_grava_dt_atz();
+-- DROP TRIGGER tr_gera_log ON public.produto_tributacao;
+
+create trigger tr_gera_log after
+insert
+    or
+delete
+    or
+update
+    on
+    public.produto_tributacao for each row execute procedure gera_log();
 
 -----------------------------------------------------------------------------------
 
@@ -947,3 +907,69 @@ delete
 update
     on
     public.nfi for each row execute procedure func_estoque_nota();
+
+---------------------------------------------------------------------
+
+CREATE SEQUENCE public.cliente_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 9223372036854775807
+	START 1
+	CACHE 1
+	NO CYCLE;
+----------------------------------------------------------
+
+CREATE SEQUENCE public.seq_id_geral
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 9223372036854775807
+	START 1
+	CACHE 1
+	NO CYCLE;
+--------------------------------------------------------
+
+CREATE SEQUENCE public.seq_nr_pedido
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 9223372036854775807
+	START 1
+	CACHE 1
+	NO CYCLE;
+----------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION public.func_id_geral()
+ RETURNS bigint
+ LANGUAGE plpgsql
+AS $function$
+            DECLARE
+              RESULTADO BIGINT;
+            BEGIN
+                /*Gera o id_geral */
+                SELECT NEXTVAL(PG_CLASS.OID)
+                INTO RESULTADO
+                FROM PG_CLASS
+                WHERE RELNAME = 'seq_id_geral';
+            RETURN RESULTADO + 100000;
+            END
+            $function$
+;
+
+----------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.func_nr_pedido()
+ RETURNS bigint
+ LANGUAGE plpgsql
+AS $function$
+            DECLARE
+              RESULTADO BIGINT;
+            BEGIN
+                /*Gera o nr_pedido */
+                SELECT NEXTVAL(PG_CLASS.OID)
+                INTO RESULTADO
+                FROM PG_CLASS
+                WHERE RELNAME = 'seq_nr_pedido';
+            RETURN RESULTADO;
+            END
+            $function$
+;

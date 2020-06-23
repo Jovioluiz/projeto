@@ -179,6 +179,18 @@ begin
         ClientDataSet1.FieldByName('Valor Unitário').AsCurrency := StrToCurr(edtVlUnitario.Text);
         ClientDataSet1.FieldByName('Valor Desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
         ClientDataSet1.FieldByName('Valor Total').AsCurrency := StrToCurr(edtVlTotal.Text);
+
+        if aliq_icms = 0 then
+        ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := 0;
+        ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency := StrToCurr(edtVlTotal.Text);
+        ClientDataSet1.FieldByName('Aliq ICMS').AsFloat := aliq_icms;
+        ClientDataSet1.FieldByName('Valor ICMS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
+        ClientDataSet1.FieldByName('Valor Base IPI').AsCurrency := StrToCurr(edtVlTotal.Text);
+        ClientDataSet1.FieldByName('Aliq IPI').AsFloat := aliq_ipi;
+        ClientDataSet1.FieldByName('Valor IPI').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
+        ClientDataSet1.FieldByName('Valor Base PIS/COFINS').AsCurrency := StrToCurr(edtVlTotal.Text);
+        ClientDataSet1.FieldByName('Aliq PIS/COFINS').AsFloat := aliq_pis_cofins;
+        ClientDataSet1.FieldByName('Valor PIS/COFINS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
       finally
         ClientDataSet1.Insert;
         edicaoItem := False;
@@ -243,6 +255,7 @@ procedure TfrmPedidoVenda.btnConfirmarPedidoClick(Sender: TObject);
 var nr_pedido, id_geral, id_geral_pvi, qtdade, qttotal : Integer;
 var Tempo : Integer;
 begin
+  {colocar tudo dentro de um try, igual ao que está no lançamento da nota de entrada}
   nr_pedido := 0;
   id_geral := 0;
   //id_geral do pedido_venda
@@ -349,7 +362,7 @@ begin
   end;
 
   //insert na pedido_venda_item
-  sqlPedidoVendaInsert.Close;
+  //sqlPedidoVendaInsert.Close;
 
   with ClientDataSet1 do
     begin

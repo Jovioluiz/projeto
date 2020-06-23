@@ -32,7 +32,6 @@ type
     edtCLIENTEENDERECO_CIDADE: TEdit;
     edtCLIENTEENDERECO_NUMERO: TEdit;
     edtCLIENTETP_PESSOA: TRadioGroup;
-    edtCLIENTEFONE: TMaskEdit;
     edtCLIENTECELULAR: TMaskEdit;
     edtCLIENTEEMAIL: TEdit;
     edtCLIENTEENDERECO_LOGRADOURO: TEdit;
@@ -48,6 +47,7 @@ type
     edtEstado: TEdit;
     Label5: TLabel;
     edtCep: TEdit;
+    edtCLIENTEFONE: TMaskEdit;
     procedure pFormarCamposPessoa;
     procedure edtCLIENTETP_PESSOAClick(Sender: TObject);
     procedure edtCLIENTEcd_clienteExit(Sender: TObject);
@@ -108,6 +108,7 @@ end;
 procedure TfrmCadCliente.salvar;
 begin
  try
+    frmConexao.conexao.StartTransaction;
     validaCampos;
 
     FDQuery1.Close;
@@ -169,7 +170,7 @@ begin
                                         '  bairro = :bairro,            '+
                                         '  cidade = :cidade,            '+
                                         '  uf = :uf,                    '+
-                                        'cep = :cep                     '+
+                                        '  cep = :cep                   '+
                                       'where                            '+
                                         '  cd_cliente = :cd_cliente';
 
@@ -184,12 +185,14 @@ begin
         try
           sqlInsertCliente.ExecSQL;
           sqlInsertEndereco.ExecSQL;
+          frmConexao.conexao.Commit;
           sqlInsertCliente.Close;
           sqlInsertEndereco.Close;
           ShowMessage('Cliente alterado com sucesso');
         except
           on E:exception do
             begin
+              frmConexao.conexao.Rollback;
               ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
               Exit;
             end;
@@ -276,12 +279,14 @@ begin
         try
           sqlInsertCliente.ExecSQL;
           sqlInsertEndereco.ExecSQL;
+          frmConexao.conexao.Commit;
           sqlInsertCliente.Close;
           sqlInsertEndereco.Close;
           ShowMessage('Cliente inserido com sucesso');
         except
         on E:exception do
             begin
+              frmConexao.conexao.Rollback;
               ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
               Exit;
             end;
@@ -337,6 +342,7 @@ begin
   edtCLIENTEENDERECO_BAIRRO.Text := FDQuery1.FieldByName('bairro_descricao').AsString;
   edtCLIENTEENDERECO_CIDADE.Text := FDQuery1.FieldByName('nm_cidade').AsString;
   edtEstado.Text := FDQuery1.FieldByName('uf').AsString;
+  edtCLIENTEENDERECO_LOGRADOURO.SetFocus;
 
 end;
 

@@ -97,7 +97,7 @@ object frmCadCliente: TfrmCadCliente
       Width = 820
       Height = 177
       Caption = 'Endere'#231'o'
-      TabOrder = 11
+      TabOrder = 10
       object Label6: TLabel
         Left = 41
         Top = 56
@@ -161,14 +161,14 @@ object frmCadCliente: TfrmCadCliente
         Top = 56
         Width = 73
         Height = 21
-        TabOrder = 1
+        TabOrder = 4
       end
       object edtEstado: TEdit
         Left = 480
         Top = 96
         Width = 73
         Height = 21
-        TabOrder = 4
+        TabOrder = 5
       end
       object edtCep: TEdit
         Left = 114
@@ -178,6 +178,14 @@ object frmCadCliente: TfrmCadCliente
         CharCase = ecUpperCase
         TabOrder = 0
         OnExit = edtCepExit
+      end
+      object edtCLIENTEENDERECO_LOGRADOURO: TEdit
+        Left = 114
+        Top = 60
+        Width = 273
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 1
       end
     end
     object edtCLIENTETP_PESSOA: TRadioGroup
@@ -193,16 +201,6 @@ object frmCadCliente: TfrmCadCliente
       TabOrder = 3
       OnClick = edtCLIENTETP_PESSOAClick
     end
-    object edtCLIENTEFONE: TMaskEdit
-      Left = 605
-      Top = 93
-      Width = 106
-      Height = 21
-      EditMask = '!\(99\)0000-0000;0;_'
-      MaxLength = 13
-      TabOrder = 9
-      Text = ''
-    end
     object edtCLIENTECELULAR: TMaskEdit
       Left = 605
       Top = 120
@@ -210,7 +208,7 @@ object frmCadCliente: TfrmCadCliente
       Height = 21
       EditMask = '!\(99\)00000-0000;0;_'
       MaxLength = 14
-      TabOrder = 10
+      TabOrder = 9
       Text = ''
       OnExit = edtCLIENTECELULARExit
     end
@@ -220,14 +218,6 @@ object frmCadCliente: TfrmCadCliente
       Width = 170
       Height = 21
       TabOrder = 7
-    end
-    object edtCLIENTEENDERECO_LOGRADOURO: TEdit
-      Left = 123
-      Top = 243
-      Width = 273
-      Height = 21
-      CharCase = ecUpperCase
-      TabOrder = 12
     end
     object edtCLIENTECPF_CNPJ: TMaskEdit
       Left = 131
@@ -278,6 +268,17 @@ object frmCadCliente: TfrmCadCliente
       TabOrder = 0
       OnExit = edtCLIENTEcd_clienteExit
     end
+  end
+  object edtCLIENTEFONE: TMaskEdit
+    Left = 605
+    Top = 93
+    Width = 102
+    Height = 21
+    EditMask = '!\(99\)0000-0000;0;_'
+    MaxLength = 13
+    TabOrder = 1
+    Text = ''
+    OnExit = edtCLIENTECELULARExit
   end
   object FDQuery1: TFDQuery
     Connection = frmConexao.conexao

@@ -322,7 +322,7 @@ object frm_Login: Tfrm_Login
     TabOrder = 3
     OnClick = btnCancelarClick
   end
-  object sql_login: TFDQuery
+  object sqlLogin: TFDQuery
     Connection = frmConexao.conexao
     Left = 24
     Top = 144

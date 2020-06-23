@@ -18,7 +18,7 @@ type
     edtSenha: TMaskEdit;
     btnEntrar: TButton;
     btnCancelar: TButton;
-    sql_login: TFDQuery;
+    sqlLogin: TFDQuery;
     Image1: TImage;
     procedure btnCancelarClick(Sender: TObject);
     procedure btnEntrarClick(Sender: TObject);
@@ -47,8 +47,8 @@ end;
 procedure Tfrm_Login.btnEntrarClick(Sender: TObject);
 var usuario, senha : String;
 begin
-sql_login.Close;
-sql_login.SQL.Text := 'select '+
+sqlLogin.Close;
+sqlLogin.SQL.Text := 'select '+
                             'login, '+
                             'senha '+
                       'from '+
@@ -56,30 +56,13 @@ sql_login.SQL.Text := 'select '+
                       'where '+
                           '(login = :login) and (senha = :senha)';
 
-sql_login.ParamByName('login').AsString := edtUsuario.Text;
-sql_login.ParamByName('senha').AsString := edtSenha.Text;
-sql_login.Open();
-
- {
-with dm.sqlLogin do
-  begin
-    Close;
-    SQL.Clear;
-    SQL.Add('select login, senha from login_usuario ');
-
-    Open();
-
-    if RecordCount > 0 then
-      begin
-        SQL.Add('where login = :login and senha = :senha');
-        ParamByName('login').Value := edtUsuario.Text;
-        ParamByName('senha').Value := edtSenha.Text;
-      end;
-  end;}
+sqlLogin.ParamByName('login').AsString := edtUsuario.Text;
+sqlLogin.ParamByName('senha').AsString := edtSenha.Text;
+sqlLogin.Open();
 
 
-usuario := sql_login.FieldByName('login').Text;
-senha :=  sql_login.FieldByName('senha').Text;
+usuario := sqlLogin.FieldByName('login').Text;
+senha :=  sqlLogin.FieldByName('senha').Text;
 
 if (edtUsuario.Text = EmptyStr) or (edtSenha.Text = EmptyStr) then
   begin

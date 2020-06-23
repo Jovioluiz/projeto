@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.PGDef,
   FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
   FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  FireDAC.Comp.UI, FireDAC.Phys.PG, frxClass, frxServerClient, frxDBSet;
+  FireDAC.Comp.UI, FireDAC.Phys.PG;// frxClass, frxServerClient, frxDBSet;
 
 type
   Tdm = class(TDataModule)
@@ -31,8 +31,8 @@ type
     tbClientesfl_fornecedor: TBooleanField;
     tbClientesdt_atz: TSQLTimeStampField;
     sqlPedidoVenda: TFDQuery;
-    dsRelPedidoVenda: TfrxDBDataset;
-    reportPedidoVenda: TfrxReport;
+    //dsRelPedidoVenda: TfrxDBDataset;
+    //reportPedidoVenda: TfrxReport;
     tbProdutos: TFDTable;
     tbProdutoscd_produto: TIntegerField;
     tbProdutosfl_ativo: TBooleanField;
