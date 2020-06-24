@@ -3,32 +3,38 @@ object frmConsultaProdutos: TfrmConsultaProdutos
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Consulta de Produtos'
-  ClientHeight = 821
-  ClientWidth = 1208
+  ClientHeight = 746
+  ClientWidth = 1198
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   Visible = True
+  WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1208
-    Height = 821
+    Width = 1198
+    Height = 746
     Align = alClient
     TabOrder = 0
+    ExplicitLeft = 8
+    ExplicitTop = -56
+    ExplicitHeight = 816
     object Label1: TLabel
       Left = 16
-      Top = 653
+      Top = 581
       Width = 96
       Height = 16
       Caption = #218'ltimas Entradas'
@@ -41,7 +47,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     end
     object btnPesquisar: TButton
       Left = 928
-      Top = 72
+      Top = 58
       Width = 89
       Height = 31
       Caption = 'Pesquisar'
@@ -79,7 +85,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     end
     object dbGridProduto: TDBGrid
       Left = 16
-      Top = 150
+      Top = 102
       Width = 721
       Height = 475
       DataSource = DataSource1
@@ -159,23 +165,25 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     end
     object StatusBar1: TStatusBar
       Left = 1
-      Top = 801
-      Width = 1206
+      Top = 726
+      Width = 1196
       Height = 19
       AutoHint = True
       Panels = <>
+      ExplicitTop = 801
+      ExplicitWidth = 1206
     end
     object edtPesquisa: TEdit
       Left = 16
-      Top = 72
+      Top = 58
       Width = 881
-      Height = 21
+      Height = 31
       CharCase = ecUpperCase
       TabOrder = 0
     end
     object dbGridUltimasEntradas: TDBGrid
       Left = 16
-      Top = 675
+      Top = 603
       Width = 593
       Height = 120
       DataSource = DataSourceUltEntradas
@@ -223,7 +231,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     end
     object dbgriPrecos: TDBGrid
       Left = 760
-      Top = 150
+      Top = 102
       Width = 425
       Height = 275
       DataSource = dsPrecos
@@ -293,7 +301,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
   object DataSourceUltEntradas: TDataSource
     DataSet = sqlUltEntrada
     Left = 104
-    Top = 728
+    Top = 672
   end
   object ClientDataSetUltEntradas: TClientDataSet
     Aggregates = <>
@@ -302,12 +310,12 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     Params = <>
     StoreDefs = True
     Left = 248
-    Top = 728
+    Top = 664
   end
   object sqlUltEntrada: TFDQuery
     Connection = frmConexao.conexao
-    Left = 336
-    Top = 720
+    Left = 344
+    Top = 648
   end
   object dsPrecos: TDataSource
     DataSet = sqlPrecos

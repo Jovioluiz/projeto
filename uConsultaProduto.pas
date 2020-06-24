@@ -39,6 +39,7 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure dbGridProdutoCellClick(Column: TColumn);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -211,6 +212,18 @@ begin
   edtCodigo.Checked := True;
   edtDescricao.Checked := True;
   //edtPesquisa.SetFocus;
+end;
+
+procedure TfrmConsultaProdutos.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_ESCAPE then //ESC
+    begin
+    if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+      begin
+        Close;
+      end;
+    end;
 end;
 
 procedure TfrmConsultaProdutos.FormKeyPress(Sender: TObject; var Key: Char);

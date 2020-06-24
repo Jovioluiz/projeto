@@ -27,6 +27,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
@@ -554,5 +555,10 @@ object frmPedidoVenda: TfrmPedidoVenda
     Connection = frmConexao.conexao
     Left = 464
     Top = 200
+  end
+  object sqlPedidoVendaItem: TFDQuery
+    Connection = frmConexao.conexao
+    Left = 512
+    Top = 448
   end
 end
