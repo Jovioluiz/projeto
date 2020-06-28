@@ -13,8 +13,16 @@ object frmConfiguracoes: TfrmConfiguracoes
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 24
+    Top = 40
+    Width = 148
+    Height = 13
+    Caption = 'Altera Cliente Pedido de Venda'
+  end
   object btnSalvar: TButton
     Left = 440
     Top = 272
@@ -32,18 +40,18 @@ object frmConfiguracoes: TfrmConfiguracoes
     Caption = 'Cancelar'
     TabOrder = 1
   end
-  object rgEditaClientePV: TRadioGroup
-    Left = 24
-    Top = 40
-    Width = 201
-    Height = 65
-    Caption = 'Alterar Cliente Pedido de Venda'
+  object cbConfigAlteraCliPv: TComboBox
+    Left = 178
+    Top = 37
+    Width = 71
+    Height = 21
+    TabOrder = 2
     Items.Strings = (
       'Sim'
       'N'#227'o')
-    TabOrder = 2
   end
   object FDQuery1: TFDQuery
+    Connection = frmConexao.conexao
     Left = 488
     Top = 80
   end

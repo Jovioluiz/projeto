@@ -104,14 +104,14 @@ end;
 //da erro aqui, não carrega os campos certos e limpa o grid
 procedure Tfrm_Edicao_Pedido_Venda.dbGridProdutosDblClick(Sender: TObject);
 begin
-  edtCdProduto.Text := dbGridProdutos.Fields[0].AsString;
-  edtNomeProduto.Text := dbGridProdutos.Fields[1].AsString;
-  edtQtdade.Text := dbGridProdutos.Fields[2].AsString;
-  edtUnMedida.Text := dbGridProdutos.Fields[3].AsString;
-  edtTabelaPreco.Text := dbGridProdutos.Fields[4].AsString;
-  edtVlUnitario.Text := dbGridProdutos.Fields[5].AsString;
-  edtVlDesconto.Text := dbGridProdutos.Fields[6].AsString;
-  edtVlTotal.Text := dbGridProdutos.Fields[7].AsString;
+  edtCdProduto.Text := dbGridProdutos.Columns[0].Field.Text;
+  edtNomeProduto.Text := dbGridProdutos.Columns[1].Field.Text;
+  edtQtdade.Text := dbGridProdutos.Columns[2].Field.Text;
+  edtUnMedida.Text := dbGridProdutos.Columns[3].Field.Text;
+  edtTabelaPreco.Text := dbGridProdutos.Columns[4].Field.Text;
+  edtVlUnitario.Text := dbGridProdutos.Columns[5].Field.Text;
+  edtVlDesconto.Text := dbGridProdutos.Columns[6].Field.Text;
+  edtVlTotal.Text := dbGridProdutos.Columns[7].Field.Text;
   edicao := True;
 end;
 
@@ -254,10 +254,15 @@ begin
     sqlCarregaPedidoVenda.Open();
     edtNrPedido.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('nr_pedido').AsInteger);
     edtFl_orcamento.Checked := sqlCarregaPedidoVenda.FieldByName('fl_orcamento').AsBoolean;
-    if edicao.rgEditaClientePV.ItemIndex = 0 then
-      begin
-        edtCdCliente.Enabled := True;
-      end;
+    if edicao.cbConfigAlteraCliPv.ItemIndex = 0 then
+    begin
+      edtCdCliente.Enabled := True;
+      edtCdCliente.SetFocus;
+    end
+    else
+    begin
+      edtCdCliente.Enabled := False;
+    end;
 
     edtCdCliente.Text := IntToStr(sqlCarregaPedidoVenda.FieldByName('cd_cliente').AsInteger);
     edtNomeCliente.Text := sqlCarregaPedidoVenda.FieldByName('nome').AsString;

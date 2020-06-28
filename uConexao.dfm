@@ -26,7 +26,9 @@ object frmConexao: TfrmConexao
     Top = 104
   end
   object FDPhysPgDriverLink1: TFDPhysPgDriverLink
-    VendorLib = 'C:\Users\FlexSmart\Documents\AProjeto\trunk\lib\libpq.dll'
+    VendorLib = 
+      'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
+      'libpq.dll'
     Left = 168
     Top = 104
   end
