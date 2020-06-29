@@ -62,6 +62,7 @@ end;
 procedure TfrmConfiguracoes.FormCreate(Sender: TObject);
 var f, config : Integer;
 begin
+  f := 0;
    try
     FDQuery1.Close;
     FDQuery1.SQL.Text := 'select cd_configuracao, valor from configuracao order by cd_configuracao';

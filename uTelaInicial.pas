@@ -17,7 +17,7 @@ uses
   uConfiguracoes;
 
 type
-  Tfrm_Principal = class(TForm)
+  TfrmPrincipal = class(TForm)
     MenuCadastro: TMainMenu;
     MenuItemCad: TMenuItem;
     Cadastro1: TMenuItem;
@@ -67,63 +67,63 @@ type
   end;
 
 var
-  frm_Principal: Tfrm_Principal;
+  frmPrincipal: TfrmPrincipal;
 
 implementation
 
 {$R *.dfm}
 
 
-procedure Tfrm_Principal.Cadastro2Click(Sender: TObject);
+procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
 begin
   frmCadastraTributacaoItem := TfrmCadastraTributacaoItem.Create(Self);
   frmCadastraTributacaoItem.Show;
 end;
 
-procedure Tfrm_Principal.Cliente1Click(Sender: TObject);
+procedure TfrmPrincipal.Cliente1Click(Sender: TObject);
 begin
   frmCadCliente := TfrmCadCliente.Create(Self);
   frmCadCliente.Show;
 
 end;
 
-procedure Tfrm_Principal.Cliente2Click(Sender: TObject);
+procedure TfrmPrincipal.Cliente2Click(Sender: TObject);
 begin
   frmConsultaCliente := TfrmConsultaCliente.Create(Self);
   frmConsultaCliente.Show;
 end;
 
-procedure Tfrm_Principal.CondicaoPagamento1Click(Sender: TObject);
+procedure TfrmPrincipal.CondicaoPagamento1Click(Sender: TObject);
 begin
   frmCadCondPgto := TfrmCadCondPgto.Create(Self);
   frmCadCondPgto.Show;
 end;
 
-procedure Tfrm_Principal.Configuraes1Click(Sender: TObject);
+procedure TfrmPrincipal.Configuraes1Click(Sender: TObject);
 begin
   frmConfiguracoes := TfrmConfiguracoes.Create(Self);
   frmConfiguracoes.ShowModal;
 end;
 
-procedure Tfrm_Principal.FormaPagamento1Click(Sender: TObject);
+procedure TfrmPrincipal.FormaPagamento1Click(Sender: TObject);
 begin
   frmCadFormaPagamento := TfrmCadFormaPagamento.Create(Self);
   frmCadFormaPagamento.Show;
 end;
 
 
-procedure Tfrm_Principal.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  frm_Principal := nil;
+  frmPrincipal := nil;
 end;
 
 //mostra o usuário logado
-procedure Tfrm_Principal.FormCreate(Sender: TObject);
+procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
-  StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frm_Login.edtUsuario.Text);
+  StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frmLogin.edtUsuario.Text);
 end;
 
-procedure Tfrm_Principal.FormKeyDown(Sender: TObject; var Key: Word;
+procedure TfrmPrincipal.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
 if key = VK_ESCAPE then //ESC
@@ -135,31 +135,31 @@ if key = VK_ESCAPE then //ESC
   end;
 end;
 
-procedure Tfrm_Principal.NotaEntrada1Click(Sender: TObject);
+procedure TfrmPrincipal.NotaEntrada1Click(Sender: TObject);
 begin
   frmLancamentoNotaEntrada := TfrmLancamentoNotaEntrada.Create(Self);
   frmLancamentoNotaEntrada.Show;
 end;
 
-procedure Tfrm_Principal.PedidodeVenda1Click(Sender: TObject);
+procedure TfrmPrincipal.PedidodeVenda1Click(Sender: TObject);
 begin
   frmPedidoVenda := TfrmPedidoVenda.Create(Self);
   frmPedidoVenda.Show;
 end;
 
-procedure Tfrm_Principal.Produto1Click(Sender: TObject);
+procedure TfrmPrincipal.Produto1Click(Sender: TObject);
 begin
   frmCadProduto := TfrmCadProduto.Create(Self);
   frmCadProduto.Show;
 end;
 
-procedure Tfrm_Principal.Produtos1Click(Sender: TObject);
+procedure TfrmPrincipal.Produtos1Click(Sender: TObject);
 begin
   frmConsultaProdutos := TfrmConsultaProdutos.Create(Self);
   frmConsultaProdutos.Show;
 end;
 
-procedure Tfrm_Principal.Sair1Click(Sender: TObject);
+procedure TfrmPrincipal.Sair1Click(Sender: TObject);
 begin
   if (Application.MessageBox('Deseja realmente sair do Sistema?','Atenção', MB_YESNO) = IDYES) then
   begin
@@ -167,24 +167,24 @@ begin
   end;
 end;
 
-procedure Tfrm_Principal.TabeladePreo1Click(Sender: TObject);
+procedure TfrmPrincipal.TabeladePreo1Click(Sender: TObject);
 begin
   frmcadTabelaPreco := TfrmcadTabelaPreco.Create(Self);
   frmcadTabelaPreco.ShowModal;
 end;
 
-procedure Tfrm_Principal.Timer1Timer(Sender: TObject);
+procedure TfrmPrincipal.Timer1Timer(Sender: TObject);
 begin
   StatusBar1.Panels.Items[1].Text := DateTimeToStr(Now);
 end;
 
-procedure Tfrm_Principal.VendaDiria1Click(Sender: TObject);
+procedure TfrmPrincipal.VendaDiria1Click(Sender: TObject);
 begin
   frmRelVendaDiaria := TfrmRelVendaDiaria.Create(Self);
   frmRelVendaDiaria.Show;
 end;
 
-procedure Tfrm_Principal.VisualizarPedidoVenda1Click(Sender: TObject);
+procedure TfrmPrincipal.VisualizarPedidoVenda1Click(Sender: TObject);
 begin
   frmVisualizaPedidoVenda := TfrmVisualizaPedidoVenda.Create(Self);
   frmVisualizaPedidoVenda.Show;

@@ -1,4 +1,4 @@
-object frm_Login: Tfrm_Login
+object frmLogin: TfrmLogin
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
@@ -6,7 +6,7 @@ object frm_Login: Tfrm_Login
   Caption = 'Login'
   ClientHeight = 200
   ClientWidth = 522
-  Color = clBtnFace
+  Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11

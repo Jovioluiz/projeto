@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.Client, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
 
 type
-  Tfrm_Login = class(TForm)
+  TfrmLogin = class(TForm)
     Label1: TLabel;
     Label2: TLabel;
     edtUsuario: TEdit;
@@ -31,7 +31,7 @@ type
   end;
 
 var
-  frm_Login: Tfrm_Login;
+  frmLogin: TfrmLogin;
 
 implementation
 
@@ -39,12 +39,12 @@ implementation
 
 uses uTelaInicial, uDataModule;
 
-procedure Tfrm_Login.btnCancelarClick(Sender: TObject);
+procedure TfrmLogin.btnCancelarClick(Sender: TObject);
 begin
   Close;
 end;
 
-procedure Tfrm_Login.btnEntrarClick(Sender: TObject);
+procedure TfrmLogin.btnEntrarClick(Sender: TObject);
 var usuario, senha : String;
 begin
 sqlLogin.Close;
@@ -71,13 +71,12 @@ if (edtUsuario.Text = EmptyStr) or (edtSenha.Text = EmptyStr) then
   end;
 if (edtUsuario.Text = usuario) and (edtSenha.Text = senha) then
   begin
-  try
-    frm_Principal := Tfrm_Principal.Create(Self);
-    frm_Principal.ShowModal;
-  finally
-    frm_Login.Close;
-  end;
-
+    try
+      frmPrincipal := TfrmPrincipal.Create(Self);
+      frmPrincipal.ShowModal;
+    finally
+      frmLogin.Close;
+    end;
   end
 else
   begin
@@ -85,12 +84,12 @@ else
   end;
 end;
 
-procedure Tfrm_Login.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TfrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
- frm_Login := nil;
+ frmLogin := nil;
 end;
 
-procedure Tfrm_Login.FormKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmLogin.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
     begin
