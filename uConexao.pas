@@ -13,7 +13,8 @@ uses
 type
   TfrmConexao = class(TForm)
     conexao: TFDConnection;
-    FDPhysPgDriverLink1: TFDPhysPgDriverLink;
+    drive: TFDPhysPgDriverLink;
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -26,5 +27,17 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TfrmConexao.FormCreate(Sender: TObject);
+begin
+  conexao.Params.Database := 'trabalho_engenharia';
+  conexao.Params.UserName := 'postgres';
+  conexao.Params.Password := 'postgres';
+
+  conexao.Connected := true;
+
+  drive.VendorLib := GetCurrentDir + '\lib\libpq.dll';
+
+end;
 
 end.

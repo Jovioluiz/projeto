@@ -71,16 +71,22 @@ begin
                      'from                  '+
                           'produto ';
 
-  //if edtPesquisa.Text = '' then
-   // ShowMessage('Informe algo para pesquisar');
-   // Exit;
+  if Trim(edtPesquisa.Text) = '' then
+  begin
+    ShowMessage('Informe algo para pesquisar');
+    Exit;
+  end;
+
   if edtPesquisa.Text = '*' then
+  begin
     sqlConsulta.Open();
+  end;
+
   if edtCodigo.Checked then
     begin
       sqlConsulta.SQL.Add(' where cast(cd_produto as varchar) ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));
       sqlConsulta.SQL.Add(sql);
-      //sqlConsulta.Open();
+      sqlConsulta.Open();
     end;
   if edtDescricao.Checked then
     sqlConsulta.SQL.Add(' or desc_produto ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));

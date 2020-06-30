@@ -123,7 +123,7 @@ object frmCadCondPgto: TfrmCadCondPgto
     Top = 200
   end
   object selectCDPGTO: TFDQuery
-    Connection = dm.FDConnection1
+    Connection = frmConexao.conexao
     Left = 424
     Top = 144
   end

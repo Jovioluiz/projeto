@@ -15,7 +15,6 @@ object frmConsultaProdutos: TfrmConsultaProdutos
   OldCreateOrder = False
   Position = poScreenCenter
   Visible = True
-  WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
@@ -29,9 +28,6 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     Height = 746
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = -56
-    ExplicitHeight = 816
     object Label1: TLabel
       Left = 16
       Top = 581
@@ -88,7 +84,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Top = 102
       Width = 721
       Height = 475
-      DataSource = DataSource1
+      DataSource = dm.dsConsultaProdutos
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 4
       TitleFont.Charset = DEFAULT_CHARSET
@@ -170,14 +166,12 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Height = 19
       AutoHint = True
       Panels = <>
-      ExplicitTop = 801
-      ExplicitWidth = 1206
     end
     object edtPesquisa: TEdit
       Left = 16
       Top = 58
       Width = 881
-      Height = 31
+      Height = 21
       CharCase = ecUpperCase
       TabOrder = 0
     end
@@ -325,7 +319,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
   object cdPrecos: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 944
+    Left = 920
     Top = 240
   end
   object sqlPrecos: TFDQuery

@@ -11,6 +11,7 @@ object frmConexao: TfrmConexao
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object conexao: TFDConnection
@@ -25,11 +26,8 @@ object frmConexao: TfrmConexao
     Left = 64
     Top = 104
   end
-  object FDPhysPgDriverLink1: TFDPhysPgDriverLink
-    VendorLib = 
-      'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
-      'libpq.dll'
-    Left = 168
+  object drive: TFDPhysPgDriverLink
+    Left = 120
     Top = 104
   end
 end
