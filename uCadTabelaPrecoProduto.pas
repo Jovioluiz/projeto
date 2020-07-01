@@ -134,6 +134,7 @@ procedure TfrmCadTabelaPrecoProduto.FormClose(Sender: TObject;
 begin
   inherited;
   frmCadTabelaPrecoProduto := nil;
+  aberto := False;
 end;
 
 procedure TfrmCadTabelaPrecoProduto.FormKeyDown(Sender: TObject; var Key: Word;
@@ -250,7 +251,7 @@ begin
       on E:exception do
         begin
           frmConexao.conexao.Rollback;
-          ShowMessage('Erro ao gravar os dados'+ E.Message);
+          ShowMessage('Erro ao gravar os dados '+ E.Message);
           Exit;
         end;
     end;

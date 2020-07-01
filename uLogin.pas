@@ -20,6 +20,7 @@ type
     btnCancelar: TButton;
     sqlLogin: TFDQuery;
     Image1: TImage;
+    lblInfo: TLabel;
     procedure btnCancelarClick(Sender: TObject);
     procedure btnEntrarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -64,12 +65,12 @@ sqlLogin.Open();
 usuario := sqlLogin.FieldByName('login').Text;
 senha :=  sqlLogin.FieldByName('senha').Text;
 
-if (edtUsuario.Text = EmptyStr) or (edtSenha.Text = EmptyStr) then
+if (Trim(edtUsuario.Text) = EmptyStr) or (Trim(edtSenha.Text) = EmptyStr) then
   begin
-   ShowMessage('Digite Usuário e Senha válidos');
-   exit;
+    lblInfo.Caption := 'Usuário e Senha Inválidos!';
+    Exit;
   end;
-if (edtUsuario.Text = usuario) and (edtSenha.Text = senha) then
+if (Trim(edtUsuario.Text) = usuario) and (Trim(edtSenha.Text) = senha) then
   begin
     try
       frmPrincipal := TfrmPrincipal.Create(Self);
@@ -80,7 +81,8 @@ if (edtUsuario.Text = usuario) and (edtSenha.Text = senha) then
   end
 else
   begin
-   ShowMessage('Usuário ou Senha Inválidos');
+    lblInfo.Caption := 'Usuário e Senha Inválidos!';
+    Exit;
   end;
 end;
 

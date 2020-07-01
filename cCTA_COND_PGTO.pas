@@ -64,13 +64,13 @@ begin
   selectCDPGTO.Close;
   selectCDPGTO.SQL.Clear;
   selectCDPGTO.SQL.Text := 'select '+
-                              'c.cd_cond_pag, '+
-                              'c.nm_cond_pag, '+
+                              'c.fl_ativo, '+
+                              'cd_cond_pag, '+
+                              'nm_cond_pag, '+
                               'c.cd_cta_forma_pagamento, '+
                               'f.nm_forma_pag, '+
-                              'c.nr_parcelas, '+
-                              'c.vl_minimo_parcela, '+
-                              'c.fl_ativo '+
+                              'vl_minimo_parcela, '+
+                              'nr_parcelas '+
                             'from '+
                               'cta_cond_pagamento c '+
                             'join cta_forma_pagamento f on '+
@@ -97,7 +97,6 @@ begin
       edtCTACONDPGTOVL_MINIMO.Text := CurrToStr(selectCDPGTO.FieldByName('vl_minimo_parcela').AsCurrency);
     end;
     edtCTACONDPGTONR_PARCELAS.Text := IntToStr(selectCDPGTO.FieldByName('nr_parcelas').AsInteger);
-
   end
   else
     Exit;

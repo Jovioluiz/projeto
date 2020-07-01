@@ -276,6 +276,14 @@ object frmLogin: TfrmLogin
       0F0C0C52D071C71E21B6CDB7C724FC15811C9B059A1C7C690000000049454E44
       AE426082}
   end
+  object lblInfo: TLabel
+    Left = 109
+    Top = 120
+    Width = 188
+    Height = 13
+    Color = clRed
+    ParentColor = False
+  end
   object edtUsuario: TEdit
     Left = 96
     Top = 21

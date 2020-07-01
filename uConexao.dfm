@@ -23,6 +23,7 @@ object frmConexao: TfrmConexao
       'Port=5433'
       'DriverID=PG')
     TxOptions.AutoStop = False
+    Connected = True
     Left = 64
     Top = 104
   end

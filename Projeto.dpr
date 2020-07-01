@@ -22,7 +22,8 @@ uses
   uDataModule in 'uDataModule.pas' {dm: TDataModule},
   uEdicaoPedidoVenda in 'uEdicaoPedidoVenda.pas' {frm_Edicao_Pedido_Venda},
   uConfiguracoes in 'uConfiguracoes.pas' {frmConfiguracoes},
-  uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos};
+  uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos},
+  uConsulta in 'uConsulta.pas' {frmConsulta};
 
 //TestuLogin in 'Teste\TestuLogin.pas';
 
@@ -34,6 +35,7 @@ begin
   Application.CreateForm(TfrmLogin, frmLogin);
   Application.CreateForm(TfrmConexao, frmConexao);
   Application.CreateForm(Tdm, dm);
+  Application.CreateForm(TfrmConsulta, frmConsulta);
   Application.Run;
 
 end.

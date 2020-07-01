@@ -23,6 +23,7 @@ type
 
 var
   frmConexao: TfrmConexao;
+  aberto : Boolean;
 
 implementation
 
