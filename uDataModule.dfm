@@ -11,7 +11,6 @@ object dm: Tdm
       'Password=postgres'
       'Server=localhost'
       'DriverID=PG')
-    Connected = True
     Left = 40
     Top = 32
   end

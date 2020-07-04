@@ -84,7 +84,7 @@ begin
  else
   begin
     frm_Edicao_Pedido_Venda := Tfrm_Edicao_Pedido_Venda.Create(Self);
-    frm_Edicao_Pedido_Venda.Show;
+    frm_Edicao_Pedido_Venda.ShowModal;
   end;
 
 end;

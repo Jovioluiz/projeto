@@ -179,7 +179,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 95
       Height = 32
       Caption = 'Confirmar'
-      OnClick = btnConfirmarClick
     end
     object edtCdFormaPgto: TEdit
       Left = 86
@@ -380,6 +379,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Height = 21
       TabOrder = 3
       OnChange = edtCdProdutoChange
+      OnExit = edtCdProdutoExit
     end
     object edtNomeProduto: TEdit
       Left = 189
@@ -403,6 +403,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Height = 21
       TabOrder = 6
       OnChange = edtTabelaPrecoChange
+      OnExit = edtTabelaPrecoExit
     end
     object edtDescTabPreco: TEdit
       Left = 189
@@ -512,5 +513,10 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
     DataSet = ClientDataSet1
     Left = 552
     Top = 416
+  end
+  object query: TFDQuery
+    Connection = frmConexao.conexao
+    Left = 864
+    Top = 184
   end
 end

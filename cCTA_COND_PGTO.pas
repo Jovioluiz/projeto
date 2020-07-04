@@ -65,12 +65,12 @@ begin
   selectCDPGTO.SQL.Clear;
   selectCDPGTO.SQL.Text := 'select '+
                               'c.fl_ativo, '+
-                              'cd_cond_pag, '+
-                              'nm_cond_pag, '+
+                              'c.cd_cond_pag, '+
+                              'c.nm_cond_pag, '+
                               'c.cd_cta_forma_pagamento, '+
                               'f.nm_forma_pag, '+
-                              'vl_minimo_parcela, '+
-                              'nr_parcelas '+
+                              'c.vl_minimo_parcela, '+
+                              'c.nr_parcelas '+
                             'from '+
                               'cta_cond_pagamento c '+
                             'join cta_forma_pagamento f on '+
@@ -86,7 +86,7 @@ begin
     edtCTACONDPGTOFL_ATIVO.Checked := selectCDPGTO.FieldByName('fl_ativo').AsBoolean;
     edtCTACONDPGTODESCRICAO.Text := selectCDPGTO.FieldByName('nm_cond_pag').AsString;
     edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text := IntToStr(selectCDPGTO.FieldByName('cd_cta_forma_pagamento').AsInteger);
-    edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := selectCDPGTO.FieldByName('nm_forma_pag').Text;
+    edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := selectCDPGTO.FieldByName('nm_forma_pag').AsString;
     //está dando erro ao carregar o nr_parcelas e vl_minimo_parcela na primeira vez
     if selectCDPGTO.FieldByName('vl_minimo_parcela').AsCurrency = 0 then
     begin
@@ -97,9 +97,7 @@ begin
       edtCTACONDPGTOVL_MINIMO.Text := CurrToStr(selectCDPGTO.FieldByName('vl_minimo_parcela').AsCurrency);
     end;
     edtCTACONDPGTONR_PARCELAS.Text := IntToStr(selectCDPGTO.FieldByName('nr_parcelas').AsInteger);
-  end
-  else
-    Exit;
+  end;
 end;
 
 procedure TfrmCadCondPgto.edtCTACONDPGTOCD_CTA_FORMA_PGTOChange(Sender: TObject);
@@ -125,7 +123,6 @@ begin
     selectCDPGTO.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text);
     selectCDPGTO.Open();
     edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := selectCDPGTO.FieldByName('nm_forma_pag').AsString;
-    selectCDPGTO.Next;
 end;
 
 procedure TfrmCadCondPgto.excluir;
@@ -233,7 +230,7 @@ try
       sqlInsertCondPgto.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_COND.Text);
       sqlInsertCondPgto.ParamByName('nm_cond_pag').AsString := edtCTACONDPGTODESCRICAO.Text;
       sqlInsertCondPgto.ParamByName('cd_cta_forma_pagamento').AsInteger := StrToInt(edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text);
-            if edtCTACONDPGTONR_PARCELAS.Text = '' then
+      if edtCTACONDPGTONR_PARCELAS.Text = '' then
       begin
         sqlInsertCondPgto.ParamByName('nr_parcelas').AsInteger := 0;
       end
