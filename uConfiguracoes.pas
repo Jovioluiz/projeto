@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, Vcl.ComCtrls, System.UITypes;
 
 type
   TfrmConfiguracoes = class(TfrmConexao)
@@ -19,6 +19,7 @@ type
     cbConfigAlteraCliPv: TComboBox;
     procedure btnSalvarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -56,6 +57,14 @@ begin
     ShowMessage('Gravado com Sucesso');
   finally
     FDQuery1.Close;
+  end;
+end;
+
+procedure TfrmConfiguracoes.Button2Click(Sender: TObject);
+begin
+  if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
+  begin
+    Close;
   end;
 end;
 

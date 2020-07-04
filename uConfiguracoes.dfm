@@ -25,7 +25,7 @@ object frmConfiguracoes: TfrmConfiguracoes
   end
   object btnSalvar: TButton
     Left = 440
-    Top = 272
+    Top = 266
     Width = 75
     Height = 25
     Caption = 'Salvar'
@@ -34,17 +34,21 @@ object frmConfiguracoes: TfrmConfiguracoes
   end
   object Button2: TButton
     Left = 521
-    Top = 272
+    Top = 266
     Width = 75
     Height = 25
     Caption = 'Cancelar'
     TabOrder = 1
+    OnClick = Button2Click
   end
   object cbConfigAlteraCliPv: TComboBox
     Left = 178
     Top = 37
     Width = 71
     Height = 21
+    Hint = 'Permite Alterar Cliente na Edi'#231#227'o do Pedido de Venda'
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 2
     Items.Strings = (
       'Sim'
