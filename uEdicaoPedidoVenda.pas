@@ -62,7 +62,6 @@ type
     edtUnMedida: TComboBox;
     btnAdicionarItem: TSpeedButton;
     btnConfirmar: TSpeedButton;
-    DataSource2: TDataSource;
     query: TFDQuery;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
@@ -74,11 +73,17 @@ type
     procedure edtCdProdutoExit(Sender: TObject);
     procedure edtTabelaPrecoExit(Sender: TObject);
     procedure edtTabelaPrecoChange(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure edtVlDescontoExit(Sender: TObject);
+    procedure edtQtdadeChange(Sender: TObject);
   private
     { Private declarations }
     edicao : Boolean;
+    procedure limpaCampos;
+    procedure validaQtdadeItem();
   public
     { Public declarations }
+
   end;
 
 var
@@ -183,6 +188,24 @@ begin
   edtVlUnitario.Text := CurrToStr(query.FieldByName('valor').AsCurrency);
 end;
 
+procedure Tfrm_Edicao_Pedido_Venda.edtQtdadeChange(Sender: TObject);
+var valorTotal, vlUnitario, qtdade : Currency;
+begin
+  if edtQtdade.Text = EmptyStr then
+    begin
+      edtVlTotal.Text := '';
+      Exit;
+    end
+  else
+    begin
+      vlUnitario := StrToCurr(edtVlUnitario.Text);
+      qtdade := StrToCurr(edtQtdade.Text);
+      valorTotal := qtdade * vlUnitario;
+      edtVlTotal.Text := CurrToStr(valorTotal);
+      edtVlDesconto.Enabled := true;
+    end;
+end;
+
 procedure Tfrm_Edicao_Pedido_Venda.edtTabelaPrecoChange(Sender: TObject);
 begin
   if edtTabelaPreco.Text = EmptyStr then
@@ -232,6 +255,23 @@ begin
       valorTotal := qtdade * vlUnitario;
       edtVlTotal.Text := CurrToStr(valorTotal);
       edtVlDesconto.Enabled := true;
+    end;
+end;
+
+procedure Tfrm_Edicao_Pedido_Venda.edtVlDescontoExit(Sender: TObject);
+var vlDesconto, vlTotal, vlTotalComDesc : Currency;
+begin
+  if edtVlDesconto.Text = EmptyStr then
+    begin
+      edtVlDesconto.Text := '0,00';
+    end
+  else
+    begin
+      vlDesconto := StrToCurr(edtVlDesconto.Text);
+      vlTotal := StrToCurr(edtVlTotal.Text);
+      vlTotalComDesc := vlTotal - vlDesconto;
+      edtVlTotal.Text := CurrToStr(vlTotalComDesc);
+      //edtVlDesconto.Enabled := false;
     end;
 end;
 
@@ -369,6 +409,18 @@ begin
   end;
 end;
 
+procedure Tfrm_Edicao_Pedido_Venda.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_ESCAPE then //ESC
+  begin
+  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      Close;
+    end;
+  end;
+end;
+
 procedure Tfrm_Edicao_Pedido_Venda.FormKeyPress(Sender: TObject; var Key: Char);
 begin
  if Key = #13 then
@@ -378,6 +430,50 @@ begin
   end;
 end;
 
+procedure Tfrm_Edicao_Pedido_Venda.limpaCampos;
+begin
+  edtCdProduto.Clear;
+  edtNomeProduto.Clear;
+  edtQtdade.Clear;
+  edtTabelaPreco.Clear;
+  edtUnMedida.Clear;
+  edtVlUnitario.Clear;
+  edtVlDesconto.Clear;
+  edtVlTotal.Clear;
+  edtCdProduto.SetFocus;
+  //edtVlDescTotalPedido.Text := '0,00';
+  //edtVlAcrescimoTotalPedido.Text := '0,00';
+end;
+
+procedure Tfrm_Edicao_Pedido_Venda.validaQtdadeItem;
+var
+  qtdade, qt : Double;
+begin
+  query.Close;
+  query.SQL.Text := 'select            '+
+                            'qtd_estoque  '+
+                        'from             '+
+                            'produto      '+
+                        'where            '+
+                            'cd_produto = :cd_produto';
+  query.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+  query.Open();
+  qtdade := query.FieldByName('qtd_estoque').AsFloat;
+  qt := StrToFloat(edtQtdade.Text);
+
+  if edtQtdade.Text = '0' then
+    begin
+      ShowMessage('Informe uma quantidade maior que 0');
+      edtCdProduto.SetFocus;
+    end;
+
+  if (qt > qtdade) then
+    begin
+      ShowMessage('Quantidade informada maior que a disponível.' + #13 +'Quantidade disponível: ' + FloatToStr(qtdade));
+      edtQtdade.SetFocus;
+      Exit;
+    end;
+end;
 
 //testar pra ver se funciona
 procedure Tfrm_Edicao_Pedido_Venda.btnAdicionarItemClick(Sender: TObject);
@@ -502,19 +598,7 @@ begin
           ClientDataSet1.EnableControls;
       end;
 
-    edtCdProduto.Clear;
-    edtNomeProduto.Clear;
-    edtQtdade.Clear;
-    edtTabelaPreco.Clear;
-    edtUnMedida.Clear;
-    edtVlUnitario.Clear;
-    edtVlDesconto.Clear;
-    edtVlTotal.Clear;
-
-    edtCdProduto.SetFocus;
-
-    edtVlDescTotalPedido.Text := '0,00';
-    edtVlAcrescimoTotalPedido.Text := '0,00';
+  limpaCampos;
 end;
 
 end.

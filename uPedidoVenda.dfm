@@ -25,6 +25,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
@@ -558,7 +559,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   end
   object sqlPedidoVendaItem: TFDQuery
     Connection = frmConexao.conexao
-    Left = 512
+    Left = 608
     Top = 448
   end
 end

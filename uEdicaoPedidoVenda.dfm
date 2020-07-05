@@ -11,10 +11,13 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
@@ -186,7 +189,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 65
       Height = 21
       ReadOnly = True
-      TabOrder = 1
+      TabOrder = 3
     end
     object edtCdCondPgto: TEdit
       Left = 550
@@ -194,7 +197,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 87
       Height = 21
       ReadOnly = True
-      TabOrder = 2
+      TabOrder = 4
     end
     object edtNomeCondPgto: TEdit
       Left = 643
@@ -203,131 +206,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 0
-    end
-    object dbGridProdutos: TDBGrid
-      Left = 86
-      Top = 304
-      Width = 825
-      Height = 281
-      DataSource = DataSource1
-      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 14
-      TitleFont.Charset = DEFAULT_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -11
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Style = []
-      OnDblClick = dbGridProdutosDblClick
-      Columns = <
-        item
-          Expanded = False
-          FieldName = 'C'#243'd. Produto'
-          ReadOnly = True
-          Title.Color = clWhite
-          Width = 73
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Descri'#231#227'o'
-          ReadOnly = True
-          Width = 300
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Qtdade'
-          ReadOnly = True
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'UN Medida'
-          ReadOnly = True
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Tabela Pre'#231'o'
-          ReadOnly = True
-          Width = 70
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Unit'#225'rio'
-          ReadOnly = True
-          Width = 70
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Desconto'
-          ReadOnly = True
-          Width = 80
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Total'
-          ReadOnly = True
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Base ICMS '
-          Width = 85
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq ICMS'
-          Width = 53
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq ICMS'
-          Width = 52
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Base IPI'
-          Width = 76
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq IPI'
-          Width = 48
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor IPI'
-          Width = 48
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Base PIS/COFINS'
-          Width = 120
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq PIS/COFINS'
-          Width = 85
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor PIS/COFINS'
-          Width = 91
-          Visible = True
-        end>
     end
     object edtVlDescTotalPedido: TEdit
       Left = 131
@@ -335,7 +214,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 61
       Height = 21
       ReadOnly = True
-      TabOrder = 10
+      TabOrder = 12
     end
     object edtVlAcrescimoTotalPedido: TEdit
       Left = 221
@@ -343,7 +222,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 61
       Height = 21
       ReadOnly = True
-      TabOrder = 11
+      TabOrder = 13
     end
     object edtVlTotalPedido: TEdit
       Left = 309
@@ -351,7 +230,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 61
       Height = 21
       ReadOnly = True
-      TabOrder = 13
+      TabOrder = 15
     end
     object btnCancelar: TButton
       Left = 816
@@ -359,7 +238,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 95
       Height = 32
       Caption = 'Cancelar'
-      TabOrder = 12
+      TabOrder = 16
       OnClick = btnCancelarClick
     end
     object edtDataEmissao: TMaskEdit
@@ -369,7 +248,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Height = 21
       EditMask = '!99/99/0000;1;_'
       MaxLength = 10
-      TabOrder = 15
+      TabOrder = 17
       Text = '  /  /    '
     end
     object edtCdProduto: TEdit
@@ -377,7 +256,7 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Top = 203
       Width = 65
       Height = 21
-      TabOrder = 3
+      TabOrder = 5
       OnChange = edtCdProdutoChange
       OnExit = edtCdProdutoExit
     end
@@ -387,21 +266,22 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 329
       Height = 21
       Enabled = False
-      TabOrder = 16
+      TabOrder = 18
     end
     object edtQtdade: TEdit
       Left = 550
       Top = 203
       Width = 65
       Height = 21
-      TabOrder = 4
+      TabOrder = 6
+      OnChange = edtQtdadeChange
     end
     object edtTabelaPreco: TEdit
       Left = 86
       Top = 259
       Width = 65
       Height = 21
-      TabOrder = 6
+      TabOrder = 8
       OnChange = edtTabelaPrecoChange
       OnExit = edtTabelaPrecoExit
     end
@@ -411,87 +291,212 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
       Width = 329
       Height = 21
       Enabled = False
-      TabOrder = 17
+      TabOrder = 19
     end
     object edtVlUnitario: TEdit
       Left = 550
       Top = 259
       Width = 65
       Height = 21
-      TabOrder = 7
+      TabOrder = 9
     end
     object edtVlDesconto: TEdit
       Left = 644
       Top = 259
       Width = 65
       Height = 21
-      TabOrder = 8
+      TabOrder = 10
+      OnExit = edtVlDescontoExit
     end
     object edtVlTotal: TEdit
       Left = 724
       Top = 259
       Width = 65
       Height = 21
-      TabOrder = 9
+      TabOrder = 11
     end
     object edtUnMedida: TComboBox
       Left = 643
       Top = 203
       Width = 66
       Height = 21
-      TabOrder = 5
+      TabOrder = 7
+    end
+    object edtCdCliente: TEdit
+      Left = 88
+      Top = 87
+      Width = 65
+      Height = 21
+      ReadOnly = True
+      TabOrder = 2
+    end
+    object edtCidadeCliente: TEdit
+      Left = 552
+      Top = 87
+      Width = 361
+      Height = 21
+      Enabled = False
+      ReadOnly = True
+      TabOrder = 20
+    end
+    object edtFl_orcamento: TCheckBox
+      Left = 344
+      Top = 33
+      Width = 73
+      Height = 17
+      Caption = 'Or'#231'amento'
+      TabOrder = 1
+    end
+    object edtNomeCliente: TEdit
+      Left = 191
+      Top = 87
+      Width = 329
+      Height = 21
+      Enabled = False
+      ReadOnly = True
+      TabOrder = 21
+    end
+    object edtNomeFormaPgto: TEdit
+      Left = 191
+      Top = 149
+      Width = 329
+      Height = 21
+      Enabled = False
+      ReadOnly = True
+      TabOrder = 22
+    end
+    object edtNrPedido: TEdit
+      Left = 191
+      Top = 31
+      Width = 105
+      Height = 21
+      Enabled = False
+      TabOrder = 0
     end
   end
-  object edtNrPedido: TEdit
-    Left = 191
-    Top = 31
-    Width = 105
-    Height = 21
-    Enabled = False
-    TabOrder = 2
-  end
-  object edtCdCliente: TEdit
-    Left = 88
-    Top = 87
-    Width = 65
-    Height = 21
-    ReadOnly = True
+  object dbGridProdutos: TDBGrid
+    Left = 86
+    Top = 304
+    Width = 825
+    Height = 281
+    DataSource = DataSource1
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 1
-  end
-  object edtNomeCliente: TEdit
-    Left = 191
-    Top = 87
-    Width = 329
-    Height = 21
-    Enabled = False
-    ReadOnly = True
-    TabOrder = 3
-  end
-  object edtCidadeCliente: TEdit
-    Left = 552
-    Top = 87
-    Width = 361
-    Height = 21
-    Enabled = False
-    ReadOnly = True
-    TabOrder = 4
-  end
-  object edtNomeFormaPgto: TEdit
-    Left = 191
-    Top = 149
-    Width = 329
-    Height = 21
-    Enabled = False
-    ReadOnly = True
-    TabOrder = 5
-  end
-  object edtFl_orcamento: TCheckBox
-    Left = 344
-    Top = 33
-    Width = 73
-    Height = 17
-    Caption = 'Or'#231'amento'
-    TabOrder = 6
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnDblClick = dbGridProdutosDblClick
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'C'#243'd. Produto'
+        ReadOnly = True
+        Title.Color = clWhite
+        Width = 73
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Descri'#231#227'o'
+        ReadOnly = True
+        Width = 300
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Qtdade'
+        ReadOnly = True
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'UN Medida'
+        ReadOnly = True
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Tabela Pre'#231'o'
+        ReadOnly = True
+        Width = 70
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor Unit'#225'rio'
+        ReadOnly = True
+        Width = 70
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor Desconto'
+        ReadOnly = True
+        Width = 80
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor Total'
+        ReadOnly = True
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor Base ICMS '
+        Width = 85
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Aliq ICMS'
+        Width = 53
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Aliq ICMS'
+        Width = 52
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor Base IPI'
+        Width = 76
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Aliq IPI'
+        Width = 48
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor IPI'
+        Width = 48
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor Base PIS/COFINS'
+        Width = 120
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Aliq PIS/COFINS'
+        Width = 85
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor PIS/COFINS'
+        Width = 91
+        Visible = True
+      end>
   end
   object ClientDataSet1: TClientDataSet
     Aggregates = <>
@@ -507,11 +512,6 @@ object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
   object sqlCarregaPedidoVenda: TFDQuery
     Connection = frmConexao.conexao
     Left = 432
-    Top = 416
-  end
-  object DataSource2: TDataSource
-    DataSet = ClientDataSet1
-    Left = 552
     Top = 416
   end
   object query: TFDQuery

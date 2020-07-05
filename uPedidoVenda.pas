@@ -323,16 +323,18 @@ begin
                                         ':fl_orcamento,           '+
                                         ':dt_emissao)';
 
-  sqlPedidoVendaInsert.ParamByName('id_geral').AsInteger := id_geral;
-  sqlPedidoVendaInsert.ParamByName('nr_pedido').AsInteger := nr_pedido;
-  sqlPedidoVendaInsert.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
-  sqlPedidoVendaInsert.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCdFormaPgto.Text);
-  sqlPedidoVendaInsert.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCdCondPgto.Text);
-  sqlPedidoVendaInsert.ParamByName('vl_desconto_pedido').AsCurrency := StrToCurr(edtVlDescTotalPedido.Text);
-  sqlPedidoVendaInsert.ParamByName('vl_acrescimo').AsCurrency := StrToCurr(edtVlAcrescimoTotalPedido.Text);
-  sqlPedidoVendaInsert.ParamByName('vl_total').AsCurrency := StrToCurr(edtVlTotalPedido.Text);
-  sqlPedidoVendaInsert.ParamByName('fl_orcamento').AsBoolean := edtFl_orcamento.Checked;
-  sqlPedidoVendaInsert.ParamByName('dt_emissao').AsDate := StrToDate(edtDataEmissao.Text);
+    sqlPedidoVendaInsert.ParamByName('id_geral').AsInteger := id_geral;
+    sqlPedidoVendaInsert.ParamByName('nr_pedido').AsInteger := nr_pedido;
+    sqlPedidoVendaInsert.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
+    sqlPedidoVendaInsert.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCdFormaPgto.Text);
+    sqlPedidoVendaInsert.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCdCondPgto.Text);
+    sqlPedidoVendaInsert.ParamByName('vl_desconto_pedido').AsCurrency := StrToCurr(edtVlDescTotalPedido.Text);
+    sqlPedidoVendaInsert.ParamByName('vl_acrescimo').AsCurrency := StrToCurr(edtVlAcrescimoTotalPedido.Text);
+    sqlPedidoVendaInsert.ParamByName('vl_total').AsCurrency := StrToCurr(edtVlTotalPedido.Text);
+    sqlPedidoVendaInsert.ParamByName('fl_orcamento').AsBoolean := edtFl_orcamento.Checked;
+    sqlPedidoVendaInsert.ParamByName('dt_emissao').AsDate := StrToDate(edtDataEmissao.Text);
+
+    sqlPedidoVendaInsert.ExecSQL;
 
   //insert na pedido_venda_item
   with ClientDataSet1 do
@@ -409,32 +411,43 @@ begin
           sqlPedidoVendaItem.ParamByName('pis_cofins_valor').AsCurrency := ClientDataSet1.FieldByName('Valor PIS/COFINS').AsCurrency;
           sqlPedidoVendaItem.ParamByName('un_medida').AsString := ClientDataSet1.FieldByName('UN Medida').AsString;
           ClientDataSet1.Next;
+
+          sqlPedidoVendaItem.ExecSQL;
         end;
     end;
 
-    //atualiza a qtd_estoque do produto na tabela produto
-    sqlPedidoVendaProduto.Close;
-    sqlPedidoVendaProduto.SQL.Text := 'select '+
-                                          'qtd_estoque '+
-                                      'from '+
-                                          'produto '+
-                                      'where '+
-                                          'cd_produto = :cd_produto';
-    sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
-    sqlPedidoVendaProduto.Open();
-    qtdade := sqlPedidoVendaProduto.Fields[0].Value;//quantidade no banco
-    qttotal := qtdade - ClientDataSet1.FieldByName('Qtdade').AsInteger; //diminui com a informada no pedido
-    sqlPedidoVendaProduto.SQL.Text := 'update '+
-                                            'produto '+
-                                      'set '+
-                                            'qtd_estoque = :qtd_estoque '+
-                                      'where cd_produto = :cd_produto';
-    sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
-    sqlPedidoVendaProduto.ParamByName('qtd_estoque').AsInteger := qttotal;
 
-    sqlPedidoVendaInsert.ExecSQL;
-    sqlPedidoVendaItem.ExecSQL;
-    sqlPedidoVendaProduto.ExecSQL;
+    with ClientDataSet1 do
+      begin
+        ClientDataSet1.DisableControls;
+        ClientDataSet1.First;
+      while not ClientDataSet1.Eof do
+        begin
+          //atualiza a qtd_estoque do produto na tabela produto
+          sqlPedidoVendaProduto.Close;
+          sqlPedidoVendaProduto.SQL.Text := 'select '+
+                                                'qtd_estoque '+
+                                            'from '+
+                                                'produto '+
+                                            'where '+
+                                                'cd_produto = :cd_produto';
+          sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
+          sqlPedidoVendaProduto.Open();
+          qtdade := sqlPedidoVendaProduto.Fields[0].Value;//quantidade no banco
+          qttotal := qtdade - ClientDataSet1.FieldByName('Qtdade').AsInteger; //diminui com a informada no pedido
+          sqlPedidoVendaProduto.SQL.Text := 'update '+
+                                                  'produto '+
+                                            'set '+
+                                                  'qtd_estoque = :qtd_estoque '+
+                                            'where cd_produto = :cd_produto';
+          sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
+          sqlPedidoVendaProduto.ParamByName('qtd_estoque').AsInteger := qttotal;
+          ClientDataSet1.Next;
+          sqlPedidoVendaProduto.ExecSQL;
+        end;
+      end;
+
+
     conexao.Commit;
     conexao.Close;
 
