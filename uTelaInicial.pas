@@ -77,13 +77,13 @@ implementation
 procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
 begin
   frmCadastraTributacaoItem := TfrmCadastraTributacaoItem.Create(Self);
-  frmCadastraTributacaoItem.Show;
+  frmCadastraTributacaoItem.ShowModal;
 end;
 
 procedure TfrmPrincipal.Cliente1Click(Sender: TObject);
 begin
   frmCadCliente := TfrmCadCliente.Create(Self);
-  frmCadCliente.Show;
+  frmCadCliente.ShowModal;
 
 end;
 
@@ -96,7 +96,7 @@ end;
 procedure TfrmPrincipal.CondicaoPagamento1Click(Sender: TObject);
 begin
   frmCadCondPgto := TfrmCadCondPgto.Create(Self);
-  frmCadCondPgto.Show;
+  frmCadCondPgto.ShowModal;
 end;
 
 procedure TfrmPrincipal.Configuraes1Click(Sender: TObject);
@@ -108,7 +108,7 @@ end;
 procedure TfrmPrincipal.FormaPagamento1Click(Sender: TObject);
 begin
   frmCadFormaPagamento := TfrmCadFormaPagamento.Create(Self);
-  frmCadFormaPagamento.Show;
+  frmCadFormaPagamento.ShowModal;
 end;
 
 
@@ -150,7 +150,7 @@ end;
 procedure TfrmPrincipal.Produto1Click(Sender: TObject);
 begin
   frmCadProduto := TfrmCadProduto.Create(Self);
-  frmCadProduto.Show;
+  frmCadProduto.ShowModal;
 end;
 
 procedure TfrmPrincipal.Produtos1Click(Sender: TObject);
