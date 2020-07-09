@@ -61,9 +61,9 @@ begin
       Abort;
     end;
 
-  selectCDPGTO.Close;
-  selectCDPGTO.SQL.Clear;
-  selectCDPGTO.SQL.Text := 'select '+
+  sqlInsertCondPgto.Close;
+  sqlInsertCondPgto.SQL.Clear;
+  sqlInsertCondPgto.SQL.Text := 'select '+
                               'c.fl_ativo, '+
                               'c.cd_cond_pag, '+
                               'c.nm_cond_pag, '+
@@ -77,26 +77,33 @@ begin
                               'c.cd_cta_forma_pagamento = f.cd_forma_pag '+
                           'where cd_cond_pag = :cd_cond_pag';
 
-  selectCDPGTO.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_COND.Text);
+  sqlInsertCondPgto.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_COND.Text);
 
-  selectCDPGTO.Open();
+  sqlInsertCondPgto.Open();
 
-  if not selectCDPGTO.IsEmpty then
+  if not sqlInsertCondPgto.IsEmpty then
   begin
-    edtCTACONDPGTOFL_ATIVO.Checked := selectCDPGTO.FieldByName('fl_ativo').AsBoolean;
-    edtCTACONDPGTODESCRICAO.Text := selectCDPGTO.FieldByName('nm_cond_pag').AsString;
-    edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text := IntToStr(selectCDPGTO.FieldByName('cd_cta_forma_pagamento').AsInteger);
-    edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := selectCDPGTO.FieldByName('nm_forma_pag').AsString;
-    //está dando erro ao carregar o nr_parcelas e vl_minimo_parcela na primeira vez
-    if selectCDPGTO.FieldByName('vl_minimo_parcela').AsCurrency = 0 then
+    edtCTACONDPGTOFL_ATIVO.Checked := sqlInsertCondPgto.FieldByName('fl_ativo').AsBoolean;
+    edtCTACONDPGTODESCRICAO.Text := sqlInsertCondPgto.FieldByName('nm_cond_pag').AsString;
+    edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text := IntToStr(sqlInsertCondPgto.FieldByName('cd_cta_forma_pagamento').AsInteger);
+    edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := sqlInsertCondPgto.FieldByName('nm_forma_pag').AsString;
+    if sqlInsertCondPgto.FieldByName('vl_minimo_parcela').AsCurrency = 0 then
     begin
       edtCTACONDPGTOVL_MINIMO.Text := '';
     end
     else
     begin
-      edtCTACONDPGTOVL_MINIMO.Text := CurrToStr(selectCDPGTO.FieldByName('vl_minimo_parcela').AsCurrency);
+      edtCTACONDPGTOVL_MINIMO.Text := CurrToStr(sqlInsertCondPgto.FieldByName('vl_minimo_parcela').AsCurrency);
     end;
-    edtCTACONDPGTONR_PARCELAS.Text := IntToStr(selectCDPGTO.FieldByName('nr_parcelas').AsInteger);
+
+    if sqlInsertCondPgto.FieldByName('nr_parcelas').AsInteger = 0 then
+    begin
+      edtCTACONDPGTONR_PARCELAS.Text := '';
+    end
+    else
+    begin
+      edtCTACONDPGTONR_PARCELAS.Text := IntToStr(sqlInsertCondPgto.FieldByName('nr_parcelas').AsInteger);
+    end;
   end;
 end;
 

@@ -11,13 +11,11 @@ object dm: Tdm
       'Password=postgres'
       'Server=localhost'
       'DriverID=PG')
+    Connected = True
     Left = 40
     Top = 32
   end
   object driver: TFDPhysPgDriverLink
-    VendorLib = 
-      'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
-      'libpq.dll'
     Left = 120
     Top = 32
   end
@@ -99,7 +97,7 @@ object dm: Tdm
   object sqlCliente: TFDQuery
     Connection = FDConnection1
     SQL.Strings = (
-      'select *from login_usuario')
+      'select *from cliente')
     Left = 80
     Top = 128
   end
@@ -211,5 +209,10 @@ object dm: Tdm
     DataSet = tbProdutos
     Left = 96
     Top = 280
+  end
+  object transacao: TFDTransaction
+    Connection = FDConnection1
+    Left = 328
+    Top = 48
   end
 end

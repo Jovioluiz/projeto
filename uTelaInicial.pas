@@ -84,7 +84,6 @@ procedure TfrmPrincipal.Cliente1Click(Sender: TObject);
 begin
   frmCadCliente := TfrmCadCliente.Create(Self);
   frmCadCliente.ShowModal;
-
 end;
 
 procedure TfrmPrincipal.Cliente2Click(Sender: TObject);

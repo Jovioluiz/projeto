@@ -279,7 +279,7 @@ object frmLogin: TfrmLogin
   object lblInfo: TLabel
     Left = 109
     Top = 120
-    Width = 188
+    Width = 3
     Height = 13
     Color = clRed
     ParentColor = False
@@ -301,7 +301,7 @@ object frmLogin: TfrmLogin
     Text = ''
   end
   object btnEntrar: TButton
-    Left = 112
+    Left = 109
     Top = 152
     Width = 75
     Height = 25

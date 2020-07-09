@@ -48,6 +48,7 @@ type
     tbProdutoscodigo_barras: TWideStringField;
     tbProdutosimagem: TWideStringField;
     dsProduto: TDataSource;
+    transacao: TFDTransaction;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }

@@ -84,7 +84,6 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Top = 102
       Width = 721
       Height = 475
-      DataSource = dm.dsConsultaProdutos
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 4
       TitleFont.Charset = DEFAULT_CHARSET

@@ -69,6 +69,8 @@ type
 
 var
   frmCadCliente: TfrmCadCliente;
+  verdade : Boolean;
+  cep : String;
 
 implementation
 
@@ -108,7 +110,8 @@ end;
 procedure TfrmCadCliente.salvar;
 begin
  try
-    frmConexao.conexao.StartTransaction;
+    //frmConexao.conexao.StartTransaction;
+    dm.transacao.StartTransaction;
     validaCampos;
 
     FDQuery1.Close;
@@ -185,14 +188,16 @@ begin
         try
           sqlInsertCliente.ExecSQL;
           sqlInsertEndereco.ExecSQL;
-          frmConexao.conexao.Commit;
+          //frmConexao.conexao.Commit;
+          dm.transacao.Commit;
           sqlInsertCliente.Close;
           sqlInsertEndereco.Close;
           ShowMessage('Cliente alterado com sucesso');
         except
           on E:exception do
             begin
-              frmConexao.conexao.Rollback;
+              //frmConexao.conexao.Rollback;
+              dm.transacao.Rollback;
               ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
               Exit;
             end;
@@ -279,14 +284,16 @@ begin
         try
           sqlInsertCliente.ExecSQL;
           sqlInsertEndereco.ExecSQL;
-          frmConexao.conexao.Commit;
+          //frmConexao.conexao.Commit;
+          dm.transacao.Commit;
           sqlInsertCliente.Close;
           sqlInsertEndereco.Close;
           ShowMessage('Cliente inserido com sucesso');
         except
         on E:exception do
             begin
-              frmConexao.conexao.Rollback;
+              //frmConexao.conexao.Rollback;
+              dm.transacao.Rollback;
               ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
               Exit;
             end;
@@ -326,6 +333,13 @@ begin
 
   FDQuery1.ParamByName('endereco_cep').AsString := edtCep.Text;
 
+  //se o cep do cadastro for diferente do que foi digitado
+  //executa o sql acima
+  if cep <> edtCep.Text then
+    verdade := False;
+  if verdade = True then
+    Exit;
+
   if not FDQuery1.IsEmpty then
   begin
     FDQuery1.Open();
@@ -351,10 +365,12 @@ var
  sql_temp : String;
  f : Integer;
 begin
-  f := 0;
+  verdade := False;
 
+  f := 0;
   if edtCLIENTEcd_cliente.Text = '' then
     begin
+      edtCLIENTEFL_ATIVO.SetFocus;
       //incrementa o código do cliente
       sql_seq := 'select last_value + 1 as last_value from cliente_seq';
       FDQuery1.Close;
@@ -372,6 +388,7 @@ begin
     begin
       with dm.sqlCliente do
       begin
+        verdade := True;
         Close;
         SQL.Clear;
         SQL.Add('select '+
@@ -403,6 +420,7 @@ begin
 
         if RecordCount > 0 then
           begin
+            edtCLIENTEFL_ATIVO.SetFocus;
             edtCLIENTEcd_cliente.Text := IntToStr(FieldByName('cd_cliente').AsInteger);
             edtCLIENTENM_CLIENTE.Text := FieldByName('nome').AsString;
             edtCLIENTEFL_ATIVO.Checked := FieldByName('fl_ativo').AsBoolean;
@@ -440,8 +458,9 @@ begin
             edtCLIENTEENDERECO_CIDADE.Text := FieldByName('cidade').AsString;
             edtEstado.Text := FieldByName('uf').AsString;
             edtCep.Text := FieldByName('cep').AsString;
-          end;
 
+            cep := edtCep.Text;
+          end;
       end;
 
       //ShowMessage('Código do Cliente não pode ser vazio');

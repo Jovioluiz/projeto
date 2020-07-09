@@ -118,7 +118,7 @@ end;
 
 procedure TfrmConsultaProdutos.dbGridProdutoCellClick(Column: TColumn);
 begin
-//dados da última compra do item
+  //dados da última compra do item
   sqlUltEntrada.Close;
   sqlUltEntrada.SQL.Text := 'select                                  '+
                             '    nfc.dcto_numero,                    '+

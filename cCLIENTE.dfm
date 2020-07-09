@@ -14,7 +14,6 @@ object frmCadCliente: TfrmCadCliente
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
-  Visible = True
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
@@ -97,7 +96,7 @@ object frmCadCliente: TfrmCadCliente
       Width = 820
       Height = 177
       Caption = 'Endere'#231'o'
-      TabOrder = 10
+      TabOrder = 11
       object Label6: TLabel
         Left = 41
         Top = 56
@@ -168,6 +167,7 @@ object frmCadCliente: TfrmCadCliente
         Top = 96
         Width = 73
         Height = 21
+        CharCase = ecUpperCase
         TabOrder = 5
       end
       object edtCep: TEdit
@@ -208,7 +208,7 @@ object frmCadCliente: TfrmCadCliente
       Height = 21
       EditMask = '!\(99\)00000-0000;0;_'
       MaxLength = 14
-      TabOrder = 9
+      TabOrder = 10
       Text = ''
       OnExit = edtCLIENTECELULARExit
     end
@@ -268,17 +268,17 @@ object frmCadCliente: TfrmCadCliente
       TabOrder = 0
       OnExit = edtCLIENTEcd_clienteExit
     end
-  end
-  object edtCLIENTEFONE: TMaskEdit
-    Left = 605
-    Top = 93
-    Width = 102
-    Height = 21
-    EditMask = '!\(99\)0000-0000;0;_'
-    MaxLength = 13
-    TabOrder = 1
-    Text = ''
-    OnExit = edtCLIENTECELULARExit
+    object edtCLIENTEFONE: TMaskEdit
+      Left = 605
+      Top = 93
+      Width = 102
+      Height = 21
+      EditMask = '!\(99\)0000-0000;0;_'
+      MaxLength = 13
+      TabOrder = 9
+      Text = ''
+      OnExit = edtCLIENTECELULARExit
+    end
   end
   object FDQuery1: TFDQuery
     Connection = frmConexao.conexao
