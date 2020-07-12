@@ -1,4 +1,4 @@
-object frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda
+object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
   Left = 0
   Top = 0
   BorderStyle = bsDialog

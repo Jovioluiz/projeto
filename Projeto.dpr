@@ -16,13 +16,14 @@ uses
   uLogin in 'uLogin.pas' {frmLogin},
   uCadastroTributacaoItem in 'uCadastroTributacaoItem.pas' {frmCadastraTributacaoItem},
   uLancamentoNotaEntrada in 'uLancamentoNotaEntrada.pas' {frmLancamentoNotaEntrada},
-  UfrmRelVendaDiaria in 'UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
   Vcl.Themes,
   Vcl.Styles,
   uDataModule in 'uDataModule.pas' {dm: TDataModule},
-  uEdicaoPedidoVenda in 'uEdicaoPedidoVenda.pas' {frm_Edicao_Pedido_Venda},
+  uEdicaoPedidoVenda in 'uEdicaoPedidoVenda.pas' {frmEdicaoPedidoVenda},
   uConfiguracoes in 'uConfiguracoes.pas' {frmConfiguracoes},
-  uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos};
+  uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos},
+  uUsuario in 'uUsuario.pas' {frmUsuario},
+  UfrmRelVendaDiaria in 'UfrmRelVendaDiaria.pas' {frmRelVendaDiaria};
 
 //uConsulta in 'uConsulta.pas' {frmConsulta};
 
@@ -36,6 +37,8 @@ begin
   Application.CreateForm(TfrmLogin, frmLogin);
   Application.CreateForm(TfrmConexao, frmConexao);
   Application.CreateForm(Tdm, dm);
+  Application.CreateForm(TfrmUsuario, frmUsuario);
+  Application.CreateForm(TfrmRelVendaDiaria, frmRelVendaDiaria);
   Application.Run;
 
 end.

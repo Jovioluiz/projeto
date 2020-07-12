@@ -11675,6 +11675,10 @@ object frmPrincipal: TfrmPrincipal
         Caption = 'Configura'#231#245'es'
         OnClick = Configuraes1Click
       end
+      object Usurios1: TMenuItem
+        Caption = 'Usu'#225'rios'
+        OnClick = Usurios1Click
+      end
       object Sair1: TMenuItem
         Caption = 'Sair'
         OnClick = Sair1Click

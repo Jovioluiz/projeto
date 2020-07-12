@@ -11,11 +11,13 @@ object dm: Tdm
       'Password=postgres'
       'Server=localhost'
       'DriverID=PG')
-    Connected = True
     Left = 40
     Top = 32
   end
   object driver: TFDPhysPgDriverLink
+    VendorLib = 
+      'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
+      'libpq.dll'
     Left = 120
     Top = 32
   end

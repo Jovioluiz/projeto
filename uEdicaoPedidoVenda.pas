@@ -12,7 +12,7 @@ uses
   FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Phys;
 
 type
-  Tfrm_Edicao_Pedido_Venda = class(TForm)
+  TfrmEdicaoPedidoVenda = class(TForm)
     Panel1: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -87,7 +87,7 @@ type
   end;
 
 var
-  frm_Edicao_Pedido_Venda: Tfrm_Edicao_Pedido_Venda;
+  frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda;
 
 implementation
 
@@ -95,7 +95,7 @@ implementation
 
 uses uVisualizaPedidoVenda, uConfiguracoes, uConexao;
 
-procedure Tfrm_Edicao_Pedido_Venda.btnCancelarClick(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.btnCancelarClick(Sender: TObject);
 begin
   if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
     begin
@@ -103,7 +103,7 @@ begin
     end;
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.dbGridProdutosDblClick(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.dbGridProdutosDblClick(Sender: TObject);
 begin
   edtCdProduto.Text := dbGridProdutos.Fields[0].AsString;
   edtNomeProduto.Text := dbGridProdutos.Fields[1].AsString;
@@ -116,7 +116,7 @@ begin
   edicao := True;
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.edtCdProdutoChange(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.edtCdProdutoChange(Sender: TObject);
 begin
   if edtCdProduto.Text = EmptyStr then
   begin
@@ -156,7 +156,7 @@ begin
   edtVlUnitario.Text := CurrToStr(query.FieldByName('valor').AsCurrency);
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.edtCdProdutoExit(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.edtCdProdutoExit(Sender: TObject);
 begin
   if edtTabelaPreco.Text = EmptyStr then
       begin
@@ -188,7 +188,7 @@ begin
   edtVlUnitario.Text := CurrToStr(query.FieldByName('valor').AsCurrency);
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.edtQtdadeChange(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.edtQtdadeChange(Sender: TObject);
 var valorTotal, vlUnitario, qtdade : Currency;
 begin
   if edtQtdade.Text = EmptyStr then
@@ -206,7 +206,7 @@ begin
     end;
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.edtTabelaPrecoChange(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.edtTabelaPrecoChange(Sender: TObject);
 begin
   if edtTabelaPreco.Text = EmptyStr then
       begin
@@ -237,7 +237,7 @@ begin
     edtVlUnitario.Text := CurrToStr(query.FieldByName('valor').AsCurrency);
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.edtTabelaPrecoExit(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.edtTabelaPrecoExit(Sender: TObject);
 var valorTotal, vlUnitario, qtdade : Currency;
 begin
   if query.IsEmpty then
@@ -258,7 +258,7 @@ begin
     end;
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.edtVlDescontoExit(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.edtVlDescontoExit(Sender: TObject);
 var vlDesconto, vlTotal, vlTotalComDesc : Currency;
 begin
   if edtVlDesconto.Text = EmptyStr then
@@ -275,13 +275,13 @@ begin
     end;
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.FormClose(Sender: TObject;
+procedure TfrmEdicaoPedidoVenda.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
-frm_Edicao_Pedido_Venda := nil;
+frmEdicaoPedidoVenda := nil;
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.FormCreate(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.FormCreate(Sender: TObject);
 var tempC, tempU : String;
 editarPedido : TfrmConfiguracoes;
 begin
@@ -409,7 +409,7 @@ begin
   end;
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.FormKeyDown(Sender: TObject; var Key: Word;
+procedure TfrmEdicaoPedidoVenda.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if key = VK_ESCAPE then //ESC
@@ -421,7 +421,7 @@ begin
   end;
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.FormKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmEdicaoPedidoVenda.FormKeyPress(Sender: TObject; var Key: Char);
 begin
  if Key = #13 then
   begin
@@ -430,7 +430,7 @@ begin
   end;
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.limpaCampos;
+procedure TfrmEdicaoPedidoVenda.limpaCampos;
 begin
   edtCdProduto.Clear;
   edtNomeProduto.Clear;
@@ -445,7 +445,7 @@ begin
   //edtVlAcrescimoTotalPedido.Text := '0,00';
 end;
 
-procedure Tfrm_Edicao_Pedido_Venda.validaQtdadeItem;
+procedure TfrmEdicaoPedidoVenda.validaQtdadeItem;
 var
   qtdade, qt : Double;
 begin
@@ -476,7 +476,7 @@ begin
 end;
 
 //testar pra ver se funciona
-procedure Tfrm_Edicao_Pedido_Venda.btnAdicionarItemClick(Sender: TObject);
+procedure TfrmEdicaoPedidoVenda.btnAdicionarItemClick(Sender: TObject);
  var
   vlTotalItens : Currency;
   var aliqIcms, aliqIpi, aliqPisCofins : Double;

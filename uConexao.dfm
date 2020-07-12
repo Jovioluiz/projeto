@@ -27,6 +27,9 @@ object frmConexao: TfrmConexao
     Top = 104
   end
   object drive: TFDPhysPgDriverLink
+    VendorLib = 
+      'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
+      'libpq.dll'
     Left = 120
     Top = 104
   end

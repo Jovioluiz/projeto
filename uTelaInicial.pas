@@ -42,6 +42,7 @@ type
     Timer1: TTimer;
     Produtos1: TMenuItem;
     Configuraes1: TMenuItem;
+    Usurios1: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -60,6 +61,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Configuraes1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure Usurios1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -72,6 +74,8 @@ var
 implementation
 
 {$R *.dfm}
+
+uses uUsuario;
 
 
 procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
@@ -175,6 +179,12 @@ end;
 procedure TfrmPrincipal.Timer1Timer(Sender: TObject);
 begin
   StatusBar1.Panels.Items[1].Text := DateTimeToStr(Now);
+end;
+
+procedure TfrmPrincipal.Usurios1Click(Sender: TObject);
+begin
+  frmUsuario := TfrmUsuario.Create(Self);
+  frmUsuario.ShowModal;
 end;
 
 procedure TfrmPrincipal.VendaDiria1Click(Sender: TObject);
