@@ -910,6 +910,92 @@ update
 
 ---------------------------------------------------------------------
 
+CREATE TABLE public.acoes_sistema (
+	cd_acao int4 NOT NULL,
+	nm_acao varchar(50) NULL,
+	nm_formulario varchar(50) NULL,
+	dt_atz timestamp NULL,
+	CONSTRAINT pk_acoes_sistema PRIMARY KEY (cd_acao)
+);
+
+create trigger tr_gera_log after
+insert
+    or
+delete
+    or
+update
+    on
+    public.acoes_sistema for each row execute procedure gera_log();
+
+create trigger tr_dt_atz before
+insert
+    or
+update
+    on
+    public.acoes_sistema for each row execute procedure func_grava_dt_atz();
+
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(1, 'Cadastro Cliente', 'frmCadCliente', '2020-07-11 21:07:38.973');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(2, 'Cadastro Produto', 'frmCadProduto', '2020-07-11 21:08:35.294');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(3, 'Forma Pagamento', 'frmCadFormaPagamento', '2020-07-11 21:09:09.428');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(4, 'Condição Pagamento', 'frmCadCondPgto', '2020-07-11 21:09:34.224');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(5, 'Tabela Preco', 'frmcadTabelaPreco', '2020-07-11 21:10:04.594');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(6, 'Tabela Preco Produto', 'frmCadTabelaPrecoProduto', '2020-07-11 21:10:36.384');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(7, 'Consulta de Produto', 'frmConsultaProdutos', '2020-07-11 21:11:13.529');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(8, 'Pedido de Venda', 'frmPedidoVenda', '2020-07-11 21:11:45.226');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(9, 'Visualizar Pedido de Venda', 'frmVisualizaPedidoVenda', '2020-07-11 21:12:11.572');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(10, 'Edição Pedido de Venda', 'frmEdicaoPedidoVenda', '2020-07-11 21:14:06.392');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(11, 'Relatorio Venda Diária', 'frmRelVendaDiaria', '2020-07-11 21:15:18.863');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(12, 'Lançamento Nota de Entrada', 'frmLancamentoNotaEntrada', '2020-07-11 21:15:48.490');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(13, 'Cadastro Tributação Produto', 'frmCadastraTributacaoItem', '2020-07-11 21:16:28.881');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(14, 'Configurações', 'frmConfiguracoes', '2020-07-11 21:16:58.408');
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(15, 'Cadastro Usuário', 'frmUsuario', '2020-07-11 21:17:24.408');
+
+
+----------------------------------------------------------------------
+CREATE TABLE public.usuario_acao (
+	cd_usuario int4 NOT NULL,
+	cd_acao int4 NOT NULL,
+	fl_permite_acesso bool NULL,
+	dt_atz timestamp NULL,
+	CONSTRAINT usuario_acao_un UNIQUE (cd_usuario, cd_acao),
+	CONSTRAINT fk_usuario_acao_acoes_sistema FOREIGN KEY (cd_acao) REFERENCES acoes_sistema(cd_acao),
+	CONSTRAINT usuario_acao_fk FOREIGN KEY (cd_usuario) REFERENCES login_usuario(id_usuario)
+);
+
+create trigger tr_gera_log after
+insert
+    or
+delete
+    or
+update
+    on
+    public.usuario_acao for each row execute procedure gera_log();
+
+create trigger tr_dt_atz before
+insert
+    or
+update
+    on
+    public.usuario_acao for each row execute procedure func_grava_dt_atz();
+
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 1, true, '2020-07-11 21:21:33.473');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 2, true, '2020-07-11 21:23:46.501');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 3, true, '2020-07-11 21:23:54.320');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 4, true, '2020-07-11 21:23:56.595');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 5, true, '2020-07-11 21:23:58.625');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 6, true, '2020-07-11 21:24:00.407');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 7, true, '2020-07-11 21:24:02.232');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 8, true, '2020-07-11 21:24:04.226');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 9, true, '2020-07-11 21:24:05.999');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 10, true, '2020-07-11 21:24:08.017');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 11, true, '2020-07-11 21:24:09.429');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 12, true, '2020-07-11 21:24:11.131');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 13, true, '2020-07-11 21:24:14.176');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 14, true, '2020-07-11 21:24:16.104');
+INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 15, true, '2020-07-11 21:24:20.016');
+
+-------------------------------------------------------------------------
+
 CREATE SEQUENCE public.cliente_seq
 	INCREMENT BY 1
 	MINVALUE 1
