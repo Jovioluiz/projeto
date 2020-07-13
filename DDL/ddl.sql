@@ -935,22 +935,6 @@ update
     on
     public.acoes_sistema for each row execute procedure func_grava_dt_atz();
 
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(1, 'Cadastro Cliente', 'frmCadCliente', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(2, 'Cadastro Produto', 'frmCadProduto', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(3, 'Forma Pagamento', 'frmCadFormaPagamento', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(4, 'Condição Pagamento', 'frmCadCondPgto', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(5, 'Tabela Preco', 'frmcadTabelaPreco', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(6, 'Tabela Preco Produto', 'frmCadTabelaPrecoProduto', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(7, 'Consulta de Produto', 'frmConsultaProdutos', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(8, 'Pedido de Venda', 'frmPedidoVenda', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(9, 'Visualizar Pedido de Venda', 'frmVisualizaPedidoVenda', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(10, 'Edição Pedido de Venda', 'frmEdicaoPedidoVenda', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(11, 'Relatorio Venda Diária', 'frmRelVendaDiaria', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(12, 'Lançamento Nota de Entrada', 'frmLancamentoNotaEntrada', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(13, 'Cadastro Tributação Produto', 'frmCadastraTributacaoItem', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(14, 'Configurações', 'frmConfiguracoes', now());
-INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(15, 'Cadastro Usuário', 'frmUsuario', now());
-
 ----------------------------------------------------------------------
 CREATE TABLE public.usuario_acao (
 	cd_usuario int4 NOT NULL,
@@ -978,21 +962,33 @@ update
     on
     public.usuario_acao for each row execute procedure func_grava_dt_atz();
 
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 1, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 2, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 3, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 4, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 5, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 6, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 7, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 8, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 9, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 10, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 11, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 12, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 13, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 14, true, now());
-INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 15, true, now());
+-------------------------------------------------------------------------
+
+CREATE TABLE public.configuracao (
+	cd_configuracao int4 NOT NULL,
+	nm_configuracao varchar(100) NOT NULL,
+	descricao_configuracao varchar(100) NOT NULL,
+	valor varchar(1) NULL,
+	dt_atz timestamp NULL,
+	CONSTRAINT pk_configuracao PRIMARY KEY (cd_configuracao)
+);
+
+create trigger tr_dt_atz before
+insert
+    or
+update
+    on
+    public.configuracao for each row execute procedure func_grava_dt_atz();
+
+create trigger tr_gera_log after
+insert
+    or
+delete
+    or
+update
+    on
+    public.configuracao for each row execute procedure gera_log();
+
 
 -------------------------------------------------------------------------
 
