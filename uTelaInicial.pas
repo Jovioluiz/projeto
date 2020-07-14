@@ -43,6 +43,7 @@ type
     Produtos1: TMenuItem;
     Configuraes1: TMenuItem;
     Usurios1: TMenuItem;
+    ControleAcesso1: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -62,6 +63,7 @@ type
     procedure Configuraes1Click(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Usurios1Click(Sender: TObject);
+    procedure ControleAcesso1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -75,7 +77,7 @@ implementation
 
 {$R *.dfm}
 
-uses uUsuario;
+uses uUsuario, uControleAcesso;
 
 
 procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
@@ -106,6 +108,12 @@ procedure TfrmPrincipal.Configuraes1Click(Sender: TObject);
 begin
   frmConfiguracoes := TfrmConfiguracoes.Create(Self);
   frmConfiguracoes.ShowModal;
+end;
+
+procedure TfrmPrincipal.ControleAcesso1Click(Sender: TObject);
+begin
+  frmControleAcesso := TfrmControleAcesso.Create(Self);
+  frmControleAcesso.ShowModal;
 end;
 
 procedure TfrmPrincipal.FormaPagamento1Click(Sender: TObject);

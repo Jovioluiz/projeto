@@ -60,9 +60,9 @@ type
     edtVlDesconto: TEdit;
     edtVlTotal: TEdit;
     edtUnMedida: TComboBox;
-    btnAdicionarItem: TSpeedButton;
     btnConfirmar: TSpeedButton;
     query: TFDQuery;
+    btnAdicionarItem: TButton;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -76,11 +76,13 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtVlDescontoExit(Sender: TObject);
     procedure edtQtdadeChange(Sender: TObject);
+    procedure edtVlDescTotalPedidoExit(Sender: TObject);
+    procedure edtVlAcrescimoTotalPedidoExit(Sender: TObject);
   private
     { Private declarations }
     edicao : Boolean;
     procedure limpaCampos;
-    procedure validaQtdadeItem();
+    procedure validaQtdadeItem;
   public
     { Public declarations }
 
@@ -258,6 +260,50 @@ begin
     end;
 end;
 
+procedure TfrmEdicaoPedidoVenda.edtVlAcrescimoTotalPedidoExit(Sender: TObject);
+//recalcula o valor total se informado um valor de acrescimo no total do pedido
+var
+  vlTotalComAcrescimo, vlAcrescimo, vlTotalPedido, valorTotal, valorDesconto : Currency;
+begin
+  if (edtVlAcrescimoTotalPedido.Text = '0') or (edtVlAcrescimoTotalPedido.Text = '0,00') then
+    begin
+      edtVlAcrescimoTotalPedido.Text := CurrToStr(0);
+      valorTotal := 0;
+      with ClientDataSet1 do
+        begin
+          ClientDataSet1.DisableControls;
+          ClientDataSet1.First;
+          while not ClientDataSet1.Eof do
+            begin
+              valorTotal := (valorTotal + ClientDataSet1.FieldByName('Valor Total').AsCurrency);
+              ClientDataSet1.Next;
+            end;
+            edtVlTotalPedido.Text := CurrToStr(valorTotal);
+            ClientDataSet1.EnableControls;
+        end;
+    end
+  else
+    begin
+      valorDesconto := StrToCurr(edtVlDescTotalPedido.Text); //desconto no total do pedido
+      vlTotalPedido := 0;
+      vlAcrescimo := StrToCurr(edtVlAcrescimoTotalPedido.Text);
+      with ClientDataSet1 do
+        begin
+          ClientDataSet1.DisableControls;
+          ClientDataSet1.First;
+          while not ClientDataSet1.Eof do
+            begin
+              vlTotalPedido := (vlTotalPedido + ClientDataSet1.FieldByName('Valor Total').AsCurrency);
+              ClientDataSet1.Next;
+            end;
+            ClientDataSet1.EnableControls;
+        end;
+
+        vlTotalComAcrescimo := (vlTotalPedido + vlAcrescimo) - valorDesconto;
+        edtVlTotalPedido.Text := CurrToStr(vlTotalComAcrescimo);
+    end;
+end;
+
 procedure TfrmEdicaoPedidoVenda.edtVlDescontoExit(Sender: TObject);
 var vlDesconto, vlTotal, vlTotalComDesc : Currency;
 begin
@@ -273,6 +319,49 @@ begin
       edtVlTotal.Text := CurrToStr(vlTotalComDesc);
       //edtVlDesconto.Enabled := false;
     end;
+end;
+
+procedure TfrmEdicaoPedidoVenda.edtVlDescTotalPedidoExit(Sender: TObject);
+var
+    vlTotalComDesconto, vlDesconto, vlTotalPedido, valorTotal : Currency;
+begin
+  if (edtVlDescTotalPedido.Text = '0') or (edtVlDescTotalPedido.Text = '0,00') then
+  begin
+    edtVlDescTotalPedido.Text := CurrToStr(0);
+    valorTotal := 0;
+    //soma os valores totais dos itens
+    with ClientDataSet1 do
+      begin
+        ClientDataSet1.DisableControls;
+        ClientDataSet1.First;
+        while not ClientDataSet1.Eof do
+          begin
+            valorTotal := (valorTotal + ClientDataSet1.FieldByName('Valor Total').AsCurrency);
+            ClientDataSet1.Next;
+          end;
+          edtVlTotalPedido.Text := CurrToStr(valorTotal);
+          ClientDataSet1.EnableControls;
+      end;
+  end
+else
+  begin
+    vlTotalPedido := 0;
+    vlDesconto := StrToCurr(edtVlDescTotalPedido.Text);
+    with ClientDataSet1 do
+      begin
+        ClientDataSet1.DisableControls;
+        ClientDataSet1.First;
+        while not ClientDataSet1.Eof do
+          begin
+            vlTotalPedido := (vlTotalPedido + ClientDataSet1.FieldByName('Valor Total').AsCurrency);
+            ClientDataSet1.Next;
+          end;
+          //edtVlTotalPedido.Text := CurrToStr(valor_total);
+          ClientDataSet1.EnableControls;
+      end;
+    vlTotalComDesconto := vlTotalPedido - vlDesconto;
+    edtVlTotalPedido.Text := CurrToStr(vlTotalComDesconto);
+  end;
 end;
 
 procedure TfrmEdicaoPedidoVenda.FormClose(Sender: TObject;
@@ -475,7 +564,7 @@ begin
     end;
 end;
 
-//testar pra ver se funciona
+//não funciona
 procedure TfrmEdicaoPedidoVenda.btnAdicionarItemClick(Sender: TObject);
  var
   vlTotalItens : Currency;
@@ -530,8 +619,6 @@ begin
 
       ClientDataSet1.CreateDataSet;
 
-    end;
-
   if edicao = True then
     begin
       try
@@ -582,7 +669,7 @@ begin
       ClientDataSet1.FieldByName('Valor PIS/COFINS').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliqPisCofins) / 100;
       ClientDataSet1.Post;
     end;
-
+  end;
     //soma os valores totais dos itens e preenche o valor total do pedido
     vlTotalItens := 0;
     with ClientDataSet1 do

@@ -11679,6 +11679,10 @@ object frmPrincipal: TfrmPrincipal
         Caption = 'Usu'#225'rios'
         OnClick = Usurios1Click
       end
+      object ControleAcesso1: TMenuItem
+        Caption = 'Controle Acesso'
+        OnClick = ControleAcesso1Click
+      end
       object Sair1: TMenuItem
         Caption = 'Sair'
         OnClick = Sair1Click

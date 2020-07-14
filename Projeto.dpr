@@ -23,7 +23,8 @@ uses
   uConfiguracoes in 'uConfiguracoes.pas' {frmConfiguracoes},
   uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos},
   uUsuario in 'uUsuario.pas' {frmUsuario},
-  UfrmRelVendaDiaria in 'UfrmRelVendaDiaria.pas' {frmRelVendaDiaria};
+  UfrmRelVendaDiaria in 'UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
+  uControleAcesso in 'uControleAcesso.pas' {frmControleAcesso};
 
 //uConsulta in 'uConsulta.pas' {frmConsulta};
 
@@ -39,6 +40,7 @@ begin
   Application.CreateForm(Tdm, dm);
   Application.CreateForm(TfrmUsuario, frmUsuario);
   Application.CreateForm(TfrmRelVendaDiaria, frmRelVendaDiaria);
+  Application.CreateForm(TfrmControleAcesso, frmControleAcesso);
   Application.Run;
 
 end.

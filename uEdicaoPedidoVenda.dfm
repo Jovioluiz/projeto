@@ -14,7 +14,6 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
-  Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
@@ -162,20 +161,6 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Height = 13
       Caption = 'Valor Total'
     end
-    object btnAdicionarItem: TSpeedButton
-      Left = 801
-      Top = 259
-      Width = 63
-      Height = 25
-      Caption = 'Adicionar'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      OnClick = btnAdicionarItemClick
-    end
     object btnConfirmar: TSpeedButton
       Left = 715
       Top = 622
@@ -206,7 +191,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 14
+      TabOrder = 15
     end
     object edtVlDescTotalPedido: TEdit
       Left = 131
@@ -214,7 +199,8 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Width = 61
       Height = 21
       ReadOnly = True
-      TabOrder = 12
+      TabOrder = 13
+      OnExit = edtVlDescTotalPedidoExit
     end
     object edtVlAcrescimoTotalPedido: TEdit
       Left = 221
@@ -222,7 +208,8 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Width = 61
       Height = 21
       ReadOnly = True
-      TabOrder = 13
+      TabOrder = 14
+      OnExit = edtVlAcrescimoTotalPedidoExit
     end
     object edtVlTotalPedido: TEdit
       Left = 309
@@ -230,7 +217,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Width = 61
       Height = 21
       ReadOnly = True
-      TabOrder = 15
+      TabOrder = 16
     end
     object btnCancelar: TButton
       Left = 816
@@ -238,7 +225,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Width = 95
       Height = 32
       Caption = 'Cancelar'
-      TabOrder = 16
+      TabOrder = 17
       OnClick = btnCancelarClick
     end
     object edtDataEmissao: TMaskEdit
@@ -248,7 +235,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Height = 21
       EditMask = '!99/99/0000;1;_'
       MaxLength = 10
-      TabOrder = 17
+      TabOrder = 18
       Text = '  /  /    '
     end
     object edtCdProduto: TEdit
@@ -266,7 +253,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Width = 329
       Height = 21
       Enabled = False
-      TabOrder = 18
+      TabOrder = 19
     end
     object edtQtdade: TEdit
       Left = 550
@@ -291,7 +278,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Width = 329
       Height = 21
       Enabled = False
-      TabOrder = 19
+      TabOrder = 20
     end
     object edtVlUnitario: TEdit
       Left = 550
@@ -313,6 +300,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Top = 259
       Width = 65
       Height = 21
+      Enabled = False
       TabOrder = 11
     end
     object edtUnMedida: TComboBox
@@ -337,7 +325,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 20
+      TabOrder = 21
     end
     object edtFl_orcamento: TCheckBox
       Left = 344
@@ -354,7 +342,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 21
+      TabOrder = 22
     end
     object edtNomeFormaPgto: TEdit
       Left = 191
@@ -363,7 +351,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Height = 21
       Enabled = False
       ReadOnly = True
-      TabOrder = 22
+      TabOrder = 23
     end
     object edtNrPedido: TEdit
       Left = 191
@@ -372,6 +360,15 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Height = 21
       Enabled = False
       TabOrder = 0
+    end
+    object btnAdicionarItem: TButton
+      Left = 806
+      Top = 257
+      Width = 63
+      Height = 25
+      Caption = 'Adicionar'
+      TabOrder = 12
+      OnClick = btnAdicionarItemClick
     end
   end
   object dbGridProdutos: TDBGrid
@@ -457,7 +454,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       end
       item
         Expanded = False
-        FieldName = 'Aliq ICMS'
+        FieldName = 'Valor ICMS'
         Width = 52
         Visible = True
       end
@@ -511,6 +508,55 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
   end
   object sqlCarregaPedidoVenda: TFDQuery
     Connection = frmConexao.conexao
+    SQL.Strings = (
+      'select'
+      #9'pv.nr_pedido,'
+      #9'pv.fl_orcamento,'
+      #9'pv.cd_cliente,'
+      #9'c.nome,'
+      #9'e.cidade,'
+      #9'e.uf,'
+      #9'pv.cd_forma_pag,'
+      #9'cfp.nm_forma_pag,'
+      #9'pv.cd_cond_pag,'
+      #9'ccp.nm_cond_pag,'
+      #9'pvi.cd_produto,'
+      #9'p.desc_produto,'
+      #9'pvi.qtd_venda,'
+      #9'pvi.cd_tabela_preco,'
+      #9'p.un_medida,'
+      #9'pvi.vl_unitario,'
+      #9'pvi.vl_desconto,'
+      #9'pvi.vl_total_item,'
+      #9'pvi.vl_total_item as icms_vl_base,'
+      #9'pvi.icms_pc_aliq,'
+      #9'((pvi.vl_total_item * pvi.icms_pc_aliq) / 100) as icms_valor,'
+      #9'pvi.vl_total_item as ipi_vl_base,'
+      #9'pvi.ipi_pc_aliq,'
+      #9'((pvi.vl_total_item * pvi.ipi_pc_aliq) / 100) as ipi_valor,'
+      #9'pvi.vl_total_item as pis_cofins_vl_base,'
+      #9'pvi.pis_cofins_pc_aliq,'
+      
+        #9'((pvi.vl_total_item * pvi.pis_cofins_pc_aliq) / 100) as pis_cof' +
+        'ins_valor,'
+      #9'pvi.vl_total_item,'
+      #9'pv.vl_desconto_pedido,'
+      #9'pv.vl_acrescimo,'
+      #9'pv.vl_total'
+      'from'
+      #9'pedido_venda pv'
+      'join pedido_venda_item pvi on'
+      #9'pv.id_geral = pvi.id_pedido_venda'
+      'join cta_forma_pagamento cfp on'
+      #9'pv.cd_forma_pag = cfp.cd_forma_pag'
+      'join cta_cond_pagamento ccp on'
+      #9'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento'
+      'join cliente c on'
+      #9'pv.cd_cliente = c.cd_cliente'
+      'join endereco_cliente e on'
+      #9'c.cd_cliente = e.cd_cliente'
+      'join produto p on'
+      #9'pvi.cd_produto = p.cd_produto')
     Left = 432
     Top = 416
   end
