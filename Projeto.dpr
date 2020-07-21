@@ -24,7 +24,8 @@ uses
   uConsultaProduto in 'uConsultaProduto.pas' {frmConsultaProdutos},
   uUsuario in 'uUsuario.pas' {frmUsuario},
   UfrmRelVendaDiaria in 'UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
-  uControleAcesso in 'uControleAcesso.pas' {frmControleAcesso};
+  uControleAcesso in 'uControleAcesso.pas' {frmControleAcesso},
+  uValidaDados in 'uValidaDados.pas';
 
 //uConsulta in 'uConsulta.pas' {frmConsulta};
 

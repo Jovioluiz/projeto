@@ -76,7 +76,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule;
+uses uDataModule, uValidaDados;
 
 procedure TfrmCadCliente.pFormarCamposPessoa;
 begin
@@ -108,11 +108,18 @@ begin
 end;
 
 procedure TfrmCadCliente.salvar;
+var cliente : TValidaDados;
 begin
  try
     //frmConexao.conexao.StartTransaction;
     dm.transacao.StartTransaction;
-    validaCampos;
+
+    cliente := TValidaDados.Create;
+    cliente.nomeCliente := edtCLIENTENM_CLIENTE.Text;
+    cliente.cpf := edtCLIENTECPF_CNPJ.Text;
+    cliente.validaNomeCpf(edtCLIENTENM_CLIENTE.Text, edtCLIENTECPF_CNPJ.Text);
+
+    //validaCampos;
 
     FDQuery1.Close;
     FDQuery1.SQL.Clear;
@@ -193,6 +200,7 @@ begin
           sqlInsertCliente.Close;
           sqlInsertEndereco.Close;
           ShowMessage('Cliente alterado com sucesso');
+          limpaCampos;
         except
           on E:exception do
             begin
@@ -289,6 +297,7 @@ begin
           sqlInsertCliente.Close;
           sqlInsertEndereco.Close;
           ShowMessage('Cliente inserido com sucesso');
+          limpaCampos;
         except
         on E:exception do
             begin
@@ -299,9 +308,11 @@ begin
             end;
         end;
       end;
-
   finally
-    limpaCampos;
+    sqlInsertCliente.SQL.Clear;
+    sqlInsertCliente.Close;
+    sqlInsertEndereco.SQL.Clear;
+    sqlInsertEndereco.Close;
   end;
 end;
 
