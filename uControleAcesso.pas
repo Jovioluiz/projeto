@@ -34,6 +34,8 @@ type
     edtNomeUsuario: TEdit;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtUsuarioExit(Sender: TObject);
+    procedure limpaCampos;
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -54,7 +56,7 @@ uses uDataModule;
 
 
 procedure TfrmControleAcesso.edtUsuarioExit(Sender: TObject);
-var qtd : integer;
+//var qtd : integer;
 begin
   if edtUsuario.Text = '' then
   begin
@@ -62,6 +64,8 @@ begin
     Exit;
   end;
 
+  //verificar esse sql para trazer o usuario que está cadastrado na tabela login_usuario
+  //pois se o usuario estiver cadastrado somente na tabela login_usuario não vai dar certo quando tentar adicionar uma ação ao usuario
   query.Close;
   query.SQL.Clear;
   query.SQL.Text := 'select                           '+
@@ -77,6 +81,13 @@ begin
   query.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
   query.Open();
 
+  if query.IsEmpty then
+  begin
+    //edtNomeUsuario.Text := query.FieldByName('login').Text;
+    ShowMessage('Usuário não encontrado');
+    edtUsuario.SetFocus;
+    Exit;
+  end;
   edtNomeUsuario.Text := query.FieldByName('login').AsString;
 
   query.First;
@@ -149,14 +160,31 @@ begin
     end;
     query.Next;
   end;
+end;
 
-
-
-
-
-
-
-
+procedure TfrmControleAcesso.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if key = VK_F3 then //F3
+  begin
+    limpaCampos;
+  end
+  else if key = VK_F2 then  //F2
+  begin
+    //salvar;
+  end
+  else if key = VK_F4 then    //F4
+  begin
+    //excluir;
+  end
+  else if key = VK_ESCAPE then //ESC
+  begin
+  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      Close;
+    end;
+  end;
 end;
 
 procedure TfrmControleAcesso.FormKeyPress(Sender: TObject; var Key: Char);
@@ -166,6 +194,29 @@ begin
       Key := #0;
       Perform(WM_NEXTDLGCTL,0,0)
     end;
+end;
+
+procedure TfrmControleAcesso.limpaCampos;
+begin
+  edtUsuario.Clear;
+  edtNomeUsuario.Clear;
+  cbCadCliente.Checked := False;
+  cbCadProduto.Checked := False;
+  cbCadCtaFormaPag.Checked := False;
+  cbCadCtaCondPag.Checked := False;
+  cbCadTabelaPreco.Checked := False;
+  cbCadTabelaPrecoProduto.Checked := False;
+  cbConsultaProduto.Checked := False;
+  cbPedidoVenda.Checked := False;
+  cbVisualizaPedido.Checked := False;
+  cbEdicaoPedido.Checked := False;
+  cbRel.Checked := False;
+  cbNotaEntrada.Checked := False;
+  cbCadTributacao.Checked := False;
+  cbCadConfig.Checked := False;
+  cbCadUsuario.Checked := False;
+  cbCadAcesso.Checked := False;
+  edtUsuario.SetFocus;
 end;
 
 end.

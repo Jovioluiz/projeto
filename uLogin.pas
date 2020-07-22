@@ -33,6 +33,7 @@ type
 
 var
   frmLogin: TfrmLogin;
+  idUsuario : Integer;
 
 implementation
 
@@ -50,6 +51,7 @@ var usuario, senha : String;
 begin
 sqlLogin.Close;
 sqlLogin.SQL.Text := 'select '+
+                            'id_usuario, '+
                             'login, '+
                             'senha '+
                       'from '+
@@ -61,7 +63,7 @@ sqlLogin.ParamByName('login').AsString := edtUsuario.Text;
 sqlLogin.ParamByName('senha').AsString := edtSenha.Text;
 sqlLogin.Open();
 
-
+idUsuario := sqlLogin.FieldByName('id_usuario').AsInteger;
 usuario := sqlLogin.FieldByName('login').Text;
 senha :=  sqlLogin.FieldByName('senha').Text;
 

@@ -44,6 +44,7 @@ type
     Configuraes1: TMenuItem;
     Usurios1: TMenuItem;
     ControleAcesso1: TMenuItem;
+    query: TFDQuery;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -77,7 +78,7 @@ implementation
 
 {$R *.dfm}
 
-uses uUsuario, uControleAcesso;
+uses uUsuario, uControleAcesso, uDataModule;
 
 
 procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
@@ -87,9 +88,33 @@ begin
 end;
 
 procedure TfrmPrincipal.Cliente1Click(Sender: TObject);
+var
+  temPermissao : Boolean;
 begin
-  frmCadCliente := TfrmCadCliente.Create(Self);
-  frmCadCliente.ShowModal;
+  query.Close;
+  query.SQL.Clear;
+  query.SQL.Text := 'select '+
+                       '  fl_permite_acesso '+
+                       'from '+
+                       '  usuario_acao '+
+                       'where '+
+                       '  cd_acao = 4 and '+
+                       '  cd_usuario = :cd_usuario';
+  query.ParamByName('cd_usuario').AsInteger := idUsuario;
+  query.Open();
+
+  temPermissao := query.FieldByName('fl_permite_acesso').AsBoolean;
+
+  if temPermissao = False then
+  begin
+    ShowMessage('usuário não possui permissão de acesso!');
+    Exit;
+  end
+  else
+  begin
+    frmCadCliente := TfrmCadCliente.Create(Self);
+    frmCadCliente.ShowModal;
+  end;
 end;
 
 procedure TfrmPrincipal.Cliente2Click(Sender: TObject);

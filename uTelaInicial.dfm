@@ -11694,4 +11694,9 @@ object frmPrincipal: TfrmPrincipal
     Left = 312
     Top = 600
   end
+  object query: TFDQuery
+    Connection = dm.FDConnection1
+    Left = 880
+    Top = 40
+  end
 end

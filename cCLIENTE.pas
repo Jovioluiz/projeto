@@ -76,7 +76,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, uValidaDados;
+uses uDataModule, uValidaDados, uLogin;
 
 procedure TfrmCadCliente.pFormarCamposPessoa;
 begin
@@ -111,13 +111,14 @@ procedure TfrmCadCliente.salvar;
 var cliente : TValidaDados;
 begin
  try
-    //frmConexao.conexao.StartTransaction;
     dm.transacao.StartTransaction;
 
     cliente := TValidaDados.Create;
     cliente.nomeCliente := edtCLIENTENM_CLIENTE.Text;
     cliente.cpf := edtCLIENTECPF_CNPJ.Text;
+    cliente.cdCliente := StrToInt(edtCLIENTEcd_cliente.Text);
     cliente.validaNomeCpf(edtCLIENTENM_CLIENTE.Text, edtCLIENTECPF_CNPJ.Text);
+    cliente.validaCodigo(StrToInt(edtCLIENTEcd_cliente.Text));
 
     //validaCampos;
 
@@ -195,7 +196,6 @@ begin
         try
           sqlInsertCliente.ExecSQL;
           sqlInsertEndereco.ExecSQL;
-          //frmConexao.conexao.Commit;
           dm.transacao.Commit;
           sqlInsertCliente.Close;
           sqlInsertEndereco.Close;
@@ -204,7 +204,6 @@ begin
         except
           on E:exception do
             begin
-              //frmConexao.conexao.Rollback;
               dm.transacao.Rollback;
               ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
               Exit;
@@ -292,7 +291,6 @@ begin
         try
           sqlInsertCliente.ExecSQL;
           sqlInsertEndereco.ExecSQL;
-          //frmConexao.conexao.Commit;
           dm.transacao.Commit;
           sqlInsertCliente.Close;
           sqlInsertEndereco.Close;
@@ -301,7 +299,6 @@ begin
         except
         on E:exception do
             begin
-              //frmConexao.conexao.Rollback;
               dm.transacao.Rollback;
               ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
               Exit;
@@ -524,6 +521,32 @@ begin
   frmCadCliente := nil;
 end;
 
+{
+procedure TfrmCadCliente.FormCreate(Sender: TObject);
+var
+  temPermissao : Boolean;
+begin
+  inherited;
+  FDQuery1.Close;
+  FDQuery1.SQL.Clear;
+  FDQuery1.SQL.Text := 'select '+
+                       '  fl_permite_acesso '+
+                       'from '+
+                       '  usuario_acao '+
+                       'where '+
+                       '  cd_acao = 4 and '+
+                       '  cd_usuario = :cd_usuario';
+  FDQuery1.ParamByName('cd_usuario').AsInteger := idUsuario;
+  FDQuery1.Open();
+
+  temPermissao := FDQuery1.FieldByName('fl_permite_acesso').AsBoolean;
+
+  if temPermissao = False then
+  begin
+    ShowMessage('usuário não possui permissão de acesso!');
+    Abort;
+  end;
+end; }
 
 procedure TfrmCadCliente.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
