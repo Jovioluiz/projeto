@@ -11,6 +11,7 @@ object dm: Tdm
       'Password=postgres'
       'Server=localhost'
       'DriverID=PG')
+    Connected = True
     Left = 40
     Top = 32
   end
@@ -214,7 +215,83 @@ object dm: Tdm
   end
   object transacao: TFDTransaction
     Connection = FDConnection1
-    Left = 328
-    Top = 48
+    Left = 296
+    Top = 32
+  end
+  object queryControleAcesso: TFDQuery
+    Connection = FDConnection1
+    SQL.Strings = (
+      'select'
+      #9'*'
+      #9'from usuario_acao ua'
+      'join acoes_sistema as2 on '
+      #9'ua.cd_acao = as2.cd_acao ')
+    Left = 504
+    Top = 32
+    object queryControleAcessocd_usuario: TIntegerField
+      DisplayLabel = 'Usuario'
+      FieldName = 'cd_usuario'
+      Origin = 'cd_usuario'
+    end
+    object queryControleAcessocd_acao: TIntegerField
+      DisplayLabel = 'C'#243'd. A'#231#227'o'
+      FieldName = 'cd_acao'
+      Origin = 'cd_acao'
+    end
+    object queryControleAcessofl_permite_acesso: TBooleanField
+      DisplayLabel = 'Permite Acesso'
+      FieldName = 'fl_permite_acesso'
+      Origin = 'fl_permite_acesso'
+    end
+    object queryControleAcessodt_atz: TSQLTimeStampField
+      FieldName = 'dt_atz'
+      Origin = 'dt_atz'
+      Visible = False
+    end
+    object queryControleAcessocd_acao_1: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'cd_acao_1'
+      Origin = 'cd_acao'
+      Visible = False
+    end
+    object queryControleAcessonm_acao: TWideStringField
+      AutoGenerateValue = arDefault
+      DisplayLabel = 'Nome A'#231#227'o'
+      DisplayWidth = 25
+      FieldName = 'nm_acao'
+      Origin = 'nm_acao'
+      Size = 50
+    end
+    object queryControleAcessonm_formulario: TWideStringField
+      AutoGenerateValue = arDefault
+      DisplayWidth = 25
+      FieldName = 'nm_formulario'
+      Origin = 'nm_formulario'
+      Visible = False
+      Size = 50
+    end
+    object queryControleAcessodt_atz_1: TSQLTimeStampField
+      AutoGenerateValue = arDefault
+      FieldName = 'dt_atz_1'
+      Origin = 'dt_atz'
+      Visible = False
+    end
+  end
+  object tbControleAcesso: TFDTable
+    Connection = FDConnection1
+    Left = 504
+    Top = 96
+  end
+  object dsControleAcesso: TDataSource
+    DataSet = queryControleAcesso
+    Left = 504
+    Top = 160
+  end
+  object query: TFDQuery
+    Connection = FDConnection1
+    SQL.Strings = (
+      'select id_usuario, login from login_usuario')
+    Left = 384
+    Top = 32
   end
 end

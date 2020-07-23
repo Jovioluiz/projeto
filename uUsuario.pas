@@ -23,6 +23,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtIdUsuarioExit(Sender: TObject);
+    procedure edtIdUsuarioChange(Sender: TObject);
   private
     { Private declarations }
     procedure limpaCampos;
@@ -40,10 +41,24 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule;
+uses uDataModule, uValidaDados;
+
+procedure TfrmUsuario.edtIdUsuarioChange(Sender: TObject);
+begin
+  if edtIdUsuario.Text = '' then
+    validaCampos;
+
+end;
 
 procedure TfrmUsuario.edtIdUsuarioExit(Sender: TObject);
 begin
+  if edtIdUsuario.Text = '' then
+  begin
+    validaCampos;
+    Exit;
+  end;
+
+
   sql.Close;
   sql.SQL.Text := 'select '+
                       'login, '+
@@ -159,68 +174,72 @@ begin
 
     if not query.IsEmpty then
     begin
-      sql.Close;
-      sql.SQL.Text := 'update '+
-                        'login_usuario set '+
-                        'id_usuario = :id_usuario, '+
-                        'login = :login, '+
-                        'senha = :senha ' +
-                      'where '+
-                        'id_usuario = :id_usuario';
       try
-        sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
-        sql.ParamByName('login').AsString := edtNomeUsuario.Text;
-        sql.ParamByName('senha').AsString := edtSenhaUsuario.Text;
+        sql.Close;
+        sql.SQL.Text := 'update '+
+                          'login_usuario set '+
+                          'id_usuario = :id_usuario, '+
+                          'login = :login, '+
+                          'senha = :senha ' +
+                        'where '+
+                          'id_usuario = :id_usuario';
 
-        sql.ExecSQL;
-        dm.transacao.Commit;
-        ShowMessage('Salvo');
-      except
-        on E:exception do
-          begin
-            dm.transacao.Rollback;
-            ShowMessage('Erro '+ E.Message);
-            Exit;
-          end;
-      end;
+          sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
+          sql.ParamByName('login').AsString := edtNomeUsuario.Text;
+          sql.ParamByName('senha').AsString := edtSenhaUsuario.Text;
+
+          sql.ExecSQL;
+          dm.transacao.Commit;
+          ShowMessage('Salvo');
+        except
+          on E:exception do
+            begin
+              dm.transacao.Rollback;
+              ShowMessage('Erro '+ E.Message);
+              Exit;
+            end;
+        end;
     end
     else
     begin
-      sql.Close;
-      sql.SQL.Text := 'insert '+
-                        'into '+
-                      'login_usuario (id_usuario, '+
-                        'login,                     '+
-                        'senha) '+
-                      'values '+
-                        '(:id_usuario, '+
-                        ':login, '+
-                        ':senha)';
       try
-        sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
-        sql.ParamByName('login').AsString := edtNomeUsuario.Text;
-        sql.ParamByName('senha').AsString := edtSenhaUsuario.Text;
+        sql.Close;
+        sql.SQL.Text := 'insert '+
+                          'into '+
+                        'login_usuario (id_usuario, '+
+                          'login,                     '+
+                          'senha) '+
+                        'values '+
+                          '(:id_usuario, '+
+                          ':login, '+
+                          ':senha)';
 
-        sql.ExecSQL;
-        dm.transacao.Commit;
-        ShowMessage('Salvo');
-      except
-        on E:exception do
-          begin
-            dm.transacao.Rollback;
-            ShowMessage('Erro '+ E.Message);
-            Exit;
-          end;
+          sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
+          sql.ParamByName('login').AsString := edtNomeUsuario.Text;
+          sql.ParamByName('senha').AsString := edtSenhaUsuario.Text;
+
+          sql.ExecSQL;
+          dm.transacao.Commit;
+          ShowMessage('Salvo');
+        except
+          on E:exception do
+            begin
+              dm.transacao.Rollback;
+              ShowMessage('Erro '+ E.Message);
+              Exit;
+            end;
+        end;
       end;
-    end;
   finally
     limpaCampos;
   end;
 end;
 
 procedure TfrmUsuario.validaCampos;
+var usuario : TValidaDados;
 begin
-
+  usuario := TValidaDados.Create;
+  usuario.validaCodigo(StrToInt(edtIdUsuario.Text));
 end;
 
 end.

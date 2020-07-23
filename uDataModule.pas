@@ -49,6 +49,18 @@ type
     tbProdutosimagem: TWideStringField;
     dsProduto: TDataSource;
     transacao: TFDTransaction;
+    queryControleAcesso: TFDQuery;
+    tbControleAcesso: TFDTable;
+    dsControleAcesso: TDataSource;
+    queryControleAcessocd_usuario: TIntegerField;
+    queryControleAcessocd_acao: TIntegerField;
+    queryControleAcessofl_permite_acesso: TBooleanField;
+    queryControleAcessodt_atz: TSQLTimeStampField;
+    queryControleAcessocd_acao_1: TIntegerField;
+    queryControleAcessonm_acao: TWideStringField;
+    queryControleAcessonm_formulario: TWideStringField;
+    queryControleAcessodt_atz_1: TSQLTimeStampField;
+    query: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }

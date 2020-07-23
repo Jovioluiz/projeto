@@ -7,35 +7,26 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids,
+  Vcl.Buttons;
 
 type
   TfrmControleAcesso = class(TForm)
     Label3: TLabel;
     edtUsuario: TEdit;
-    cbCadCliente: TCheckBox;
-    GroupBox1: TGroupBox;
-    cbCadProduto: TCheckBox;
-    cbCadCtaFormaPag: TCheckBox;
-    cbCadCtaCondPag: TCheckBox;
-    cbCadTributacao: TCheckBox;
-    cbCadTabelaPreco: TCheckBox;
-    cbCadTabelaPrecoProduto: TCheckBox;
-    cbCadConfig: TCheckBox;
-    cbConsultaProduto: TCheckBox;
-    cbCadAcesso: TCheckBox;
-    cbPedidoVenda: TCheckBox;
-    cbEdicaoPedido: TCheckBox;
-    cbRel: TCheckBox;
-    cbNotaEntrada: TCheckBox;
-    cbVisualizaPedido: TCheckBox;
-    cbCadUsuario: TCheckBox;
     query: TFDQuery;
     edtNomeUsuario: TEdit;
+    dbGridAcoes: TDBGrid;
+    Label1: TLabel;
+    edtCdAcao: TEdit;
+    edtNomeAcao: TEdit;
+    btnAdd: TSpeedButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtUsuarioExit(Sender: TObject);
     procedure limpaCampos;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure salvar;
+    procedure btnAddClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -51,19 +42,24 @@ implementation
 
 uses uDataModule;
 
-//implementar métodos salvar e limpar
+//implementar métodos salvar, excluir acesso a acao e excluir tudo
 //realizar as validações de acesso nos formulários
 
 
+procedure TfrmControleAcesso.btnAddClick(Sender: TObject);
+begin
+//implementar 
+end;
+
 procedure TfrmControleAcesso.edtUsuarioExit(Sender: TObject);
-//var qtd : integer;
+const sql = 'select id_usuario, login from login_usuario where id_usuario = :id_usuario';
 begin
   if edtUsuario.Text = '' then
   begin
     ShowMessage('Insira um Usuário!');
     Exit;
   end;
-
+  
   //verificar esse sql para trazer o usuario que está cadastrado na tabela login_usuario
   //pois se o usuario estiver cadastrado somente na tabela login_usuario não vai dar certo quando tentar adicionar uma ação ao usuario
   query.Close;
@@ -83,83 +79,18 @@ begin
 
   if query.IsEmpty then
   begin
-    //edtNomeUsuario.Text := query.FieldByName('login').Text;
-    ShowMessage('Usuário não encontrado');
-    edtUsuario.SetFocus;
+    dm.query.Close;
+    dm.query.SQL.Clear;
+    dm.query.SQL.Add(sql);
+    dm.query.ParamByName('id_usuario').AsInteger := StrToInt(edtUsuario.Text);
+    dm.query.Open(sql);
+    edtNomeUsuario.Text := dm.query.FieldByName('login').AsString;
     Exit;
   end;
   edtNomeUsuario.Text := query.FieldByName('login').AsString;
 
-  query.First;
+  dm.queryControleAcesso.Open();
 
-  while not query.Eof do
-  begin
-    if query.FieldByName('cd_acao').AsInteger = 1 then
-    begin
-      cbCadCliente.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 2 then
-    begin
-      cbCadProduto.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 3 then
-    begin
-      cbCadCtaFormaPag.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 4  then
-    begin
-      cbCadCtaCondPag.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 5 then
-    begin
-      cbCadTabelaPreco.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 6 then
-    begin
-      cbCadTabelaPrecoProduto.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 7 then
-    begin
-      cbConsultaProduto.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 8 then
-    begin
-      cbPedidoVenda.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 9 then
-    begin
-      cbVisualizaPedido.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 10 then
-    begin
-      cbEdicaoPedido.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 11 then
-    begin
-      cbRel.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 12 then
-    begin
-      cbNotaEntrada.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 13 then
-    begin
-      cbCadTributacao.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 14 then
-    begin
-      cbCadConfig.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 15 then
-    begin
-      cbCadUsuario.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-      if query.FieldByName('cd_acao').AsInteger = 16 then
-    begin
-      cbCadAcesso.Checked := query.FieldByName('fl_permite_acesso').AsBoolean;
-    end;
-    query.Next;
-  end;
 end;
 
 procedure TfrmControleAcesso.FormKeyDown(Sender: TObject; var Key: Word;
@@ -172,7 +103,7 @@ begin
   end
   else if key = VK_F2 then  //F2
   begin
-    //salvar;
+    //salvar; acabar a implementação
   end
   else if key = VK_F4 then    //F4
   begin
@@ -200,23 +131,50 @@ procedure TfrmControleAcesso.limpaCampos;
 begin
   edtUsuario.Clear;
   edtNomeUsuario.Clear;
-  cbCadCliente.Checked := False;
-  cbCadProduto.Checked := False;
-  cbCadCtaFormaPag.Checked := False;
-  cbCadCtaCondPag.Checked := False;
-  cbCadTabelaPreco.Checked := False;
-  cbCadTabelaPrecoProduto.Checked := False;
-  cbConsultaProduto.Checked := False;
-  cbPedidoVenda.Checked := False;
-  cbVisualizaPedido.Checked := False;
-  cbEdicaoPedido.Checked := False;
-  cbRel.Checked := False;
-  cbNotaEntrada.Checked := False;
-  cbCadTributacao.Checked := False;
-  cbCadConfig.Checked := False;
-  cbCadUsuario.Checked := False;
-  cbCadAcesso.Checked := False;
   edtUsuario.SetFocus;
+  dm.queryControleAcesso.Close;
+end;
+
+procedure TfrmControleAcesso.salvar;
+begin
+  try
+    dm.transacao.StartTransaction;
+
+    query.Close;
+    query.SQL.Text := 'select '+
+                      '   * '+
+                      'from '+
+                      '   usuario_acao '+
+                      'where '+
+                      '   cd_usuario = :cd_usuario';
+    query.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
+    query.Open();
+
+    if not query.IsEmpty then
+    begin
+      try
+        query.Close;
+        query.SQL.Text := 'update '+
+                          '   usuario_acao '+
+                          'set '+
+                          '   cd_usuario = :cd_usuario, '+
+                          '   cd_acao = :cd_acao, ' +
+                          '   fl_permite_acesso = :fl_permite_acesso '+
+                          'where '+
+                          '   cd_usuario = :cd_usuario';
+        query.ParamByName('cd_usuario').AsString := edtUsuario.Text;
+        query.ParamByName('cd_acao').AsBoolean;
+
+      
+
+      except
+
+      end;
+    end;
+    
+  finally
+
+  end;
 end;
 
 end.

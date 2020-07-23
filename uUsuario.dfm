@@ -46,6 +46,7 @@ object frmUsuario: TfrmUsuario
     Width = 121
     Height = 21
     TabOrder = 0
+    OnChange = edtIdUsuarioChange
     OnExit = edtIdUsuarioExit
   end
   object edtNomeUsuario: TEdit
