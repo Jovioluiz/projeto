@@ -27,6 +27,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure salvar;
     procedure btnAddClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -52,45 +53,42 @@ begin
 end;
 
 procedure TfrmControleAcesso.edtUsuarioExit(Sender: TObject);
-const sql = 'select id_usuario, login from login_usuario where id_usuario = :id_usuario';
+//sql para trazer o usuario caso ainda não possua nenhuma ação vinculada na tabela usuario_acao
+const sql_login = 'select id_usuario, login from login_usuario where id_usuario = :id_usuario';
+      sql_acao = 'select '+
+                 '    *     '+
+	               'from '+
+                 '    usuario_acao ua '+
+                 'join acoes_sistema acs on '+
+                 '    ua.cd_acao = acs.cd_acao '+
+                 'where cd_usuario = :cd_usuario';
+
 begin
+  dm.queryControleAcesso.Close;
+  dm.queryControleAcesso.SQL.Clear;
+
   if edtUsuario.Text = '' then
   begin
     ShowMessage('Insira um Usuário!');
     Exit;
   end;
-  
-  //verificar esse sql para trazer o usuario que está cadastrado na tabela login_usuario
-  //pois se o usuario estiver cadastrado somente na tabela login_usuario não vai dar certo quando tentar adicionar uma ação ao usuario
+
   query.Close;
   query.SQL.Clear;
-  query.SQL.Text := 'select                           '+
-                    '	  fl_permite_acesso,            '+
-                    '	  cd_acao, 			                '+
-                    '	  login    		                  '+
-                    'from 				                  	'+
-                    '	  usuario_acao ua               '+
-                    'join login_usuario lu on         '+
-                    '	  ua.cd_usuario = lu.id_usuario '+
-                    'where							            	'+
-                    '	  cd_usuario = :cd_usuario';
-  query.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
-  query.Open();
-
-  if query.IsEmpty then
-  begin
-    dm.query.Close;
-    dm.query.SQL.Clear;
-    dm.query.SQL.Add(sql);
-    dm.query.ParamByName('id_usuario').AsInteger := StrToInt(edtUsuario.Text);
-    dm.query.Open(sql);
-    edtNomeUsuario.Text := dm.query.FieldByName('login').AsString;
-    Exit;
-  end;
+  query.SQL.Add(sql_login);
+  query.ParamByName('id_usuario').AsInteger := StrToInt(edtUsuario.Text);
+  query.Open(sql_login);
   edtNomeUsuario.Text := query.FieldByName('login').AsString;
 
-  dm.queryControleAcesso.Open();
+  dm.queryControleAcesso.SQL.Add(sql_acao);
+  dm.queryControleAcesso.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
+  dm.queryControleAcesso.Open(sql_acao);
+end;
 
+procedure TfrmControleAcesso.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  dm.queryControleAcesso.Close;
 end;
 
 procedure TfrmControleAcesso.FormKeyDown(Sender: TObject; var Key: Word;

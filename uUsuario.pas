@@ -46,8 +46,7 @@ uses uDataModule, uValidaDados;
 procedure TfrmUsuario.edtIdUsuarioChange(Sender: TObject);
 begin
   if edtIdUsuario.Text = '' then
-    validaCampos;
-
+    Exit;
 end;
 
 procedure TfrmUsuario.edtIdUsuarioExit(Sender: TObject);

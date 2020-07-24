@@ -15,6 +15,7 @@ object frmControleAcesso: TfrmControleAcesso
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
@@ -89,7 +90,6 @@ object frmControleAcesso: TfrmControleAcesso
     Width = 73
     Height = 21
     TabOrder = 3
-    OnExit = edtUsuarioExit
   end
   object edtNomeAcao: TEdit
     Left = 176

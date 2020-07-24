@@ -54,6 +54,7 @@ begin
       ShowMessage('Código não pode ser vazio');
       Abort;
     end;
+    Result := 0;
 end;
 
 function TValidaDados.validaNomeCpf(nome: String; cpf : String): String;
