@@ -77,19 +77,22 @@ object frmControleAcesso: TfrmControleAcesso
     Width = 472
     Height = 297
     DataSource = dm.dsControleAcesso
-    TabOrder = 2
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    TabOrder = 4
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+    OnKeyDown = dbGridAcoesKeyDown
   end
   object edtCdAcao: TEdit
     Left = 82
     Top = 65
     Width = 73
     Height = 21
-    TabOrder = 3
+    TabOrder = 2
+    OnChange = edtCdAcaoChange
   end
   object edtNomeAcao: TEdit
     Left = 176
@@ -97,7 +100,7 @@ object frmControleAcesso: TfrmControleAcesso
     Width = 161
     Height = 21
     Enabled = False
-    TabOrder = 4
+    TabOrder = 3
     OnExit = edtUsuarioExit
   end
   object query: TFDQuery

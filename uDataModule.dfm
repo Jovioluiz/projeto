@@ -223,29 +223,40 @@ object dm: Tdm
     SQL.Strings = (
       'select'
       #9'*'
-      #9'from usuario_acao ua'
-      'join acoes_sistema as2 on '
-      #9'ua.cd_acao = as2.cd_acao ')
+      'from'
+      #9'acoes_sistema a'
+      #9'join usuario_acao ua on '
+      #9'a.cd_acao = ua.cd_acao ')
     Left = 504
     Top = 32
-    object queryControleAcessocd_usuario: TIntegerField
-      DisplayLabel = 'Usuario'
-      FieldName = 'cd_usuario'
-      Origin = 'cd_usuario'
-    end
     object queryControleAcessocd_acao: TIntegerField
       DisplayLabel = 'C'#243'd. A'#231#227'o'
       FieldName = 'cd_acao'
       Origin = 'cd_acao'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
     end
-    object queryControleAcessofl_permite_acesso: TBooleanField
-      DisplayLabel = 'Permite Acesso'
-      FieldName = 'fl_permite_acesso'
-      Origin = 'fl_permite_acesso'
+    object queryControleAcessonm_acao: TWideStringField
+      DisplayLabel = 'Nome A'#231#227'o'
+      DisplayWidth = 30
+      FieldName = 'nm_acao'
+      Origin = 'nm_acao'
+      Size = 50
+    end
+    object queryControleAcessonm_formulario: TWideStringField
+      FieldName = 'nm_formulario'
+      Origin = 'nm_formulario'
+      Visible = False
+      Size = 50
     end
     object queryControleAcessodt_atz: TSQLTimeStampField
       FieldName = 'dt_atz'
       Origin = 'dt_atz'
+      Visible = False
+    end
+    object queryControleAcessocd_usuario: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'cd_usuario'
+      Origin = 'cd_usuario'
       Visible = False
     end
     object queryControleAcessocd_acao_1: TIntegerField
@@ -254,21 +265,11 @@ object dm: Tdm
       Origin = 'cd_acao'
       Visible = False
     end
-    object queryControleAcessonm_acao: TWideStringField
+    object queryControleAcessofl_permite_acesso: TBooleanField
       AutoGenerateValue = arDefault
-      DisplayLabel = 'Nome A'#231#227'o'
-      DisplayWidth = 25
-      FieldName = 'nm_acao'
-      Origin = 'nm_acao'
-      Size = 50
-    end
-    object queryControleAcessonm_formulario: TWideStringField
-      AutoGenerateValue = arDefault
-      DisplayWidth = 25
-      FieldName = 'nm_formulario'
-      Origin = 'nm_formulario'
-      Visible = False
-      Size = 50
+      DisplayLabel = 'Permite Acesso'
+      FieldName = 'fl_permite_acesso'
+      Origin = 'fl_permite_acesso'
     end
     object queryControleAcessodt_atz_1: TSQLTimeStampField
       AutoGenerateValue = arDefault
@@ -279,6 +280,8 @@ object dm: Tdm
   end
   object tbControleAcesso: TFDTable
     Connection = FDConnection1
+    UpdateOptions.UpdateTableName = 'usuario_acao'
+    TableName = 'usuario_acao'
     Left = 504
     Top = 96
   end

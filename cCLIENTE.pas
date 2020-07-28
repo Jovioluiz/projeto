@@ -60,7 +60,7 @@ type
     { Private declarations }
     sql_seq : String;
     procedure limpaCampos;
-    procedure validaCampos;
+    //procedure validaCampos;
     procedure salvar;
     procedure excluir;
   public
@@ -313,12 +313,12 @@ begin
   end;
 end;
 
-procedure TfrmCadCliente.validaCampos;
+{procedure TfrmCadCliente.validaCampos;
 begin
  if (Trim(edtCLIENTEcd_cliente.Text) = '') and (Trim(edtCLIENTENM_CLIENTE.Text) = '') and
     (Trim(edtCLIENTECPF_CNPJ.Text) = '') then
     raise Exception.Create('Código, nome e CPF/CNPJ não podem ser vazios');
-end;
+end;}
 
 procedure TfrmCadCliente.edtCepExit(Sender: TObject);
 var sql : String;
