@@ -279,10 +279,16 @@ object frmLogin: TfrmLogin
   object lblInfo: TLabel
     Left = 109
     Top = 120
-    Width = 3
+    Width = 148
     Height = 13
     Color = clRed
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clNone
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
     ParentColor = False
+    ParentFont = False
   end
   object edtUsuario: TEdit
     Left = 96

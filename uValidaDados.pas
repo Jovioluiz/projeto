@@ -3,7 +3,7 @@ unit uValidaDados;
 interface
 
 uses Winapi.Windows, Winapi.Messages, System.SysUtils, System.UITypes, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Data.DB, FireDAC.Stan.Param;
 
 type TValidaDados = class
   private
@@ -24,6 +24,7 @@ property cpf : String read Fcpf write Setcpf;
 
 function validaNomeCpf(nome : String; cpf : String) : String;
 function validaCodigo(cod : Integer) : Integer;
+function validaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
 
 
 end;
@@ -31,6 +32,8 @@ end;
 implementation
 
 { TValidaDados }
+
+uses uDataModule;
 
 procedure TValidaDados.SetcdCliente(const Value: Integer);
 begin
@@ -45,6 +48,30 @@ end;
 procedure TValidaDados.SetnomeCliente(const Value: String);
 begin
   FnomeCliente := Value;
+end;
+
+function TValidaDados.validaAcessoAcao(cdUsuario, cdAcao: Integer): Boolean;
+const
+  sql = 'select '+
+         '  fl_permite_acesso '+
+         'from '+
+         '  usuario_acao '+
+         ' where '+
+         '  cd_acao = :cd_acao and '+
+         '  cd_usuario = :cd_usuario';
+begin
+  Result := False;
+
+  dm.query.Close;
+  dm.query.SQL.Clear;
+  dm.query.SQL.Add(sql);
+  dm.query.ParamByName('cd_acao').AsInteger := cdAcao;
+  dm.query.ParamByName('cd_usuario').AsInteger := cdUsuario;
+
+  dm.query.Open();
+
+  if not dm.query.IsEmpty then
+    Result := True;
 end;
 
 function TValidaDados.validaCodigo(cod: Integer): Integer;

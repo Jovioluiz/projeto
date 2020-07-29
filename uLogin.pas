@@ -69,7 +69,11 @@ senha :=  sqlLogin.FieldByName('senha').Text;
 
 if (Trim(edtUsuario.Text) = EmptyStr) or (Trim(edtSenha.Text) = EmptyStr) then
   begin
-    lblInfo.Caption := 'Usuário e Senha Inválidos!';
+    lblInfo.Font.Color := clRed;
+    lblInfo.Caption := 'Usuário ou Senha Inválidos! Verifique!';
+    edtUsuario.Clear;
+    edtSenha.Clear;
+    edtUsuario.SetFocus;
     Exit;
   end;
 if (Trim(edtUsuario.Text) = usuario) and (Trim(edtSenha.Text) = senha) then
@@ -83,7 +87,11 @@ if (Trim(edtUsuario.Text) = usuario) and (Trim(edtSenha.Text) = senha) then
   end
 else
   begin
-    lblInfo.Caption := 'Usuário e Senha Inválidos!';
+    lblInfo.Font.Color := clRed;
+    lblInfo.Caption := 'Usuário ou Senha Inválidos! Verifique!';
+    edtUsuario.Clear;
+    edtSenha.Clear;
+    edtUsuario.SetFocus;
     Exit;
   end;
 end;

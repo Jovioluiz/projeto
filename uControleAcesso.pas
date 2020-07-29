@@ -25,7 +25,6 @@ type
     procedure edtUsuarioExit(Sender: TObject);
     procedure limpaCampos;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure salvar;
     procedure btnAddClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtCdAcaoChange(Sender: TObject);
@@ -34,6 +33,7 @@ type
   private
     { Private declarations }
     procedure listar;
+    procedure excluir;
   public
     { Public declarations }
   end;
@@ -47,12 +47,12 @@ implementation
 
 uses uDataModule;
 
-//implementar métodos salvar, excluir acesso a acao e excluir tudo
 //realizar as validações de acesso nos formulários
 
 
 procedure TfrmControleAcesso.btnAddClick(Sender: TObject);
 begin
+//já salva os dados na tabela usuario_acao
   dm.query.Close;
   dm.query.SQL.Clear;
   dm.query.SQL.Text := 'select '+
@@ -156,6 +156,37 @@ begin
   listar;
 end;
 
+procedure TfrmControleAcesso.excluir;
+begin
+  if (Application.MessageBox('Deseja Excluir os dados do Usuário?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      try
+        dm.query.Close;
+        dm.query.SQL.Clear;
+        dm.query.SQL.Text := 'delete '+
+                             '  from '+
+                             'usuario_acao '+
+                             '  where '+
+                             'cd_usuario = :cd_usuario';
+        dm.query.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
+        dm.query.ExecSQL;
+        edtUsuario.SetFocus;
+      except
+        on E:exception do
+          begin
+            ShowMessage('Erro ao excluir os dados' + E.Message);
+          end;
+      end;
+    end
+  else
+    begin
+      Exit;
+    end;
+    listar;
+    edtUsuario.Clear;
+    edtNomeUsuario.Clear;
+end;
+
 procedure TfrmControleAcesso.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
@@ -170,13 +201,9 @@ begin
   begin
     limpaCampos;
   end
-  else if key = VK_F2 then  //F2
-  begin
-    //salvar; acabar a implementação
-  end
   else if key = VK_F4 then    //F4
   begin
-    //excluir;
+    excluir;
   end
   else if key = VK_ESCAPE then //ESC
   begin
@@ -220,49 +247,6 @@ begin
   dm.queryControleAcesso.SQL.Add(sql_acao);
   dm.queryControleAcesso.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
   dm.queryControleAcesso.Open(sql_acao);
-end;
-
-//acho que não precisa disso
-procedure TfrmControleAcesso.salvar;
-begin
-  try
-    dm.transacao.StartTransaction;
-
-    query.Close;
-    query.SQL.Text := 'select '+
-                      '   * '+
-                      'from '+
-                      '   usuario_acao '+
-                      'where '+
-                      '   cd_usuario = :cd_usuario';
-    query.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
-    query.Open();
-
-    if not query.IsEmpty then
-    begin
-      try
-        query.Close;
-        query.SQL.Text := 'update '+
-                          '   usuario_acao '+
-                          'set '+
-                          '   cd_usuario = :cd_usuario, '+
-                          '   cd_acao = :cd_acao, ' +
-                          '   fl_permite_acesso = :fl_permite_acesso '+
-                          'where '+
-                          '   cd_usuario = :cd_usuario';
-        query.ParamByName('cd_usuario').AsString := edtUsuario.Text;
-        query.ParamByName('cd_acao').AsBoolean;
-
-      
-
-      except
-
-      end;
-    end;
-    
-  finally
-
-  end;
 end;
 
 end.

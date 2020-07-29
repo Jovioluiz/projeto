@@ -521,33 +521,6 @@ begin
   frmCadCliente := nil;
 end;
 
-{
-procedure TfrmCadCliente.FormCreate(Sender: TObject);
-var
-  temPermissao : Boolean;
-begin
-  inherited;
-  FDQuery1.Close;
-  FDQuery1.SQL.Clear;
-  FDQuery1.SQL.Text := 'select '+
-                       '  fl_permite_acesso '+
-                       'from '+
-                       '  usuario_acao '+
-                       'where '+
-                       '  cd_acao = 4 and '+
-                       '  cd_usuario = :cd_usuario';
-  FDQuery1.ParamByName('cd_usuario').AsInteger := idUsuario;
-  FDQuery1.Open();
-
-  temPermissao := FDQuery1.FieldByName('fl_permite_acesso').AsBoolean;
-
-  if temPermissao = False then
-  begin
-    ShowMessage('usuário não possui permissão de acesso!');
-    Abort;
-  end;
-end; }
-
 procedure TfrmCadCliente.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin

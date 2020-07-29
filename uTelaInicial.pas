@@ -74,11 +74,30 @@ type
 var
   frmPrincipal: TfrmPrincipal;
 
+  //ações
+  const
+    cdAcaoCadCliente = 1;
+    cdAcaoCadProduto = 2;
+    cdAcaoCadFormaPagamento = 3;
+    cdAcaoCadCondPgto = 4;
+    cdAcaocadTabelaPreco = 5;
+    cdAcaoCadTabelaPrecoProduto = 6;
+    cdAcaoConsultaProdutos = 7;
+    cdAcaoPedidoVenda = 8;
+    cdAcaoVisualizaPedidoVenda = 9;
+    cdAcaoEdicaoPedidoVenda = 10;
+    cdAcaoRelVendaDiaria = 11;
+    cdAcaoLancamentoNotaEntrada = 12;
+    cdAcaoCadastraTributacaoItem = 13;
+    cdAcaoConfiguracoes = 14;
+    cdAcaoUsuario = 15;
+    cdAcaoControleAcesso = 16;
+
 implementation
 
 {$R *.dfm}
 
-uses uUsuario, uControleAcesso, uDataModule;
+uses uUsuario, uControleAcesso, uDataModule, uValidaDados;
 
 
 procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
@@ -90,25 +109,16 @@ end;
 procedure TfrmPrincipal.Cliente1Click(Sender: TObject);
 var
   temPermissao : Boolean;
+  cliente : TValidaDados;
 begin
-  query.Close;
-  query.SQL.Clear;
-  query.SQL.Text := 'select '+
-                       '  fl_permite_acesso '+
-                       'from '+
-                       '  usuario_acao '+
-                       'where '+
-                       '  cd_acao = 4 and '+
-                       '  cd_usuario = :cd_usuario';
-  query.ParamByName('cd_usuario').AsInteger := idUsuario;
-  query.Open();
 
-  temPermissao := query.FieldByName('fl_permite_acesso').AsBoolean;
+  cliente := TValidaDados.Create;
+  temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoCadCliente);
 
   if temPermissao = False then
   begin
-    ShowMessage('usuário não possui permissão de acesso!');
-    Exit;
+    ShowMessage('Usuário não possui permissão de acesso! Verifique!');
+    Abort;
   end
   else
   begin
@@ -184,9 +194,24 @@ begin
 end;
 
 procedure TfrmPrincipal.Produto1Click(Sender: TObject);
+var
+  temPermissao : Boolean;
+  cliente : TValidaDados;
 begin
-  frmCadProduto := TfrmCadProduto.Create(Self);
-  frmCadProduto.ShowModal;
+
+  cliente := TValidaDados.Create;
+  temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoCadProduto);
+
+  if temPermissao = False then
+  begin
+    ShowMessage('Usuário não possui permissão de acesso! Verifique!');
+    Abort;
+  end
+  else
+  begin
+    frmCadProduto := TfrmCadProduto.Create(Self);
+    frmCadProduto.ShowModal;
+  end;
 end;
 
 procedure TfrmPrincipal.Produtos1Click(Sender: TObject);
