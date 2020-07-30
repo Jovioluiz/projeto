@@ -8,7 +8,7 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, uCadTabelaPrecoProduto, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao, uValidaDados;
 
 type
   TfrmcadTabelaPreco = class(TfrmConexao)
@@ -49,18 +49,28 @@ type
 
 var
   frmcadTabelaPreco: TfrmcadTabelaPreco;
+  temPermissao : Boolean;
+  cliente : TValidaDados;
+
 
 implementation
 
 {$R *.dfm}
 
-
+uses uLogin;
 
 procedure TfrmcadTabelaPreco.btnAdicionarProdutoClick(Sender: TObject);
 begin
   aberto := True;
-  frmCadTabelaPrecoProduto :=  TfrmCadTabelaPrecoProduto.Create(Self);
-  frmCadTabelaPrecoProduto.Show;
+  temPermissao := False;
+  cliente := TValidaDados.Create;
+  temPermissao := cliente.validaAcessoAcao(idUsuario, 6);
+
+  if temPermissao = True then
+  begin
+    frmCadTabelaPrecoProduto := TfrmCadTabelaPrecoProduto.Create(Self);
+    frmCadTabelaPrecoProduto.Show;
+  end;
 end;
 
 procedure TfrmcadTabelaPreco.DBGridProdutoKeyDown(Sender: TObject;

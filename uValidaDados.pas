@@ -71,7 +71,12 @@ begin
   dm.query.Open();
 
   if not dm.query.IsEmpty then
-    Result := True;
+    Result := True
+  else
+    begin
+      ShowMessage('Usuário não possui permissão de acesso! Verifique!');
+      Abort;
+    end;
 end;
 
 function TValidaDados.validaCodigo(cod: Integer): Integer;
