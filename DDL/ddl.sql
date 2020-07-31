@@ -1053,5 +1053,36 @@ AS $function$
                 WHERE RELNAME = 'seq_nr_pedido';
             RETURN RESULTADO;
             END
-            $function$
-;
+            $function$;
+
+ALTER TABLE public.produto DROP COLUMN tipo_cod_barras;
+ALTER TABLE public.produto DROP COLUMN codigo_barras;
+
+create table produto_cod_barras(
+	cd_produto int4 not null,
+	un_medida varchar(10),
+	tipo_cod_barras int2,
+	codigo_barras varchar(20),
+	dt_atz timestamp,
+	constraint fk_produto_cod_barras_produto foreign key (cd_produto) references produto(cd_produto) 
+);
+
+create trigger tr_dt_atz before
+insert
+    or
+update
+    on
+    public.produto_cod_barras for each row execute procedure func_grava_dt_atz();
+
+create trigger tr_gera_log after
+insert
+    or
+delete
+    or
+update
+    on
+    public.produto_cod_barras for each row execute procedure gera_log();
+
+COMMENT ON COLUMN public.produto_cod_barras.tipo_cod_barras IS '0 - Interno
+1 - GTIN
+2 - Outro';

@@ -153,7 +153,7 @@ object frmCadProduto: TfrmCadProduto
         Top = 331
         Width = 407
         Height = 120
-        DataSource = DataSource1
+        DataSource = dm.dsCodBarraProduto
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
         TabOrder = 7
         TitleFont.Charset = DEFAULT_CHARSET
@@ -161,21 +161,6 @@ object frmCadProduto: TfrmCadProduto
         TitleFont.Height = -11
         TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
-        Columns = <
-          item
-            Expanded = False
-            FieldName = 'Tipo'
-            ReadOnly = True
-            Width = 75
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'Codigo de Barras'
-            ReadOnly = True
-            Width = 229
-            Visible = True
-          end>
       end
       object edtCodigoBarras: TEdit
         Left = 200
@@ -193,37 +178,13 @@ object frmCadProduto: TfrmCadProduto
         TabOrder = 6
         OnClick = btnAddCodBarrasClick
       end
-      object edtCodBarrasInterno: TRadioButton
-        Left = 3
-        Top = 293
-        Width = 63
-        Height = 17
-        Caption = 'Interno'
-        TabOrder = 8
-      end
-      object edtCodBarrasGTIN: TRadioButton
-        Left = 72
-        Top = 293
-        Width = 63
-        Height = 17
-        Caption = 'GTIN'
-        TabOrder = 9
-      end
-      object edtCodBarrasOutro: TRadioButton
-        Left = 131
-        Top = 293
-        Width = 63
-        Height = 17
-        Caption = 'Outro'
-        TabOrder = 10
-      end
       object Button1: TButton
         Left = 480
         Top = 232
         Width = 1
         Height = 17
         Caption = 'Button1'
-        TabOrder = 11
+        TabOrder = 8
       end
       object btnCarregarImagem: TButton
         Left = 600
@@ -231,8 +192,19 @@ object frmCadProduto: TfrmCadProduto
         Width = 96
         Height = 25
         Caption = 'Carregar Imagem'
-        TabOrder = 12
+        TabOrder = 9
         OnClick = btnCarregarImagemClick
+      end
+      object cbTipoCodBarras: TComboBox
+        Left = 3
+        Top = 291
+        Width = 145
+        Height = 21
+        TabOrder = 10
+        Items.Strings = (
+          'Interno'
+          'GTIN'
+          'Outro')
       end
     end
     object TabSheet1: TTabSheet
@@ -352,22 +324,6 @@ object frmCadProduto: TfrmCadProduto
     Connection = frmConexao.conexao
     Left = 568
     Top = 80
-  end
-  object ClientDataSet1: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    Left = 180
-    Top = 488
-  end
-  object DataSource1: TDataSource
-    DataSet = ClientDataSet1
-    Left = 100
-    Top = 488
-  end
-  object DataSource2: TDataSource
-    DataSet = comandoSelect
-    Left = 268
-    Top = 504
   end
   object sqltributacao: TFDQuery
     Connection = frmConexao.conexao

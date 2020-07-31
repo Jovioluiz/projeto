@@ -39,9 +39,6 @@ begin
   Application.CreateForm(TfrmLogin, frmLogin);
   Application.CreateForm(TfrmConexao, frmConexao);
   Application.CreateForm(Tdm, dm);
-  Application.CreateForm(TfrmUsuario, frmUsuario);
-  Application.CreateForm(TfrmRelVendaDiaria, frmRelVendaDiaria);
-  Application.CreateForm(TfrmControleAcesso, frmControleAcesso);
   Application.Run;
 
 end.

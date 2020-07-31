@@ -61,6 +61,14 @@ type
     queryControleAcessocd_acao_1: TIntegerField;
     queryControleAcessofl_permite_acesso: TBooleanField;
     queryControleAcessodt_atz_1: TSQLTimeStampField;
+    tbCodBarraProduto: TFDTable;
+    queryCodBarraProduto: TFDQuery;
+    dsCodBarraProduto: TDataSource;
+    queryCodBarraProdutocd_produto: TIntegerField;
+    queryCodBarraProdutoun_medida: TWideStringField;
+    queryCodBarraProdutocodigo_barras: TWideStringField;
+    queryCodBarraProdutodt_atz: TSQLTimeStampField;
+    queryCodBarraProdutotipo_cod_barras: TSmallintField;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }

@@ -47,12 +47,6 @@ type
     edtProdutoNomeGrupoTributacaoICMS: TEdit;
     edtProdutoNomeGrupoTributacaoIPI: TEdit;
     edtProdutoNomeGrupoTributacaoPISCOFINS: TEdit;
-    ClientDataSet1: TClientDataSet;
-    DataSource1: TDataSource;
-    edtCodBarrasInterno: TRadioButton;
-    edtCodBarrasGTIN: TRadioButton;
-    edtCodBarrasOutro: TRadioButton;
-    DataSource2: TDataSource;
     sqltributacao: TFDQuery;
     sqlVerificaTributacao: TFDQuery;
     imagem: TImage;
@@ -60,10 +54,10 @@ type
     Button1: TButton;
     btnCarregarImagem: TButton;
     OpenDialog1: TOpenDialog;
+    cbTipoCodBarras: TComboBox;
     procedure btnPRODUTOCANCELARClick(Sender: TObject);
     procedure edtPRODUTOCD_PRODUTOExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure btnAddCodBarrasClick(Sender: TObject);
     procedure edtProdutoGrupoTributacaoICMSChange(Sender: TObject);
     procedure edtProdutoGrupoTributacaoIPIChange(Sender: TObject);
     procedure edtProdutoGrupoTributacaoPISCOFINSChange(Sender: TObject);
@@ -72,12 +66,14 @@ type
     procedure imagemMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure btnAddCodBarrasClick(Sender: TObject);
   private
     { Private declarations }
     procedure limpaCampos;
     procedure salvar;
     procedure excluir;
     procedure validaCampos;
+    procedure listarCodBarras;
   public
     { Public declarations }
 
@@ -96,36 +92,18 @@ uses uDataModule;
 
 procedure TfrmCadProduto.btnAddCodBarrasClick(Sender: TObject);
 begin
-  if ClientDataSet1.FieldCount = 0 then
-    begin
-      ClientDataSet1.FieldDefs.Clear;
-      ClientDataSet1.FieldDefs.Add('Tipo',ftString,10,false);
-      ClientDataSet1.FieldDefs.Add('Codigo de Barras',ftString,40,false);
-      ClientDataSet1.CreateDataSet;
-    end;
+  dm.dsCodBarraProduto.DataSet.Active := True;
+  dm.dsCodBarraProduto.DataSet.Append;
+  dm.dsCodBarraProduto.DataSet.FieldByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+  dm.dsCodBarraProduto.DataSet.FieldByName('un_medida').AsString := edtPRODUTOUN_MEDIDA.Text;
+  dm.dsCodBarraProduto.DataSet.FieldByName('tipo_cod_barras').AsInteger := cbTipoCodBarras.ItemIndex;
+  dm.dsCodBarraProduto.DataSet.FieldByName('codigo_barras').AsString := edtCodigoBarras.Text;
+  dm.dsCodBarraProduto.DataSet.Post;
 
-    ClientDataSet1.Append;
-  if edtCodBarrasInterno.Checked then
-      begin
-        ClientDataSet1.FieldByName('Tipo').AsString := 'I';
-      end
-    else if edtCodBarrasGTIN.Checked then
-      begin
-        ClientDataSet1.FieldByName('Tipo').AsString := 'G';
-      end
-    else if edtCodBarrasOutro.Checked then
-      begin
-       ClientDataSet1.FieldByName('Tipo').AsString := 'O';
-      end
-    else
-      begin
-        ClientDataSet1.FieldByName('Tipo').AsString := 'N';
-      end;
-  ClientDataSet1.FieldByName('Codigo de Barras').AsString := edtCodigoBarras.Text;
+  listarCodBarras;
 
-  ClientDataSet1.Post;
+  cbTipoCodBarras.ItemIndex := -1;
   edtCodigoBarras.Clear;
-
 end;
 
 procedure TfrmCadProduto.btnCarregarImagemClick(Sender: TObject);
@@ -167,8 +145,6 @@ begin
                             '    peso_liquido,                                  '+
                             '    peso_bruto,                                    '+
                             '    observacao,                                    '+
-                            '    tipo_cod_barras,                               '+
-                            '    codigo_barras,                                 '+
                             '    imagem,                                        '+
                             '    pt.cd_tributacao_icms,                         '+
                             '    gti.nm_tributacao_icms,                        '+
@@ -233,11 +209,8 @@ begin
     begin
       imagem.Picture.LoadFromFile(GetCurrentDir + '\imagens_produto\' + comandoSelect.FieldByName('imagem').AsString);
     end;
-  DBGridCodigoBarras.DataSource := DataSource2;
-  DBGridCodigoBarras.Columns[0].Title.Caption := 'Tipo';
-  DBGridCodigoBarras.Columns[0].FieldName := 'tipo_cod_barras';
-  DBGridCodigoBarras.Columns[1].Title.Caption := 'Codigo de Barras';
-  DBGridCodigoBarras.Columns[1].FieldName := 'codigo_barras';
+
+    listarCodBarras;
 
 end;
 
@@ -414,13 +387,40 @@ begin
   edtProdutoNomeGrupoTributacaoICMS.Clear;
   edtProdutoNomeGrupoTributacaoIPI.Clear;
   edtProdutoNomeGrupoTributacaoPISCOFINS.Clear;
-  edtCodBarrasInterno.Checked := false;
-  edtCodBarrasGTIN.Checked := false;
-  edtCodBarrasOutro.Checked := false;
   memoObservacao.Clear;
   edtPRODUTOCD_PRODUTO.SetFocus;
-  DBGridCodigoBarras.DataSource := nil;
+  dm.queryCodBarraProduto.Close;
   imagem.Picture := nil;
+end;
+
+procedure TfrmCadProduto.listarCodBarras;
+const
+    sql =  'select  '+
+           '    * '+
+           'from '+
+           '    produto_cod_barras '+
+           'where '+
+           '    cd_produto = :cd_produto';
+
+  {sql = 'select '+
+        '	cd_produto, '+
+        '	un_medida, '+
+        '	case '+
+        '		when tipo_cod_barras = 0 then ''Interno'' 	'+
+        '		when tipo_cod_barras = 1 then ''GTIN'' 		'+
+        '		when tipo_cod_barras = 2 then ''Outro'' 	'+
+        '	end tipo_cod_barras, '+
+        '	codigo_barras '+
+        'from '+
+        '	produto_cod_barras '+
+        'where '+
+        '	cd_produto = :cd_produto ';}
+begin
+  dm.queryCodBarraProduto.Close;
+  dm.queryCodBarraProduto.SQL.Clear;
+  dm.queryCodBarraProduto.SQL.Add(sql);
+  dm.queryCodBarraProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+  dm.queryCodBarraProduto.Open(sql);
 end;
 
 procedure TfrmCadProduto.salvar;

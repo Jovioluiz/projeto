@@ -227,8 +227,8 @@ object dm: Tdm
       #9'acoes_sistema a'
       #9'join usuario_acao ua on '
       #9'a.cd_acao = ua.cd_acao ')
-    Left = 504
-    Top = 32
+    Left = 512
+    Top = 240
     object queryControleAcessocd_acao: TIntegerField
       DisplayLabel = 'C'#243'd. A'#231#227'o'
       FieldName = 'cd_acao'
@@ -282,13 +282,13 @@ object dm: Tdm
     Connection = FDConnection1
     UpdateOptions.UpdateTableName = 'usuario_acao'
     TableName = 'usuario_acao'
-    Left = 504
-    Top = 96
+    Left = 512
+    Top = 304
   end
   object dsControleAcesso: TDataSource
     DataSet = queryControleAcesso
-    Left = 504
-    Top = 160
+    Left = 512
+    Top = 368
   end
   object query: TFDQuery
     Connection = FDConnection1
@@ -296,5 +296,51 @@ object dm: Tdm
       'select id_usuario, login from login_usuario')
     Left = 384
     Top = 32
+  end
+  object tbCodBarraProduto: TFDTable
+    Connection = FDConnection1
+    UpdateOptions.UpdateTableName = 'produto_cod_barras'
+    TableName = 'produto_cod_barras'
+    Left = 384
+    Top = 304
+  end
+  object queryCodBarraProduto: TFDQuery
+    Connection = FDConnection1
+    SQL.Strings = (
+      'select * from produto_cod_barras')
+    Left = 376
+    Top = 248
+    object queryCodBarraProdutocd_produto: TIntegerField
+      DisplayLabel = 'C'#243'd Produto'
+      FieldName = 'cd_produto'
+      Origin = 'cd_produto'
+      Visible = False
+    end
+    object queryCodBarraProdutoun_medida: TWideStringField
+      DisplayLabel = 'UN Medida'
+      FieldName = 'un_medida'
+      Origin = 'un_medida'
+      Size = 10
+    end
+    object queryCodBarraProdutotipo_cod_barras: TSmallintField
+      DisplayLabel = 'Tipo C'#243'd Barras'
+      FieldName = 'tipo_cod_barras'
+      Origin = 'tipo_cod_barras'
+    end
+    object queryCodBarraProdutocodigo_barras: TWideStringField
+      DisplayLabel = 'C'#243'digo Barras'
+      FieldName = 'codigo_barras'
+      Origin = 'codigo_barras'
+    end
+    object queryCodBarraProdutodt_atz: TSQLTimeStampField
+      FieldName = 'dt_atz'
+      Origin = 'dt_atz'
+      Visible = False
+    end
+  end
+  object dsCodBarraProduto: TDataSource
+    DataSet = queryCodBarraProduto
+    Left = 384
+    Top = 360
   end
 end
