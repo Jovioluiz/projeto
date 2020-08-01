@@ -13,6 +13,8 @@ INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUE
 INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(13, 'Cadastro Tributação Produto', 'frmCadastraTributacaoItem', now());
 INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(14, 'Configurações', 'frmConfiguracoes', now());
 INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(15, 'Cadastro Usuário', 'frmUsuario', now());
+INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(16, 'Controle de Acesso', 'frmControleAcesso', '2020-08-01 17:34:08.422');
+
 
 INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 1, true, now());
 INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 2, true, now());

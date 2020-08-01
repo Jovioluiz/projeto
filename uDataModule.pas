@@ -69,6 +69,7 @@ type
     queryCodBarraProdutocodigo_barras: TWideStringField;
     queryCodBarraProdutodt_atz: TSQLTimeStampField;
     queryCodBarraProdutotipo_cod_barras: TSmallintField;
+    queryControleAcessofl_permite_edicao: TBooleanField;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }

@@ -25,6 +25,7 @@ property cpf : String read Fcpf write Setcpf;
 function validaNomeCpf(nome : String; cpf : String) : String;
 function validaCodigo(cod : Integer) : Integer;
 function validaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
+function validaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean;
 
 
 end;
@@ -87,6 +88,30 @@ begin
       Abort;
     end;
     Result := 0;
+end;
+
+function TValidaDados.validaEdicaoAcao(cdUsuario, cdAcao: Integer): Boolean;
+const
+  sql = 'select '+
+         '  fl_permite_edicao '+
+         'from '+
+         '  usuario_acao '+
+         ' where '+
+         '  cd_acao = :cd_acao and '+
+         '  cd_usuario = :cd_usuario';
+begin
+  Result := False;
+
+  dm.query.Close;
+  dm.query.SQL.Clear;
+  dm.query.SQL.Add(sql);
+  dm.query.ParamByName('cd_acao').AsInteger := cdAcao;
+  dm.query.ParamByName('cd_usuario').AsInteger := cdUsuario;
+
+  dm.query.Open();
+
+  if dm.query.FieldByName('fl_permite_edicao').AsBoolean = True then
+    Result := True;
 end;
 
 function TValidaDados.validaNomeCpf(nome: String; cpf : String): String;

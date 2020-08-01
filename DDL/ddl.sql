@@ -1086,3 +1086,6 @@ update
 COMMENT ON COLUMN public.produto_cod_barras.tipo_cod_barras IS '0 - Interno
 1 - GTIN
 2 - Outro';
+
+
+ALTER TABLE public.usuario_acao ADD fl_permite_edicao bool NULL;

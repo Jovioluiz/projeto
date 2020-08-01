@@ -161,6 +161,7 @@ object frmCadProduto: TfrmCadProduto
         TitleFont.Height = -11
         TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
+        OnKeyDown = DBGridCodigoBarrasKeyDown
       end
       object edtCodigoBarras: TEdit
         Left = 200

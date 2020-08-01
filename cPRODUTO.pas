@@ -67,6 +67,8 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnAddCodBarrasClick(Sender: TObject);
+    procedure DBGridCodigoBarrasKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     procedure limpaCampos;
@@ -74,6 +76,7 @@ type
     procedure excluir;
     procedure validaCampos;
     procedure listarCodBarras;
+    procedure desabilitaCampos;
   public
     { Public declarations }
 
@@ -82,16 +85,17 @@ type
 
 var
   frmCadProduto: TfrmCadProduto;
-  //cd_produto : String;
+  camposDesabilitados : Boolean;
 
 implementation
 
 {$R *.dfm}
 
-uses uDataModule;
+uses uDataModule, uValidaDados, uLogin;
 
 procedure TfrmCadProduto.btnAddCodBarrasClick(Sender: TObject);
 begin
+//fazer validações para não permitir inserir sem nenhuma informação
   dm.dsCodBarraProduto.DataSet.Active := True;
   dm.dsCodBarraProduto.DataSet.Append;
   dm.dsCodBarraProduto.DataSet.FieldByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
@@ -126,7 +130,41 @@ begin
     end;
 end;
 
+procedure TfrmCadProduto.DBGridCodigoBarrasKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  //implementar exclusão
+end;
+
+procedure TfrmCadProduto.desabilitaCampos;
+//desabilita os campos quando o usuário não possui permissão de edição
+begin
+  edtPRODUTOCD_PRODUTO.Enabled := false;
+  edtPRODUTODESCRICAO.Enabled := false;
+  edtPRODUTOUN_MEDIDA.Enabled := false;
+  edtPRODUTOFATOR_CONVERSAO.Enabled := false;
+  edtPRODUTOPESO_BRUTO.Enabled := false;
+  edtPRODUTOPESO_LIQUIDO.Enabled := false;
+  edtCodigoBarras.Enabled := false;
+  edtProdutoGrupoTributacaoICMS.Enabled := false;
+  edtProdutoGrupoTributacaoIPI.Enabled := false;
+  edtProdutoGrupoTributacaoPISCOFINS.Enabled := false;
+  edtProdutoNomeGrupoTributacaoICMS.Enabled := false;
+  edtProdutoNomeGrupoTributacaoIPI.Enabled := false;
+  edtProdutoNomeGrupoTributacaoPISCOFINS.Enabled := false;
+  cbTipoCodBarras.Enabled := false;
+  ckPRODUTOATIVO.Enabled := false;
+  btnAddCodBarras.Enabled := false;
+  btnCarregarImagem.Enabled := false;
+  memoObservacao.Enabled := false;
+  camposDesabilitados := True;
+end;
+
 procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
+var
+  temPermissaoEdicao : Boolean;
+  cliente : TValidaDados;
 begin
   if edtPRODUTOCD_PRODUTO.Text = EmptyStr then
     begin
@@ -210,7 +248,20 @@ begin
       imagem.Picture.LoadFromFile(GetCurrentDir + '\imagens_produto\' + comandoSelect.FieldByName('imagem').AsString);
     end;
 
-    listarCodBarras;
+  listarCodBarras;
+
+  temPermissaoEdicao := False;
+  cliente := TValidaDados.Create;
+  temPermissaoEdicao := cliente.validaEdicaoAcao(idUsuario, 2);
+
+  if temPermissaoEdicao = True then
+  begin
+    Exit;
+  end
+  else
+  begin
+    desabilitaCampos;
+  end;
 
 end;
 
@@ -374,6 +425,30 @@ end;
 
 procedure TfrmCadProduto.limpaCampos;
 begin
+  if camposDesabilitados = True then
+  begin
+    edtPRODUTOCD_PRODUTO.Enabled := true;
+    edtPRODUTODESCRICAO.Enabled := true;
+    edtPRODUTOUN_MEDIDA.Enabled := true;
+    edtPRODUTOFATOR_CONVERSAO.Enabled := true;
+    edtPRODUTOPESO_BRUTO.Enabled := true;
+    edtPRODUTOPESO_LIQUIDO.Enabled := true;
+    edtCodigoBarras.Enabled := true;
+    edtProdutoGrupoTributacaoICMS.Enabled := true;
+    edtProdutoGrupoTributacaoIPI.Enabled := true;
+    edtProdutoGrupoTributacaoPISCOFINS.Enabled := true;
+    edtProdutoNomeGrupoTributacaoICMS.Enabled := true;
+    edtProdutoNomeGrupoTributacaoIPI.Enabled := true;
+    edtProdutoNomeGrupoTributacaoPISCOFINS.Enabled := true;
+    cbTipoCodBarras.Enabled := true;
+    ckPRODUTOATIVO.Enabled := true;
+    btnAddCodBarras.Enabled := true;
+    btnCarregarImagem.Enabled := true;
+    memoObservacao.Enabled := true;
+
+    camposDesabilitados := false;
+  end;
+
   edtPRODUTOCD_PRODUTO.Clear;
   edtPRODUTODESCRICAO.Clear;
   edtPRODUTOUN_MEDIDA.Clear;
@@ -463,8 +538,6 @@ begin
                                   'peso_liquido = :peso_liquido,      '+
                                   'peso_bruto = :peso_bruto,          '+
                                   'observacao = :observacao,           '+
-                                  //'tipo_cod_barras = :tipo_cod_barras, '+
-                                  //'codigo_barras = :codigo_barras,     '+
                                   'imagem = :imagem                    '+
                              'where                                    '+
                                   'cd_produto = :cd_produto';
@@ -477,9 +550,6 @@ begin
       comandosql.ParamByName('peso_liquido').AsCurrency := StrToCurr(edtPRODUTOPESO_LIQUIDO.Text);
       comandosql.ParamByName('peso_bruto').AsCurrency := StrToCurr(edtPRODUTOPESO_BRUTO.Text);
       comandosql.ParamByName('observacao').AsString := memoObservacao.Text;
-      //comandosql.ParamByName('tipo_cod_barras').AsString := ClientDataSet1.FieldByName('Tipo').AsString;
-      //comandosql.ParamByName('codigo_barras').AsString := ClientDataSet1.FieldByName('Codigo de Barras').AsString;
-      //comandosql.ParamByName('codigo_barras').AsString := edtCodigoBarras.Text;
       comandosql.ParamByName('imagem').AsString := NomeImg;
 
       sqltributacao.Close;
@@ -548,8 +618,6 @@ begin
       comandosql.ParamByName('peso_liquido').AsCurrency := StrToCurr(edtPRODUTOPESO_LIQUIDO.Text);
       comandosql.ParamByName('peso_bruto').AsCurrency := StrToCurr(edtPRODUTOPESO_BRUTO.Text);
       comandosql.ParamByName('observacao').AsString := memoObservacao.Text;
-      //comandosql.ParamByName('tipo_cod_barras').AsString := ClientDataSet1.FieldByName('Tipo').AsString;
-      //comandosql.ParamByName('codigo_barras').AsString := ClientDataSet1.FieldByName('Codigo de Barras').AsString;
       comandosql.ParamByName('imagem').AsString := NomeImg;
 
       sqltributacao.Close;

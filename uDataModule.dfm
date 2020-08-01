@@ -277,6 +277,12 @@ object dm: Tdm
       Origin = 'dt_atz'
       Visible = False
     end
+    object queryControleAcessofl_permite_edicao: TBooleanField
+      AutoGenerateValue = arDefault
+      DisplayLabel = 'Permite Edi'#231#227'o'
+      FieldName = 'fl_permite_edicao'
+      Origin = 'fl_permite_edicao'
+    end
   end
   object tbControleAcesso: TFDTable
     Connection = FDConnection1
