@@ -21,6 +21,8 @@ type
     edtCdAcao: TEdit;
     edtNomeAcao: TEdit;
     btnAdd: TSpeedButton;
+    cbEdicao: TComboBox;
+    Label2: TLabel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtUsuarioExit(Sender: TObject);
     procedure limpaCampos;
@@ -30,6 +32,7 @@ type
     procedure edtCdAcaoChange(Sender: TObject);
     procedure dbGridAcoesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     procedure listar;
@@ -47,11 +50,18 @@ implementation
 
 uses uDataModule;
 
-//realizar as validações de acesso nos formulários
+//realizar as validações de edição nos formulários de cadastro
 
 
 procedure TfrmControleAcesso.btnAddClick(Sender: TObject);
 begin
+
+  if edtCdAcao.Text = EmptyStr then
+  begin
+    ShowMessage('Informe uma ação!');
+    Exit;
+  end;
+
 //já salva os dados na tabela usuario_acao
   dm.query.Close;
   dm.query.SQL.Clear;
@@ -72,10 +82,15 @@ begin
   dm.dsControleAcesso.DataSet.FieldByName('cd_acao').AsInteger := StrToInt(edtCdAcao.Text);
   dm.dsControleAcesso.DataSet.FieldByName('nm_acao').AsString := edtNomeAcao.Text;
   dm.dsControleAcesso.DataSet.FieldByName('fl_permite_acesso').AsBoolean := True;
+  if cbEdicao.ItemIndex = 0 then
+    dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := True
+  else
+    dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := False;
   dm.dsControleAcesso.DataSet.Post;
 
   edtCdAcao.Clear;
   edtNomeAcao.Clear;
+  cbEdicao.ItemIndex := 1;
   listar;
 end;
 
@@ -191,6 +206,11 @@ procedure TfrmControleAcesso.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   dm.queryControleAcesso.Close;
+end;
+
+procedure TfrmControleAcesso.FormCreate(Sender: TObject);
+begin
+ cbEdicao.ItemIndex := 1;
 end;
 
 procedure TfrmControleAcesso.FormKeyDown(Sender: TObject; var Key: Word;

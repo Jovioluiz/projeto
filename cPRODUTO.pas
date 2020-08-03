@@ -55,6 +55,9 @@ type
     btnCarregarImagem: TButton;
     OpenDialog1: TOpenDialog;
     cbTipoCodBarras: TComboBox;
+    edtUnCodBarras: TEdit;
+    Label14: TLabel;
+    Label15: TLabel;
     procedure btnPRODUTOCANCELARClick(Sender: TObject);
     procedure edtPRODUTOCD_PRODUTOExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -77,8 +80,10 @@ type
     procedure validaCampos;
     procedure listarCodBarras;
     procedure desabilitaCampos;
+    procedure validaCamposCodBarra;
   public
     { Public declarations }
+
 
     var NomeImg : string;
   end;
@@ -95,11 +100,11 @@ uses uDataModule, uValidaDados, uLogin;
 
 procedure TfrmCadProduto.btnAddCodBarrasClick(Sender: TObject);
 begin
-//fazer validações para não permitir inserir sem nenhuma informação
+  validaCamposCodBarra;
   dm.dsCodBarraProduto.DataSet.Active := True;
   dm.dsCodBarraProduto.DataSet.Append;
   dm.dsCodBarraProduto.DataSet.FieldByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-  dm.dsCodBarraProduto.DataSet.FieldByName('un_medida').AsString := edtPRODUTOUN_MEDIDA.Text;
+  dm.dsCodBarraProduto.DataSet.FieldByName('un_medida').AsString := edtUnCodBarras.Text;
   dm.dsCodBarraProduto.DataSet.FieldByName('tipo_cod_barras').AsInteger := cbTipoCodBarras.ItemIndex;
   dm.dsCodBarraProduto.DataSet.FieldByName('codigo_barras').AsString := edtCodigoBarras.Text;
   dm.dsCodBarraProduto.DataSet.Post;
@@ -133,8 +138,33 @@ end;
 procedure TfrmCadProduto.DBGridCodigoBarrasKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
-  inherited;
-  //implementar exclusão
+   if Key = VK_DELETE then
+    begin
+      if MessageDlg('Deseja excluir o código de barras?', mtConfirmation,[mbYes,mbNo], 0) = mrYes then
+         begin
+            try
+              dm.query.Close;
+              dm.query.SQL.Clear;
+              dm.query.SQL.Text := 'delete '+
+                                   '  from '+
+                                   'produto_cod_barras '+
+                                   '  where '+
+                                   'cd_produto = :cd_produto and '+
+                                   'codigo_barras = :codigo_barras';
+              dm.query.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+              dm.query.ParamByName('codigo_barras').AsString := IntToStr(DBGridCodigoBarras.Fields[2].Value);
+              dm.query.ExecSQL;
+              edtPRODUTOCD_PRODUTO.SetFocus;
+            except
+                on E : exception do
+              begin
+                ShowMessage('Erro ' + E.Message);
+                Exit;
+              end;
+            end;
+         end;
+    end;
+    listarCodBarras;
 end;
 
 procedure TfrmCadProduto.desabilitaCampos;
@@ -158,6 +188,7 @@ begin
   btnAddCodBarras.Enabled := false;
   btnCarregarImagem.Enabled := false;
   memoObservacao.Enabled := false;
+  edtUnCodBarras.Enabled := false;
   camposDesabilitados := True;
 end;
 
@@ -166,6 +197,8 @@ var
   temPermissaoEdicao : Boolean;
   cliente : TValidaDados;
 begin
+  cliente := TValidaDados.Create;
+
   if edtPRODUTOCD_PRODUTO.Text = EmptyStr then
     begin
       raise Exception.Create('Código não pode ser vazio');
@@ -240,28 +273,22 @@ begin
   end;
   edtProdutoNomeGrupoTributacaoPISCOFINS.Text := comandoSelect.FieldByName('nm_tributacao_pis_cofins').AsString;
   if comandoSelect.FieldByName('imagem').AsString = '' then
-    begin
-      imagem.Picture := nil;
-    end
-  else
-    begin
-      imagem.Picture.LoadFromFile(GetCurrentDir + '\imagens_produto\' + comandoSelect.FieldByName('imagem').AsString);
-    end;
+  begin
+    imagem.Picture := nil;
+  end
+else
+  begin
+    imagem.Picture.LoadFromFile(GetCurrentDir + '\imagens_produto\' + comandoSelect.FieldByName('imagem').AsString);
+  end;
 
   listarCodBarras;
-
-  temPermissaoEdicao := False;
-  cliente := TValidaDados.Create;
   temPermissaoEdicao := cliente.validaEdicaoAcao(idUsuario, 2);
 
   if temPermissaoEdicao = True then
-  begin
-    Exit;
-  end
+    Exit
   else
-  begin
     desabilitaCampos;
-  end;
+
 
 end;
 
@@ -445,6 +472,7 @@ begin
     btnAddCodBarras.Enabled := true;
     btnCarregarImagem.Enabled := true;
     memoObservacao.Enabled := true;
+    edtUnCodBarras.Enabled := true;
 
     camposDesabilitados := false;
   end;
@@ -463,6 +491,7 @@ begin
   edtProdutoNomeGrupoTributacaoIPI.Clear;
   edtProdutoNomeGrupoTributacaoPISCOFINS.Clear;
   memoObservacao.Clear;
+  edtUnCodBarras.Clear;
   edtPRODUTOCD_PRODUTO.SetFocus;
   dm.queryCodBarraProduto.Close;
   imagem.Picture := nil;
@@ -670,6 +699,31 @@ begin
     raise Exception.Create('Preencha os tipos de Tributação do produto!');
   end;
        
+end;
+
+procedure TfrmCadProduto.validaCamposCodBarra;
+const
+  sql = 'select '+
+        '   un_medida '+
+        'from '+
+        '   produto_cod_barras '+
+        'where '+
+        '   cd_produto = :cd_produto';
+begin
+  if (Trim(edtCodigoBarras.Text) = EmptyStr) or (Trim(edtUnCodBarras.Text) = EmptyStr) or
+  (cbTipoCodBarras.ItemIndex = -1) then
+    raise Exception.Create('Campos não podem ser vazios');
+
+
+  dm.query.Close;
+  dm.query.SQL.Clear;
+  dm.query.SQL.Add(sql);
+  dm.query.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+  dm.query.Open(sql);
+
+  if dm.query.FieldByName('un_medida').AsString = edtUnCodBarras.Text then
+    raise Exception.Create('O produto já possui código de barras cadastrado para a unidade de medida informada');
+  
 end;
 
 end.

@@ -16,6 +16,7 @@ object frmControleAcesso: TfrmControleAcesso
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
@@ -47,12 +48,25 @@ object frmControleAcesso: TfrmControleAcesso
     ParentFont = False
   end
   object btnAdd: TSpeedButton
-    Left = 343
-    Top = 64
+    Left = 351
+    Top = 65
     Width = 34
     Height = 22
     Caption = '+'
     OnClick = btnAddClick
+  end
+  object Label2: TLabel
+    Left = 35
+    Top = 92
+    Width = 41
+    Height = 18
+    Caption = 'Edi'#231#227'o'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
   end
   object edtUsuario: TEdit
     Left = 82
@@ -73,12 +87,12 @@ object frmControleAcesso: TfrmControleAcesso
   end
   object dbGridAcoes: TDBGrid
     Left = 9
-    Top = 104
+    Top = 128
     Width = 472
-    Height = 297
+    Height = 273
     DataSource = dm.dsControleAcesso
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-    TabOrder = 4
+    TabOrder = 5
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
@@ -102,6 +116,16 @@ object frmControleAcesso: TfrmControleAcesso
     Enabled = False
     TabOrder = 3
     OnExit = edtUsuarioExit
+  end
+  object cbEdicao: TComboBox
+    Left = 82
+    Top = 92
+    Width = 73
+    Height = 21
+    TabOrder = 4
+    Items.Strings = (
+      'Sim'
+      'N'#227'o')
   end
   object query: TFDQuery
     Connection = dm.FDConnection1

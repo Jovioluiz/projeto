@@ -111,6 +111,20 @@ object frmCadProduto: TfrmCadProduto
         Height = 13
         Caption = 'Imagem'
       end
+      object Label14: TLabel
+        Left = 129
+        Top = 264
+        Width = 39
+        Height = 13
+        Caption = 'Unidade'
+      end
+      object Label15: TLabel
+        Left = 200
+        Top = 264
+        Width = 82
+        Height = 13
+        Caption = 'C'#243'digo de Barras'
+      end
       object edtPRODUTOUN_MEDIDA: TEdit
         Left = 85
         Top = 37
@@ -199,13 +213,21 @@ object frmCadProduto: TfrmCadProduto
       object cbTipoCodBarras: TComboBox
         Left = 3
         Top = 291
-        Width = 145
+        Width = 105
         Height = 21
         TabOrder = 10
         Items.Strings = (
           'Interno'
           'GTIN'
           'Outro')
+      end
+      object edtUnCodBarras: TEdit
+        Left = 129
+        Top = 291
+        Width = 65
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 11
       end
     end
     object TabSheet1: TTabSheet
