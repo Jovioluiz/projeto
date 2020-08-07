@@ -81,33 +81,40 @@ uses uDataModule, uValidaDados, uLogin;
 procedure TfrmCadCliente.pFormarCamposPessoa;
 begin
   //Muda o caption do label CPF/CNPJ e RG/IE
-  if edtCLIENTETP_PESSOA.ItemIndex = 0 then
+    if edtCLIENTETP_PESSOA.ItemIndex = 0 then
+      begin
+        lblCLIENTECPF_CNPJ.Caption := 'CPF';
+        edtCLIENTECPF_CNPJ.Width    := 90;
+        edtCLIENTECPF_CNPJ.EditMask := uValidaDcto.MASCARA_CPF;
+        lblCLIENTEIE_RG.Caption    := 'RG';
+        lblCLIENTEDTNASCIMENTO.Caption := 'Data Nascimento';
+        edtCLIENTEDATANASCIMENTO.EditMask := uValidaDcto.MASCARA_DATA;
+        edtCLIENTEFONE.EditMask := uValidaDcto.MASCARA_TELEFONE;
+        edtCLIENTECELULAR.EditMask := uValidaDcto.MASCARA_CELULAR;
+        edtCLIENTEDATANASCIMENTO.Visible := true;
+      end
+    else
     begin
-      lblCLIENTECPF_CNPJ.Caption := 'CPF';
-      edtCLIENTECPF_CNPJ.Width    := 90;
-      edtCLIENTECPF_CNPJ.EditMask := uValidaDcto.MASCARA_CPF;
-      lblCLIENTEIE_RG.Caption    := 'RG';
-      lblCLIENTEDTNASCIMENTO.Caption := 'Data Nascimento';
-      edtCLIENTEDATANASCIMENTO.EditMask := uValidaDcto.MASCARA_DATA;
-      edtCLIENTEFONE.EditMask := uValidaDcto.MASCARA_TELEFONE;
-      edtCLIENTECELULAR.EditMask := uValidaDcto.MASCARA_CELULAR;
-      edtCLIENTEDATANASCIMENTO.Visible := true;
-    end
-  else
-    begin
-      lblCLIENTECPF_CNPJ.Caption  := 'CNPJ';
-      edtCLIENTECPF_CNPJ.Width    := 110;
-      edtCLIENTECPF_CNPJ.EditMask := uValidaDcto.MASCARA_CNPJ;
-      lblCLIENTEIE_RG.Caption    := 'IE';
-      lblCLIENTEDTNASCIMENTO.Caption := 'Data Fundação';
-      edtCLIENTEDATANASCIMENTO.EditMask := uValidaDcto.MASCARA_DATA;
-      edtCLIENTEFONE.EditMask := uValidaDcto.MASCARA_TELEFONE;
-      edtCLIENTECELULAR.EditMask := uValidaDcto.MASCARA_CELULAR;
-
+        lblCLIENTECPF_CNPJ.Caption  := 'CNPJ';
+        edtCLIENTECPF_CNPJ.Width    := 110;
+        edtCLIENTECPF_CNPJ.EditMask := uValidaDcto.MASCARA_CNPJ;
+        lblCLIENTEIE_RG.Caption    := 'IE';
+        lblCLIENTEDTNASCIMENTO.Caption := 'Data Fundação';
+        edtCLIENTEDATANASCIMENTO.EditMask := uValidaDcto.MASCARA_DATA;
+        edtCLIENTEFONE.EditMask := uValidaDcto.MASCARA_TELEFONE;
+        edtCLIENTECELULAR.EditMask := uValidaDcto.MASCARA_CELULAR;
     end;
 end;
 
 procedure TfrmCadCliente.salvar;
+const
+  SQL_CLIENTE = 'select       '+
+                    '*        '+
+                'from         '+
+                    'cliente  '+
+                'where        '+
+                    'cd_cliente = :cd_cliente';
+
 var cliente : TValidaDados;
 begin
  try
@@ -122,6 +129,11 @@ begin
 
     //validaCampos;
 
+    //dm.sqlCliente.Close;
+    //dm.sqlCliente.SQL.Clear;
+    //dm.sqlCliente.SQL.Add(SQL_CLIENTE);
+    //dm.sqlCliente.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
+    //dm.sqlCliente.Open();
     FDQuery1.Close;
     FDQuery1.SQL.Clear;
     FDQuery1.SQL.Text := 'select        '+
@@ -201,6 +213,8 @@ begin
           sqlInsertEndereco.Close;
           ShowMessage('Cliente alterado com sucesso');
           limpaCampos;
+          //dm.sqlCliente.Close;
+          //dm.sqlCliente.SQL.Clear;
         except
           on E:exception do
             begin
@@ -296,6 +310,8 @@ begin
           sqlInsertEndereco.Close;
           ShowMessage('Cliente inserido com sucesso');
           limpaCampos;
+          //dm.sqlCliente.Close;
+          //dm.sqlCliente.SQL.Clear;
         except
         on E:exception do
             begin
@@ -313,18 +329,30 @@ begin
   end;
 end;
 
-{procedure TfrmCadCliente.validaCampos;
-begin
- if (Trim(edtCLIENTEcd_cliente.Text) = '') and (Trim(edtCLIENTENM_CLIENTE.Text) = '') and
-    (Trim(edtCLIENTECPF_CNPJ.Text) = '') then
-    raise Exception.Create('Código, nome e CPF/CNPJ não podem ser vazios');
-end;}
-
 procedure TfrmCadCliente.edtCepExit(Sender: TObject);
+const
+  SQL_ENDERECO_CLIENTE = 'select                                '+
+                        '    e.endereco_logradouro,             '+
+                        '    b.bairro_descricao,                '+
+                        '    c.nm_cidade,                       '+
+                        '    es.uf                              '+
+                        '    from endereco e                    '+
+                        'join bairro b on                       '+
+                        '    e.bairro_codigo = b.bairro_codigo  '+
+                        'join cidade c on                       '+
+                        '    b.cidade_codigo = c.cd_cidade      '+
+                        'join estado es on                      '+
+                        '    c.uf = es.uf                       '+
+                        'where e.endereco_cep = :endereco_cep		';
+
 var sql : String;
 begin
-  inherited;
-  FDQuery1.Close;
+  dm.sqlCliente.Close;
+  dm.sqlCliente.SQL.Clear;
+  dm.sqlCliente.SQL.Add(SQL_ENDERECO_CLIENTE);
+  dm.sqlCliente.ParamByName('endereco_cep').AsString := edtCep.Text;
+  //dm.sqlCliente.Open();
+  {FDQuery1.Close;
   FDQuery1.SQL.Text := 'select                                  '+
                         '    e.endereco_logradouro,             '+
                         '    b.bairro_descricao,                '+
@@ -339,7 +367,7 @@ begin
                         '    c.uf = es.uf                       '+
                         'where e.endereco_cep = :endereco_cep		';
 
-  FDQuery1.ParamByName('endereco_cep').AsString := edtCep.Text;
+  FDQuery1.ParamByName('endereco_cep').AsString := edtCep.Text; }
 
   //se o cep do cadastro for diferente do que foi digitado
   //executa o sql acima
@@ -348,22 +376,22 @@ begin
   if verdade = True then
     Exit;
 
-  if not FDQuery1.IsEmpty then
+  if not dm.sqlCliente.IsEmpty then
   begin
-    FDQuery1.Open();
+    dm.sqlCliente.Open();
   end
   else
   begin
-    FDQuery1.SQL.Add('or c.cep = :cep limit 1');
-    FDQuery1.ParamByName('cep').AsString := edtCep.Text;
-    FDQuery1.SQL.Add(sql);
-    FDQuery1.Open();
+    dm.sqlCliente.SQL.Add('or c.cep = :cep limit 1');
+    dm.sqlCliente.ParamByName('cep').AsString := edtCep.Text;
+    dm.sqlCliente.SQL.Add(sql);
+    dm.sqlCliente.Open();//tá dando erro field cd_cliente not found no sqlCliente
   end;
 
-  edtCLIENTEENDERECO_LOGRADOURO.Text := FDQuery1.FieldByName('endereco_logradouro').AsString;
-  edtCLIENTEENDERECO_BAIRRO.Text := FDQuery1.FieldByName('bairro_descricao').AsString;
-  edtCLIENTEENDERECO_CIDADE.Text := FDQuery1.FieldByName('nm_cidade').AsString;
-  edtEstado.Text := FDQuery1.FieldByName('uf').AsString;
+  edtCLIENTEENDERECO_LOGRADOURO.Text := dm.sqlCliente.FieldByName('endereco_logradouro').AsString;
+  edtCLIENTEENDERECO_BAIRRO.Text := dm.sqlCliente.FieldByName('bairro_descricao').AsString;
+  edtCLIENTEENDERECO_CIDADE.Text := dm.sqlCliente.FieldByName('nm_cidade').AsString;
+  edtEstado.Text := dm.sqlCliente.FieldByName('uf').AsString;
   edtCLIENTEENDERECO_LOGRADOURO.SetFocus;
 
 end;

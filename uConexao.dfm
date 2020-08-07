@@ -20,16 +20,13 @@ object frmConexao: TfrmConexao
       'User_Name=postgres'
       'Password=postgres'
       'Server=localhost'
-      'Port=5433'
       'DriverID=PG')
     TxOptions.AutoStop = False
     Left = 64
     Top = 104
   end
   object drive: TFDPhysPgDriverLink
-    VendorLib = 
-      'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
-      'libpq.dll'
+    VendorLib = 'C:\Users\jovio\Documents\Projeto\trunk\lib\libpq.dll'
     Left = 120
     Top = 104
   end

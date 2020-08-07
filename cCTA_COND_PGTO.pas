@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, uConexao, Vcl.Buttons;
+  FireDAC.Comp.Client, uConexao, Vcl.Buttons, StrUtils;
 
 type
   TfrmCadCondPgto = class(TfrmConexao)
@@ -87,6 +87,7 @@ begin
     edtCTACONDPGTODESCRICAO.Text := sqlInsertCondPgto.FieldByName('nm_cond_pag').AsString;
     edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text := IntToStr(sqlInsertCondPgto.FieldByName('cd_cta_forma_pagamento').AsInteger);
     edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := sqlInsertCondPgto.FieldByName('nm_forma_pag').AsString;
+
     if sqlInsertCondPgto.FieldByName('vl_minimo_parcela').AsCurrency = 0 then
     begin
       edtCTACONDPGTOVL_MINIMO.Text := '';
