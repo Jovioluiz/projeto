@@ -66,8 +66,7 @@ begin
                           'desc_produto,    '+
                           'un_medida,       '+
                           'fator_conversao, '+
-                          'qtd_estoque,     '+
-                          'codigo_barras    '+
+                          'qtd_estoque      '+
                      'from                  '+
                           'produto ';
 
@@ -117,6 +116,34 @@ begin
 end;
 
 procedure TfrmConsultaProdutos.dbGridProdutoCellClick(Column: TColumn);
+const SQL_ULT_ENTRADA = 'select                                  '+
+                        '    nfc.dcto_numero,                    '+
+                        '    c.nome as fornecedor,               '+
+                        '    nfc.dt_lancamento,                  '+
+                        '    nfi.un_medida,                      '+
+                        '    nfi.vl_unitario,                    '+
+                        '    nfi.qtd_estoque as quantidade       '+
+                        'from                                    '+
+                        '    produto p                           '+
+                        'join nfi on                             '+
+                        '    p.cd_produto = nfi.cd_produto       '+
+                        'join nfc on                             '+
+                        '    nfc.id_geral = nfi.id_nfc           '+
+                        'join cliente c on                       '+
+                        '    nfc.cd_fornecedor = c.cd_cliente    '+
+                        'where                                   '+
+                        '    p.cd_produto in (                   '+
+                        '    select                              '+
+                        '        nfi.cd_produto                  '+
+                        '    from                                '+
+                        '        nfc                             '+
+                        '    join nfi on                         '+
+                        '        nfc.id_geral = nfi.id_nfc       '+
+                        '    where                               '+
+                        '        nfc.dcto_numero > 0             '+
+                        '        and p.cd_produto = :cd_produto)';
+var
+  ultimaEntrada : TdmConsultaProduto;
 begin
   //dados da última compra do item
   sqlUltEntrada.Close;
@@ -148,14 +175,14 @@ begin
                             '        and p.cd_produto = :cd_produto)';
 
   sqlUltEntrada.ParamByName('cd_produto').AsInteger := StrToInt(dbGridProduto.Columns[0].Field.Text);
-  sqlUltEntrada.Open();
+  sqlUltEntrada.Open();         }
 
   if sqlUltEntrada.IsEmpty then
-    begin
-      dbGridUltimasEntradas.DataSource := nil;
-    end
+  begin
+    dbGridUltimasEntradas.DataSource := nil;
+  end
   else
-    begin
+  begin
       dbGridUltimasEntradas.DataSource := DataSourceUltEntradas;
       dbGridUltimasEntradas.Columns[0].Title.Caption := 'Nota';
       dbGridUltimasEntradas.Columns[0].FieldName :=  'dcto_numero';
@@ -169,40 +196,37 @@ begin
       dbGridUltimasEntradas.Columns[4].FieldName :=  'vl_unitario';
       dbGridUltimasEntradas.Columns[5].Title.Caption := 'Un Medida';
       dbGridUltimasEntradas.Columns[5].FieldName :=  'un_medida';
-    end;
+  end;
 
-   sqlPrecos.Close;
-   sqlPrecos.SQL.Text := 'select                             '+
-                          '    tpp.cd_tabela,                '+
-                          '    tp.nm_tabela,                 '+
-                          '    tpp.valor,                    '+
-                          '    tpp.un_medida                 '+
-                          '    from tabela_preco_produto tpp '+
-                          'join tabela_preco tp on           '+
-                          '    tpp.cd_tabela = tp.cd_tabela  '+
-                          'where tpp.cd_produto = :cd_produto';
-   sqlPrecos.ParamByName('cd_produto').AsInteger := StrToInt(dbGridProduto.Columns[0].Field.Text);
-   sqlPrecos.Open();
+ sqlPrecos.Close;
+ sqlPrecos.SQL.Text := 'select                             '+
+                        '    tpp.cd_tabela,                '+
+                        '    tp.nm_tabela,                 '+
+                        '    tpp.valor,                    '+
+                        '    tpp.un_medida                 '+
+                        '    from tabela_preco_produto tpp '+
+                        'join tabela_preco tp on           '+
+                        '    tpp.cd_tabela = tp.cd_tabela  '+
+                        'where tpp.cd_produto = :cd_produto';
+ sqlPrecos.ParamByName('cd_produto').AsInteger := StrToInt(dbGridProduto.Columns[0].Field.Text);
+ sqlPrecos.Open();
 
-   if sqlPrecos.IsEmpty then
-   begin
-     dbgriPrecos.DataSource := nil;
-   end
-   else
-   begin
-     dbgriPrecos.DataSource := dsPrecos;
-     dbgriPrecos.Columns[0].Title.Caption := 'Tabela';
-     dbgriPrecos.Columns[0].FieldName := 'cd_tabela';
-     dbgriPrecos.Columns[1].Title.Caption := 'Desc. Tabela';
-     dbgriPrecos.Columns[1].FieldName := 'nm_tabela';
-     dbgriPrecos.Columns[2].Title.Caption := 'Valor';
-     dbgriPrecos.Columns[2].FieldName := 'valor';
-     dbgriPrecos.Columns[3].Title.Caption := 'Un. Medida';
-     dbgriPrecos.Columns[3].FieldName := 'un_medida';
-   end;
-
-
-
+ if sqlPrecos.IsEmpty then
+ begin
+   dbgriPrecos.DataSource := nil;
+ end
+ else
+ begin
+   dbgriPrecos.DataSource := dsPrecos;
+   dbgriPrecos.Columns[0].Title.Caption := 'Tabela';
+   dbgriPrecos.Columns[0].FieldName := 'cd_tabela';
+   dbgriPrecos.Columns[1].Title.Caption := 'Desc. Tabela';
+   dbgriPrecos.Columns[1].FieldName := 'nm_tabela';
+   dbgriPrecos.Columns[2].Title.Caption := 'Valor';
+   dbgriPrecos.Columns[2].FieldName := 'valor';
+   dbgriPrecos.Columns[3].Title.Caption := 'Un. Medida';
+   dbgriPrecos.Columns[3].FieldName := 'un_medida';
+ end;
 end;
 
 procedure TfrmConsultaProdutos.FormClose(Sender: TObject;
@@ -224,21 +248,21 @@ procedure TfrmConsultaProdutos.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if key = VK_ESCAPE then //ESC
+  begin
+  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
     begin
-    if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-      begin
-        Close;
-      end;
+      Close;
     end;
+  end;
 end;
 
 procedure TfrmConsultaProdutos.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
-    begin
-      Key := #0;
-      Perform(WM_NEXTDLGCTL,0,0)
-    end;
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL,0,0)
+  end;
 end;
 
 end.
