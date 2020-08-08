@@ -53,7 +53,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule;
+uses uDataModule, dtmConsultaProduto;
 
 
 
@@ -116,7 +116,7 @@ begin
 end;
 
 procedure TfrmConsultaProdutos.dbGridProdutoCellClick(Column: TColumn);
-const SQL_ULT_ENTRADA = 'select                                  '+
+{const SQL_ULT_ENTRADA = 'select                                  '+
                         '    nfc.dcto_numero,                    '+
                         '    c.nome as fornecedor,               '+
                         '    nfc.dt_lancamento,                  '+
@@ -141,7 +141,7 @@ const SQL_ULT_ENTRADA = 'select                                  '+
                         '        nfc.id_geral = nfi.id_nfc       '+
                         '    where                               '+
                         '        nfc.dcto_numero > 0             '+
-                        '        and p.cd_produto = :cd_produto)';
+                        '        and p.cd_produto = :cd_produto)';}
 var
   ultimaEntrada : TdmConsultaProduto;
 begin
@@ -175,7 +175,7 @@ begin
                             '        and p.cd_produto = :cd_produto)';
 
   sqlUltEntrada.ParamByName('cd_produto').AsInteger := StrToInt(dbGridProduto.Columns[0].Field.Text);
-  sqlUltEntrada.Open();         }
+  sqlUltEntrada.Open();
 
   if sqlUltEntrada.IsEmpty then
   begin
