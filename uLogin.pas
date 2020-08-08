@@ -3,7 +3,8 @@ unit uLogin;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.XPMan,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
@@ -32,7 +33,7 @@ type
 
 var
   frmLogin: TfrmLogin;
-  idUsuario : Integer;
+  idUsuario: Integer;
 
 implementation
 
@@ -56,8 +57,9 @@ const
               'where '+
               '  login = :login and senha = :senha';
 
-var usuario, senha : String;
-login : TdmLogin;
+var
+  usuario, senha: String;
+  login: TdmLogin;
 begin
   try
     login := TdmLogin.Create(nil);
@@ -69,7 +71,7 @@ begin
 
     idUsuario := login.queryLogin.FieldByName('id_usuario').AsInteger;
     usuario := login.queryLogin.FieldByName('login').Text;
-    senha :=  login.queryLogin.FieldByName('senha').Text;
+    senha := login.queryLogin.FieldByName('senha').Text;
 
     if (Trim(edtUsuario.Text) = EmptyStr) or (Trim(edtSenha.Text) = EmptyStr) then
     begin
@@ -105,16 +107,16 @@ end;
 
 procedure TfrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
- frmLogin := nil;
+  frmLogin := nil;
 end;
 
 procedure TfrmLogin.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
-    begin
-      Key := #0;
-      Perform(WM_NEXTDLGCTL,0,0)
-    end;
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0)
+  end;
 end;
 
 end.

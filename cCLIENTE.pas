@@ -522,27 +522,27 @@ end;
 procedure TfrmCadCliente.excluir;
 begin
   if (Application.MessageBox('Deseja Excluir o Cliente?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      try
-        conexao.ExecSQL('delete                   '+
-                        ' from                    '+
-                        'cliente                  '+
-                        ' where                   '+
-                        'cd_cliente = :cd_cliente',
-                        [StrToInt(edtCLIENTEcd_cliente.Text)]);//parametros
-        ShowMessage('Cliente excluído com sucesso!');
-        limpaCampos;
-      except
-        on E:exception do
-          begin
-            ShowMessage('Erro ao excluir os dados do cliente ' +edtCLIENTEcd_cliente.Text + E.Message);
-          end;
+  begin
+    try
+      conexao.ExecSQL('delete                   '+
+                      ' from                    '+
+                      'cliente                  '+
+                      ' where                   '+
+                      'cd_cliente = :cd_cliente',
+                      [StrToInt(edtCLIENTEcd_cliente.Text)]);//parametros
+      ShowMessage('Cliente excluído com sucesso!');
+      limpaCampos;
+    except
+      on E:exception do
+      begin
+        ShowMessage('Erro ao excluir os dados do cliente ' +edtCLIENTEcd_cliente.Text + E.Message);
       end;
-    end
-  else
-    begin
-      Exit;
     end;
+  end
+  else
+  begin
+    Exit;
+  end;
 end;
 
 procedure TfrmCadCliente.FormClose(Sender: TObject; var Action: TCloseAction);

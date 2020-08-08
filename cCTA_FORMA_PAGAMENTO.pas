@@ -120,25 +120,25 @@ end;
 procedure TfrmCadFormaPagamento.excluir;
 begin
   if (Application.MessageBox('Deseja Excluir a Forma de Pagamento?', 'Atenção', MB_YESNO) = IDYES) then
-    begin
-      try
-        conexao.ExecSQL('delete '+
-                        ' from '+
-                        'cta_forma_pagamento '+
-                        ' where '+
-                        'cd_forma_pag = :cd_forma_pag',
-                            [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text)]);
-        ShowMessage('Forma de Pagamento excluída com sucesso!');
-        LimpaCampos;
-      except
-        on E:exception do
-          begin
-            ShowMessage('Erro ao excluir a Forma de Pagamento ' + edtCTA_FORMA_PGTOCODIGO.Text + E.Message);
-            conexao.Rollback;
-            Exit;
-          end;
+  begin
+    try
+      conexao.ExecSQL('delete '+
+                      ' from '+
+                      'cta_forma_pagamento '+
+                      ' where '+
+                      'cd_forma_pag = :cd_forma_pag',
+                          [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text)]);
+      ShowMessage('Forma de Pagamento excluída com sucesso!');
+      LimpaCampos;
+    except
+      on E:exception do
+      begin
+        ShowMessage('Erro ao excluir a Forma de Pagamento ' + edtCTA_FORMA_PGTOCODIGO.Text + E.Message);
+        conexao.Rollback;
+        Exit;
       end;
     end;
+  end;
 end;
 
 //passa pelos campos pressionando enter
@@ -200,50 +200,50 @@ begin
     resultado := conexao.ExecSQLScalar('select cd_forma_pag from cta_forma_pagamento where cd_forma_pag = :cd_forma_pag',
                                         [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text)]);
     if not resultado.IsEmpty then
-      begin
-        conexao.ExecSQL('update                                     '+
-                            'cta_forma_pagamento                    '+
-                        'set                                        '+
-                        '    cd_forma_pag = :cd_forma_pag,          '+
-                         '   nm_forma_pag = :nm_forma_pag,          '+
-                          '  fl_ativo = :fl_ativo,                  '+
-                          '  tp_classificacao = :tp_classificacao   '+
-                        'where                                      '+
-                          'cd_forma_pag = :cd_forma_pag',
-                          [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text),
-                          edtCTA_FORMA_PGTODESCRICAO.Text,
-                          edtCTA_FORMA_PGTOFL_ATIVO.Checked,
-                          edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex.ToString]);
-        ShowMessage('Forma de Pagamento cadastrada com Sucesso!');
-        LimpaCampos;
-      end
+    begin
+      conexao.ExecSQL('update                                     '+
+                          'cta_forma_pagamento                    '+
+                      'set                                        '+
+                      '    cd_forma_pag = :cd_forma_pag,          '+
+                       '   nm_forma_pag = :nm_forma_pag,          '+
+                        '  fl_ativo = :fl_ativo,                  '+
+                        '  tp_classificacao = :tp_classificacao   '+
+                      'where                                      '+
+                        'cd_forma_pag = :cd_forma_pag',
+                        [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text),
+                        edtCTA_FORMA_PGTODESCRICAO.Text,
+                        edtCTA_FORMA_PGTOFL_ATIVO.Checked,
+                        edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex.ToString]);
+      ShowMessage('Forma de Pagamento cadastrada com Sucesso!');
+      LimpaCampos;
+    end
     else
-      begin
-        conexao.ExecSQL('insert                                '+
-                            'into                              '+
-                            'cta_forma_pagamento(cd_forma_pag, '+
-                            'nm_forma_pag,                     '+
-                            'fl_ativo,                         '+
-                            'tp_classificacao)                 '+
-                        'values (:cd_forma_pag,                '+
-                            ':nm_forma_pag,                    '+
-                            ':fl_ativo,                        '+
-                            ':tp_classificacao)',
-                    [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text),
-                    edtCTA_FORMA_PGTODESCRICAO.Text,
-                    edtCTA_FORMA_PGTOFL_ATIVO.Checked,
-                    edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex.ToString],
-                    [ftInteger, ftString, ftBoolean, ftInteger]);
-        ShowMessage('Forma de Pagamento cadastrada com Sucesso!');
-        LimpaCampos;
-      end;
+    begin
+      conexao.ExecSQL('insert                                '+
+                          'into                              '+
+                          'cta_forma_pagamento(cd_forma_pag, '+
+                          'nm_forma_pag,                     '+
+                          'fl_ativo,                         '+
+                          'tp_classificacao)                 '+
+                      'values (:cd_forma_pag,                '+
+                          ':nm_forma_pag,                    '+
+                          ':fl_ativo,                        '+
+                          ':tp_classificacao)',
+                  [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text),
+                  edtCTA_FORMA_PGTODESCRICAO.Text,
+                  edtCTA_FORMA_PGTOFL_ATIVO.Checked,
+                  edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex.ToString],
+                  [ftInteger, ftString, ftBoolean, ftInteger]);
+      ShowMessage('Forma de Pagamento cadastrada com Sucesso!');
+      LimpaCampos;
+    end;
   except
     on E : exception do
-      begin
-        conexao.Rollback;
-        ShowMessage('Erro ao gravar os dados '+ E.Message);
-        Exit;
-      end;
+    begin
+      conexao.Rollback;
+      ShowMessage('Erro ao gravar os dados '+ E.Message);
+      Exit;
+    end;
   end;
 end;
 

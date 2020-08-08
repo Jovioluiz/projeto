@@ -27,7 +27,6 @@ object frmCadFormaPagamento: TfrmCadFormaPagamento
     Align = alTop
     BorderStyle = bsSingle
     TabOrder = 0
-    ExplicitWidth = 469
     object Label1: TLabel
       Left = 8
       Top = 16

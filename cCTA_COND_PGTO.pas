@@ -136,25 +136,25 @@ end;
 procedure TfrmCadCondPgto.excluir;
 begin
   if (Application.MessageBox('Deseja Excluir a Condição de Pagamento?', 'Aviso', MB_YESNO) = IDYES) then
-    begin
-      try
-        conexao.ExecSQL('delete '+
-                        ' from '+
-                        'cta_cond_pagamento '+
-                        ' where '+
-                        'cd_cond_pag = :cd_cond_pag',
-                        [StrToInt(edtCTACONDPGTOCD_COND.Text)]);
-        ShowMessage('Condição de Pagamento excluída com sucesso!');
-        limpaCampos;
-      except
-        on E:exception do
-          begin
-            ShowMessage('Erro ao excluir a condição de pagamento' + edtCTACONDPGTOCD_COND.Text + E.Message);
-            conexao.Rollback;
-            Exit;
-          end;
+  begin
+    try
+      conexao.ExecSQL('delete '+
+                      ' from '+
+                      'cta_cond_pagamento '+
+                      ' where '+
+                      'cd_cond_pag = :cd_cond_pag',
+                      [StrToInt(edtCTACONDPGTOCD_COND.Text)]);
+      ShowMessage('Condição de Pagamento excluída com sucesso!');
+      limpaCampos;
+    except
+      on E:exception do
+      begin
+        ShowMessage('Erro ao excluir a condição de pagamento' + edtCTACONDPGTOCD_COND.Text + E.Message);
+        conexao.Rollback;
+        Exit;
       end;
     end;
+  end;
 end;
 
 procedure TfrmCadCondPgto.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -217,7 +217,7 @@ begin
 try
   validaCampos;
 
-   resultado := conexao.ExecSQLScalar('select cd_cond_pag from cta_cond_pagamento where cd_cond_pag = :cd_cond_pag',
+  resultado := conexao.ExecSQLScalar('select cd_cond_pag from cta_cond_pagamento where cd_cond_pag = :cd_cond_pag',
                             [StrToInt(edtCTACONDPGTOCD_COND.Text)]);
 
   if not resultado.IsEmpty then
