@@ -9,13 +9,15 @@ object dm: Tdm
       'Database=trabalho_engenharia'
       'Password=postgres'
       'Server=localhost'
+      'Port=5433'
       'DriverID=PG')
-    Connected = True
     Left = 32
     Top = 16
   end
   object driver: TFDPhysPgDriverLink
-    VendorLib = 'C:\Users\jovio\Documents\Projeto\trunk\lib\libpq.dll'
+    VendorLib = 
+      'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
+      'libpq.dll'
     Left = 88
     Top = 16
   end
@@ -271,70 +273,5 @@ object dm: Tdm
       '    cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento')
     Left = 16
     Top = 264
-  end
-  object tbClientes: TFDTable
-    IndexFieldNames = 'cd_cliente'
-    Connection = FDConnection1
-    UpdateOptions.UpdateTableName = 'cliente'
-    SchemaName = 'public'
-    TableName = 'cliente'
-    Left = 16
-    Top = 80
-    object tbClientescd_cliente: TIntegerField
-      FieldName = 'cd_cliente'
-      Origin = 'cd_cliente'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-    end
-    object tbClientesnome: TWideStringField
-      FieldName = 'nome'
-      Origin = 'nome'
-      Size = 45
-    end
-    object tbClientestp_pessoa: TWideStringField
-      FieldName = 'tp_pessoa'
-      Origin = 'tp_pessoa'
-      Size = 10
-    end
-    object tbClientesfl_ativo: TBooleanField
-      FieldName = 'fl_ativo'
-      Origin = 'fl_ativo'
-    end
-    object tbClientestelefone: TWideStringField
-      FieldName = 'telefone'
-      Origin = 'telefone'
-      Size = 45
-    end
-    object tbClientescelular: TWideStringField
-      FieldName = 'celular'
-      Origin = 'celular'
-      Size = 45
-    end
-    object tbClientesemail: TWideStringField
-      FieldName = 'email'
-      Origin = 'email'
-      Size = 45
-    end
-    object tbClientescpf_cnpj: TWideStringField
-      FieldName = 'cpf_cnpj'
-      Origin = 'cpf_cnpj'
-      Size = 15
-    end
-    object tbClientesrg_ie: TWideStringField
-      FieldName = 'rg_ie'
-      Origin = 'rg_ie'
-      Size = 45
-    end
-    object tbClientesdt_nasc_fundacao: TDateField
-      FieldName = 'dt_nasc_fundacao'
-      Origin = 'dt_nasc_fundacao'
-    end
-    object tbClientesfl_fornecedor: TBooleanField
-      FieldName = 'fl_fornecedor'
-      Origin = 'fl_fornecedor'
-    end
-    object tbClientesdt_atz: TSQLTimeStampField
-      FieldName = 'dt_atz'
-      Origin = 'dt_atz'
-    end
   end
 end

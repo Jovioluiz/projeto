@@ -386,6 +386,7 @@ begin
     dm.sqlCliente.ParamByName('cep').AsString := edtCep.Text;
     dm.sqlCliente.SQL.Add(sql);
     dm.sqlCliente.Open();//tá dando erro field cd_cliente not found no sqlCliente
+    //apagar os fields do sqlCliente no datamodule
   end;
 
   edtCLIENTEENDERECO_LOGRADOURO.Text := dm.sqlCliente.FieldByName('endereco_logradouro').AsString;

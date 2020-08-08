@@ -25,7 +25,8 @@ uses
   uUsuario in 'uUsuario.pas' {frmUsuario},
   UfrmRelVendaDiaria in 'UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
   uControleAcesso in 'uControleAcesso.pas' {frmControleAcesso},
-  uValidaDados in 'uValidaDados.pas';
+  uValidaDados in 'uValidaDados.pas',
+  dtmLogin in 'dtmLogin.pas' {dmLogin: TDataModule};
 
 //uConsulta in 'uConsulta.pas' {frmConsulta};
 
@@ -39,6 +40,7 @@ begin
   Application.CreateForm(TfrmLogin, frmLogin);
   Application.CreateForm(TfrmConexao, frmConexao);
   Application.CreateForm(Tdm, dm);
+  Application.CreateForm(TdmLogin, dmLogin);
   Application.Run;
 
 end.

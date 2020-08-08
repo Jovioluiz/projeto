@@ -18,7 +18,6 @@ type
     edtSenha: TMaskEdit;
     btnEntrar: TButton;
     btnCancelar: TButton;
-    sqlLogin: TFDQuery;
     Image1: TImage;
     lblInfo: TLabel;
     procedure btnCancelarClick(Sender: TObject);
@@ -39,7 +38,7 @@ implementation
 
 {$R *.dfm}
 
-uses uTelaInicial, uDataModule;
+uses uTelaInicial, uDataModule, dtmLogin;
 
 procedure TfrmLogin.btnCancelarClick(Sender: TObject);
 begin
@@ -47,52 +46,60 @@ begin
 end;
 
 procedure TfrmLogin.btnEntrarClick(Sender: TObject);
+const
+  SQL_LOGIN = 'select '+
+              '  id_usuario, '+
+              '  login, '+
+              '  senha '+
+              'from '+
+              '  login_usuario '+
+              'where '+
+              '  login = :login and senha = :senha';
+
 var usuario, senha : String;
+login : TdmLogin;
 begin
-sqlLogin.Close;
-sqlLogin.SQL.Text := 'select '+
-                            'id_usuario, '+
-                            'login, '+
-                            'senha '+
-                      'from '+
-                            'login_usuario '+
-                      'where '+
-                          '(login = :login) and (senha = :senha)';
+  try
+    login := TdmLogin.Create(nil);
+    login.queryLogin.SQL.Add(SQL_LOGIN);
+    login.queryLogin.ParamByName('login').AsString := edtUsuario.Text;
+    login.queryLogin.ParamByName('senha').AsString := edtSenha.Text;
+    login.queryLogin.Prepare;
+    login.queryLogin.Open(SQL_LOGIN);
 
-sqlLogin.ParamByName('login').AsString := edtUsuario.Text;
-sqlLogin.ParamByName('senha').AsString := edtSenha.Text;
-sqlLogin.Open();
+    idUsuario := login.queryLogin.FieldByName('id_usuario').AsInteger;
+    usuario := login.queryLogin.FieldByName('login').Text;
+    senha :=  login.queryLogin.FieldByName('senha').Text;
 
-idUsuario := sqlLogin.FieldByName('id_usuario').AsInteger;
-usuario := sqlLogin.FieldByName('login').Text;
-senha :=  sqlLogin.FieldByName('senha').Text;
-
-if (Trim(edtUsuario.Text) = EmptyStr) or (Trim(edtSenha.Text) = EmptyStr) then
-  begin
-    lblInfo.Font.Color := clRed;
-    lblInfo.Caption := 'Usuário ou Senha Inválidos! Verifique!';
-    edtUsuario.Clear;
-    edtSenha.Clear;
-    edtUsuario.SetFocus;
-    Exit;
-  end;
-if (Trim(edtUsuario.Text) = usuario) and (Trim(edtSenha.Text) = senha) then
-  begin
-    try
-      frmPrincipal := TfrmPrincipal.Create(Self);
-      frmPrincipal.ShowModal;
-    finally
-      frmLogin.Close;
+    if (Trim(edtUsuario.Text) = EmptyStr) or (Trim(edtSenha.Text) = EmptyStr) then
+    begin
+      lblInfo.Font.Color := clRed;
+      lblInfo.Caption := 'Usuário ou Senha Inválidos! Verifique!';
+      edtUsuario.Clear;
+      edtSenha.Clear;
+      edtUsuario.SetFocus;
+      Exit;
     end;
-  end
-else
-  begin
-    lblInfo.Font.Color := clRed;
-    lblInfo.Caption := 'Usuário ou Senha Inválidos! Verifique!';
-    edtUsuario.Clear;
-    edtSenha.Clear;
-    edtUsuario.SetFocus;
-    Exit;
+    if (Trim(edtUsuario.Text) = usuario) and (Trim(edtSenha.Text) = senha) then
+    begin
+      try
+        frmPrincipal := TfrmPrincipal.Create(Self);
+        frmPrincipal.ShowModal;
+      finally
+        frmLogin.Close;
+      end;
+    end
+    else
+    begin
+      lblInfo.Font.Color := clRed;
+      lblInfo.Caption := 'Usuário ou Senha Inválidos! Verifique!';
+      edtUsuario.Clear;
+      edtSenha.Clear;
+      edtUsuario.SetFocus;
+      Exit;
+    end;
+  finally
+    FreeAndNil(login);
   end;
 end;
 

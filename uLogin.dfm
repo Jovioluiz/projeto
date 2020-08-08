@@ -279,7 +279,7 @@ object frmLogin: TfrmLogin
   object lblInfo: TLabel
     Left = 109
     Top = 120
-    Width = 148
+    Width = 3
     Height = 13
     Color = clRed
     Font.Charset = DEFAULT_CHARSET
@@ -335,10 +335,5 @@ object frmLogin: TfrmLogin
     ParentFont = False
     TabOrder = 3
     OnClick = btnCancelarClick
-  end
-  object sqlLogin: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 24
-    Top = 144
   end
 end

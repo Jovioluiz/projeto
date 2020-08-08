@@ -39,19 +39,6 @@ type
     queryCodBarraProdutotipo_cod_barras: TSmallintField;
     queryControleAcessofl_permite_edicao: TBooleanField;
     sqlPedidoVenda: TFDQuery;
-    tbClientes: TFDTable;
-    tbClientescd_cliente: TIntegerField;
-    tbClientesnome: TWideStringField;
-    tbClientestp_pessoa: TWideStringField;
-    tbClientesfl_ativo: TBooleanField;
-    tbClientestelefone: TWideStringField;
-    tbClientescelular: TWideStringField;
-    tbClientesemail: TWideStringField;
-    tbClientescpf_cnpj: TWideStringField;
-    tbClientesrg_ie: TWideStringField;
-    tbClientesdt_nasc_fundacao: TDateField;
-    tbClientesfl_fornecedor: TBooleanField;
-    tbClientesdt_atz: TSQLTimeStampField;
     sqlClientecd_cliente: TIntegerField;
     sqlClientenome: TWideStringField;
     sqlClientetp_pessoa: TWideStringField;
@@ -93,9 +80,6 @@ begin
   FDConnection1.Connected := true;
 
   driver.VendorLib := GetCurrentDir + '\lib\libpq.dll';
-
-  tbClientes.TableName := 'cliente';
-  tbClientes.Active := True;
 end;
 
 end.
