@@ -16,16 +16,15 @@ type TValidaDados = class
 
 
 
-public
+  public
+    property nomeCliente : String read FnomeCliente write SetnomeCliente;
+    property cdCliente : Integer read FcdCliente write SetcdCliente;
+    property cpf : String read Fcpf write Setcpf;
 
-property nomeCliente : String read FnomeCliente write SetnomeCliente;
-property cdCliente : Integer read FcdCliente write SetcdCliente;
-property cpf : String read Fcpf write Setcpf;
-
-function validaNomeCpf(nome : String; cpf : String) : String;
-function validaCodigo(cod : Integer) : Integer;
-function validaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
-function validaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean;
+    function validaNomeCpf(nome : String; cpf : String) : String;
+    function validaCodigo(cod : Integer) : Integer;
+    function validaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
+    function validaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean;
 
 
 end;

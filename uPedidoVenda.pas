@@ -113,6 +113,9 @@ var
 
 implementation
 
+uses
+  uclPedidoVenda;
+
 {$R *.dfm}
 
 //adiciona os produtos no grid
@@ -775,9 +778,25 @@ end;
 
 
 procedure TfrmPedidoVenda.edtQtdadeExit(Sender: TObject);
+var
+  ValidaQtdade : TPedidoVenda;
+  resposta : Boolean;
 begin
-  validaQtdadeItem;
+  //validaQtdadeItem;
+  ValidaQtdade := TPedidoVenda.Create;
+  resposta := ValidaQtdade.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
+
+  if resposta then
+  begin
+    ShowMessage('Quantidade informada maior que a disponível.');
+    //+ #13 +'Quantidade disponível: ' + FloatToStr(qtdade));
+    edtQtdade.SetFocus;
+    Exit;
+  end;
+
 end;
+
+
 
 procedure TfrmPedidoVenda.edtVlAcrescimoTotalPedidoExit(Sender: TObject);
 //recalcula o valor total se informado um valor de acrescimo no total do pedido

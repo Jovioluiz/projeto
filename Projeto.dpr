@@ -27,7 +27,8 @@ uses
   uControleAcesso in 'uControleAcesso.pas' {frmControleAcesso},
   uValidaDados in 'uValidaDados.pas',
   dtmLogin in 'dtmLogin.pas' {dmLogin: TDataModule},
-  dtmConsultaProduto in 'dtmConsultaProduto.pas' {dmConsultaProduto: TDataModule};
+  dtmConsultaProduto in 'dtmConsultaProduto.pas' {dmConsultaProduto: TDataModule},
+  uclPedidoVenda in 'uclPedidoVenda.pas';
 
 //uConsulta in 'uConsulta.pas' {frmConsulta};
 
