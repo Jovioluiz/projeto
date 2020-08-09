@@ -10,8 +10,16 @@ uses
 
 type
   TdmConsultaProduto = class(TDataModule)
-    queryUltEntradaProduto: TFDQuery;
+    query: TFDQuery;
     dsUltimaEntrada: TDataSource;
+    cdsUltEntrada: TClientDataSet;
+    cdsUltEntradanota: TIntegerField;
+    cdsUltEntradafornecedor: TStringField;
+    cdsUltEntradadataLancamento: TDateField;
+    cdsUltEntradaquantidade: TFloatField;
+    cdsUltEntradavalor_unitario: TCurrencyField;
+    cdsUltEntradaun_medida: TStringField;
+    DataSetProvider1: TDataSetProvider;
   private
     { Private declarations }
   public

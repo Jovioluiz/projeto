@@ -143,7 +143,7 @@ procedure TfrmConsultaProdutos.dbGridProdutoCellClick(Column: TColumn);
                         '        nfc.dcto_numero > 0             '+
                         '        and p.cd_produto = :cd_produto)';}
 var
-  ultimaEntrada : TdmConsultaProduto;
+  dm : TdmConsultaProduto;
 begin
   //dados da última compra do item
   sqlUltEntrada.Close;

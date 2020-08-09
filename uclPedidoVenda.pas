@@ -14,6 +14,7 @@ type TPedidoVenda = class
 
   public
     function ValidaQtdadeItem(CodProduto: Integer; QtdPedido: Double) : Boolean;
+    function CalcValorTotalItem(valorUnitario, qtdadeItem: Double) : Double;
 
 end;
 
@@ -21,6 +22,18 @@ implementation
 
 
 { TPedidoVenda }
+
+function TPedidoVenda.CalcValorTotalItem(valorUnitario,
+  qtdadeItem: Double): Double;
+var
+  vlTotal, vlUnitario, qtdade: Double;
+begin
+  vlUnitario := valorUnitario;
+  qtdade := qtdadeItem;
+  vlTotal := vlUnitario * qtdade;
+
+  Result := vlTotal;
+end;
 
 function TPedidoVenda.ValidaQtdadeItem(CodProduto: Integer; QtdPedido: Double): Boolean;
 const
@@ -42,7 +55,6 @@ begin
 
   if dm.query.IsEmpty then
     Exit;
-
 
   qtPedido := QtdPedido;
   qtEstoque := dm.query.FieldByName('qtd_estoque').AsFloat;

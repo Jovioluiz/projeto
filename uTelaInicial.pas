@@ -147,8 +147,8 @@ begin
 
   if temPermissao = True then
   begin
-  frmConfiguracoes := TfrmConfiguracoes.Create(Self);
-  frmConfiguracoes.ShowModal;
+    frmConfiguracoes := TfrmConfiguracoes.Create(Self);
+    frmConfiguracoes.ShowModal;
   end;
 end;
 
@@ -193,9 +193,9 @@ end;
 procedure TfrmPrincipal.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-if key = VK_ESCAPE then //ESC
+  if key = VK_ESCAPE then //ESC
   begin
-  if (Application.MessageBox('Deseja realmente sair do sistema?','Atenção', MB_YESNO) = IDYES) then
+    if (Application.MessageBox('Deseja realmente sair do sistema?','Atenção', MB_YESNO) = IDYES) then
     begin
       Close;
     end;

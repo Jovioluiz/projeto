@@ -8,7 +8,7 @@ uses
   Data.FMTBcd, Data.DB, Data.SqlExpr, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client, FireDAC.DApt,
-  FireDAC.Comp.DataSet, Vcl.DBCtrls, Vcl.Buttons;
+  FireDAC.Comp.DataSet, Vcl.DBCtrls, Vcl.Buttons, StrUtils;
 
 type
   TfrmCadCliente = class(TfrmConexao)
@@ -63,6 +63,7 @@ type
     //procedure validaCampos;
     procedure salvar;
     procedure excluir;
+    procedure desabilitaCampos;
   public
     { Public declarations }
   end;
@@ -329,6 +330,27 @@ begin
   end;
 end;
 
+procedure TfrmCadCliente.desabilitaCampos;
+begin
+  edtCLIENTENM_CLIENTE.Enabled := False;
+  edtCLIENTEENDERECO_BAIRRO.Enabled := False;
+  edtCLIENTEENDERECO_CIDADE.Enabled := False;
+  edtCLIENTEENDERECO_NUMERO.Enabled := False;
+  edtCLIENTETP_PESSOA.Enabled := False;
+  edtCLIENTECELULAR.Enabled := False;
+  edtCLIENTEEMAIL.Enabled := False;
+  edtCLIENTEENDERECO_LOGRADOURO.Enabled := False;
+  edtCLIENTECPF_CNPJ.Enabled := False;
+  edtCLIENTERG.Enabled := False;
+  edtCLIENTEDATANASCIMENTO.Enabled := False;
+  edtCLIENTEFL_FORNECEDOR.Enabled := False;
+  edtCLIENTEFL_ATIVO.Enabled := False;
+  edtCLIENTEcd_cliente.Enabled := False;
+  edtEstado.Enabled := False;
+  edtCep.Enabled := False;
+  edtCLIENTEFONE.Enabled := False;
+end;
+
 procedure TfrmCadCliente.edtCepExit(Sender: TObject);
 const
   SQL_ENDERECO_CLIENTE = 'select                                '+
@@ -401,8 +423,11 @@ procedure TfrmCadCliente.edtCLIENTEcd_clienteExit(Sender: TObject);
 var
  sql_temp : String;
  f : Integer;
+ temPermissaEdicao: Boolean;
+ cliente : TValidaDados;
 begin
   verdade := False;
+  cliente := TValidaDados.Create;
 
   f := 0;
   if edtCLIENTEcd_cliente.Text = '' then
@@ -422,88 +447,91 @@ begin
       FDQuery1.Close;
     end
   else
+  begin
+    with dm.sqlCliente do
     begin
-      with dm.sqlCliente do
-      begin
-        verdade := True;
-        Close;
-        SQL.Clear;
-        SQL.Add('select '+
-                    'c.cd_cliente, '+
-                    'nome, '+
-                    'fl_ativo, '+
-                    'fl_fornecedor, '+
-                    'tp_pessoa,'+
-                    'telefone, '+
-                    'celular, '+
-                    'email, '+
-                    'cpf_cnpj, '+
-                    'rg_ie, '+
-                    'dt_nasc_fundacao,'+
-                    'logradouro, '+
-                    'num, '+
-                    'bairro, '+
-                    'cidade, '+
-                    'uf, '+
-                    'cep '+
-              'from '+
-                    'cliente c '+
-              'join endereco_cliente e on '+
-                    'c.cd_cliente = e.cd_cliente '+
-              'where c.cd_cliente = :cd_cliente');
-        ParamByName('cd_cliente').Value := StrToInt(edtCLIENTEcd_cliente.Text);
+      verdade := True;
+      Close;
+      SQL.Clear;
+      SQL.Add('select '+
+                  'c.cd_cliente, '+
+                  'nome, '+
+                  'fl_ativo, '+
+                  'fl_fornecedor, '+
+                  'tp_pessoa,'+
+                  'telefone, '+
+                  'celular, '+
+                  'email, '+
+                  'cpf_cnpj, '+
+                  'rg_ie, '+
+                  'dt_nasc_fundacao,'+
+                  'logradouro, '+
+                  'num, '+
+                  'bairro, '+
+                  'cidade, '+
+                  'uf, '+
+                  'cep '+
+            'from '+
+                  'cliente c '+
+            'join endereco_cliente e on '+
+                  'c.cd_cliente = e.cd_cliente '+
+            'where c.cd_cliente = :cd_cliente');
+      ParamByName('cd_cliente').Value := StrToInt(edtCLIENTEcd_cliente.Text);
 
-        Open();
+      Open();
 
-        if RecordCount > 0 then
+      if RecordCount > 0 then
+        begin
+          edtCLIENTEFL_ATIVO.SetFocus;
+          edtCLIENTEcd_cliente.Text := IntToStr(FieldByName('cd_cliente').AsInteger);
+          edtCLIENTENM_CLIENTE.Text := FieldByName('nome').AsString;
+          edtCLIENTEFL_ATIVO.Checked := FieldByName('fl_ativo').AsBoolean;
+          edtCLIENTEFL_FORNECEDOR.Checked := FieldByName('fl_fornecedor').AsBoolean;
+          if FieldByName('tp_pessoa').AsString = 'F' then
+            begin
+              f := 0;
+            end
+          else if FieldByName('tp_pessoa').AsString = 'J' then
+            begin
+              f := 1;
+            end;
+
+          case f of
+          0:
           begin
-            edtCLIENTEFL_ATIVO.SetFocus;
-            edtCLIENTEcd_cliente.Text := IntToStr(FieldByName('cd_cliente').AsInteger);
-            edtCLIENTENM_CLIENTE.Text := FieldByName('nome').AsString;
-            edtCLIENTEFL_ATIVO.Checked := FieldByName('fl_ativo').AsBoolean;
-            edtCLIENTEFL_FORNECEDOR.Checked := FieldByName('fl_fornecedor').AsBoolean;
-            if FieldByName('tp_pessoa').AsString = 'F' then
-              begin
-                f := 0;
-              end
-            else if FieldByName('tp_pessoa').AsString = 'J' then
-              begin
-                f := 1;
-              end;
-
-            case f of
-            0:
-            begin
-              edtCLIENTETP_PESSOA.ItemIndex := 0;
-              pFormarCamposPessoa;
-            end;
-            1:
-            begin
-              edtCLIENTETP_PESSOA.ItemIndex := 1;
-              pFormarCamposPessoa;
-            end;
-            end;
-            edtCLIENTEFONE.Text := FieldByName('telefone').AsString;
-            edtCLIENTECELULAR.Text := FieldByName('celular').AsString;
-            edtCLIENTEEMAIL.Text := FieldByName('email').AsString;
-            edtCLIENTECPF_CNPJ.Text := FieldByName('cpf_cnpj').AsString;
-            edtCLIENTERG.Text := FieldByName('rg_ie').AsString;
-            edtCLIENTEDATANASCIMENTO.Text := DateToStr(FieldByName('dt_nasc_fundacao').AsDateTime);
-            edtCLIENTEENDERECO_LOGRADOURO.Text := FieldByName('logradouro').AsString;
-            edtCLIENTEENDERECO_NUMERO.Text := IntToStr(FieldByName('num').AsInteger);
-            edtCLIENTEENDERECO_BAIRRO.Text := FieldByName('bairro').AsString;
-            edtCLIENTEENDERECO_CIDADE.Text := FieldByName('cidade').AsString;
-            edtEstado.Text := FieldByName('uf').AsString;
-            edtCep.Text := FieldByName('cep').AsString;
-
-            cep := edtCep.Text;
+            edtCLIENTETP_PESSOA.ItemIndex := 0;
+            pFormarCamposPessoa;
           end;
-      end;
+          1:
+          begin
+            edtCLIENTETP_PESSOA.ItemIndex := 1;
+            pFormarCamposPessoa;
+          end;
+          end;
+          edtCLIENTEFONE.Text := FieldByName('telefone').AsString;
+          edtCLIENTECELULAR.Text := FieldByName('celular').AsString;
+          edtCLIENTEEMAIL.Text := FieldByName('email').AsString;
+          edtCLIENTECPF_CNPJ.Text := FieldByName('cpf_cnpj').AsString;
+          edtCLIENTERG.Text := FieldByName('rg_ie').AsString;
+          edtCLIENTEDATANASCIMENTO.Text := DateToStr(FieldByName('dt_nasc_fundacao').AsDateTime);
+          edtCLIENTEENDERECO_LOGRADOURO.Text := FieldByName('logradouro').AsString;
+          edtCLIENTEENDERECO_NUMERO.Text := IntToStr(FieldByName('num').AsInteger);
+          edtCLIENTEENDERECO_BAIRRO.Text := FieldByName('bairro').AsString;
+          edtCLIENTEENDERECO_CIDADE.Text := FieldByName('cidade').AsString;
+          edtEstado.Text := FieldByName('uf').AsString;
+          edtCep.Text := FieldByName('cep').AsString;
 
-      //ShowMessage('Código do Cliente não pode ser vazio');
-      //edtCLIENTEcd_cliente.SetFocus;
-      //exit;
+          cep := edtCep.Text;
+        end;
     end;
+  end;
+
+  temPermissaEdicao := cliente.validaEdicaoAcao(idUsuario, 1);
+
+  if temPermissaEdicao then
+    Exit
+  else
+    desabilitaCampos;
 end;
 
 

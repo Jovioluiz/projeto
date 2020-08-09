@@ -45,7 +45,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Left = 928
       Top = 58
       Width = 89
-      Height = 31
+      Height = 26
       Caption = 'Pesquisar'
       TabOrder = 1
       OnClick = btnPesquisarClick
