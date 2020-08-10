@@ -189,6 +189,7 @@ begin
   btnCarregarImagem.Enabled := false;
   memoObservacao.Enabled := false;
   edtUnCodBarras.Enabled := false;
+  DBGridCodigoBarras.Enabled := False;
   camposDesabilitados := True;
 end;
 
@@ -198,6 +199,7 @@ var
   cliente : TValidaDados;
 begin
   cliente := TValidaDados.Create;
+  temPermissaoEdicao := cliente.validaEdicaoAcao(idUsuario, 2);
 
   if edtPRODUTOCD_PRODUTO.Text = EmptyStr then
     begin
@@ -237,6 +239,13 @@ begin
                             '    p.cd_produto = :cd_produto';
   comandoSelect.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
   comandoSelect.Open();
+
+  if (not temPermissaoEdicao) and (comandosql.IsEmpty) then
+  begin
+    MessageDlg('Usuário não possui Permissão para realizar Cadastro', mtInformation, [mbOK], 0);
+    edtPRODUTOCD_PRODUTO.SetFocus;
+    Exit;
+  end;
 
   ckPRODUTOATIVO.Checked := comandoSelect.FieldByName('fl_ativo').AsBoolean;
   edtPRODUTODESCRICAO.Text := comandoSelect.FieldByName('desc_produto').AsString;
@@ -282,7 +291,6 @@ else
   end;
 
   listarCodBarras;
-  temPermissaoEdicao := cliente.validaEdicaoAcao(idUsuario, 2);
 
   if temPermissaoEdicao = True then
     Exit
@@ -452,7 +460,7 @@ end;
 
 procedure TfrmCadProduto.limpaCampos;
 begin
-  if camposDesabilitados = True then
+  if camposDesabilitados then
   begin
     edtPRODUTOCD_PRODUTO.Enabled := true;
     edtPRODUTODESCRICAO.Enabled := true;

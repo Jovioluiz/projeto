@@ -33,6 +33,7 @@ type
     procedure dbGridAcoesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
+    procedure dbGridAcoesDblClick(Sender: TObject);
   private
     { Private declarations }
     procedure listar;
@@ -43,6 +44,7 @@ type
 
 var
   frmControleAcesso: TfrmControleAcesso;
+  edicao: Boolean;
 
 implementation
 
@@ -55,7 +57,6 @@ uses uDataModule;
 
 procedure TfrmControleAcesso.btnAddClick(Sender: TObject);
 begin
-
   if edtCdAcao.Text = EmptyStr then
   begin
     ShowMessage('Informe uma ação!');
@@ -76,22 +77,50 @@ begin
   if dm.query.IsEmpty then
     Exit;
 
+  if edicao then
+  begin
+    dm.dsControleAcesso.DataSet.Edit;
+    if cbEdicao.ItemIndex = 0 then
+      dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := True
+    else
+      dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := False;
 
-  dm.dsControleAcesso.DataSet.Append;
-  dm.dsControleAcesso.DataSet.FieldByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
-  dm.dsControleAcesso.DataSet.FieldByName('cd_acao').AsInteger := StrToInt(edtCdAcao.Text);
-  dm.dsControleAcesso.DataSet.FieldByName('nm_acao').AsString := edtNomeAcao.Text;
-  dm.dsControleAcesso.DataSet.FieldByName('fl_permite_acesso').AsBoolean := True;
-  if cbEdicao.ItemIndex = 0 then
-    dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := True
+    dm.dsControleAcesso.DataSet.Post; //da erro, mas atualiza corretamente
+  end
   else
-    dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := False;
-  dm.dsControleAcesso.DataSet.Post;
+  begin
+    dm.dsControleAcesso.DataSet.Append;
+    dm.dsControleAcesso.DataSet.FieldByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
+    dm.dsControleAcesso.DataSet.FieldByName('cd_acao').AsInteger := StrToInt(edtCdAcao.Text);
+    dm.dsControleAcesso.DataSet.FieldByName('nm_acao').AsString := edtNomeAcao.Text;
+    dm.dsControleAcesso.DataSet.FieldByName('fl_permite_acesso').AsBoolean := True;
+
+    if cbEdicao.ItemIndex = 0 then
+      dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := True
+    else
+      dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := False;
+
+    dm.dsControleAcesso.DataSet.Post;
+  end;
 
   edtCdAcao.Clear;
   edtNomeAcao.Clear;
   cbEdicao.ItemIndex := 1;
   listar;
+
+  edicao := False;
+end;
+
+procedure TfrmControleAcesso.dbGridAcoesDblClick(Sender: TObject);
+begin
+  edtCdAcao.Text := dbGridAcoes.Fields[0].AsString;
+  edtNomeAcao.Text := dbGridAcoes.Fields[1].AsString;
+  if dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean = True then
+    cbEdicao.ItemIndex := 0
+  else
+    cbEdicao.ItemIndex := 1;
+
+  edicao := True;
 end;
 
 procedure TfrmControleAcesso.dbGridAcoesKeyDown(Sender: TObject; var Key: Word;
@@ -248,6 +277,9 @@ begin
   edtUsuario.Clear;
   edtNomeUsuario.Clear;
   edtUsuario.SetFocus;
+  edtCdAcao.Clear;
+  edtNomeAcao.Clear;
+  cbEdicao.ItemIndex := 1;
   dm.queryControleAcesso.Close;
 end;
 

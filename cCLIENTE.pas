@@ -70,8 +70,8 @@ type
 
 var
   frmCadCliente: TfrmCadCliente;
-  verdade : Boolean;
-  cep : String;
+  verdade, camposDesabilitados: Boolean;
+  cep: String;
 
 implementation
 
@@ -349,6 +349,7 @@ begin
   edtEstado.Enabled := False;
   edtCep.Enabled := False;
   edtCLIENTEFONE.Enabled := False;
+  camposDesabilitados := True;
 end;
 
 procedure TfrmCadCliente.edtCepExit(Sender: TObject);
@@ -428,10 +429,18 @@ var
 begin
   verdade := False;
   cliente := TValidaDados.Create;
+  temPermissaEdicao := cliente.validaEdicaoAcao(idUsuario, 1);
 
   f := 0;
   if edtCLIENTEcd_cliente.Text = '' then
     begin
+      if not temPermissaEdicao then
+      begin
+        MessageDlg('Usuário não possui Permissão para realizar Cadastro', mtInformation, [mbOK], 0);
+        edtCLIENTEcd_cliente.SetFocus;
+        Exit;
+      end;
+
       edtCLIENTEFL_ATIVO.SetFocus;
       //incrementa o código do cliente
       sql_seq := 'select last_value + 1 as last_value from cliente_seq';
@@ -526,8 +535,6 @@ begin
     end;
   end;
 
-  temPermissaEdicao := cliente.validaEdicaoAcao(idUsuario, 1);
-
   if temPermissaEdicao then
     Exit
   else
@@ -615,6 +622,29 @@ end;
 
 procedure TfrmCadCliente.limpaCampos;
 begin
+  if camposDesabilitados then
+  begin
+    edtCLIENTENM_CLIENTE.Enabled := True;
+    edtCLIENTEENDERECO_BAIRRO.Enabled := True;
+    edtCLIENTEENDERECO_CIDADE.Enabled := True;
+    edtCLIENTEENDERECO_NUMERO.Enabled := True;
+    edtCLIENTETP_PESSOA.Enabled := True;
+    edtCLIENTECELULAR.Enabled := True;
+    edtCLIENTEEMAIL.Enabled := True;
+    edtCLIENTEENDERECO_LOGRADOURO.Enabled := True;
+    edtCLIENTECPF_CNPJ.Enabled := True;
+    edtCLIENTERG.Enabled := True;
+    edtCLIENTEDATANASCIMENTO.Enabled := True;
+    edtCLIENTEFL_FORNECEDOR.Enabled := True;
+    edtCLIENTEFL_ATIVO.Enabled := True;
+    edtCLIENTEcd_cliente.Enabled := True;
+    edtEstado.Enabled := True;
+    edtCep.Enabled := True;
+    edtCLIENTEFONE.Enabled := True;
+
+    camposDesabilitados := False;
+  end;
+
   //limpa os campos
   edtCLIENTEcd_cliente.Clear;
   edtCLIENTENM_CLIENTE.Clear;

@@ -39,22 +39,6 @@ type
     queryCodBarraProdutotipo_cod_barras: TSmallintField;
     queryControleAcessofl_permite_edicao: TBooleanField;
     sqlPedidoVenda: TFDQuery;
-    sqlClientecd_cliente: TIntegerField;
-    sqlClientenome: TWideStringField;
-    sqlClientetp_pessoa: TWideStringField;
-    sqlClientefl_ativo: TBooleanField;
-    sqlClientetelefone: TWideStringField;
-    sqlClientecelular: TWideStringField;
-    sqlClienteemail: TWideStringField;
-    sqlClientecpf_cnpj: TWideStringField;
-    sqlClienterg_ie: TWideStringField;
-    sqlClientedt_nasc_fundacao: TDateField;
-    sqlClientefl_fornecedor: TBooleanField;
-    sqlClientedt_atz: TSQLTimeStampField;
-    sqlClienteendereco_logradouro: TStringField;
-    sqlClientebairro_descricao: TStringField;
-    sqlClientenm_cidade: TStringField;
-    sqlClienteuf: TStringField;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }

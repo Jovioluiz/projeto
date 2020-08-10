@@ -28,82 +28,8 @@ object dm: Tdm
   end
   object sqlCliente: TFDQuery
     Connection = FDConnection1
-    SQL.Strings = (
-      'select *from cliente')
     Left = 16
     Top = 136
-    object sqlClientecd_cliente: TIntegerField
-      FieldName = 'cd_cliente'
-      Origin = 'cd_cliente'
-      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
-    end
-    object sqlClientenome: TWideStringField
-      FieldName = 'nome'
-      Origin = 'nome'
-      Size = 45
-    end
-    object sqlClientetp_pessoa: TWideStringField
-      FieldName = 'tp_pessoa'
-      Origin = 'tp_pessoa'
-      Size = 10
-    end
-    object sqlClientefl_ativo: TBooleanField
-      FieldName = 'fl_ativo'
-      Origin = 'fl_ativo'
-    end
-    object sqlClientetelefone: TWideStringField
-      FieldName = 'telefone'
-      Origin = 'telefone'
-      Size = 45
-    end
-    object sqlClientecelular: TWideStringField
-      FieldName = 'celular'
-      Origin = 'celular'
-      Size = 45
-    end
-    object sqlClienteemail: TWideStringField
-      FieldName = 'email'
-      Origin = 'email'
-      Size = 45
-    end
-    object sqlClientecpf_cnpj: TWideStringField
-      FieldName = 'cpf_cnpj'
-      Origin = 'cpf_cnpj'
-      Size = 15
-    end
-    object sqlClienterg_ie: TWideStringField
-      FieldName = 'rg_ie'
-      Origin = 'rg_ie'
-      Size = 45
-    end
-    object sqlClientedt_nasc_fundacao: TDateField
-      FieldName = 'dt_nasc_fundacao'
-      Origin = 'dt_nasc_fundacao'
-    end
-    object sqlClientefl_fornecedor: TBooleanField
-      FieldName = 'fl_fornecedor'
-      Origin = 'fl_fornecedor'
-    end
-    object sqlClientedt_atz: TSQLTimeStampField
-      FieldName = 'dt_atz'
-      Origin = 'dt_atz'
-    end
-    object sqlClienteendereco_logradouro: TStringField
-      FieldName = 'endereco_logradouro'
-      Size = 50
-    end
-    object sqlClientebairro_descricao: TStringField
-      FieldName = 'bairro_descricao'
-      Size = 50
-    end
-    object sqlClientenm_cidade: TStringField
-      FieldName = 'nm_cidade'
-      Size = 50
-    end
-    object sqlClienteuf: TStringField
-      FieldName = 'uf'
-      Size = 2
-    end
   end
   object transacao: TFDTransaction
     Connection = FDConnection1
