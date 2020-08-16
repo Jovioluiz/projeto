@@ -582,6 +582,7 @@ end;
 
 procedure TfrmCadCliente.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  Action := caFree;
   frmCadCliente := nil;
 end;
 

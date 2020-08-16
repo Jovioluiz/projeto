@@ -11,7 +11,6 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  FormStyle = fsStayOnTop
   KeyPreview = True
   OldCreateOrder = False
   Position = poMainFormCenter
@@ -227,8 +226,6 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     AutoHint = True
     Panels = <>
     SimplePanel = True
-    ExplicitTop = 228
-    ExplicitWidth = 549
   end
   object comandoSQL: TFDQuery
     Connection = frmConexao.conexao

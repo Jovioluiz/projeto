@@ -196,10 +196,10 @@ end;
 procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
 var
   temPermissaoEdicao : Boolean;
-  cliente : TValidaDados;
+  produto : TValidaDados;
 begin
-  cliente := TValidaDados.Create;
-  temPermissaoEdicao := cliente.validaEdicaoAcao(idUsuario, 2);
+  produto := TValidaDados.Create;
+  temPermissaoEdicao := produto.validaEdicaoAcao(idUsuario, 2);
 
   if edtPRODUTOCD_PRODUTO.Text = EmptyStr then
     begin
@@ -296,8 +296,6 @@ else
     Exit
   else
     desabilitaCampos;
-
-
 end;
 
 procedure TfrmCadProduto.edtProdutoGrupoTributacaoICMSChange(Sender: TObject);
