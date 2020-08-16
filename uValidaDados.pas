@@ -24,7 +24,7 @@ type TValidaDados = class
     function validaNomeCpf(nome : String; cpf : String) : String;
     function validaCodigo(cod : Integer) : Integer;
     function validaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
-    function validaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean;
+    function validaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode editar um cadastro
 
 
 end;

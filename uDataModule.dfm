@@ -11,6 +11,7 @@ object dm: Tdm
       'Server=localhost'
       'Port=5433'
       'DriverID=PG')
+    Connected = True
     Left = 32
     Top = 16
   end
@@ -33,8 +34,8 @@ object dm: Tdm
   end
   object transacao: TFDTransaction
     Connection = FDConnection1
-    Left = 216
-    Top = 8
+    Left = 224
+    Top = 16
   end
   object queryControleAcesso: TFDQuery
     Connection = FDConnection1
@@ -130,37 +131,8 @@ object dm: Tdm
   end
   object queryCodBarraProduto: TFDQuery
     Connection = FDConnection1
-    SQL.Strings = (
-      'select * from produto_cod_barras')
     Left = 104
     Top = 80
-    object queryCodBarraProdutocd_produto: TIntegerField
-      DisplayLabel = 'C'#243'd Produto'
-      FieldName = 'cd_produto'
-      Origin = 'cd_produto'
-      Visible = False
-    end
-    object queryCodBarraProdutoun_medida: TWideStringField
-      DisplayLabel = 'UN Medida'
-      FieldName = 'un_medida'
-      Origin = 'un_medida'
-      Size = 10
-    end
-    object queryCodBarraProdutotipo_cod_barras: TSmallintField
-      DisplayLabel = 'Tipo C'#243'd Barras'
-      FieldName = 'tipo_cod_barras'
-      Origin = 'tipo_cod_barras'
-    end
-    object queryCodBarraProdutocodigo_barras: TWideStringField
-      DisplayLabel = 'C'#243'digo Barras'
-      FieldName = 'codigo_barras'
-      Origin = 'codigo_barras'
-    end
-    object queryCodBarraProdutodt_atz: TSQLTimeStampField
-      FieldName = 'dt_atz'
-      Origin = 'dt_atz'
-      Visible = False
-    end
   end
   object dsCodBarraProduto: TDataSource
     DataSet = queryCodBarraProduto
@@ -197,7 +169,7 @@ object dm: Tdm
       '    pv.cd_forma_pag = cfp.cd_forma_pag'
       'join cta_cond_pagamento ccp on'
       '    cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento')
-    Left = 16
+    Left = 24
     Top = 264
   end
 end

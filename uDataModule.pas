@@ -32,11 +32,6 @@ type
     tbCodBarraProduto: TFDTable;
     queryCodBarraProduto: TFDQuery;
     dsCodBarraProduto: TDataSource;
-    queryCodBarraProdutocd_produto: TIntegerField;
-    queryCodBarraProdutoun_medida: TWideStringField;
-    queryCodBarraProdutocodigo_barras: TWideStringField;
-    queryCodBarraProdutodt_atz: TSQLTimeStampField;
-    queryCodBarraProdutotipo_cod_barras: TSmallintField;
     queryControleAcessofl_permite_edicao: TBooleanField;
     sqlPedidoVenda: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);

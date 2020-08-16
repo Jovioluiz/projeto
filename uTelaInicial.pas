@@ -106,7 +106,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoCadastraTributacaoItem);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmCadastraTributacaoItem := TfrmCadastraTributacaoItem.Create(Self);
     frmCadastraTributacaoItem.ShowModal;
@@ -119,7 +119,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoCadCliente);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmCadCliente := TfrmCadCliente.Create(Self);
     frmCadCliente.ShowModal;
@@ -132,7 +132,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoCadCondPgto);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmCadCondPgto := TfrmCadCondPgto.Create(Self);
     frmCadCondPgto.ShowModal;
@@ -145,7 +145,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoConfiguracoes);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmConfiguracoes := TfrmConfiguracoes.Create(Self);
     frmConfiguracoes.ShowModal;
@@ -158,7 +158,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoControleAcesso);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmControleAcesso := TfrmControleAcesso.Create(Self);
     frmControleAcesso.ShowModal;
@@ -171,7 +171,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoCadFormaPagamento);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmCadFormaPagamento := TfrmCadFormaPagamento.Create(Self);
     frmCadFormaPagamento.ShowModal;
@@ -208,7 +208,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoLancamentoNotaEntrada);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmLancamentoNotaEntrada := TfrmLancamentoNotaEntrada.Create(Self);
     frmLancamentoNotaEntrada.Show;
@@ -221,7 +221,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoPedidoVenda);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmPedidoVenda := TfrmPedidoVenda.Create(Self);
     frmPedidoVenda.Show;
@@ -234,7 +234,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoCadProduto);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmCadProduto := TfrmCadProduto.Create(Self);
     frmCadProduto.ShowModal;
@@ -247,7 +247,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoConsultaProdutos);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmConsultaProdutos := TfrmConsultaProdutos.Create(Self);
     frmConsultaProdutos.Show;
@@ -268,7 +268,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaocadTabelaPreco);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmcadTabelaPreco := TfrmcadTabelaPreco.Create(Self);
     frmcadTabelaPreco.ShowModal;
@@ -286,7 +286,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoUsuario);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmUsuario := TfrmUsuario.Create(Self);
     frmUsuario.ShowModal;
@@ -299,7 +299,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoRelVendaDiaria);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmRelVendaDiaria := TfrmRelVendaDiaria.Create(Self);
     frmRelVendaDiaria.Show;
@@ -312,7 +312,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, cdAcaoVisualizaPedidoVenda);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmVisualizaPedidoVenda := TfrmVisualizaPedidoVenda.Create(Self);
     frmVisualizaPedidoVenda.Show;

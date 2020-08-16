@@ -3,7 +3,7 @@ object frmCadProduto: TfrmCadProduto
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Cadastro de Produto'
-  ClientHeight = 595
+  ClientHeight = 644
   ClientWidth = 723
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -15,6 +15,7 @@ object frmCadProduto: TfrmCadProduto
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
@@ -37,11 +38,12 @@ object frmCadProduto: TfrmCadProduto
     Left = 0
     Top = 96
     Width = 721
-    Height = 482
+    Height = 540
     ActivePage = TabSheetCadastroProduto
     TabOrder = 3
     object TabSheetCadastroProduto: TTabSheet
       Caption = 'Produto'
+      ExplicitHeight = 457
       object Label3: TLabel
         Left = 3
         Top = 40
@@ -100,7 +102,7 @@ object frmCadProduto: TfrmCadProduto
       object imagem: TImage
         Left = 424
         Top = 207
-        Width = 277
+        Width = 286
         Height = 244
         OnMouseDown = imagemMouseDown
       end
@@ -233,10 +235,7 @@ object frmCadProduto: TfrmCadProduto
     object TabSheet1: TTabSheet
       Caption = 'Tributa'#231#227'o'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitHeight = 454
       object Label10: TLabel
         Left = 49
         Top = 24
@@ -304,6 +303,52 @@ object frmCadProduto: TfrmCadProduto
         TabOrder = 5
       end
     end
+    object tsOutrasUnidades: TTabSheet
+      Caption = 'Outras Unidades'
+      ImageIndex = 2
+      ExplicitHeight = 454
+      object Label16: TLabel
+        Left = 11
+        Top = 48
+        Width = 76
+        Height = 13
+        Caption = 'Unidade Medida'
+      end
+      object Label17: TLabel
+        Left = 164
+        Top = 48
+        Width = 81
+        Height = 13
+        Caption = 'Fator Convers'#227'o'
+      end
+      object edtOutrasUnidades: TEdit
+        Left = 93
+        Top = 45
+        Width = 65
+        Height = 21
+        CharCase = ecUpperCase
+        TabOrder = 0
+      end
+      object edtOutrasUnFatorConv: TEdit
+        Left = 251
+        Top = 45
+        Width = 65
+        Height = 21
+        TabOrder = 1
+      end
+      object DBGrid1: TDBGrid
+        Left = 11
+        Top = 88
+        Width = 306
+        Height = 120
+        TabOrder = 2
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+      end
+    end
   end
   object edtPRODUTOCD_PRODUTO: TEdit
     Left = 119
@@ -335,35 +380,8 @@ object frmCadProduto: TfrmCadProduto
     ShowHint = True
     TabOrder = 2
   end
-  object comandoSelect: TFDQuery
-    Connection = frmConexao.conexao
-    SQL.Strings = (
-      'select cd_produto from produto where cd_produto = :cd_produto;')
-    Left = 648
-    Top = 80
-    ParamData = <
-      item
-        Name = 'CD_PRODUTO'
-        ParamType = ptInput
-      end>
-  end
-  object comandosql: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 568
-    Top = 80
-  end
-  object sqltributacao: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 648
-    Top = 144
-  end
-  object sqlVerificaTributacao: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 644
-    Top = 208
-  end
   object OpenDialog1: TOpenDialog
-    Left = 444
-    Top = 376
+    Left = 684
+    Top = 288
   end
 end

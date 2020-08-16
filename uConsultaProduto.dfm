@@ -170,8 +170,14 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Left = 16
       Top = 58
       Width = 881
-      Height = 21
+      Height = 26
       CharCase = ecUpperCase
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
     end
     object dbGridUltimasEntradas: TDBGrid
