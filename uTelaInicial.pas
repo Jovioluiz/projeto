@@ -44,6 +44,7 @@ type
     Usurios1: TMenuItem;
     ControleAcesso1: TMenuItem;
     query: TFDQuery;
+    GravarVendas1: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -63,6 +64,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Usurios1Click(Sender: TObject);
     procedure ControleAcesso1Click(Sender: TObject);
+    procedure GravarVendas1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -97,7 +99,7 @@ implementation
 
 {$R *.dfm}
 
-uses uUsuario, uControleAcesso, uDataModule;
+uses uUsuario, uControleAcesso, uDataModule, uGravaArquivo;
 
 
 procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
@@ -200,6 +202,12 @@ begin
       Close;
     end;
   end;
+end;
+
+procedure TfrmPrincipal.GravarVendas1Click(Sender: TObject);
+begin
+  frmGravaArquivo := TfrmGravaArquivo.Create(Self);
+  frmGravaArquivo.ShowModal
 end;
 
 procedure TfrmPrincipal.NotaEntrada1Click(Sender: TObject);
