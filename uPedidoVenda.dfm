@@ -496,11 +496,6 @@ object frmPedidoVenda: TfrmPedidoVenda
     Caption = 'Or'#231'amento'
     TabOrder = 7
   end
-  object sqlPedidoVendaCliente: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 600
-    Top = 16
-  end
   object sqlPedidoVendaFormaPgto: TFDQuery
     Connection = frmConexao.conexao
     Left = 184
@@ -539,7 +534,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   end
   object sqlNrPedido: TFDQuery
     Connection = frmConexao.conexao
-    Left = 384
+    Left = 376
     Top = 16
   end
   object sqlIdGeral: TFDQuery

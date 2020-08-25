@@ -765,6 +765,7 @@ begin
           end;
       end;
 
+      //atualiza a quantidade em estoque
       sqlUpdate.SQL.Text := 'select '+
                                 'qtd_estoque '+
                             'from '+

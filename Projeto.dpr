@@ -46,6 +46,7 @@ begin
   Application.CreateForm(TdmLogin, dmLogin);
   Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
   Application.CreateForm(TfrmGravaArquivo, frmGravaArquivo);
+  Application.CreateForm(TfrmGravaArquivo, frmGravaArquivo);
   Application.Run;
 
 end.

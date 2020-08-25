@@ -8,7 +8,7 @@ uses
   JvComponentBase, JvDSADialogs, JvDialogs, Vcl.Mask, JvExMask, JvToolEdit,
   JvExControls, JvLabel, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param,
   FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client,
-  FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ComCtrls, System.Math;
+  FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ComCtrls, System.Math, Data.DB;
 
 type
   TfrmGravaArquivo = class(TForm)
@@ -19,6 +19,7 @@ type
     edtDataFim: TDateTimePicker;
     JvLabel2: TJvLabel;
     procedure btnPedidoVendaClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -98,25 +99,54 @@ begin
       Append(arquivo); {o arquivo existe e será aberto para saídas adicionais }
     end;
 
+    Writeln(arquivo, 'Pedido','|','Cliente','|','Valor Total','|','Acrescimo','|','Desconto Pedido','|','Data Emissão',
+                              '|','Cód. Produto','|','Qtdade Venda','|','Un. Medida','|','Valor Unitário','|','Desconto',
+                              '|','Valor Total Item','|','ICMS Base','|','ICMS Aliq','|','ICMS Valor','|','IPI Base',
+                              '|','IPI Aliq','|','IPI Valor','|','PIS/Cofins Base','|','PIS/Cofins Aliq','|','PIS/Cofins Valor');
     qry.First;
 
     if not qry.IsEmpty then
     begin
       while not qry.Eof do
       begin
-        Writeln(arquivo, qry.FieldByName('nr_pedido').AsInteger, '|', qry.FieldByName('nome').AsString,
-                          '|', FormatFloat( '#,##0.00', qry.FieldByName('vl_total').AsFloat),
-                          '|', FormatFloat( '#,##0.00', qry.FieldByName('vl_acrescimo').AsFloat),
-                          '|', FormatFloat( '#,##0.00', qry.FieldByName('vl_desconto_pedido').AsFloat),
-                          '|', FormatDateTime('MM/dd/yyyy', qry.FieldByName('dt_emissao').AsDateTime));
+        Writeln(arquivo,'|', qry.FieldByName('nr_pedido').AsInteger,
+                        '|', qry.FieldByName('nome').AsString,
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('vl_total').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('vl_acrescimo').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('vl_desconto_pedido').AsCurrency),
+                        '|', FormatDateTime('dd/MM/yyyy', qry.FieldByName('dt_emissao').AsDateTime),
+                        '|', qry.FieldByName('cd_produto').AsInteger,
+                        '|', FormatFloat('#,##0.00', qry.FieldByName('qtd_venda').AsFloat),
+                        '|', qry.FieldByName('un_medida').AsString,
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('vl_unitario').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('vl_desconto').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('vl_total_item').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('icms_vl_base').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('icms_pc_aliq').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('icms_valor').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('ipi_vl_base').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('ipi_pc_aliq').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('ipi_valor').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('pis_cofins_vl_base').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('pis_cofins_pc_aliq').AsCurrency),
+                        '|', FormatCurr('#,##0.00', qry.FieldByName('pis_cofins_valor').AsCurrency));
         qry.Next;
       end;
-
     end;
 
     CloseFile(arquivo);
+  end
+  else
+  begin
+    ShowMessage('Selecione um arquivo!');
   end;
 
+end;
+
+procedure TfrmGravaArquivo.FormCreate(Sender: TObject);
+begin
+  edtDataIni.Date := Now;
+  edtDataFim.Date := Now;
 end;
 
 end.
