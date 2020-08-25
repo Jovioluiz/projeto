@@ -26,10 +26,10 @@ uses
   UfrmRelVendaDiaria in 'UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
   uControleAcesso in 'uControleAcesso.pas' {frmControleAcesso},
   uValidaDados in 'uValidaDados.pas',
-  dtmLogin in 'dtmLogin.pas' {dmLogin: TDataModule},
   dtmConsultaProduto in 'dtmConsultaProduto.pas' {dmConsultaProduto: TDataModule},
   uclPedidoVenda in 'uclPedidoVenda.pas',
-  uGravaArquivo in 'uGravaArquivo.pas' {frmGravaArquivo};
+  uGravaArquivo in 'uGravaArquivo.pas' {frmGravaArquivo},
+  uVersao in 'uVersao.pas';
 
 //uConsulta in 'uConsulta.pas' {frmConsulta};
 
@@ -43,10 +43,7 @@ begin
   Application.CreateForm(TfrmLogin, frmLogin);
   Application.CreateForm(TfrmConexao, frmConexao);
   Application.CreateForm(Tdm, dm);
-  Application.CreateForm(TdmLogin, dmLogin);
   Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
-  Application.CreateForm(TfrmGravaArquivo, frmGravaArquivo);
-  Application.CreateForm(TfrmGravaArquivo, frmGravaArquivo);
   Application.Run;
 
 end.

@@ -116,34 +116,6 @@ begin
 end;
 
 procedure TfrmConsultaProdutos.dbGridProdutoCellClick(Column: TColumn);
-{const SQL_ULT_ENTRADA = 'select                                  '+
-                        '    nfc.dcto_numero,                    '+
-                        '    c.nome as fornecedor,               '+
-                        '    nfc.dt_lancamento,                  '+
-                        '    nfi.un_medida,                      '+
-                        '    nfi.vl_unitario,                    '+
-                        '    nfi.qtd_estoque as quantidade       '+
-                        'from                                    '+
-                        '    produto p                           '+
-                        'join nfi on                             '+
-                        '    p.cd_produto = nfi.cd_produto       '+
-                        'join nfc on                             '+
-                        '    nfc.id_geral = nfi.id_nfc           '+
-                        'join cliente c on                       '+
-                        '    nfc.cd_fornecedor = c.cd_cliente    '+
-                        'where                                   '+
-                        '    p.cd_produto in (                   '+
-                        '    select                              '+
-                        '        nfi.cd_produto                  '+
-                        '    from                                '+
-                        '        nfc                             '+
-                        '    join nfi on                         '+
-                        '        nfc.id_geral = nfi.id_nfc       '+
-                        '    where                               '+
-                        '        nfc.dcto_numero > 0             '+
-                        '        and p.cd_produto = :cd_produto)';}
-var
-  dm : TdmConsultaProduto;
 begin
   //dados da última compra do item
   sqlUltEntrada.Close;

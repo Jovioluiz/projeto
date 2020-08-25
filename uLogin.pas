@@ -21,10 +21,12 @@ type
     btnCancelar: TButton;
     Image1: TImage;
     lblInfo: TLabel;
+    lblVersao: TLabel;
     procedure btnCancelarClick(Sender: TObject);
     procedure btnEntrarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -39,7 +41,7 @@ implementation
 
 {$R *.dfm}
 
-uses uTelaInicial, uDataModule, dtmLogin;
+uses uTelaInicial, uDataModule, uVersao;
 
 procedure TfrmLogin.btnCancelarClick(Sender: TObject);
 begin
@@ -59,19 +61,23 @@ const
 
 var
   usuario, senha: String;
-  login: TdmLogin;
+  qry: TFDQuery;
 begin
   try
-    login := TdmLogin.Create(nil);
-    login.queryLogin.SQL.Add(SQL_LOGIN);
-    login.queryLogin.ParamByName('login').AsString := edtUsuario.Text;
-    login.queryLogin.ParamByName('senha').AsString := edtSenha.Text;
-    login.queryLogin.Prepare;
-    login.queryLogin.Open(SQL_LOGIN);
+    qry := TFDQuery.Create(Self);
+    qry.Connection := dm.FDConnection1;
+    qry.Close;
+    qry.SQL.Clear;
 
-    idUsuario := login.queryLogin.FieldByName('id_usuario').AsInteger;
-    usuario := login.queryLogin.FieldByName('login').Text;
-    senha := login.queryLogin.FieldByName('senha').Text;
+    qry.SQL.Add(SQL_LOGIN);
+    qry.ParamByName('login').AsString := edtUsuario.Text;
+    qry.ParamByName('senha').AsString := edtSenha.Text;
+    qry.Prepare;
+    qry.Open(SQL_LOGIN);
+
+    idUsuario := qry.FieldByName('id_usuario').AsInteger;
+    usuario := qry.FieldByName('login').Text;
+    senha := qry.FieldByName('senha').Text;
 
     if (Trim(edtUsuario.Text) = EmptyStr) or (Trim(edtSenha.Text) = EmptyStr) then
     begin
@@ -101,13 +107,21 @@ begin
       Exit;
     end;
   finally
-    FreeAndNil(login);
+    FreeAndNil(qry);
   end;
 end;
 
 procedure TfrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   frmLogin := nil;
+end;
+
+procedure TfrmLogin.FormCreate(Sender: TObject);
+var
+  versao: TVersao;
+begin
+  versao := TVersao.Create;
+  lblVersao.Caption := versao.GetBuildInfo(Application.ExeName);
 end;
 
 procedure TfrmLogin.FormKeyPress(Sender: TObject; var Key: Char);

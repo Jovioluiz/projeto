@@ -4,8 +4,8 @@ object frmLogin: TfrmLogin
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Login'
-  ClientHeight = 200
-  ClientWidth = 522
+  ClientHeight = 221
+  ClientWidth = 525
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,7 +16,11 @@ object frmLogin: TfrmLogin
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyPress = FormKeyPress
+  DesignSize = (
+    525
+    221)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -289,6 +293,13 @@ object frmLogin: TfrmLogin
     Font.Style = []
     ParentColor = False
     ParentFont = False
+  end
+  object lblVersao: TLabel
+    Left = 456
+    Top = 200
+    Width = 57
+    Height = 13
+    Anchors = [akTop, akRight]
   end
   object edtUsuario: TEdit
     Left = 96
