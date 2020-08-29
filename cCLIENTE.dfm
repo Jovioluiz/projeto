@@ -91,12 +91,16 @@ object frmCadCliente: TfrmCadCliente
       TabOrder = 4
     end
     object gbENDERECO: TGroupBox
-      Left = 7
-      Top = 190
-      Width = 820
+      Left = 1
+      Top = 212
+      Width = 847
       Height = 177
+      Align = alBottom
       Caption = 'Endere'#231'o'
       TabOrder = 11
+      ExplicitLeft = 7
+      ExplicitTop = 190
+      ExplicitWidth = 820
       object Label6: TLabel
         Left = 41
         Top = 56
@@ -267,6 +271,7 @@ object frmCadCliente: TfrmCadCliente
       Height = 21
       TabOrder = 0
       OnExit = edtCLIENTEcd_clienteExit
+      OnKeyDown = edtCLIENTEcd_clienteKeyDown
     end
     object edtCLIENTEFONE: TMaskEdit
       Left = 605
@@ -279,11 +284,6 @@ object frmCadCliente: TfrmCadCliente
       Text = ''
       OnExit = edtCLIENTECELULARExit
     end
-  end
-  object FDQuery1: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 760
-    Top = 230
   end
   object sqlInsertCliente: TFDQuery
     Connection = frmConexao.conexao

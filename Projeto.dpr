@@ -29,7 +29,8 @@ uses
   dtmConsultaProduto in 'dtmConsultaProduto.pas' {dmConsultaProduto: TDataModule},
   uclPedidoVenda in 'uclPedidoVenda.pas',
   uGravaArquivo in 'uGravaArquivo.pas' {frmGravaArquivo},
-  uVersao in 'uVersao.pas';
+  uVersao in 'uVersao.pas',
+  uConsulta in 'uConsulta.pas' {frmConsulta};
 
 //uConsulta in 'uConsulta.pas' {frmConsulta};
 
@@ -44,6 +45,7 @@ begin
   Application.CreateForm(TfrmConexao, frmConexao);
   Application.CreateForm(Tdm, dm);
   Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
+  Application.CreateForm(TfrmConsulta, frmConsulta);
   Application.Run;
 
 end.
