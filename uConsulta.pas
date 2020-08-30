@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FireDAC.Comp.Client, FireDAC.DApt,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FireDAC.Comp.Client, FireDAC.DApt, FireDAC.Stan.Param,
   Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, Datasnap.DBClient,
   JvExControls, JvLabel, Vcl.StdCtrls, JvExStdCtrls, JvEdit;
 
@@ -95,45 +95,51 @@ const
         '    cliente ';
 var
   qry: TFDQuery;
-  sqlTemp: string;
 begin
-  if Key = 13 then
+  if edtBusca.Text <> EmptyStr then
   begin
-    qry := TFDQuery.Create(Self);
-    qry.Connection := dm.FDConnection1;
+    if Key = 13 then
+    begin
+      qry := TFDQuery.Create(Self);
+      qry.Connection := dm.FDConnection1;
+      qry.SQL.Add(sql);
 
-    try
-      case rgFiltros.ItemIndex of
-      0:
-      begin
-        sqlTemp := 'where nome ilike '+ QuotedStr('%'+edtBusca.Text+'%');
-        qry.SQL.Add(sqlTemp);
-      end;
-      1:
-      begin
-        qry.SQL.Add('where cd_cliente = :cd_cliente');
-        qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtBusca.Text);
-      end;
-      2:
-      begin
-        qry.SQL.Add('where cpf_cnpj ilike'+ QuotedStr('%'+edtBusca.Text+'%'));
-      end;
-      end;
+      try
+        case rgFiltros.ItemIndex of
+        0:
+        begin
+          qry.SQL.Add('where nome ilike '+ QuotedStr('%'+edtBusca.Text+'%'));
+          qry.Open();
+        end;
+        1:
+        begin
+          qry.SQL.Add('where cd_cliente = :cd_cliente');
+          qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtBusca.Text);
+          qry.Open();
+        end;
+        2:
+        begin
+          qry.SQL.Add('where cpf_cnpj ilike'+ QuotedStr('%'+edtBusca.Text+'%'));
+          qry.Open();
+        end;
+        end;
 
-      qry.Open(sql);
-      qry.First;
-      while not qry.Eof do
-      begin
-        cdsConsulta.Append;
-        cdsConsulta.FieldByName('cd_cliente').AsInteger := qry.FieldByName('cd_cliente').AsInteger;
-        cdsConsulta.FieldByName('nm_cliente').AsString := qry.FieldByName('nome').AsString;
-        cdsConsulta.FieldByName('cpf_cnpj').AsString := qry.FieldByName('cpf_cnpj').AsString;
-        cdsConsulta.Post;
-        qry.Next;
+        cdsConsulta.EmptyDataSet; //limpa o dataset
+        qry.First;
+
+        while not qry.Eof do
+        begin
+          cdsConsulta.Append;
+          cdsConsulta.FieldByName('cd_cliente').AsInteger := qry.FieldByName('cd_cliente').AsInteger;
+          cdsConsulta.FieldByName('nm_cliente').AsString := qry.FieldByName('nome').AsString;
+          cdsConsulta.FieldByName('cpf_cnpj').AsString := qry.FieldByName('cpf_cnpj').AsString;
+          cdsConsulta.Post;
+          qry.Next;
+        end;
+
+      finally
+        qry.Free;
       end;
-
-    finally
-
     end;
   end;
 end;

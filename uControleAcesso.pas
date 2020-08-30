@@ -180,7 +180,11 @@ end;
 procedure TfrmControleAcesso.edtUsuarioExit(Sender: TObject);
 //sql para trazer o usuario caso ainda não possua nenhuma ação vinculada na tabela usuario_acao
 const
-  sql_login = 'select id_usuario, login from login_usuario where id_usuario = :id_usuario';
+  sql_login = 'select id_usuario, '+
+              '   upper(login) as login '+
+              'from '+
+              '   login_usuario '+
+              'where id_usuario = :id_usuario';
 begin
   dm.queryControleAcesso.Close;
   dm.queryControleAcesso.SQL.Clear;

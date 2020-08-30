@@ -22,8 +22,6 @@ object frmConsulta: TfrmConsulta
     Height = 386
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 657
-    ExplicitHeight = 336
     object JvLabel1: TJvLabel
       Left = 16
       Top = 345
@@ -45,7 +43,7 @@ object frmConsulta: TfrmConsulta
       Height = 288
       DataSource = dsConsulta
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-      TabOrder = 0
+      TabOrder = 1
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
@@ -64,7 +62,7 @@ object frmConsulta: TfrmConsulta
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 0
       Text = ''
       OnKeyDown = edtBuscaKeyDown
     end
@@ -74,6 +72,7 @@ object frmConsulta: TfrmConsulta
       Width = 113
       Height = 74
       Caption = 'Filtros'
+      ItemIndex = 0
       Items.Strings = (
         'Nome'
         'C'#243'digo'
