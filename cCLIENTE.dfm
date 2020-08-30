@@ -98,9 +98,6 @@ object frmCadCliente: TfrmCadCliente
       Align = alBottom
       Caption = 'Endere'#231'o'
       TabOrder = 11
-      ExplicitLeft = 7
-      ExplicitTop = 190
-      ExplicitWidth = 820
       object Label6: TLabel
         Left = 41
         Top = 56
@@ -284,15 +281,5 @@ object frmCadCliente: TfrmCadCliente
       Text = ''
       OnExit = edtCLIENTECELULARExit
     end
-  end
-  object sqlInsertCliente: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 752
-    Top = 80
-  end
-  object sqlInsertEndereco: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 744
-    Top = 136
   end
 end

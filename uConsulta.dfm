@@ -3,8 +3,8 @@ object frmConsulta: TfrmConsulta
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Consulta'
-  ClientHeight = 336
-  ClientWidth = 657
+  ClientHeight = 386
+  ClientWidth = 726
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,27 +18,67 @@ object frmConsulta: TfrmConsulta
   object pnl1: TPanel
     Left = 0
     Top = 0
-    Width = 657
-    Height = 336
+    Width = 726
+    Height = 386
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = 112
-    ExplicitWidth = 185
-    ExplicitHeight = 41
+    ExplicitWidth = 657
+    ExplicitHeight = 336
+    object JvLabel1: TJvLabel
+      Left = 16
+      Top = 345
+      Width = 40
+      Height = 16
+      Caption = 'Buscar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Transparent = True
+    end
     object dbgrd1: TDBGrid
       Left = 1
       Top = 1
       Width = 655
-      Height = 334
-      Align = alClient
+      Height = 288
       DataSource = dsConsulta
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnDblClick = dbgrd1DblClick
+    end
+    object edtBusca: TJvEdit
+      Left = 62
+      Top = 345
+      Width = 475
+      Height = 24
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+      Text = ''
+      OnKeyDown = edtBuscaKeyDown
+    end
+    object rgFiltros: TRadioGroup
+      Left = 543
+      Top = 295
+      Width = 113
+      Height = 74
+      Caption = 'Filtros'
+      Items.Strings = (
+        'Nome'
+        'C'#243'digo'
+        'CPF/CNPJ')
+      TabOrder = 2
     end
   end
   object cdsConsulta: TClientDataSet
