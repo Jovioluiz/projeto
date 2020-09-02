@@ -82,11 +82,11 @@ begin
   end;
 
   if edtCodigo.Checked then
-    begin
-      sqlConsulta.SQL.Add(' where cast(cd_produto as varchar) ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));
-      sqlConsulta.SQL.Add(sql);
-      sqlConsulta.Open();
-    end;
+  begin
+    sqlConsulta.SQL.Add(' where cast(cd_produto as varchar) ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));
+    sqlConsulta.SQL.Add(sql);
+    sqlConsulta.Open();
+  end;
   if edtDescricao.Checked then
     sqlConsulta.SQL.Add(' or desc_produto ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));
   if edtAtivo.Checked then

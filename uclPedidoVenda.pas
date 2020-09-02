@@ -19,6 +19,7 @@ type TPedidoVenda = class
     function ValidaFormaPgto(CdFormaPgto: Integer): Boolean;
     function ValidaCliente(CdCliente: Integer): Boolean;
     function ValidaCondPgto(CdCond, CdForma: Integer): Boolean;
+    function ValidaCodProduto(CdProduto: Integer): Boolean;
 
 end;
 
@@ -57,6 +58,41 @@ begin
     Result := True
   else
     Result := False;
+end;
+
+function TPedidoVenda.ValidaCodProduto(CdProduto: Integer): Boolean;
+const
+  sql_produto = 'select '+
+                    'p.cd_produto,                  '+
+                    'p.desc_produto,                '+
+                    'tpp.un_medida,                 '+
+                    'tpp.cd_tabela,                 '+
+                    'tp.nm_tabela,                  '+
+                    'tpp.valor                      '+
+                'from                               '+
+                    'produto p                      '+
+                'join tabela_preco_produto tpp on   '+
+                    'p.cd_produto = tpp.cd_produto  '+
+                'join tabela_preco tp on            '+
+                    'tpp.cd_tabela = tp.cd_tabela   '+
+                'where (p.cd_produto = :cd_produto) '+
+                'and (p.fl_ativo = true)';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.Close;
+    qry.SQL.Add(sql_produto);
+    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.Open(sql_produto);
+
+    Result := qry.IsEmpty;
+  finally
+    qry.Free;
+  end;
 end;
 
 function TPedidoVenda.ValidaCondPgto(CdCond, CdForma: Integer): Boolean;

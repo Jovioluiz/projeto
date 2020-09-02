@@ -99,6 +99,7 @@ type
     { Private declarations }
     edicaoItem : Boolean;
     procedure limpaCampos;
+    procedure limpaCamposProduto;
   public
     { Public declarations }
   end;
@@ -144,8 +145,9 @@ begin
 
   try
     qry.Close;
+    qry.SQL.Add(sql);
     qry.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
-    qry.Open();
+    qry.Open(sql);
 
     aliq_icms := qry.FieldByName('aliquota_icms').AsCurrency;
     aliq_ipi := qry.FieldByName('aliquota_ipi').AsCurrency;
@@ -261,221 +263,239 @@ end;
 
 //grava os dados na pedido_venda e pedido_venda_item
 procedure TfrmPedidoVenda.btnConfirmarPedidoClick(Sender: TObject);
-var nr_pedido, id_geral, id_geral_pvi, qtdade, qttotal : Integer;
-var Tempo : Integer;
+const
+  sql_qtde ='select ' +
+                'qtd_estoque ' +
+            'from ' +
+                'produto ' +
+            'where ' +
+                'cd_produto = :cd_produto';
+sql_atualiza = 'update ' +
+                    'produto ' +
+              'set ' +
+                    'qtd_estoque = :qtd_estoque ' +
+              'where cd_produto = :cd_produto';
+
+var
+  nr_pedido,
+  id_geral,
+  id_geral_pvi,
+  qtdade,
+  qttotal : Integer;
+  qry: TFDQuery;
 begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
   try
-    nr_pedido := 0;
-    id_geral := 0;
-    //id_geral do pedido_venda
-    sqlIdGeral.Close;
-    sqlIdGeral.SQL.Text := 'select '+
-                                '* '+
-                                'from func_id_geral()';
-
-    sqlNrPedido.Close;
-    sqlNrPedido.SQL.Text := 'select '+
-                                '*  '+
-                                'from func_nr_pedido()';
     try
+      nr_pedido := 0;
+      id_geral := 0;
       //id_geral do pedido_venda
-      sqlIdGeral.Open();
-      sqlIdGeral.First;
-      while not sqlIdGeral.Eof do
-      begin
-        id_geral := sqlIdGeral.FieldByName('func_id_geral').AsInteger;
-        sqlIdGeral.Next;
+      sqlIdGeral.Close;
+      sqlIdGeral.SQL.Text := 'select '+
+                                  '* '+
+                                  'from func_id_geral()';
+
+      sqlNrPedido.Close;
+      sqlNrPedido.SQL.Text := 'select '+
+                                  '*  '+
+                                  'from func_nr_pedido()';
+      try
+        //id_geral do pedido_venda
+        sqlIdGeral.Open();
+        sqlIdGeral.First;
+        while not sqlIdGeral.Eof do
+        begin
+          id_geral := sqlIdGeral.FieldByName('func_id_geral').AsInteger;
+          sqlIdGeral.Next;
+        end;
+
+        //gera o número do pedido
+        sqlNrPedido.Open();
+        sqlNrPedido.First;
+        while not sqlNrPedido.Eof do
+        begin
+          nr_pedido := sqlNrPedido.FieldByName('func_nr_pedido').AsInteger;
+          edtNrPedido.Text := IntToStr(nr_pedido);
+          sqlNrPedido.Next;
+        end;
+      except
+        on E:exception do
+        begin
+           ShowMessage('Erro ao criar o número do pedido'+ E.Message);
+           Exit;
+        end;
       end;
 
-      //gera o número do pedido
-      sqlNrPedido.Open();
-      sqlNrPedido.First;
-      while not sqlNrPedido.Eof do
+      //insert na pedido_venda
+      sqlPedidoVendaInsert.Close;
+      conexao.StartTransaction;
+      sqlPedidoVendaInsert.SQL.Text := 'insert                        '+
+                                            'into                     '+
+                                            'pedido_venda (id_geral,  '+
+                                            'nr_pedido,               '+
+                                            'cd_cliente,              '+
+                                            'cd_forma_pag,            '+
+                                            'cd_cond_pag,             '+
+                                            ' vl_desconto_pedido,     '+
+                                            'vl_acrescimo,            '+
+                                            'vl_total,                '+
+                                            'fl_orcamento,            '+
+                                            'dt_emissao)              '+
+                                        'values (:id_geral,           '+
+                                            ':nr_pedido,              '+
+                                            ':cd_cliente,             '+
+                                            ':cd_forma_pag,           '+
+                                            ':cd_cond_pag,            '+
+                                            ':vl_desconto_pedido,     '+
+                                            ':vl_acrescimo,           '+
+                                            ':vl_total,               '+
+                                            ':fl_orcamento,           '+
+                                            ':dt_emissao)';
+
+      sqlPedidoVendaInsert.ParamByName('id_geral').AsInteger := id_geral;
+      sqlPedidoVendaInsert.ParamByName('nr_pedido').AsInteger := nr_pedido;
+      sqlPedidoVendaInsert.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
+      sqlPedidoVendaInsert.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCdFormaPgto.Text);
+      sqlPedidoVendaInsert.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCdCondPgto.Text);
+      sqlPedidoVendaInsert.ParamByName('vl_desconto_pedido').AsCurrency := StrToCurr(edtVlDescTotalPedido.Text);
+      sqlPedidoVendaInsert.ParamByName('vl_acrescimo').AsCurrency := StrToCurr(edtVlAcrescimoTotalPedido.Text);
+      sqlPedidoVendaInsert.ParamByName('vl_total').AsCurrency := StrToCurr(edtVlTotalPedido.Text);
+      sqlPedidoVendaInsert.ParamByName('fl_orcamento').AsBoolean := edtFl_orcamento.Checked;
+      sqlPedidoVendaInsert.ParamByName('dt_emissao').AsDate := StrToDate(edtDataEmissao.Text);
+
+      //insert na pedido_venda_item
+      with ClientDataSet1 do
       begin
-        nr_pedido := sqlNrPedido.FieldByName('func_nr_pedido').AsInteger;
-        edtNrPedido.Text := IntToStr(nr_pedido);
-        sqlNrPedido.Next;
+        ClientDataSet1.DisableControls;
+        ClientDataSet1.First;
+        while not ClientDataSet1.Eof do
+        begin
+           //id_geral da pedido_venda_item
+          sqlIdGeralPVI.Close;
+          conexao.StartTransaction;
+          sqlIdGeralPVI.SQL.Text := 'select '+
+                                          '* '+
+                                          'from func_id_geral()';
+          sqlIdGeralPVI.Open;
+          id_geral_pvi := sqlIdGeralPVI.FieldByName('func_id_geral').AsInteger;
+
+          sqlPedidoVendaItem.Close;
+          sqlPedidoVendaItem.SQL.Text := 'insert                            '+
+                                                'into                         '+
+                                                'pedido_venda_item (id_geral, '+
+                                                'id_pedido_venda,             '+
+                                                'cd_produto,                  '+
+                                                'vl_unitario,                 '+
+                                                'vl_total_item,               '+
+                                                'qtd_venda,                   '+
+                                                'vl_desconto,                 '+
+                                                'cd_tabela_preco,             '+
+                                                'icms_vl_base,                '+
+                                                'icms_pc_aliq,                '+
+                                                'icms_valor,                  '+
+                                                'ipi_vl_base,                 '+
+                                                'ipi_pc_aliq,                 '+
+                                                'ipi_valor,                   '+
+                                                'pis_cofins_vl_base,          '+
+                                                'pis_cofins_pc_aliq,          '+
+                                                'pis_cofins_valor,            '+
+                                                'un_medida)                   '+
+                                            'values (:id_geral,               '+
+                                                ':id_pedido_venda,            '+
+                                                ':cd_produto,                 '+
+                                                ':vl_unitario,                '+
+                                                ':vl_total_item,              '+
+                                                ':qtd_venda,                  '+
+                                                ':vl_desconto,                '+
+                                                ':cd_tabela_preco,            '+
+                                                ':icms_vl_base,               '+
+                                                ':icms_pc_aliq,               '+
+                                                ':icms_valor,                 '+
+                                                ':ipi_vl_base,                '+
+                                                ':ipi_pc_aliq,                '+
+                                                ':ipi_valor,                  '+
+                                                ':pis_cofins_vl_base,         '+
+                                                ':pis_cofins_pc_aliq,         '+
+                                                ':pis_cofins_valor,           '+
+                                                ':un_medida)';
+
+          sqlPedidoVendaItem.ParamByName('id_geral').AsInteger := id_geral_pvi;
+          sqlPedidoVendaItem.ParamByName('id_pedido_venda').AsInteger := id_geral;
+          sqlPedidoVendaItem.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
+          sqlPedidoVendaItem.ParamByName('vl_unitario').AsCurrency := ClientDataSet1.FieldByName('Valor Unitário').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('vl_total_item').AsCurrency := ClientDataSet1.FieldByName('Valor Total').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('qtd_venda').AsInteger := ClientDataSet1.FieldByName('Qtdade').AsInteger;
+          sqlPedidoVendaItem.ParamByName('vl_desconto').AsCurrency := ClientDataSet1.FieldByName('Valor Desconto').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('cd_tabela_preco').AsInteger := ClientDataSet1.FieldByName('Tabela Preço').AsInteger;
+          sqlPedidoVendaItem.ParamByName('icms_vl_base').AsCurrency := ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('icms_pc_aliq').AsCurrency := ClientDataSet1.FieldByName('Aliq ICMS').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('icms_valor').AsCurrency := ClientDataSet1.FieldByName('Valor ICMS').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('ipi_vl_base').AsCurrency := ClientDataSet1.FieldByName('Valor Base IPI').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('ipi_pc_aliq').AsCurrency := ClientDataSet1.FieldByName('Aliq IPI').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('ipi_valor').AsCurrency := ClientDataSet1.FieldByName('Valor IPI').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('pis_cofins_vl_base').AsCurrency := ClientDataSet1.FieldByName('Valor Base PIS/COFINS').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('pis_cofins_pc_aliq').AsCurrency := ClientDataSet1.FieldByName('Aliq PIS/COFINS').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('pis_cofins_valor').AsCurrency := ClientDataSet1.FieldByName('Valor PIS/COFINS').AsCurrency;
+          sqlPedidoVendaItem.ParamByName('un_medida').AsString := ClientDataSet1.FieldByName('UN Medida').AsString;
+          ClientDataSet1.Next;
+        end;
       end;
-    except
-      on E:exception do
+
+      with ClientDataSet1 do
       begin
-         ShowMessage('Erro ao criar o número do pedido'+ E.Message);
-         Exit;
+        ClientDataSet1.DisableControls;
+        ClientDataSet1.First;
+        while not ClientDataSet1.Eof do
+        begin
+          //atualiza a qtd_estoque do produto na tabela produto
+          qry.Close;
+          qry.SQL.Add(sql_qtde);
+          qry.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
+          qry.Open(sql_qtde);
+
+          qtdade := qry.Fields[0].Value;//quantidade no banco
+          qttotal := qtdade - ClientDataSet1.FieldByName('Qtdade').AsInteger; //diminui com a informada no pedido
+
+          qry.Close;
+          qry.SQL.Clear;
+          qry.SQL.Add(sql_atualiza);
+          qry.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
+          qry.ParamByName('qtd_estoque').AsInteger := qttotal;
+          ClientDataSet1.Next;
+        end;
       end;
-    end;
 
-    //insert na pedido_venda
-    sqlPedidoVendaInsert.Close;
-    conexao.StartTransaction;
-    sqlPedidoVendaInsert.SQL.Text := 'insert                        '+
-                                          'into                     '+
-                                          'pedido_venda (id_geral,  '+
-                                          'nr_pedido,               '+
-                                          'cd_cliente,              '+
-                                          'cd_forma_pag,            '+
-                                          'cd_cond_pag,             '+
-                                          ' vl_desconto_pedido,     '+
-                                          'vl_acrescimo,            '+
-                                          'vl_total,                '+
-                                          'fl_orcamento,            '+
-                                          'dt_emissao)              '+
-                                      'values (:id_geral,           '+
-                                          ':nr_pedido,              '+
-                                          ':cd_cliente,             '+
-                                          ':cd_forma_pag,           '+
-                                          ':cd_cond_pag,            '+
-                                          ':vl_desconto_pedido,     '+
-                                          ':vl_acrescimo,           '+
-                                          ':vl_total,               '+
-                                          ':fl_orcamento,           '+
-                                          ':dt_emissao)';
-
-    sqlPedidoVendaInsert.ParamByName('id_geral').AsInteger := id_geral;
-    sqlPedidoVendaInsert.ParamByName('nr_pedido').AsInteger := nr_pedido;
-    sqlPedidoVendaInsert.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
-    sqlPedidoVendaInsert.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCdFormaPgto.Text);
-    sqlPedidoVendaInsert.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCdCondPgto.Text);
-    sqlPedidoVendaInsert.ParamByName('vl_desconto_pedido').AsCurrency := StrToCurr(edtVlDescTotalPedido.Text);
-    sqlPedidoVendaInsert.ParamByName('vl_acrescimo').AsCurrency := StrToCurr(edtVlAcrescimoTotalPedido.Text);
-    sqlPedidoVendaInsert.ParamByName('vl_total').AsCurrency := StrToCurr(edtVlTotalPedido.Text);
-    sqlPedidoVendaInsert.ParamByName('fl_orcamento').AsBoolean := edtFl_orcamento.Checked;
-    sqlPedidoVendaInsert.ParamByName('dt_emissao').AsDate := StrToDate(edtDataEmissao.Text);
-
-    //insert na pedido_venda_item
-    with ClientDataSet1 do
-    begin
-      ClientDataSet1.DisableControls;
-      ClientDataSet1.First;
-      while not ClientDataSet1.Eof do
-      begin
-         //id_geral da pedido_venda_item
-        sqlIdGeralPVI.Close;
-        conexao.StartTransaction;
-        sqlIdGeralPVI.SQL.Text := 'select '+
-                                        '* '+
-                                        'from func_id_geral()';
-        sqlIdGeralPVI.Open;
-        id_geral_pvi := sqlIdGeralPVI.FieldByName('func_id_geral').AsInteger;
-
-        sqlPedidoVendaItem.Close;
-        sqlPedidoVendaItem.SQL.Text := 'insert                            '+
-                                              'into                         '+
-                                              'pedido_venda_item (id_geral, '+
-                                              'id_pedido_venda,             '+
-                                              'cd_produto,                  '+
-                                              'vl_unitario,                 '+
-                                              'vl_total_item,               '+
-                                              'qtd_venda,                   '+
-                                              'vl_desconto,                 '+
-                                              'cd_tabela_preco,             '+
-                                              'icms_vl_base,                '+
-                                              'icms_pc_aliq,                '+
-                                              'icms_valor,                  '+
-                                              'ipi_vl_base,                 '+
-                                              'ipi_pc_aliq,                 '+
-                                              'ipi_valor,                   '+
-                                              'pis_cofins_vl_base,          '+
-                                              'pis_cofins_pc_aliq,          '+
-                                              'pis_cofins_valor,            '+
-                                              'un_medida)                   '+
-                                          'values (:id_geral,               '+
-                                              ':id_pedido_venda,            '+
-                                              ':cd_produto,                 '+
-                                              ':vl_unitario,                '+
-                                              ':vl_total_item,              '+
-                                              ':qtd_venda,                  '+
-                                              ':vl_desconto,                '+
-                                              ':cd_tabela_preco,            '+
-                                              ':icms_vl_base,               '+
-                                              ':icms_pc_aliq,               '+
-                                              ':icms_valor,                 '+
-                                              ':ipi_vl_base,                '+
-                                              ':ipi_pc_aliq,                '+
-                                              ':ipi_valor,                  '+
-                                              ':pis_cofins_vl_base,         '+
-                                              ':pis_cofins_pc_aliq,         '+
-                                              ':pis_cofins_valor,           '+
-                                              ':un_medida)';
-
-        sqlPedidoVendaItem.ParamByName('id_geral').AsInteger := id_geral_pvi;
-        sqlPedidoVendaItem.ParamByName('id_pedido_venda').AsInteger := id_geral;
-        sqlPedidoVendaItem.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
-        sqlPedidoVendaItem.ParamByName('vl_unitario').AsCurrency := ClientDataSet1.FieldByName('Valor Unitário').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('vl_total_item').AsCurrency := ClientDataSet1.FieldByName('Valor Total').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('qtd_venda').AsInteger := ClientDataSet1.FieldByName('Qtdade').AsInteger;
-        sqlPedidoVendaItem.ParamByName('vl_desconto').AsCurrency := ClientDataSet1.FieldByName('Valor Desconto').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('cd_tabela_preco').AsInteger := ClientDataSet1.FieldByName('Tabela Preço').AsInteger;
-        sqlPedidoVendaItem.ParamByName('icms_vl_base').AsCurrency := ClientDataSet1.FieldByName('Valor Base ICMS').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('icms_pc_aliq').AsCurrency := ClientDataSet1.FieldByName('Aliq ICMS').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('icms_valor').AsCurrency := ClientDataSet1.FieldByName('Valor ICMS').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('ipi_vl_base').AsCurrency := ClientDataSet1.FieldByName('Valor Base IPI').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('ipi_pc_aliq').AsCurrency := ClientDataSet1.FieldByName('Aliq IPI').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('ipi_valor').AsCurrency := ClientDataSet1.FieldByName('Valor IPI').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('pis_cofins_vl_base').AsCurrency := ClientDataSet1.FieldByName('Valor Base PIS/COFINS').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('pis_cofins_pc_aliq').AsCurrency := ClientDataSet1.FieldByName('Aliq PIS/COFINS').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('pis_cofins_valor').AsCurrency := ClientDataSet1.FieldByName('Valor PIS/COFINS').AsCurrency;
-        sqlPedidoVendaItem.ParamByName('un_medida').AsString := ClientDataSet1.FieldByName('UN Medida').AsString;
-        ClientDataSet1.Next;
-      end;
-    end;
-
-    with ClientDataSet1 do
-    begin
-      ClientDataSet1.DisableControls;
-      ClientDataSet1.First;
-      while not ClientDataSet1.Eof do
-      begin
-        //atualiza a qtd_estoque do produto na tabela produto
-        sqlPedidoVendaProduto.Close;
-        sqlPedidoVendaProduto.SQL.Text := 'select '+
-                                              'qtd_estoque '+
-                                          'from '+
-                                              'produto '+
-                                          'where '+
-                                              'cd_produto = :cd_produto';
-        sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
-        sqlPedidoVendaProduto.Open();
-
-        qtdade := sqlPedidoVendaProduto.Fields[0].Value;//quantidade no banco
-        qttotal := qtdade - ClientDataSet1.FieldByName('Qtdade').AsInteger; //diminui com a informada no pedido
-        sqlPedidoVendaProduto.SQL.Text := 'update '+
-                                                'produto '+
-                                          'set '+
-                                                'qtd_estoque = :qtd_estoque '+
-                                          'where cd_produto = :cd_produto';
-        sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
-        sqlPedidoVendaProduto.ParamByName('qtd_estoque').AsInteger := qttotal;
-        ClientDataSet1.Next;
-      end;
-    end;
-
-    sqlPedidoVendaInsert.ExecSQL;
-    sqlPedidoVendaItem.ExecSQL;
-    sqlPedidoVendaProduto.ExecSQL;
-    conexao.Commit;
-    conexao.Close;
-
-    ShowMessage('Pedido ' + edtNrPedido.Text + ' Gravado Com Sucesso');
-    edtNrPedido.Clear;
-    edtCdCliente.Clear;
-    edtNomeCliente.Clear;
-    edtCidadeCliente.Clear;
-    edtCdFormaPgto.Clear;
-    edtNomeFormaPgto.Clear;
-    edtCdCondPgto.Clear;
-    edtNomeCondPgto.Clear;
-    edtVlDescTotalPedido.Clear;
-    edtVlAcrescimoTotalPedido.Clear;
-    edtVlTotalPedido.Clear;
-    dbGridProdutos.DataSource := nil;
-  except
-    on E : exception do
-    begin
-      conexao.Rollback;
-      ShowMessage('Erro ao gravar os dados do pedido ' + edtNrPedido.Text + E.Message);
-      Exit;
+      sqlPedidoVendaInsert.ExecSQL;
+      sqlPedidoVendaItem.ExecSQL;
+      qry.ExecSQL;
+      conexao.Commit;
       conexao.Close;
+
+      ShowMessage('Pedido ' + edtNrPedido.Text + ' Gravado Com Sucesso');
+      edtNrPedido.Clear;
+      edtCdCliente.Clear;
+      edtNomeCliente.Clear;
+      edtCidadeCliente.Clear;
+      edtCdFormaPgto.Clear;
+      edtNomeFormaPgto.Clear;
+      edtCdCondPgto.Clear;
+      edtNomeCondPgto.Clear;
+      edtVlDescTotalPedido.Clear;
+      edtVlAcrescimoTotalPedido.Clear;
+      edtVlTotalPedido.Clear;
+      dbGridProdutos.DataSource := nil;
+    except
+      on E : exception do
+      begin
+        conexao.Rollback;
+        ShowMessage('Erro ao gravar os dados do pedido ' + edtNrPedido.Text + E.Message);
+        Exit;
+        conexao.Close;
+      end;
     end;
+  finally
+    qry.Free;
   end;
 end;
 
@@ -578,13 +598,17 @@ var
 begin
   cliente := TPedidoVenda.Create;
   resposta := cliente.ValidaCliente(StrToInt(edtCdCliente.Text));
-
-  if not resposta then
-  begin
-    if (Application.MessageBox('Cliente não encontrado ou Inativo','Atenção', MB_OK) = idOK) then
-     begin
-      edtCdCliente.SetFocus;
-     end;
+  try
+    if not resposta then
+    begin
+      if (Application.MessageBox('Cliente não encontrado ou Inativo','Atenção', MB_OK) = idOK) then
+       begin
+        edtCdCliente.SetFocus;
+       end;
+    end;
+  finally
+    if Assigned(cliente) then
+      FreeAndNil(cliente);
   end;
 end;
 
@@ -634,12 +658,17 @@ begin
   condPgto := TPedidoVenda.Create;
   resposta := condPgto.ValidaCondPgto(StrToInt(edtCdCondPgto.Text), StrToInt(edtCdFormaPgto.Text));
 
-  if resposta then
-  begin
-    if (Application.MessageBox('Condição de pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+  try
+    if resposta then
     begin
-      edtCdCondPgto.SetFocus;
+      if (Application.MessageBox('Condição de pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+      begin
+        edtCdCondPgto.SetFocus;
+      end;
     end;
+  finally
+    if Assigned(condPgto) then
+    FreeAndNil(condPgto);
   end;
 
 end;
@@ -684,69 +713,88 @@ begin
   formaPgto := TPedidoVenda.Create;
   resposta := formaPgto.ValidaFormaPgto(StrToInt(edtCdFormaPgto.Text));
 
-  if resposta then
-  begin
-    if (Application.MessageBox('Forma de Pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+  try
+    if resposta then
     begin
-      edtCdFormaPgto.SetFocus;
+      if (Application.MessageBox('Forma de Pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+      begin
+        edtCdFormaPgto.SetFocus;
+      end;
     end;
+  finally
+    if Assigned(formaPgto) then
+      FreeAndNil(formaPgto);
   end;
 end;
 
 
 procedure TfrmPedidoVenda.edtCdProdutoChange(Sender: TObject);
+const
+  sql_produto = 'select '+
+                    'p.cd_produto,                  '+
+                    'p.desc_produto,                '+
+                    'tpp.un_medida,                 '+
+                    'tpp.cd_tabela,                 '+
+                    'tp.nm_tabela,                  '+
+                    'tpp.valor                      '+
+                'from                               '+
+                    'produto p                      '+
+                'join tabela_preco_produto tpp on   '+
+                    'p.cd_produto = tpp.cd_produto  '+
+                'join tabela_preco tp on            '+
+                    'tpp.cd_tabela = tp.cd_tabela   '+
+                'where (p.cd_produto = :cd_produto) '+
+                'and (p.fl_ativo = true)';
+var
+  qry: TFDQuery;
 begin
-  if edtCdProduto.Text = EmptyStr then
+  limpaCamposProduto;
+
+  if edtCdProduto.Text <> EmptyStr then
   begin
-    edtDescProduto.Text := '';
-    edtQtdade.Text := '';
-    edtUnMedida.Text := '';
-    edtCdtabelaPreco.Text := '';
-    edtDescTabelaPreco.Text := '';
-    edtVlUnitario.Text := '';
-    Exit;
+    qry := TFDQuery.Create(Self);
+    qry.Connection := dm.FDConnection1;
+
+    try
+      qry.Close;
+      qry.SQL.Add(sql_produto);
+      qry.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+      qry.Open(sql_produto);
+
+      edtDescProduto.Text := qry.FieldByName('desc_produto').AsString;
+      edtUnMedida.Text := qry.FieldByName('un_medida').AsString;
+      edtCdtabelaPreco.Text := IntToStr(qry.FieldByName('cd_tabela').AsInteger);
+      edtDescTabelaPreco.Text := qry.FieldByName('nm_tabela').AsString;
+      edtVlUnitario.Text := CurrToStr(qry.FieldByName('valor').AsCurrency);
+    finally
+      qry.Free;
+    end;
   end;
-
-  sqlPedidoVendaProduto.Close;
-  sqlPedidoVendaProduto.SQL.Text := 'select '+
-                                          'p.cd_produto,                  '+
-                                          'p.desc_produto,                '+
-                                          'tpp.un_medida,                 '+
-                                          'tpp.cd_tabela,                 '+
-                                          'tp.nm_tabela,                  '+
-                                          'tpp.valor                      '+
-                                      'from                               '+
-                                          'produto p                      '+
-                                      'join tabela_preco_produto tpp on   '+
-                                          'p.cd_produto = tpp.cd_produto  '+
-                                      'join tabela_preco tp on            '+
-                                          'tpp.cd_tabela = tp.cd_tabela   '+
-                                      'where (p.cd_produto = :cd_produto) '+
-                                      'and (p.fl_ativo = true)';
-
-  sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
-  sqlPedidoVendaProduto.Open();
-  edtDescProduto.Text := sqlPedidoVendaProduto.FieldByName('desc_produto').AsString;
-  edtUnMedida.Text := sqlPedidoVendaProduto.FieldByName('un_medida').AsString;
-  edtCdtabelaPreco.Text := IntToStr(sqlPedidoVendaProduto.FieldByName('cd_tabela').AsInteger);
-  edtDescTabelaPreco.Text := sqlPedidoVendaProduto.FieldByName('nm_tabela').AsString;
-  edtVlUnitario.Text := CurrToStr(sqlPedidoVendaProduto.FieldByName('valor').AsCurrency);
 end;
 
 procedure TfrmPedidoVenda.edtCdProdutoExit(Sender: TObject);
+var
+  produto: TPedidoVenda;
+  resposta : Boolean;
 begin
-{
-  if (not dbGridProdutos.DataSource.DataSet.IsEmpty) or (ClientDataSet1.State in [dsEdit]) then
+  if edtCdProduto.Text <> EmptyStr then
   begin
-    edtVlDescTotalPedido.SetFocus;
-  end;  }
+    try
+      produto := TPedidoVenda.Create;
+      resposta := produto.ValidaCodProduto(StrToInt(edtCdProduto.Text));
 
-
-  if sqlPedidoVendaProduto.IsEmpty then
-  begin
-    ShowMessage('Produto sem preço Cadastrado ou Inativo! Verifique');
-    edtCdtabelaPreco.Text := '';
-    edtCdProduto.SetFocus;
+      if resposta then
+      begin
+        if (Application.MessageBox('Produto sem preço Cadastrado ou Inativo! Verifique!', 'Atenção', MB_OK) = idOK) then
+        begin
+          edtCdtabelaPreco.Text := '';
+          edtCdProduto.SetFocus;
+        end;
+      end;
+    finally
+      if Assigned(produto) then
+        FreeAndNil(produto);
+    end;
   end;
 end;
 
@@ -846,7 +894,6 @@ begin
   end;
 
 end;
-
 
 
 procedure TfrmPedidoVenda.edtVlAcrescimoTotalPedidoExit(Sender: TObject);
@@ -966,6 +1013,9 @@ end;
 procedure TfrmPedidoVenda.FormCreate(Sender: TObject);
 begin
   edtDataEmissao.Text := DateToStr(Date());
+  edtVlDescTotalPedido.Text := '0,00';
+  edtVlAcrescimoTotalPedido.Text := '0,00';
+  edtVlTotalPedido.Text := '0,00';
 end;
 
 procedure TfrmPedidoVenda.FormKeyDown(Sender: TObject; var Key: Word;
@@ -1004,4 +1054,19 @@ begin
   edtVlDescTotalPedido.Text := '0,00';
   edtVlAcrescimoTotalPedido.Text := '0,00';
 end;
+
+procedure TfrmPedidoVenda.limpaCamposProduto;
+begin
+  if edtCdProduto.Text = EmptyStr then
+  begin
+    edtDescProduto.Text := '';
+    edtQtdade.Text := '';
+    edtUnMedida.Text := '';
+    edtCdtabelaPreco.Text := '';
+    edtDescTabelaPreco.Text := '';
+    edtVlUnitario.Text := '';
+    Exit;
+  end;
+end;
+
 end.
