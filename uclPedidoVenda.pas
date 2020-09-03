@@ -20,6 +20,7 @@ type TPedidoVenda = class
     function ValidaCliente(CdCliente: Integer): Boolean;
     function ValidaCondPgto(CdCond, CdForma: Integer): Boolean;
     function ValidaCodProduto(CdProduto: Integer): Boolean;
+    function ValidaTabelaPreco(CdTabela, CdProduto: Integer): Boolean;
 
 end;
 
@@ -195,6 +196,38 @@ begin
   if qtPedido > qtEstoque then
   begin
     Result := True;
+  end;
+end;
+
+function TPedidoVenda.ValidaTabelaPreco(CdTabela, CdProduto: Integer): Boolean;
+const
+  sql = 'select                             '+
+             'tp.cd_tabela,                 '+
+             'tp.nm_tabela,                 '+
+             'tpp.valor                     '+
+        'from                               '+
+            'tabela_preco tp                '+
+        'join tabela_preco_produto tpp on   '+
+            'tp.cd_tabela = tpp.cd_tabela   '+
+        'join produto p on                  '+
+            'tpp.cd_produto = p.cd_produto  '+
+        'where (tp.cd_tabela = :cd_tabela)  '+
+        'and (p.cd_produto = :cd_produto)';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.Close;
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_tabela').AsInteger := CdTabela;
+    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.Open(sql);
+    Result := qry.IsEmpty;
+  finally
+    qry.Free;
   end;
 end;
 
