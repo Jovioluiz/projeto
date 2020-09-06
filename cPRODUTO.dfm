@@ -43,7 +43,6 @@ object frmCadProduto: TfrmCadProduto
     TabOrder = 3
     object TabSheetCadastroProduto: TTabSheet
       Caption = 'Produto'
-      ExplicitHeight = 457
       object Label3: TLabel
         Left = 3
         Top = 40
@@ -169,7 +168,7 @@ object frmCadProduto: TfrmCadProduto
         Top = 331
         Width = 407
         Height = 120
-        DataSource = dm.dsCodBarraProduto
+        DataSource = dsBarras
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
         TabOrder = 7
         TitleFont.Charset = DEFAULT_CHARSET
@@ -235,7 +234,6 @@ object frmCadProduto: TfrmCadProduto
     object TabSheet1: TTabSheet
       Caption = 'Tributa'#231#227'o'
       ImageIndex = 1
-      ExplicitHeight = 454
       object Label10: TLabel
         Left = 49
         Top = 24
@@ -306,7 +304,6 @@ object frmCadProduto: TfrmCadProduto
     object tsOutrasUnidades: TTabSheet
       Caption = 'Outras Unidades'
       ImageIndex = 2
-      ExplicitHeight = 454
       object Label16: TLabel
         Left = 11
         Top = 48
@@ -383,5 +380,35 @@ object frmCadProduto: TfrmCadProduto
   object OpenDialog1: TOpenDialog
     Left = 684
     Top = 288
+  end
+  object dsBarras: TDataSource
+    DataSet = cdsBarras
+    Left = 164
+    Top = 496
+  end
+  object cdsBarras: TClientDataSet
+    PersistDataPacket.Data = {
+      850000009619E0BD01000000180000000400000000000300000085000A63645F
+      70726F6475746F040001000000000009756E5F6D656469646101004900000001
+      000557494454480200020014000F7469706F5F636F645F626172726173040001
+      00000000000D636F6469676F5F62617272617301004900000001000557494454
+      480200020014000000}
+    Active = True
+    Aggregates = <>
+    Params = <>
+    Left = 268
+    Top = 496
+    object cdsBarrasun_medida: TStringField
+      DisplayLabel = 'UN. Medida'
+      FieldName = 'un_medida'
+    end
+    object intgrfldBarrastipo_cod_barras: TIntegerField
+      DisplayLabel = 'Tipo'
+      FieldName = 'tipo_cod_barras'
+    end
+    object cdsBarrascodigo_barras: TStringField
+      DisplayLabel = 'C'#243'digo Barras'
+      FieldName = 'codigo_barras'
+    end
   end
 end

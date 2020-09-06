@@ -8,7 +8,7 @@ uses
   Data.FMTBcd, Data.DB, Data.SqlExpr, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client, FireDAC.DApt,
-  FireDAC.Comp.DataSet, Vcl.DBCtrls, Vcl.Buttons, StrUtils;
+  FireDAC.Comp.DataSet, Vcl.DBCtrls, Vcl.Buttons, StrUtils, System.Generics.Collections;
 
 type
   TfrmCadCliente = class(TfrmConexao)
@@ -45,6 +45,7 @@ type
     Label5: TLabel;
     edtCep: TEdit;
     edtCLIENTEFONE: TMaskEdit;
+    cbbEstado: TComboBox;
     procedure pFormarCamposPessoa;
     procedure edtCLIENTETP_PESSOAClick(Sender: TObject);
     procedure edtCLIENTEcd_clienteExit(Sender: TObject);
@@ -64,6 +65,7 @@ type
     procedure excluir;
     procedure desabilitaCampos;
     procedure SetcdCliente(const Value: Integer);
+    procedure listaEstados;
   public
     { Public declarations }
     property cdCliente: Integer read FcdCliente write SetcdCliente;
@@ -73,6 +75,7 @@ var
   frmCadCliente: TfrmCadCliente;
   temCep, camposDesabilitados: Boolean;
   cep, chamada: String;
+  lista: TList<string>;
 
 implementation
 
@@ -671,6 +674,52 @@ begin
   edtCLIENTETP_PESSOA.ItemIndex := -1;
   edtCep.Clear;
   edtEstado.Clear;
+end;
+
+procedure TfrmCadCliente.listaEstados;
+var
+  lista: TList<string>;
+  i: Integer;
+begin
+  lista := TList<string>.Create;
+
+  try
+    lista.Add('AC');
+    lista.Add('AL');
+    lista.Add('AM');
+    lista.Add('AP');
+    lista.Add('BA');
+    lista.Add('CE');
+    lista.Add('DF');
+    lista.Add('ES');
+    lista.Add('GO');
+    lista.Add('MA');
+    lista.Add('MG');
+    lista.Add('MS');
+    lista.Add('MT');
+    lista.Add('PA');
+    lista.Add('PB');
+    lista.Add('PE');
+    lista.Add('PI');
+    lista.Add('PR');
+    lista.Add('RJ');
+    lista.Add('RN');
+    lista.Add('RO');
+    lista.Add('RR');
+    lista.Add('RS');
+    lista.Add('SC');
+    lista.Add('SE');
+    lista.Add('SP');
+    lista.Add('TO');
+
+    for i := 0 to lista.Count - 1 do
+    begin
+      cbbEstado.Items.Add(lista[i]);
+    end;
+
+  finally
+    lista.Free;
+  end;
 end;
 
 end.

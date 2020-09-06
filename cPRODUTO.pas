@@ -60,6 +60,11 @@ type
     Label17: TLabel;
     edtOutrasUnFatorConv: TEdit;
     DBGrid1: TDBGrid;
+    dsBarras: TDataSource;
+    cdsBarras: TClientDataSet;
+    cdsBarrasun_medida: TStringField;
+    intgrfldBarrastipo_cod_barras: TIntegerField;
+    cdsBarrascodigo_barras: TStringField;
     procedure btnPRODUTOCANCELARClick(Sender: TObject);
     procedure edtPRODUTOCD_PRODUTOExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -85,6 +90,8 @@ type
     procedure desabilitaCampos;
     procedure validaCamposCodBarra;
     procedure formataGrid;
+    procedure salvarCodBarras;
+    function pesquisarCodBarras(CdProduto: Integer; CodBarras: String): Boolean;
   public
     { Public declarations }
 
@@ -104,19 +111,19 @@ uses uDataModule, uValidaDados, uLogin;
 
 procedure TfrmCadProduto.btnAddCodBarrasClick(Sender: TObject);
 begin
-  //tá dando erro ao adicionar, pois apaguei os fields, verificar uma maneira de adicionar sem utilizar o dm
   validaCamposCodBarra;
-  dm.dsCodBarraProduto.DataSet.Active := True;
-  dm.dsCodBarraProduto.DataSet.Append;
-  dm.dsCodBarraProduto.DataSet.FieldByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-  dm.dsCodBarraProduto.DataSet.FieldByName('un_medida').AsString := edtUnCodBarras.Text;
-  dm.dsCodBarraProduto.DataSet.FieldByName('tipo_cod_barras').AsInteger := cbTipoCodBarras.ItemIndex;
-  dm.dsCodBarraProduto.DataSet.FieldByName('codigo_barras').AsString := edtCodigoBarras.Text;
-  dm.dsCodBarraProduto.DataSet.Post;
+
+  dsBarras.DataSet.Active := True;
+  cdsBarras.Append;
+  cdsBarras.FieldByName('un_medida').AsString := edtUnCodBarras.Text;
+  cdsBarras.FieldByName('tipo_cod_barras').AsInteger := cbTipoCodBarras.ItemIndex;
+  cdsBarras.FieldByName('codigo_barras').AsString := edtCodigoBarras.Text;
+  cdsBarras.Post;
 
   listarCodBarras;
 
   cbTipoCodBarras.ItemIndex := -1;
+  edtUnCodBarras.Clear;
   edtCodigoBarras.Clear;
 end;
 
@@ -464,7 +471,6 @@ end;
 
 procedure TfrmCadProduto.FormCreate(Sender: TObject);
 begin
-  inherited;
   TabSheetCadastroProduto.Show;
 end;
 
@@ -565,9 +571,11 @@ begin
   dm.queryCodBarraProduto.Close;
   imagem.Picture := nil;
   TabSheetCadastroProduto.Show;//se estiver em outra aba, sempre volta para a primeira aba
+
+  cdsBarras.EmptyDataSet;
 end;
 
-procedure TfrmCadProduto.listarCodBarras;
+procedure TfrmCadProduto.listarCodBarras;  //ajustar, pois não está listando
 const
   sql = 'select '+
         ' un_medida, '+
@@ -581,13 +589,56 @@ const
         '	produto_cod_barras '+
         'where '+
         '	cd_produto = :cd_produto ';
+var
+  qry: TFDQuery;
 begin
-  dm.queryCodBarraProduto.Close;
-  dm.queryCodBarraProduto.SQL.Clear;
-  dm.queryCodBarraProduto.SQL.Add(sql);
-  dm.queryCodBarraProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-  dm.queryCodBarraProduto.Open(sql);
-  formataGrid;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.Close;
+    qry.SQL.Clear;
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+    qry.Open(sql);
+    //formataGrid;
+  finally
+    qry.Free;
+  end;
+
+end;
+
+function TfrmCadProduto.pesquisarCodBarras(CdProduto: Integer; CodBarras: String): Boolean;
+const
+  sql = 'select '+
+        '   cd_produto, '+
+        '   un_medida, '+
+        '   tipo_cod_barras, '+
+        '   codigo_barras '+
+        'from '+
+        '   produto_cod_barras '+
+        'where '+
+        '   cd_produto = :cd_produto and '+
+        '   codigo_barras = :codigo_barras';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.Close;
+    qry.SQL.Clear;
+    qry.SQL.Add(sql);
+
+    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.ParamByName('codigo_barras').AsString := CodBarras;
+    qry.Open(sql);
+
+    Result := qry.IsEmpty;
+  finally
+    qry.Free;
+  end;
 end;
 
 procedure TfrmCadProduto.salvar;
@@ -763,11 +814,77 @@ begin
 
       end;
     end;
+    salvarCodBarras;
   finally
     limpaCampos;
     FreeAndNil(qry);
     FreeAndNil(qryTrib);
     FreeAndNil(qryProd);
+  end;
+end;
+
+procedure TfrmCadProduto.salvarCodBarras;
+const
+  sql_insert = 'insert into produto_cod_barras(cd_produto, un_medida, tipo_cod_barras, codigo_barras) values '+
+               ' (:cd_produto, :un_medida, :tipo_cod_barras, :codigo_barras)';
+
+  sql_update = 'update produto_cod_barras set '+
+               '  cd_produto = :cd_produto, '+
+               '  un_medida = :un_medida, '+
+               '  tipo_cod_barras = :tipo_cod_barras, '+
+               '  codigo_barras = :codigo_barras '+
+               'where cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    try
+      if not pesquisarCodBarras(StrToInt(edtPRODUTOCD_PRODUTO.Text),
+                                cdsBarras.FieldByName('codigo_barras').AsString) then
+      begin
+        qry.SQL.Clear;
+        qry.SQL.Add(sql_update);
+
+        cdsBarras.First;
+        while not cdsBarras.Eof do
+        begin
+          qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+          qry.ParamByName('un_medida').AsString := cdsBarras.FieldByName('un_medida').AsString;
+          qry.ParamByName('tipo_cod_barras').AsInteger := cdsBarras.FieldByName('tipo_cod_barras').AsInteger;
+          qry.ParamByName('codigo_barras').AsString := cdsBarras.FieldByName('codigo_barras').AsString;
+          qry.ExecSQL;
+          cdsBarras.Next;
+        end;
+      end
+      else
+      begin
+        qry.SQL.Clear;
+        qry.SQL.Add(sql_insert);
+
+        cdsBarras.First;
+        while not cdsBarras.Eof do
+        begin
+          qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+          qry.ParamByName('un_medida').AsString := cdsBarras.FieldByName('un_medida').AsString;
+          qry.ParamByName('tipo_cod_barras').AsInteger := cdsBarras.FieldByName('tipo_cod_barras').AsInteger;
+          qry.ParamByName('codigo_barras').AsString := cdsBarras.FieldByName('codigo_barras').AsString;
+          qry.ExecSQL;
+          cdsBarras.Next;
+        end;
+      end;
+    except
+    on E:exception do
+      begin
+        ShowMessage('Erro ao gravar os dados do código de barras do produto '+ E.Message);
+        Exit;
+      end;
+
+    end;
+  finally
+    qry.Free;
   end;
 end;
 

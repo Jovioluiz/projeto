@@ -188,6 +188,13 @@ object frmCadCliente: TfrmCadCliente
         CharCase = ecUpperCase
         TabOrder = 1
       end
+      object cbbEstado: TComboBox
+        Left = 480
+        Top = 96
+        Width = 73
+        Height = 21
+        TabOrder = 5
+      end
     end
     object edtCLIENTETP_PESSOA: TRadioGroup
       Left = 544

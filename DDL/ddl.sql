@@ -1089,3 +1089,5 @@ COMMENT ON COLUMN public.produto_cod_barras.tipo_cod_barras IS '0 - Interno
 
 
 ALTER TABLE public.usuario_acao ADD fl_permite_edicao bool NULL;
+
+ALTER TABLE public.produto_cod_barras ADD CONSTRAINT produto_cod_barras_un UNIQUE (cd_produto,codigo_barras);
