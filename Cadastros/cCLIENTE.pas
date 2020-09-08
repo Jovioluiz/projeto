@@ -548,7 +548,7 @@ begin
   if key = VK_F9 then
   begin
     chamada := 'cntCliente';
-    consulta.abreConsultaCliente(sql);
+    consulta.abreConsulta(sql);
     consulta.ShowModal;
   end;
 end;

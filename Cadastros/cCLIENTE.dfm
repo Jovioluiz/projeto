@@ -169,7 +169,7 @@ object frmCadCliente: TfrmCadCliente
         Width = 73
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 5
+        TabOrder = 6
       end
       object edtCep: TEdit
         Left = 114

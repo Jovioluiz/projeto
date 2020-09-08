@@ -285,7 +285,7 @@ end;
 
 procedure TfrmPrincipal.Timer1Timer(Sender: TObject);
 begin
-  StatusBar1.Panels.Items[1].Text := DateTimeToStr(Now);
+  //StatusBar1.Panels.Items[1].Text := DateTimeToStr(Now);
 end;
 
 procedure TfrmPrincipal.Usurios1Click(Sender: TObject);

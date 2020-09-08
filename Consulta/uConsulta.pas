@@ -14,9 +14,6 @@ type
     dbgrd1: TDBGrid;
     cdsConsulta: TClientDataSet;
     dsConsulta: TDataSource;
-    intgrfldConsultacd_cliente: TIntegerField;
-    cdsConsultanm_cliente: TStringField;
-    cdsConsultacpf_cnpj: TStringField;
     edtBusca: TJvEdit;
     JvLabel1: TJvLabel;
     rgFiltros: TRadioGroup;
@@ -27,7 +24,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    function abreConsultaCliente(consulta: String): string;
+    function abreConsulta(consulta: String): string;
   end;
 
 var
@@ -42,21 +39,35 @@ uses
 
 //passa no sql os campos que quer retornar na consulta
 //se adicionar mais campos na consulta, precisa adicionar esses campos no dataset
-function TfrmConsulta.abreConsultaCliente(consulta: String): string;
+function TfrmConsulta.abreConsulta(consulta: String): string;
 var
   qry: TFDQuery;
+  i: Integer;
+  campo: TField;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
   qry.Close;
   qry.SQL.Clear;
 
+  cdsConsulta.Create(Self);
+
+  qry.FieldList.Create(qry);
+
   try
     qry.SQL.Add(consulta);
     qry.Open(consulta);
 
-    qry.First;
-    while not qry.Eof do
+    for i := 0 to qry.FieldCount - 1 do
+    begin
+      campo := TField.Create(cdsConsulta);
+      campo.FieldName := qry.Fields[i].FieldName;
+      campo.SetFieldType(qry.Fields[i].DataType);
+      cdsConsulta.Fields.Add(campo);
+    end;
+
+    //qry.First;
+    {while not qry.Eof do
     begin
       cdsConsulta.Append;
       cdsConsulta.FieldByName('cd_cliente').AsInteger := qry.FieldByName('cd_cliente').AsInteger;
@@ -64,7 +75,7 @@ begin
       cdsConsulta.FieldByName('cpf_cnpj').AsString := qry.FieldByName('cpf_cnpj').AsString;
       cdsConsulta.Post;
       qry.Next;
-    end;
+    end;}
   finally
     qry.Free;
   end;
