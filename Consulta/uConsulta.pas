@@ -17,6 +17,9 @@ type
     edtBusca: TJvEdit;
     JvLabel1: TJvLabel;
     rgFiltros: TRadioGroup;
+    cdsConsultacd_cliente: TIntegerField;
+    cdsConsultanm_cliente: TStringField;
+    cdsConsultacpf_cnpj: TStringField;
     procedure dbgrd1DblClick(Sender: TObject);
     procedure edtBuscaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -50,32 +53,41 @@ begin
   qry.Close;
   qry.SQL.Clear;
 
-  cdsConsulta.Create(Self);
+  //cdsConsulta.EmptyDataSet;
 
-  qry.FieldList.Create(qry);
+  //cdsConsulta.Create(Self);
+
+  //qry.FieldList.Create(qry);
 
   try
     qry.SQL.Add(consulta);
-    qry.Open(consulta);
+    qry.Open();
 
-    for i := 0 to qry.FieldCount - 1 do
+   { for i := 0 to qry.FieldCount - 1 do
     begin
       campo := TField.Create(cdsConsulta);
       campo.FieldName := qry.Fields[i].FieldName;
       campo.SetFieldType(qry.Fields[i].DataType);
       cdsConsulta.Fields.Add(campo);
-    end;
+    end; }
 
-    //qry.First;
-    {while not qry.Eof do
+
+    if qry.IsEmpty then
+      cdsConsulta.EmptyDataSet
+    else
     begin
-      cdsConsulta.Append;
-      cdsConsulta.FieldByName('cd_cliente').AsInteger := qry.FieldByName('cd_cliente').AsInteger;
-      cdsConsulta.FieldByName('nm_cliente').AsString := qry.FieldByName('nome').AsString;
-      cdsConsulta.FieldByName('cpf_cnpj').AsString := qry.FieldByName('cpf_cnpj').AsString;
-      cdsConsulta.Post;
-      qry.Next;
-    end;}
+      qry.First;
+
+      while not qry.Eof do
+      begin
+        cdsConsulta.Append;
+        cdsConsulta.FieldByName('cd_cliente').AsInteger := qry.FieldByName('cd_cliente').AsInteger;
+        cdsConsulta.FieldByName('nm_cliente').AsString := qry.FieldByName('nome').AsString;
+        cdsConsulta.FieldByName('cpf_cnpj').AsString := qry.FieldByName('cpf_cnpj').AsString;
+        cdsConsulta.Post;
+        qry.Next;
+      end;
+    end;
   finally
     qry.Free;
   end;
@@ -87,11 +99,15 @@ var
 begin
   cliente := TfrmCadCliente.Create(Self);
 
-  if chamada = 'cntCliente' then
-  begin
-    cliente.cdCliente := cdsConsulta.FieldByName('cd_cliente').AsInteger;
-    Close;
-    chamada := '';
+  try
+    if chamada = 'cntCliente' then
+    begin
+      cliente.edtCLIENTEcd_cliente.Text := cdsConsulta.FieldByName('cd_cliente').ToString;
+      Close;
+      chamada := '';
+    end;
+  finally
+    FreeAndNil(cliente);
   end;
 end;
 

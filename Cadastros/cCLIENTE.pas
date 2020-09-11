@@ -65,7 +65,7 @@ type
     procedure excluir;
     procedure desabilitaCampos;
     procedure SetcdCliente(const Value: Integer);
-    procedure listaEstados;
+    //procedure listaEstados;
   public
     { Public declarations }
     property cdCliente: Integer read FcdCliente write SetcdCliente;
@@ -676,7 +676,7 @@ begin
   edtEstado.Clear;
 end;
 
-procedure TfrmCadCliente.listaEstados;
+{procedure TfrmCadCliente.listaEstados;
 var
   lista: TList<string>;
   i: Integer;
@@ -720,6 +720,6 @@ begin
   finally
     lista.Free;
   end;
-end;
+end;                                 }
 
 end.
