@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao, Vcl.Mask,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, System.Generics.Collections;
 
 type
   TfrmPedidoVenda = class(TfrmConexao)
@@ -56,7 +56,6 @@ type
     edtVlTotalPedido: TEdit;
     btnConfirmarPedido: TButton;
     btnCancelar: TButton;
-    sqlPedidoVendaProduto: TFDQuery;
     sqlPedidoVendaTabPreco: TFDQuery;
     ClientDataSet1: TClientDataSet;
     DataSource1: TDataSource;
@@ -99,6 +98,7 @@ type
     { Private declarations }
     edicaoItem : Boolean;
     procedure limpaCampos;
+    procedure atualizaEstoqueProduto;
   public
     { Public declarations }
   end;
@@ -113,8 +113,60 @@ uses
 
 {$R *.dfm}
 
-//adiciona os produtos no grid
+
+procedure TfrmPedidoVenda.atualizaEstoqueProduto;
+const
+  sql_update = 'update '+
+                    'produto '+
+              'set '+
+                    'qtd_estoque = :qtd_estoque '+
+              'where cd_produto = :cd_produto';
+
+  sql_select = 'select '+
+                  'qtd_estoque '+
+              'from '+
+                  'produto '+
+              'where '+
+                  'cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+  qtdade, qttotal: Double;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+  dm.FDConnection1.StartTransaction;
+
+  try
+    ClientDataSet1.DisableControls;
+    ClientDataSet1.First;
+    while not ClientDataSet1.Eof do
+    begin
+      qry.SQL.Clear;
+      qry.SQL.Add(sql_select);
+      qry.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
+      qry.Open(sql_select);
+
+      qtdade := qry.FieldByName('qtd_estoque').AsFloat;//quantidade no banco
+      qttotal := qtdade - ClientDataSet1.FieldByName('Qtdade').AsInteger; //diminui com a informada no pedido
+
+      qry.SQL.Clear;
+
+      qry.SQL.Add(sql_update);
+      qry.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
+      qry.ParamByName('qtd_estoque').AsFloat := qttotal;
+
+      qry.ExecSQL;
+      ClientDataSet1.Next;
+      dm.FDConnection1.Commit;
+    end;
+  finally
+    qry.Free;
+    ClientDataSet1.EnableControls;
+  end;
+end;
+
 procedure TfrmPedidoVenda.btnAdicionarClick(Sender: TObject);
+//adiciona os produtos no grid
 const
   sql = 'select '+
         '    pt.cd_produto, '+
@@ -144,8 +196,9 @@ begin
 
   try
     qry.Close;
+    qry.SQL.Add(sql);
     qry.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
-    qry.Open();
+    qry.Open(sql);
 
     aliq_icms := qry.FieldByName('aliquota_icms').AsCurrency;
     aliq_ipi := qry.FieldByName('aliquota_ipi').AsCurrency;
@@ -261,7 +314,7 @@ end;
 
 //grava os dados na pedido_venda e pedido_venda_item
 procedure TfrmPedidoVenda.btnConfirmarPedidoClick(Sender: TObject);
-var nr_pedido, id_geral, id_geral_pvi, qtdade, qttotal : Integer;
+var nr_pedido, id_geral, id_geral_pvi : Integer;
 var Tempo : Integer;
 begin
   try
@@ -419,39 +472,10 @@ begin
       end;
     end;
 
-    with ClientDataSet1 do
-    begin
-      ClientDataSet1.DisableControls;
-      ClientDataSet1.First;
-      while not ClientDataSet1.Eof do
-      begin
-        //atualiza a qtd_estoque do produto na tabela produto
-        sqlPedidoVendaProduto.Close;
-        sqlPedidoVendaProduto.SQL.Text := 'select '+
-                                              'qtd_estoque '+
-                                          'from '+
-                                              'produto '+
-                                          'where '+
-                                              'cd_produto = :cd_produto';
-        sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
-        sqlPedidoVendaProduto.Open();
-
-        qtdade := sqlPedidoVendaProduto.Fields[0].Value;//quantidade no banco
-        qttotal := qtdade - ClientDataSet1.FieldByName('Qtdade').AsInteger; //diminui com a informada no pedido
-        sqlPedidoVendaProduto.SQL.Text := 'update '+
-                                                'produto '+
-                                          'set '+
-                                                'qtd_estoque = :qtd_estoque '+
-                                          'where cd_produto = :cd_produto';
-        sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := ClientDataSet1.FieldByName('Cód. Produto').AsInteger;
-        sqlPedidoVendaProduto.ParamByName('qtd_estoque').AsInteger := qttotal;
-        ClientDataSet1.Next;
-      end;
-    end;
+    atualizaEstoqueProduto;
 
     sqlPedidoVendaInsert.ExecSQL;
     sqlPedidoVendaItem.ExecSQL;
-    sqlPedidoVendaProduto.ExecSQL;
     conexao.Commit;
     conexao.Close;
 
@@ -687,15 +711,20 @@ begin
   if resposta then
   begin
     if (Application.MessageBox('Forma de Pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
-    begin
       edtCdFormaPgto.SetFocus;
-    end;
   end;
 end;
 
 
 procedure TfrmPedidoVenda.edtCdProdutoChange(Sender: TObject);
+var
+  produto: TPedidoVenda;
+  lista: TList<String>;
+  i: Integer;
 begin
+  produto := TPedidoVenda.Create;
+  lista := TList<string>.Create;
+  
   if edtCdProduto.Text = EmptyStr then
   begin
     edtDescProduto.Text := '';
@@ -707,46 +736,36 @@ begin
     Exit;
   end;
 
-  sqlPedidoVendaProduto.Close;
-  sqlPedidoVendaProduto.SQL.Text := 'select '+
-                                          'p.cd_produto,                  '+
-                                          'p.desc_produto,                '+
-                                          'tpp.un_medida,                 '+
-                                          'tpp.cd_tabela,                 '+
-                                          'tp.nm_tabela,                  '+
-                                          'tpp.valor                      '+
-                                      'from                               '+
-                                          'produto p                      '+
-                                      'join tabela_preco_produto tpp on   '+
-                                          'p.cd_produto = tpp.cd_produto  '+
-                                      'join tabela_preco tp on            '+
-                                          'tpp.cd_tabela = tp.cd_tabela   '+
-                                      'where (p.cd_produto = :cd_produto) '+
-                                      'and (p.fl_ativo = true)';
+  try
+    lista := produto.BuscaProduto(StrToInt(edtCdProduto.Text));
 
-  sqlPedidoVendaProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
-  sqlPedidoVendaProduto.Open();
-  edtDescProduto.Text := sqlPedidoVendaProduto.FieldByName('desc_produto').AsString;
-  edtUnMedida.Text := sqlPedidoVendaProduto.FieldByName('un_medida').AsString;
-  edtCdtabelaPreco.Text := IntToStr(sqlPedidoVendaProduto.FieldByName('cd_tabela').AsInteger);
-  edtDescTabelaPreco.Text := sqlPedidoVendaProduto.FieldByName('nm_tabela').AsString;
-  edtVlUnitario.Text := CurrToStr(sqlPedidoVendaProduto.FieldByName('valor').AsCurrency);
+    //preenche os dados da lista nos campos
+
+    edtDescProduto.Text := lista.Items[0];
+    edtUnMedida.Text := lista.Items[1];
+    edtCdtabelaPreco.Text := lista.Items[2];
+    edtDescTabelaPreco.Text := lista.Items[3];
+    edtVlUnitario.Text := lista.Items[4];
+  finally
+    FreeAndNil(lista);
+  end;
 end;
 
 procedure TfrmPedidoVenda.edtCdProdutoExit(Sender: TObject);
+var
+  produto: TPedidoVenda;
+  resposta : Boolean;
 begin
-{
-  if (not dbGridProdutos.DataSource.DataSet.IsEmpty) or (ClientDataSet1.State in [dsEdit]) then
-  begin
-    edtVlDescTotalPedido.SetFocus;
-  end;  }
+  produto := TPedidoVenda.Create;
+  resposta := produto.ValidaProduto(StrToInt(edtCdCondPgto.Text));
 
-
-  if sqlPedidoVendaProduto.IsEmpty then
+  if resposta then
   begin
-    ShowMessage('Produto sem preço Cadastrado ou Inativo! Verifique');
-    edtCdtabelaPreco.Text := '';
-    edtCdProduto.SetFocus;
+    if (Application.MessageBox('Produto sem preço Cadastrado ou Inativo!', 'Verifique', MB_OK) = idOK) then
+    begin
+      edtCdtabelaPreco.Text := '';
+      edtCdProduto.SetFocus;
+    end;
   end;
 end;
 

@@ -8,7 +8,7 @@ uses
   Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Data.DB, FireDAC.Stan.Param,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, System.Generics.Collections;
 
 type TPedidoVenda = class
 
@@ -19,6 +19,8 @@ type TPedidoVenda = class
     function ValidaFormaPgto(CdFormaPgto: Integer): Boolean;
     function ValidaCliente(CdCliente: Integer): Boolean;
     function ValidaCondPgto(CdCond, CdForma: Integer): Boolean;
+    function BuscaProduto(CodProduto: Integer): TList<String>;
+    function ValidaProduto(CodProduto: Integer): Boolean;
 
 end;
 
@@ -118,6 +120,92 @@ begin
   finally
     qry.Free;
   end;
+end;
+
+function TPedidoVenda.ValidaProduto(CodProduto: Integer): Boolean;
+const
+  sql = 'select '+
+            'p.cd_produto,                  '+
+            'p.desc_produto,                '+
+            'tpp.un_medida,                 '+
+            'tpp.cd_tabela,                 '+
+            'tp.nm_tabela,                  '+
+            'tpp.valor                      '+
+        'from                               '+
+            'produto p                      '+
+        'join tabela_preco_produto tpp on   '+
+            'p.cd_produto = tpp.cd_produto  '+
+        'join tabela_preco tp on            '+
+            'tpp.cd_tabela = tp.cd_tabela   '+
+        'where (p.cd_produto = :cd_produto) '+
+        'and (p.fl_ativo = true)';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_produto').AsInteger := CodProduto;
+    qry.Open(sql);
+
+    Result := qry.IsEmpty;
+  finally
+    qry.Free;
+  end;
+end;
+
+function TPedidoVenda.BuscaProduto(CodProduto: Integer): TList<String>;
+const
+  sql = 'select '+
+            'p.cd_produto,                  '+
+            'p.desc_produto,                '+
+            'tpp.un_medida,                 '+
+            'tpp.cd_tabela,                 '+
+            'tp.nm_tabela,                  '+
+            'tpp.valor                      '+
+        'from                               '+
+            'produto p                      '+
+        'join tabela_preco_produto tpp on   '+
+            'p.cd_produto = tpp.cd_produto  '+
+        'join tabela_preco tp on            '+
+            'tpp.cd_tabela = tp.cd_tabela   '+
+        'where (p.cd_produto = :cd_produto) '+
+        'and (p.fl_ativo = true)';
+var
+  qry: TFDQuery;
+  lista: TList<string>;
+  desc_produto,
+  un_medida, cd_tabela, nm_tabela, valor: string;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.FDConnection1;
+  lista := TList<string>.Create;
+
+  try
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_produto').AsInteger := CodProduto;
+    qry.Open(sql);
+
+    desc_produto := qry.FieldByName('desc_produto').AsString;
+    un_medida := qry.FieldByName('un_medida').AsString;
+    cd_tabela := qry.FieldByName('cd_tabela').AsString;
+    nm_tabela := qry.FieldByName('nm_tabela').AsString;
+    valor := qry.FieldByName('valor').AsString;
+
+    //retorna em uma lista
+    lista.Add(desc_produto);
+    lista.Add(un_medida);
+    lista.Add(cd_tabela);
+    lista.Add(nm_tabela);
+    lista.Add(valor);
+
+    Result := lista;
+  finally
+    qry.Free;
+  end;
+
 end;
 
 function TPedidoVenda.CalcValorTotalItem(valorUnitario,
