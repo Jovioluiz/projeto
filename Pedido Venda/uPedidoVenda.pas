@@ -228,20 +228,41 @@ begin
         cdsPedidoVenda.FieldByName('vl_desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
         cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency := StrToCurr(edtVlTotal.Text);
         if aliq_icms = 0 then
+        begin
           cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := 0;
-        cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-        cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := aliq_icms;
-        cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
+          cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := 0;
+          cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := 0;
+        end
+        else
+        begin
+          cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
+          cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := aliq_icms;
+          cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
+        end;
         if aliq_ipi = 0 then
+        begin
           cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := 0;
-        cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-        cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := aliq_ipi;
-        cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
+          cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := 0;
+          cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := 0;
+        end
+        else
+        begin
+          cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
+          cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := aliq_ipi;
+          cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
+        end;
         if aliq_pis_cofins = 0 then
+        begin
           cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := 0;
-        cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-        cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsFloat := aliq_pis_cofins;
-        cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
+          cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsFloat := 0;
+          cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := 0;
+        end
+        else
+        begin
+          cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
+          cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsFloat := aliq_pis_cofins;
+          cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
+        end;
       finally
         cdsPedidoVenda.Insert;
         edicaoItem := False;
@@ -259,20 +280,41 @@ begin
       cdsPedidoVenda.FieldByName('vl_desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
       cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency := StrToCurr(edtVlTotal.Text);
       if aliq_icms = 0 then
+      begin
         cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := 0;
-      cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-      cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := aliq_icms;
-      cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
+        cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := 0;
+        cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := 0;
+      end
+      else
+      begin
+        cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
+        cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := aliq_icms;
+        cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
+      end;
       if aliq_ipi = 0 then
+      begin
         cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := 0;
-      cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-      cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := aliq_ipi;
-      cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
+        cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := 0;
+        cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := 0;
+      end
+      else
+      begin
+        cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
+        cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := aliq_ipi;
+        cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
+      end;
       if aliq_pis_cofins = 0 then
+      begin
         cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := 0;
-      cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-      cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := aliq_pis_cofins;
-      cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
+        cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsFloat := 0;
+        cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := 0;
+      end
+      else
+      begin
+        cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
+        cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsFloat := aliq_pis_cofins;
+        cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
+      end;
       cdsPedidoVenda.Post;
     end;
 
