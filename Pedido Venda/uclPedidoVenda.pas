@@ -21,7 +21,8 @@ type TPedidoVenda = class
     function ValidaCondPgto(CdCond, CdForma: Integer): Boolean;
     function BuscaProduto(CodProduto: Integer): TList<String>;
     function ValidaProduto(CodProduto: Integer): Boolean;
-
+    function BuscaTabelaPreco(CodTabela, CodProduto: Integer): TList<string>;
+    function ValidaTabelaPreco(CodTabela, CodProduto: Integer): Boolean;
 end;
 
 implementation
@@ -208,6 +209,43 @@ begin
 
 end;
 
+function TPedidoVenda.BuscaTabelaPreco(CodTabela, CodProduto: Integer): TList<string>;
+const
+  sql = 'select                             '+
+             'tp.cd_tabela,                 '+
+             'tp.nm_tabela,                 '+
+             'tpp.valor                     '+
+        'from                               '+
+            'tabela_preco tp                '+
+        'join tabela_preco_produto tpp on   '+
+            'tp.cd_tabela = tpp.cd_tabela   '+
+        'join produto p on                  '+
+            'tpp.cd_produto = p.cd_produto  '+
+        'where (tp.cd_tabela = :cd_tabela)  '+
+        'and (p.cd_produto = :cd_produto)';
+var
+  qry: TFDQuery;
+  lista: TList<string>;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.FDConnection1;
+  lista := TList<string>.Create;
+
+  try
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_tabela').AsInteger := CodTabela;
+    qry.ParamByName('cd_produto').AsInteger := CodProduto;
+    qry.Open(sql);
+
+    lista.Add(qry.FieldByName('nm_tabela').AsString);
+    lista.Add(qry.FieldByName('valor').AsString);
+
+    Result := lista;
+  finally
+    qry.Free;
+  end;
+end;
+
 function TPedidoVenda.CalcValorTotalItem(valorUnitario,
   qtdadeItem: Double): Double;
 var
@@ -247,6 +285,38 @@ begin
   if qtPedido > qtEstoque then
   begin
     Result := True;
+  end;
+end;
+
+function TPedidoVenda.ValidaTabelaPreco(CodTabela, CodProduto: Integer): Boolean;
+const
+  sql = 'select                             '+
+             'tp.cd_tabela,                 '+
+             'tp.nm_tabela,                 '+
+             'tpp.valor                     '+
+        'from                               '+
+            'tabela_preco tp                '+
+        'join tabela_preco_produto tpp on   '+
+            'tp.cd_tabela = tpp.cd_tabela   '+
+        'join produto p on                  '+
+            'tpp.cd_produto = p.cd_produto  '+
+        'where (tp.cd_tabela = :cd_tabela)  '+
+        'and (p.cd_produto = :cd_produto)';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_tabela').AsInteger := CodTabela;
+    qry.ParamByName('cd_produto').AsInteger := CodProduto;
+    qry.Open(sql);
+
+    Result := qry.IsEmpty;
+  finally
+    qry.Free;
   end;
 end;
 

@@ -269,7 +269,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       Top = 384
       Width = 831
       Height = 201
-      DataSource = DataSource1
+      DataSource = dsPedidoVenda
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       ReadOnly = True
       TabOrder = 17
@@ -281,103 +281,6 @@ object frmPedidoVenda: TfrmPedidoVenda
       OnDrawColumnCell = dbGridProdutosDrawColumnCell
       OnDblClick = dbGridProdutosDblClick
       OnKeyDown = dbGridProdutosKeyDown
-      Columns = <
-        item
-          Expanded = False
-          FieldName = 'C'#243'd. Produto'
-          Title.Color = clWhite
-          Width = 73
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Descri'#231#227'o'
-          Width = 300
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Qtdade'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Tabela Pre'#231'o'
-          Width = 70
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'UN Medida'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Unit'#225'rio'
-          Width = 70
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Desconto'
-          Width = 80
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Total'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Base ICMS '
-          Width = 100
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq ICMS'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor ICMS'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Base IPI'
-          Width = 75
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq IPI'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor IPI'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Base PIS/COFINS'
-          Width = 120
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq PIS/COFINS'
-          Width = 90
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor PIS/COFINS'
-          Width = 90
-          Visible = True
-        end>
     end
     object edtVlDescontoItem: TEdit
       Left = 650
@@ -496,45 +399,123 @@ object frmPedidoVenda: TfrmPedidoVenda
     Caption = 'Or'#231'amento'
     TabOrder = 7
   end
-  object sqlPedidoVendaTabPreco: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 216
-    Top = 304
-  end
-  object ClientDataSet1: TClientDataSet
+  object cdsPedidoVenda: TClientDataSet
+    PersistDataPacket.Data = {
+      870200009619E0BD01000000180000001100000000000300000087020A63645F
+      70726F6475746F04000100000000000964657363726963616F01004900000001
+      00055749445448020002001400097174645F76656E646108000400000000000F
+      63645F746162656C615F707265636F040001000000000009756E5F6D65646964
+      6101004900000001000557494454480200020014000B766C5F756E6974617269
+      6F080004000000010007535542545950450200490006004D6F6E6579000B766C
+      5F646573636F6E746F080004000000010007535542545950450200490006004D
+      6F6E6579000D766C5F746F74616C5F6974656D08000400000001000753554254
+      5950450200490006004D6F6E6579000C69636D735F766C5F6261736508000400
+      0000010007535542545950450200490006004D6F6E6579000C69636D735F7063
+      5F616C6971080004000000010007535542545950450200490006004D6F6E6579
+      000A69636D735F76616C6F720800040000000100075355425459504502004900
+      06004D6F6E6579000B6970695F766C5F62617365080004000000010007535542
+      545950450200490006004D6F6E6579000B6970695F70635F616C697108000400
+      0000010007535542545950450200490006004D6F6E657900096970695F76616C
+      6F72080004000000010007535542545950450200490006004D6F6E6579001270
+      69735F636F66696E735F766C5F62617365080004000000010007535542545950
+      450200490006004D6F6E657900127069735F636F66696E735F70635F616C6971
+      080004000000010007535542545950450200490006004D6F6E65790010706973
+      5F636F66696E735F76616C6F7208000400000001000753554254595045020049
+      0006004D6F6E6579000000}
+    Active = True
     Aggregates = <>
     Params = <>
     Left = 328
     Top = 448
+    object intgrfldPedidoVendacd_produto: TIntegerField
+      DisplayLabel = 'C'#243'd. Produto'
+      DisplayWidth = 11
+      FieldName = 'cd_produto'
+    end
+    object cdsPedidoVendadescricao: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      DisplayWidth = 29
+      FieldName = 'descricao'
+    end
+    object cdsPedidoVendaqtd_venda: TFloatField
+      DisplayLabel = 'Qtdade'
+      DisplayWidth = 7
+      FieldName = 'qtd_venda'
+    end
+    object intgrfldPedidoVendacd_tabela_preco: TIntegerField
+      DisplayLabel = 'Tabela Preco'
+      DisplayWidth = 11
+      FieldName = 'cd_tabela_preco'
+    end
+    object cdsPedidoVendaun_medida: TStringField
+      DisplayLabel = 'UN Medida'
+      DisplayWidth = 8
+      FieldName = 'un_medida'
+    end
+    object cdsPedidoVendavl_unitario: TCurrencyField
+      DisplayLabel = 'Valor Unit'#225'rio'
+      DisplayWidth = 10
+      FieldName = 'vl_unitario'
+    end
+    object cdsPedidoVendavl_desconto: TCurrencyField
+      DisplayLabel = 'Desconto'
+      DisplayWidth = 7
+      FieldName = 'vl_desconto'
+    end
+    object cdsPedidoVendavl_total_item: TCurrencyField
+      DisplayLabel = 'Total Item'
+      DisplayWidth = 10
+      FieldName = 'vl_total_item'
+    end
+    object cdsPedidoVendaicms_vl_base: TCurrencyField
+      DisplayLabel = 'Base ICMS'
+      DisplayWidth = 10
+      FieldName = 'icms_vl_base'
+    end
+    object cdsPedidoVendaicms_pc_aliq: TCurrencyField
+      DisplayLabel = 'ICMS Aliq.'
+      DisplayWidth = 10
+      FieldName = 'icms_pc_aliq'
+    end
+    object cdsPedidoVendaicms_valor: TCurrencyField
+      DisplayLabel = 'ICMS Valor'
+      DisplayWidth = 10
+      FieldName = 'icms_valor'
+    end
+    object cdsPedidoVendaipi_vl_base: TCurrencyField
+      DisplayLabel = 'IPI Base'
+      DisplayWidth = 7
+      FieldName = 'ipi_vl_base'
+    end
+    object cdsPedidoVendaipi_pc_aliq: TCurrencyField
+      DisplayLabel = 'IPI Aliq.'
+      DisplayWidth = 6
+      FieldName = 'ipi_pc_aliq'
+    end
+    object cdsPedidoVendaipi_valor: TCurrencyField
+      DisplayLabel = 'IPI Valor'
+      DisplayWidth = 7
+      FieldName = 'ipi_valor'
+    end
+    object cdsPedidoVendapis_cofins_vl_base: TCurrencyField
+      DisplayLabel = 'PIS/COFINS Base'
+      DisplayWidth = 15
+      FieldName = 'pis_cofins_vl_base'
+    end
+    object cdsPedidoVendapis_cofins_pc_aliq: TCurrencyField
+      DisplayLabel = 'PIS/COFINS Aliq.'
+      DisplayWidth = 13
+      FieldName = 'pis_cofins_pc_aliq'
+    end
+    object cdsPedidoVendapis_cofins_valor: TCurrencyField
+      DisplayLabel = 'PIS/COFINS Valor'
+      DisplayWidth = 14
+      FieldName = 'pis_cofins_valor'
+    end
   end
-  object DataSource1: TDataSource
-    DataSet = ClientDataSet1
+  object dsPedidoVenda: TDataSource
+    DataSet = cdsPedidoVenda
     Left = 248
-    Top = 448
-  end
-  object sqlPedidoVendaInsert: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 432
-    Top = 448
-  end
-  object sqlNrPedido: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 376
-    Top = 16
-  end
-  object sqlIdGeral: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 440
-    Top = 16
-  end
-  object sqlIdGeralPVI: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 488
-    Top = 16
-  end
-  object sqlPedidoVendaItem: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 608
     Top = 448
   end
 end
