@@ -498,7 +498,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Top = 409
       Width = 817
       Height = 265
-      DataSource = DataSource1
+      DataSource = dsEntrada
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 31
       TitleFont.Charset = DEFAULT_CHARSET
@@ -646,12 +646,12 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     Left = 112
     Top = 8
   end
-  object DataSource1: TDataSource
-    DataSet = ClientDataSet1
+  object dsEntrada: TDataSource
+    DataSet = cdsEntrada
     Left = 184
     Top = 472
   end
-  object ClientDataSet1: TClientDataSet
+  object cdsEntrada: TClientDataSet
     Aggregates = <>
     Params = <>
     Left = 264

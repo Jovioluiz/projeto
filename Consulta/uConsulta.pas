@@ -102,7 +102,7 @@ begin
   try
     if chamada = 'cntCliente' then
     begin
-      cliente.edtCLIENTEcd_cliente.Text := cdsConsulta.FieldByName('cd_cliente').ToString;
+      cliente.cdCliente := cdsConsulta.FieldByName('cd_cliente').AsInteger;
       Close;
       chamada := '';
     end;

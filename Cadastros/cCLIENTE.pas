@@ -56,6 +56,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtCLIENTEcd_clienteKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure FormActivate(Sender: TObject);
   private
     FcdCliente: Integer;
     { Private declarations }
@@ -131,7 +132,7 @@ begin
   qryEnd := TFDQuery.Create(Self);
   qryEnd.Connection := dm.FDConnection1;
 
-   try
+  try
     cliente := TValidaDados.Create;
     cliente.nomeCliente := edtCLIENTENM_CLIENTE.Text;
     cliente.cpf := edtCLIENTECPF_CNPJ.Text;
@@ -312,7 +313,7 @@ begin
           end;
       end;
     end;
-    finally
+  finally
     qry.Free;
     qryCliente.Free;
     qryEnd.Free;
@@ -549,7 +550,7 @@ begin
   begin
     chamada := 'cntCliente';
     consulta.abreConsulta(sql);
-    consulta.ShowModal;
+    consulta.Show;
   end;
 end;
 
@@ -586,9 +587,15 @@ begin
     end;
   end
   else
-  begin
     Exit;
-  end;
+
+end;
+
+procedure TfrmCadCliente.FormActivate(Sender: TObject);
+begin
+  inherited;
+  if chamada = 'cntCliente' then
+    edtCLIENTEcd_cliente.Text := cdCliente.ToString;
 end;
 
 procedure TfrmCadCliente.FormClose(Sender: TObject; var Action: TCloseAction);

@@ -147,7 +147,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     object dbGridUltimasEntradas: TDBGrid
       Left = 16
       Top = 603
-      Width = 593
+      Width = 721
       Height = 120
       DataSource = dsUltimaEntradas
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -159,10 +159,10 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       TitleFont.Style = []
     end
     object dbgriPrecos: TDBGrid
-      Left = 760
-      Top = 102
-      Width = 425
-      Height = 275
+      Left = 743
+      Top = 100
+      Width = 442
+      Height = 277
       DataSource = dsPrecos
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 9
@@ -290,12 +290,12 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     Top = 648
     object intgrfldUltimasEntradasdcto_numero: TIntegerField
       DisplayLabel = 'N'#250'mero'
-      DisplayWidth = 10
+      DisplayWidth = 12
       FieldName = 'dcto_numero'
     end
     object cdsUltimasEntradasfornecedor: TStringField
       DisplayLabel = 'Fornecedor'
-      DisplayWidth = 33
+      DisplayWidth = 50
       FieldName = 'fornecedor'
     end
     object cdsUltimasEntradasdt_lancamento: TDateField
@@ -315,7 +315,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     end
     object cdsUltimasEntradasquantidade: TFloatField
       DisplayLabel = 'Quantidade'
-      DisplayWidth = 10
+      DisplayWidth = 12
       FieldName = 'quantidade'
     end
   end
