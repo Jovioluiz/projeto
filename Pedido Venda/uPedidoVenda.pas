@@ -109,6 +109,7 @@ type
     { Private declarations }
     edicaoItem : Boolean;
     procedure limpaCampos;
+    procedure limpaDados;
     procedure atualizaEstoqueProduto;
     function GeraIdGeral: Largeint;
     function GeraNumeroPedido: Int8;
@@ -442,18 +443,8 @@ begin
     dm.FDConnection1.Close;
 
     ShowMessage('Pedido ' + edtNrPedido.Text + ' Gravado Com Sucesso');
-    edtNrPedido.Clear;
-    edtCdCliente.Clear;
-    edtNomeCliente.Clear;
-    edtCidadeCliente.Clear;
-    edtCdFormaPgto.Clear;
-    edtNomeFormaPgto.Clear;
-    edtCdCondPgto.Clear;
-    edtNomeCondPgto.Clear;
-    edtVlDescTotalPedido.Clear;
-    edtVlAcrescimoTotalPedido.Clear;
-    edtVlTotalPedido.Clear;
-    dbGridProdutos.DataSource := nil;
+    limpaDados;
+
   except
     on E : exception do
     begin
@@ -567,9 +558,9 @@ begin
   if not resposta then
   begin
     if (Application.MessageBox('Cliente não encontrado ou Inativo','Atenção', MB_OK) = idOK) then
-     begin
+    begin
       edtCdCliente.SetFocus;
-     end;
+    end;
   end;
 end;
 
@@ -1027,4 +1018,20 @@ begin
   edtVlDescTotalPedido.Text := '0,00';
   edtVlAcrescimoTotalPedido.Text := '0,00';
 end;
+procedure TfrmPedidoVenda.limpaDados;
+begin
+  edtNrPedido.Clear;
+  edtCdCliente.Clear;
+  edtNomeCliente.Clear;
+  edtCidadeCliente.Clear;
+  edtCdFormaPgto.Clear;
+  edtNomeFormaPgto.Clear;
+  edtCdCondPgto.Clear;
+  edtNomeCondPgto.Clear;
+  edtVlDescTotalPedido.Clear;
+  edtVlAcrescimoTotalPedido.Clear;
+  edtVlTotalPedido.Clear;
+  dbGridProdutos.DataSource := nil;
+end;
+
 end.

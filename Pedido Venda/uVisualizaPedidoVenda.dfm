@@ -132,7 +132,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       Top = 264
       Width = 873
       Height = 321
-      DataSource = DataSource1
+      DataSource = dsProdutos
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 7
       TitleFont.Charset = DEFAULT_CHARSET
@@ -141,111 +141,6 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
       OnDrawColumnCell = dbGridProdutosDrawColumnCell
-      Columns = <
-        item
-          Expanded = False
-          FieldName = 'C'#243'd. Produto'
-          ReadOnly = True
-          Title.Color = clWhite
-          Width = 73
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Descri'#231#227'o'
-          ReadOnly = True
-          Width = 300
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Qtdade'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Tabela Pre'#231'o'
-          ReadOnly = True
-          Width = 70
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'UN Medida'
-          ReadOnly = True
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Unit'#225'rio'
-          ReadOnly = True
-          Width = 70
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Desconto'
-          ReadOnly = True
-          Width = 80
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Total'
-          ReadOnly = True
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Base ICMS '
-          Width = 92
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq ICMS'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor ICMS'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Base IPI'
-          Width = 81
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq IPI'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor IPI'
-          Width = 58
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Base PIS/COFINS'
-          Width = 124
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq PIS/COFINS'
-          Width = 86
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor PIS/COFINS'
-          Width = 96
-          Visible = True
-        end>
     end
     object edtVlDescTotalPedido: TEdit
       Left = 131
@@ -355,20 +250,106 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     TabOrder = 7
     OnClick = btnEditarPedidoClick
   end
-  object ClientDataSet1: TClientDataSet
+  object cdsProdutos: TClientDataSet
+    PersistDataPacket.Data = {
+      8A0200009619E0BD0100000018000000110000000000030000008A020A63645F
+      70726F6475746F04000100000000000C646573635F70726F6475746F01004900
+      00000100055749445448020002001400097174645F76656E6461080004000000
+      00000F63645F746162656C615F707265636F040001000000000009756E5F6D65
+      6469646101004900000001000557494454480200020014000B766C5F756E6974
+      6172696F080004000000010007535542545950450200490006004D6F6E657900
+      0B766C5F646573636F6E746F0800040000000100075355425459504502004900
+      06004D6F6E6579000D766C5F746F74616C5F6974656D08000400000001000753
+      5542545950450200490006004D6F6E6579000C69636D735F766C5F6261736508
+      0004000000010007535542545950450200490006004D6F6E6579000C69636D73
+      5F70635F616C6971080004000000010007535542545950450200490006004D6F
+      6E6579000A69636D735F76616C6F720800040000000100075355425459504502
+      00490006004D6F6E6579000B6970695F766C5F62617365080004000000010007
+      535542545950450200490006004D6F6E6579000B6970695F70635F616C697108
+      0004000000010007535542545950450200490006004D6F6E657900096970695F
+      76616C6F72080004000000010007535542545950450200490006004D6F6E6579
+      00127069735F636F66696E735F766C5F62617365080004000000010007535542
+      545950450200490006004D6F6E657900127069735F636F66696E735F70635F61
+      6C6971080004000000010007535542545950450200490006004D6F6E65790010
+      7069735F636F66696E735F76616C6F7208000400000001000753554254595045
+      0200490006004D6F6E6579000000}
+    Active = True
     Aggregates = <>
     Params = <>
     Left = 328
     Top = 352
+    object cdsProdutoscd_produto: TIntegerField
+      DisplayLabel = 'Produto'
+      FieldName = 'cd_produto'
+    end
+    object cdsProdutosdesc_produto: TStringField
+      DisplayLabel = 'Desc. Produto'
+      FieldName = 'desc_produto'
+    end
+    object cdsProdutosqtd_venda: TFloatField
+      DisplayLabel = 'Qtd Venda'
+      FieldName = 'qtd_venda'
+    end
+    object cdsProdutoscd_tabela_preco: TIntegerField
+      DisplayLabel = 'Tabela Preco'
+      FieldName = 'cd_tabela_preco'
+    end
+    object cdsProdutosun_medida: TStringField
+      DisplayLabel = 'Un Medida'
+      FieldName = 'un_medida'
+    end
+    object cdsProdutosvl_unitario: TCurrencyField
+      DisplayLabel = 'Valor Unit'#225'rio'
+      FieldName = 'vl_unitario'
+    end
+    object cdsProdutosvl_desconto: TCurrencyField
+      DisplayLabel = 'Valor Desconto'
+      FieldName = 'vl_desconto'
+    end
+    object cdsProdutosvl_total_item: TCurrencyField
+      DisplayLabel = 'Valor Total Item'
+      FieldName = 'vl_total_item'
+    end
+    object cdsProdutosicms_vl_base: TCurrencyField
+      DisplayLabel = 'Valor Base ICMS'
+      FieldName = 'icms_vl_base'
+    end
+    object cdsProdutosicms_pc_aliq: TCurrencyField
+      DisplayLabel = 'Aliq. ICMS'
+      FieldName = 'icms_pc_aliq'
+    end
+    object cdsProdutosicms_valor: TCurrencyField
+      DisplayLabel = 'Valor ICMS'
+      FieldName = 'icms_valor'
+    end
+    object cdsProdutosipi_vl_base: TCurrencyField
+      DisplayLabel = 'Valor Base IPI'
+      FieldName = 'ipi_vl_base'
+    end
+    object cdsProdutosipi_pc_aliq: TCurrencyField
+      DisplayLabel = 'Aliq. IPI'
+      FieldName = 'ipi_pc_aliq'
+    end
+    object cdsProdutosipi_valor: TCurrencyField
+      DisplayLabel = 'Valor IPI'
+      FieldName = 'ipi_valor'
+    end
+    object cdsProdutospis_cofins_vl_base: TCurrencyField
+      DisplayLabel = 'Valor Base PIS/COFINS'
+      FieldName = 'pis_cofins_vl_base'
+    end
+    object cdsProdutospis_cofins_pc_aliq: TCurrencyField
+      DisplayLabel = 'Aliq. PIS/COFINS'
+      FieldName = 'pis_cofins_pc_aliq'
+    end
+    object cdsProdutospis_cofins_valor: TCurrencyField
+      DisplayLabel = 'Valor PIS/COFINS'
+      FieldName = 'pis_cofins_valor'
+    end
   end
-  object DataSource1: TDataSource
-    DataSet = sqlVisualizaPedidoVenda
+  object dsProdutos: TDataSource
+    DataSet = cdsProdutos
     Left = 248
-    Top = 352
-  end
-  object sqlVisualizaPedidoVenda: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 424
     Top = 352
   end
 end
