@@ -52,14 +52,18 @@ begin
   qry.Close;
   qry.SQL.Clear;
 
-  qry.SQL.Add(sql_cliente);
-  qry.ParamByName('cd_cliente').AsInteger := CdCliente;
-  qry.Open(sql_cliente);
+  try
+    qry.SQL.Add(sql_cliente);
+    qry.ParamByName('cd_cliente').AsInteger := CdCliente;
+    qry.Open(sql_cliente);
 
-  if not qry.IsEmpty then
-    Result := True
-  else
-    Result := False;
+    if not qry.IsEmpty then
+      Result := True
+    else
+      Result := False;
+  finally
+    qry.Free;
+  end;
 end;
 
 function TPedidoVenda.ValidaCondPgto(CdCond, CdForma: Integer): Boolean;

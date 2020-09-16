@@ -530,7 +530,6 @@ begin
   qry.Connection := dm.FDConnection1;
 
   try
-
     qry.Close;
     qry.SQL.Clear;
     qry.SQL.Add(sql_cliente);
@@ -555,12 +554,16 @@ begin
   cliente := TPedidoVenda.Create;
   resposta := cliente.ValidaCliente(StrToInt(edtCdCliente.Text));
 
-  if not resposta then
-  begin
-    if (Application.MessageBox('Cliente não encontrado ou Inativo','Atenção', MB_OK) = idOK) then
+  try
+    if not resposta then
     begin
-      edtCdCliente.SetFocus;
+      if (Application.MessageBox('Cliente não encontrado ou Inativo','Atenção', MB_OK) = idOK) then
+      begin
+        edtCdCliente.SetFocus;
+      end;
     end;
+  finally
+    FreeAndNil(cliente);
   end;
 end;
 
@@ -610,14 +613,17 @@ begin
   condPgto := TPedidoVenda.Create;
   resposta := condPgto.ValidaCondPgto(StrToInt(edtCdCondPgto.Text), StrToInt(edtCdFormaPgto.Text));
 
-  if resposta then
-  begin
-    if (Application.MessageBox('Condição de pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+  try
+    if resposta then
     begin
-      edtCdCondPgto.SetFocus;
+      if (Application.MessageBox('Condição de pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+      begin
+        edtCdCondPgto.SetFocus;
+      end;
     end;
+  finally
+    FreeAndNil(condPgto);
   end;
-
 end;
 
 //busca a forma pgto
@@ -660,10 +666,14 @@ begin
   formaPgto := TPedidoVenda.Create;
   resposta := formaPgto.ValidaFormaPgto(StrToInt(edtCdFormaPgto.Text));
 
-  if resposta then
-  begin
-    if (Application.MessageBox('Forma de Pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
-      edtCdFormaPgto.SetFocus;
+  try
+    if resposta then
+    begin
+      if (Application.MessageBox('Forma de Pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+        edtCdFormaPgto.SetFocus;
+    end;
+  finally
+    FreeAndNil(formaPgto);
   end;
 end;
 
@@ -698,6 +708,7 @@ begin
     edtDescTabelaPreco.Text := lista.Items[3];
     edtVlUnitario.Text := lista.Items[4];
   finally
+    FreeAndNil(produto);
     FreeAndNil(lista);
   end;
 end;
@@ -710,13 +721,17 @@ begin
   produto := TPedidoVenda.Create;
   resposta := produto.ValidaProduto(StrToInt(edtCdCondPgto.Text));
 
-  if resposta then
-  begin
-    if (Application.MessageBox('Produto sem preço Cadastrado ou Inativo!', 'Verifique', MB_OK) = idOK) then
+  try
+    if resposta then
     begin
-      edtCdtabelaPreco.Text := '';
-      edtCdProduto.SetFocus;
+      if (Application.MessageBox('Produto sem preço Cadastrado ou Inativo!', 'Verifique', MB_OK) = idOK) then
+      begin
+        edtCdtabelaPreco.Text := '';
+        edtCdProduto.SetFocus;
+      end;
     end;
+  finally
+    FreeAndNil(produto);
   end;
 end;
 
@@ -742,6 +757,7 @@ begin
     edtDescTabelaPreco.Text:= lista.Items[0];
     edtVlUnitario.Text := lista.Items[1];
   finally
+    FreeAndNil(tabela);
     FreeAndNil(lista);
   end;
 end;
@@ -755,22 +771,26 @@ begin
   tabela := TPedidoVenda.Create;
   resposta := tabela.ValidaTabelaPreco(StrToInt(edtCdtabelaPreco.Text), StrToInt(edtCdProduto.Text));
 
-  if resposta then
-  begin
-    if (Application.MessageBox('Tabela de Preço não encontrada', 'Atenção', MB_OK) = idOK) then
+  try
+    if resposta then
     begin
-      edtCdtabelaPreco.SetFocus;
+      if (Application.MessageBox('Tabela de Preço não encontrada', 'Atenção', MB_OK) = idOK) then
+      begin
+        edtCdtabelaPreco.SetFocus;
+      end;
+    end
+    else
+    begin
+      //recalcula o valor total do item ao alterar a tabela de preço
+      //fazer function na uclpedidovenda
+      vl_unitario := StrToCurr(edtVlUnitario.Text);
+      qtdade := StrToCurr(edtQtdade.Text);
+      valor_total := qtdade * vl_unitario;
+      edtVlTotal.Text := CurrToStr(valor_total);
+      edtVlDescontoItem.Enabled := true;
     end;
-  end
-  else
-  begin
-    //recalcula o valor total do item ao alterar a tabela de preço
-    //fazer function na uclpedidovenda
-    vl_unitario := StrToCurr(edtVlUnitario.Text);
-    qtdade := StrToCurr(edtQtdade.Text);
-    valor_total := qtdade * vl_unitario;
-    edtVlTotal.Text := CurrToStr(valor_total);
-    edtVlDescontoItem.Enabled := true;
+  finally
+    FreeAndNil(tabela);
   end;
 end;
 
@@ -781,16 +801,20 @@ valorTotal: Double;
 begin
   pv := TPedidoVenda.Create;
 
-  if edtQtdade.Text = EmptyStr then
-  begin
-    edtVlTotal.Text := '';
-    Exit;
-  end
-  else
-  begin
-    valorTotal := pv.CalcValorTotalItem(StrToFloat(edtVlUnitario.Text), StrToFloat(edtQtdade.Text));
-    edtVlTotal.Text := FloatToStr(valorTotal);
-    edtVlDescontoItem.Enabled := true;
+  try
+    if edtQtdade.Text = EmptyStr then
+    begin
+      edtVlTotal.Text := '';
+      Exit;
+    end
+    else
+    begin
+      valorTotal := pv.CalcValorTotalItem(StrToFloat(edtVlUnitario.Text), StrToFloat(edtQtdade.Text));
+      edtVlTotal.Text := FloatToStr(valorTotal);
+      edtVlDescontoItem.Enabled := true;
+    end;
+  finally
+    FreeAndNil(pv);
   end;
 end;
 
@@ -803,67 +827,74 @@ begin
   ValidaQtdade := TPedidoVenda.Create;
   resposta := ValidaQtdade.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
 
-  if edtQtdade.Text = '0' then
-  begin
-    ShowMessage('Informe uma quantidade maior que 0');
-    edtCdProduto.SetFocus;
-  end;
+  try
+    if edtQtdade.Text = '0' then
+    begin
+      ShowMessage('Informe uma quantidade maior que 0');
+      edtCdProduto.SetFocus;
+    end;
 
-  if resposta then
-  begin
-    ShowMessage('Quantidade informada maior que a disponível.');
-    //+ #13 +'Quantidade disponível: ' + FloatToStr(qtdade));
-    edtQtdade.SetFocus;
-    Exit;
+    if resposta then
+    begin
+      ShowMessage('Quantidade informada maior que a disponível.');
+      //+ #13 +'Quantidade disponível: ' + FloatToStr(qtdade));
+      edtQtdade.SetFocus;
+      Exit;
+    end;
+  finally
+    FreeAndNil(ValidaQtdade);
   end;
-
 end;
-
 
 
 procedure TfrmPedidoVenda.edtVlAcrescimoTotalPedidoExit(Sender: TObject);
 //recalcula o valor total se informado um valor de acrescimo no total do pedido
 var
-  vl_total_com_acrescimo, vl_acrescimo, vl_total_pedido, valor_total, valor_desconto : Currency;
+  vl_total_com_acrescimo, vl_acrescimo,
+  vl_total_pedido, valor_total, valor_desconto : Currency;
 begin
-  if (edtVlAcrescimoTotalPedido.Text = '0') or (edtVlAcrescimoTotalPedido.Text = '0,00') then
-  begin
-    edtVlAcrescimoTotalPedido.Text := CurrToStr(0);
-    valor_total := 0;
-    with cdsPedidoVenda do
-    begin
-      cdsPedidoVenda.DisableControls;
-      cdsPedidoVenda.First;
-      while not cdsPedidoVenda.Eof do
-      begin
-        valor_total := (valor_total + cdsPedidoVenda.FieldByName('Valor Total').AsCurrency);
-        cdsPedidoVenda.Next;
-      end;
-      edtVlTotalPedido.Text := CurrToStr(valor_total);
-      cdsPedidoVenda.EnableControls;
-    end;
-  end
-  else
-  begin
-    valor_desconto := StrToCurr(edtVlDescTotalPedido.Text); //desconto no total do pedido
-    vl_total_pedido := 0;
-    vl_acrescimo := StrToCurr(edtVlAcrescimoTotalPedido.Text);
-    with cdsPedidoVenda do
-    begin
-      cdsPedidoVenda.DisableControls;
-      cdsPedidoVenda.First;
-      while not cdsPedidoVenda.Eof do
-      begin
-        vl_total_pedido := (vl_total_pedido + cdsPedidoVenda.FieldByName('Valor Total').AsCurrency);
-        cdsPedidoVenda.Next;
-      end;
-      cdsPedidoVenda.EnableControls;
-    end;
+  try
+    cdsPedidoVenda.DisableControls;
 
-    vl_total_com_acrescimo := (vl_total_pedido + vl_acrescimo) - valor_desconto;
-    edtVlTotalPedido.Text := CurrToStr(vl_total_com_acrescimo);
+    if (edtVlAcrescimoTotalPedido.Text = '0') or (edtVlAcrescimoTotalPedido.Text = '0,00') then
+    begin
+      edtVlAcrescimoTotalPedido.Text := CurrToStr(0);
+      valor_total := 0;
+
+      with cdsPedidoVenda do
+      begin
+        cdsPedidoVenda.First;
+        while not cdsPedidoVenda.Eof do
+        begin
+          valor_total := (valor_total + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
+          cdsPedidoVenda.Next;
+        end;
+        edtVlTotalPedido.Text := CurrToStr(valor_total);
+      end;
+    end
+    else
+    begin
+      valor_desconto := StrToCurr(edtVlDescTotalPedido.Text); //desconto no total do pedido
+      vl_total_pedido := 0;
+      vl_acrescimo := StrToCurr(edtVlAcrescimoTotalPedido.Text);
+
+      cdsPedidoVenda.DisableControls;
+      with cdsPedidoVenda do
+      begin
+        cdsPedidoVenda.First;
+        while not cdsPedidoVenda.Eof do
+        begin
+          vl_total_pedido := (vl_total_pedido + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
+          cdsPedidoVenda.Next;
+        end;
+      end;
+
+      vl_total_com_acrescimo := (vl_total_pedido + vl_acrescimo) - valor_desconto;
+      edtVlTotalPedido.Text := CurrToStr(vl_total_com_acrescimo);
+    end;
+  finally
+    cdsPedidoVenda.EnableControls;
   end;
-
 end;
 
 //altera o valor total ao sair do campo de desconto

@@ -8,7 +8,7 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Datasnap.DBClient, uConexao, System.UITypes;
+  FireDAC.Comp.Client, Datasnap.DBClient, uConexao, System.UITypes, uclValidacoesEntrada, uDataModule;
 
 type
   TfrmLancamentoNotaEntrada = class(TForm)
@@ -124,7 +124,7 @@ type
 
 var
   frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada;
-  seq : Integer = 1;
+  seq : Integer = 1; //sequencia dos itens lançados na nota
   aliqIcms, aliqIpi, aliqPisCofins : Double; //guardar as aliquotas dos itens e mostrar no grid
 
 implementation
@@ -133,36 +133,56 @@ implementation
 
 //busca o fornecedor/cliente
 procedure TfrmLancamentoNotaEntrada.edtCdFornecedorChange(Sender: TObject);
+const
+  sql = 'select                       '+
+          'cd_cliente,                '+
+          'nome                       '+
+        'from                         '+
+           'cliente                   '+
+        'where                        '+
+            'cd_cliente = :cd_cliente';
+var
+  qry: TFDQuery;
 begin
-  if edtCdFornecedor.Text = EmptyStr then
-  begin
-    edtNomeFornecedor.Clear;
-    Exit;
-  end;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
 
-  sqlCabecalho.Close;
-  sqlCabecalho.SQL.Text := 'select                        '+
-                              'cd_cliente,                '+
-                              'nome                       '+
-                            'from                         '+
-                               'cliente c2                '+
-                            'where                        '+
-                                'cd_cliente = :cd_cliente';
-  sqlCabecalho.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdFornecedor.Text);
-  sqlCabecalho.Open();
-  edtNomeFornecedor.Text := sqlCabecalho.FieldByName('nome').AsString;
+  try
+    if edtCdFornecedor.Text = EmptyStr then
+    begin
+      edtNomeFornecedor.Clear;
+      Exit;
+    end;
+
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdFornecedor.Text);
+    qry.Open(sql);
+    edtNomeFornecedor.Text := qry.FieldByName('nome').AsString;
+  finally
+    qry.Free;
+  end;
 end;
 
 
 procedure TfrmLancamentoNotaEntrada.edtCdFornecedorExit(Sender: TObject);
+var
+  cliente: TValidacoesEntrada;
+  resposta : Boolean;
 begin
-  if sqlCabecalho.IsEmpty then
-  begin
-    if (Application.MessageBox('Fornecedor/Cliente não Encontrado', 'Atenção', MB_OK) = IDOK) then
+  cliente := TValidacoesEntrada.Create;
+  resposta := cliente.BuscaClienteFornecedor(StrToInt(edtCdFornecedor.Text));
+
+  try
+    if resposta then
     begin
-      edtCdFornecedor.SetFocus;
-      edtNomeFornecedor.Clear;
+      if (Application.MessageBox('Fornecedor/Cliente não Encontrado', 'Atenção', MB_OK) = IDOK) then
+      begin
+        edtCdFornecedor.SetFocus;
+        edtNomeFornecedor.Clear;
+      end;
     end;
+  finally
+    FreeAndNil(cliente);
   end;
 end;
 
@@ -268,14 +288,14 @@ end;
 
 procedure TfrmLancamentoNotaEntrada.edtModeloExit(Sender: TObject);
 begin
-    if sqlCabecalho.IsEmpty then
+  if sqlCabecalho.IsEmpty then
+  begin
+    if (Application.MessageBox('Modelo não Encontrado', 'Atenção', MB_OK) = IDOK) then
     begin
-      if (Application.MessageBox('Modelo não Encontrado', 'Atenção', MB_OK) = IDOK) then
-      begin
-        edtModelo.SetFocus;
-        edtNomeModelo.Clear;
-      end;
+      edtModelo.SetFocus;
+      edtNomeModelo.Clear;
     end;
+  end;
 end;
 
 
