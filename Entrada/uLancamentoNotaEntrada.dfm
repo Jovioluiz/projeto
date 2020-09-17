@@ -507,120 +507,6 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
       OnKeyDown = DBGridProdutosKeyDown
-      Columns = <
-        item
-          Expanded = False
-          FieldName = 'Sequencia'
-          ReadOnly = True
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'C'#243'd. Produto'
-          ReadOnly = True
-          Width = 80
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Descri'#231#227'o'
-          ReadOnly = True
-          Width = 250
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Un. Medida'
-          ReadOnly = True
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Quantidade'
-          ReadOnly = True
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Fator Convers'#227'o'
-          ReadOnly = True
-          Width = 90
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Quantidade Total'
-          ReadOnly = True
-          Width = 90
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Unit'#225'rio'
-          ReadOnly = True
-          Width = 75
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor Total'
-          ReadOnly = True
-          Width = 80
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Vl Base ICMS'
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq. ICMS'
-          Width = 55
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Vl ICMS'
-          Width = 50
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Vl Base IPI'
-          Width = 60
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq. IPI'
-          Width = 50
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Vl IPI'
-          Width = 50
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Vl Base PIS/COFINS'
-          Width = 100
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Aliq. PIS/COFINS'
-          Width = 85
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Vl PIS/COFINS'
-          Width = 75
-          Visible = True
-        end>
     end
     object btnConfirmar: TButton
       Left = 632
@@ -652,10 +538,144 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     Top = 472
   end
   object cdsEntrada: TClientDataSet
+    PersistDataPacket.Data = {
+      F90200009619E0BD010000001800000015000000000003000000F9020C736571
+      5F6974656D5F6E666904000100000000000A63645F70726F6475746F04000100
+      000000000964657363726963616F010049000000010005574944544802000200
+      140009756E5F6D65646964610100490000000100055749445448020002001400
+      0B7174645F6573746F71756508000400000000000F6661746F725F636F6E7665
+      7273616F0800040000000000097174645F746F74616C08000400000000000B76
+      6C5F756E69746172696F08000400000001000753554254595045020049000600
+      4D6F6E65790008766C5F746F74616C0800040000000100075355425459504502
+      00490006004D6F6E6579000C69636D735F766C5F626173650800040000000100
+      07535542545950450200490006004D6F6E6579000C69636D735F70635F616C69
+      71080004000000010007535542545950450200490006004D6F6E6579000A6963
+      6D735F76616C6F72080004000000010007535542545950450200490006004D6F
+      6E6579000B6970695F766C5F6261736508000400000001000753554254595045
+      0200490006004D6F6E6579000B6970695F70635F616C69710800040000000100
+      07535542545950450200490006004D6F6E657900096970695F76616C6F720800
+      04000000010007535542545950450200490006004D6F6E657900127069735F63
+      6F66696E735F766C5F6261736508000400000001000753554254595045020049
+      0006004D6F6E657900127069735F636F66696E735F70635F616C697108000400
+      0000010007535542545950450200490006004D6F6E657900107069735F636F66
+      696E735F76616C6F72080004000000010007535542545950450200490006004D
+      6F6E6579000B6973735F766C5F62617365080004000000010007535542545950
+      450200490006004D6F6E6579000B6973735F70635F616C697108000400000001
+      0007535542545950450200490006004D6F6E657900096973735F76616C6F7208
+      0004000000010007535542545950450200490006004D6F6E6579000000}
+    Active = True
     Aggregates = <>
     Params = <>
     Left = 264
     Top = 472
+    object cdsEntradaseq_item_nfi: TIntegerField
+      DisplayLabel = 'Seq'
+      DisplayWidth = 4
+      FieldName = 'seq_item_nfi'
+    end
+    object cdsEntradacd_produto: TIntegerField
+      DisplayLabel = 'C'#243'd Produto'
+      DisplayWidth = 10
+      FieldName = 'cd_produto'
+    end
+    object cdsEntradadescricao: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      DisplayWidth = 29
+      FieldName = 'descricao'
+    end
+    object cdsEntradaun_medida: TStringField
+      DisplayLabel = 'UN Medida'
+      DisplayWidth = 9
+      FieldName = 'un_medida'
+    end
+    object cdsEntradaqtd_estoque: TFloatField
+      DisplayLabel = 'Quantidade'
+      DisplayWidth = 10
+      FieldName = 'qtd_estoque'
+    end
+    object cdsEntradafator_conversao: TFloatField
+      DisplayLabel = 'Fator Convers'#227'o'
+      DisplayWidth = 13
+      FieldName = 'fator_conversao'
+    end
+    object cdsEntradaqtd_total: TFloatField
+      DisplayLabel = 'Qtd Total'
+      DisplayWidth = 10
+      FieldName = 'qtd_total'
+    end
+    object cdsEntradavl_unitario: TCurrencyField
+      DisplayLabel = 'Valor Unit'#225'rio'
+      DisplayWidth = 10
+      FieldName = 'vl_unitario'
+    end
+    object cdsEntradavl_total: TCurrencyField
+      DisplayLabel = 'Valor Total'
+      DisplayWidth = 10
+      FieldName = 'vl_total'
+    end
+    object cdsEntradaicms_vl_base: TCurrencyField
+      DisplayLabel = 'Vl Base ICMS'
+      DisplayWidth = 10
+      FieldName = 'icms_vl_base'
+    end
+    object cdsEntradaicms_pc_aliq: TCurrencyField
+      DisplayLabel = 'Aliq ICMS'
+      DisplayWidth = 10
+      FieldName = 'icms_pc_aliq'
+    end
+    object cdsEntradaicms_valor: TCurrencyField
+      DisplayLabel = 'Vl ICMS'
+      DisplayWidth = 10
+      FieldName = 'icms_valor'
+    end
+    object cdsEntradaipi_vl_base: TCurrencyField
+      DisplayLabel = 'Vl Base IPI'
+      DisplayWidth = 10
+      FieldName = 'ipi_vl_base'
+    end
+    object cdsEntradaipi_pc_aliq: TCurrencyField
+      DisplayLabel = 'Aliq. IPI'
+      DisplayWidth = 7
+      FieldName = 'ipi_pc_aliq'
+    end
+    object cdsEntradaipi_valor: TCurrencyField
+      DisplayLabel = 'Vl IPI'
+      DisplayWidth = 8
+      FieldName = 'ipi_valor'
+    end
+    object cdsEntradapis_cofins_vl_base: TCurrencyField
+      DisplayLabel = 'Vl Base PIS/COFINS'
+      DisplayWidth = 15
+      FieldName = 'pis_cofins_vl_base'
+    end
+    object cdsEntradapis_cofins_pc_aliq: TCurrencyField
+      DisplayLabel = 'Aliq PIS/COFINS'
+      DisplayWidth = 14
+      FieldName = 'pis_cofins_pc_aliq'
+    end
+    object cdsEntradapis_cofins_valor: TCurrencyField
+      DisplayLabel = 'Vl PIS/COFINS'
+      DisplayWidth = 12
+      FieldName = 'pis_cofins_valor'
+    end
+    object cdsEntradaiss_vl_base: TCurrencyField
+      DisplayLabel = 'Vl Base ISS'
+      DisplayWidth = 10
+      FieldName = 'iss_vl_base'
+      Visible = False
+    end
+    object cdsEntradaiss_pc_aliq: TCurrencyField
+      DisplayLabel = 'Aliq ISS'
+      DisplayWidth = 6
+      FieldName = 'iss_pc_aliq'
+      Visible = False
+    end
+    object cdsEntradaiss_valor: TCurrencyField
+      DisplayLabel = 'Vl ISS'
+      DisplayWidth = 10
+      FieldName = 'iss_valor'
+      Visible = False
+    end
   end
   object sqlIdGeral: TFDQuery
     Connection = frmConexao.conexao

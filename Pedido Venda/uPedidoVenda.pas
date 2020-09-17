@@ -175,6 +175,7 @@ begin
     end;
   finally
     qry.Free;
+    dm.FDConnection1.Rollback;
     cdsPedidoVenda.EnableControls;
   end;
 end;

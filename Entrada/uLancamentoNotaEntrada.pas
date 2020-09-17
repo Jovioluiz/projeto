@@ -82,6 +82,27 @@ type
     sqlInsert: TFDQuery;
     sqlInsertiNfi: TFDQuery;
     sqlUpdate: TFDQuery;
+    cdsEntradaseq_item_nfi: TIntegerField;
+    cdsEntradacd_produto: TIntegerField;
+    cdsEntradadescricao: TStringField;
+    cdsEntradaun_medida: TStringField;
+    cdsEntradaqtd_estoque: TFloatField;
+    cdsEntradafator_conversao: TFloatField;
+    cdsEntradaqtd_total: TFloatField;
+    cdsEntradavl_unitario: TCurrencyField;
+    cdsEntradavl_total: TCurrencyField;
+    cdsEntradaicms_vl_base: TCurrencyField;
+    cdsEntradaicms_pc_aliq: TCurrencyField;
+    cdsEntradaicms_valor: TCurrencyField;
+    cdsEntradaipi_vl_base: TCurrencyField;
+    cdsEntradaipi_pc_aliq: TCurrencyField;
+    cdsEntradaipi_valor: TCurrencyField;
+    cdsEntradapis_cofins_vl_base: TCurrencyField;
+    cdsEntradapis_cofins_pc_aliq: TCurrencyField;
+    cdsEntradapis_cofins_valor: TCurrencyField;
+    cdsEntradaiss_vl_base: TCurrencyField;
+    cdsEntradaiss_pc_aliq: TCurrencyField;
+    cdsEntradaiss_valor: TCurrencyField;
     procedure edtOperacaoChange(Sender: TObject);
     procedure edtOperacaoExit(Sender: TObject);
     procedure edtModeloChange(Sender: TObject);
@@ -118,6 +139,7 @@ type
     { Private declarations }
     procedure validaValoresNota;
     procedure limpaCampos;
+    procedure atualizaEstoqueProduto;
   public
     { Public declarations }
   end;
@@ -499,59 +521,83 @@ begin
   edtValorAcrescimo.Text := '0,00';
   edtValorOutrasDespesas.Text := '0,00';
   edtValorTotalNota.Text := '0,00';
-  DBGridProdutos.DataSource.DataSet.Close;
+  //cdsEntrada.EmptyDataSet;
   seq := 1;
+end;
+
+procedure TfrmLancamentoNotaEntrada.atualizaEstoqueProduto;
+const
+  sql_update =  'update '+
+                    'produto '+
+                'set '+
+                    'qtd_estoque = :qtd_estoque '+
+                'where cd_produto = :cd_produto';
+  sql_select = 'select '+
+                  'qtd_estoque '+
+              'from '+
+                  'produto '+
+              'where '+
+                  'cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+  qtdade, qttotal: Double;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+  dm.FDConnection1.StartTransaction;
+
+  try
+    cdsEntrada.DisableControls;
+    cdsEntrada.First;
+    while not cdsEntrada.Eof do
+    begin
+      qry.SQL.Clear;
+      qry.SQL.Add(sql_select);
+      qry.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('cd_produto').AsInteger;
+      qry.Open(sql_select);
+      qtdade := qry.FieldByName('qtd_estoque').AsFloat;
+      qttotal := qtdade + cdsEntrada.FieldByName('qtd_total').AsFloat;
+
+      qry.SQL.Clear;
+      qry.SQL.Add(sql_update);
+      qry.ParamByName('qtd_estoque').AsFloat := qttotal;
+      qry.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('cd_produto').AsInteger;
+
+      qry.ExecSQL;
+      dm.FDConnection1.Commit;
+      cdsEntrada.Next;
+    end;
+  finally
+    qry.Free;
+    dm.FDConnection1.Rollback;
+    cdsEntrada.EnableControls
+  end;
 end;
 
 procedure TfrmLancamentoNotaEntrada.btnAddItensClick(Sender: TObject);
 begin
-  if cdsEntrada.FieldCount = 0 then
-    begin
-      cdsEntrada.FieldDefs.Clear;
-      cdsEntrada.FieldDefs.Add('Sequencia', ftInteger);
-      cdsEntrada.FieldDefs.Add('Cód. Produto', ftInteger);
-      cdsEntrada.FieldDefs.Add('Descrição', ftString,40,false);
-      cdsEntrada.FieldDefs.Add('Un. Medida', ftString,40,false);
-      cdsEntrada.FieldDefs.Add('Quantidade', ftInteger);
-      cdsEntrada.FieldDefs.Add('Fator Conversão', ftInteger);
-      cdsEntrada.FieldDefs.Add('Quantidade Total', ftInteger);
-      cdsEntrada.FieldDefs.Add('Valor Unitário', ftCurrency);
-      cdsEntrada.FieldDefs.Add('Valor Total', ftSingle);
-      cdsEntrada.FieldDefs.Add('Vl Base ICMS', ftCurrency);
-      cdsEntrada.FieldDefs.Add('Aliq. ICMS', ftCurrency);
-      cdsEntrada.FieldDefs.Add('Vl ICMS', ftCurrency);
-      cdsEntrada.FieldDefs.Add('Vl Base IPI', ftCurrency);
-      cdsEntrada.FieldDefs.Add('Aliq. IPI', ftCurrency);
-      cdsEntrada.FieldDefs.Add('Vl IPI', ftCurrency);
-      cdsEntrada.FieldDefs.Add('Vl Base PIS/COFINS', ftCurrency);
-      cdsEntrada.FieldDefs.Add('Aliq. PIS/COFINS', ftCurrency);
-      cdsEntrada.FieldDefs.Add('Vl PIS/COFINS', ftCurrency);
-
-      cdsEntrada.CreateDataSet;
-    end;
-
+  try
     cdsEntrada.Append;
-    cdsEntrada.FieldByName('Sequencia').AsInteger := seq;
-    cdsEntrada.FieldByName('Cód. Produto').AsInteger := StrToInt(edtCodProduto.Text);
-    cdsEntrada.FieldByName('Descrição').AsString := edtDescricaoProduto.Text;
-    cdsEntrada.FieldByName('Un. Medida').AsString := edtUnMedida.Text;
-    cdsEntrada.FieldByName('Quantidade').AsInteger := StrToInt(edtQuantidade.Text);
-    cdsEntrada.FieldByName('Fator Conversão').AsInteger := StrToInt(edtFatorConversao.Text);
-    cdsEntrada.FieldByName('Quantidade Total').AsInteger := StrToInt(edtQuantidadeTotalProduto.Text);
-    cdsEntrada.FieldByName('Valor Unitário').AsCurrency := StrToCurr(edtValorUnitario.Text);
-    cdsEntrada.FieldByName('Valor Total').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
-    cdsEntrada.FieldByName('Vl Base ICMS').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
-    cdsEntrada.FieldByName('Aliq. ICMS').AsFloat := aliqIcms;
-    cdsEntrada.FieldByName('Vl ICMS').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIcms) / 100;
-    cdsEntrada.FieldByName('Vl Base IPI').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
-    cdsEntrada.FieldByName('Aliq. IPI').AsFloat := aliqIpi;
-    cdsEntrada.FieldByName('Vl IPI').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIpi) / 100;
-    cdsEntrada.FieldByName('Vl Base PIS/COFINS').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
-    cdsEntrada.FieldByName('Aliq. PIS/COFINS').AsFloat := aliqPisCofins;
-    cdsEntrada.FieldByName('Vl PIS/COFINS').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqPisCofins) / 100;
-
+    cdsEntrada.FieldByName('seq_item_nfi').AsInteger := seq;
+    cdsEntrada.FieldByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
+    cdsEntrada.FieldByName('descricao').AsString := edtDescricaoProduto.Text;
+    cdsEntrada.FieldByName('un_medida').AsString := edtUnMedida.Text;
+    cdsEntrada.FieldByName('qtd_estoque').AsInteger := StrToInt(edtQuantidade.Text);
+    cdsEntrada.FieldByName('fator_conversao').AsInteger := StrToInt(edtFatorConversao.Text);
+    cdsEntrada.FieldByName('qtd_total').AsInteger := StrToInt(edtQuantidadeTotalProduto.Text);
+    cdsEntrada.FieldByName('vl_unitario').AsCurrency := StrToCurr(edtValorUnitario.Text);
+    cdsEntrada.FieldByName('vl_total').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+    cdsEntrada.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+    cdsEntrada.FieldByName('icms_pc_aliq').AsFloat := aliqIcms;
+    cdsEntrada.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIcms) / 100;
+    cdsEntrada.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+    cdsEntrada.FieldByName('ipi_pc_aliq').AsFloat := aliqIpi;
+    cdsEntrada.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIpi) / 100;
+    cdsEntrada.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+    cdsEntrada.FieldByName('pis_cofins_pc_aliq').AsFloat := aliqPisCofins;
+    cdsEntrada.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqPisCofins) / 100;
     cdsEntrada.Post;
-
+  finally
     edtCodProduto.Clear;
     edtDescricaoProduto.Clear;
     edtQuantidade.Clear;
@@ -562,6 +608,7 @@ begin
     edtValorTotalProduto.Clear;
     edtCodProduto.SetFocus;
     seq := seq + 1;
+  end;
 end;
 
 procedure TfrmLancamentoNotaEntrada.btnCancelarClick(Sender: TObject);
@@ -573,7 +620,8 @@ end;
 procedure TfrmLancamentoNotaEntrada.btnConfirmarClick(Sender: TObject);
 var
   idGeralNfc, idGeralNfi : Integer;
-  vlIcmsRateado, vlIpiRateado, vlIssRateado, vlFreteRateado, vlDescontoRateado, vlAcrescimoRateado, soma, qtdade, qtTotal: Currency;
+  vlIcmsRateado, vlIpiRateado, vlIssRateado, vlFreteRateado,
+  vlDescontoRateado, vlAcrescimoRateado, soma, qtdade, qtTotal: Currency;
 begin
   try
     idGeralNfc := 0;
@@ -669,7 +717,7 @@ begin
       cdsEntrada.First;
       while not cdsEntrada.Eof do
       begin
-        soma := soma + cdsEntrada.FieldByName('Quantidade').AsCurrency;
+        soma := soma + cdsEntrada.FieldByName('qtd_total').AsCurrency;
         cdsEntrada.Next;
       end;
       cdsEntrada.EnableControls;
@@ -732,10 +780,10 @@ begin
                                   '    :seq_item_nfi)';
         sqlInsertiNfi.ParamByName('id_geral').AsInteger := idGeralNfi;
         sqlInsertiNfi.ParamByName('id_nfc').AsInteger := idGeralNfc;
-        sqlInsertiNfi.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('Cód. Produto').AsInteger;
-        sqlInsertiNfi.ParamByName('qtd_estoque').AsCurrency := cdsEntrada.FieldByName('Quantidade').AsCurrency;
-        sqlInsertiNfi.ParamByName('un_medida').AsString := cdsEntrada.FieldByName('Un. Medida').AsString;
-        sqlInsertiNfi.ParamByName('vl_unitario').AsCurrency := cdsEntrada.FieldByName('Valor Unitário').AsCurrency;
+        sqlInsertiNfi.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('cd_produto').AsInteger;
+        sqlInsertiNfi.ParamByName('qtd_estoque').AsCurrency := cdsEntrada.FieldByName('qtd_estoque').AsCurrency;
+        sqlInsertiNfi.ParamByName('un_medida').AsString := cdsEntrada.FieldByName('un_medida').AsString;
+        sqlInsertiNfi.ParamByName('vl_unitario').AsCurrency := cdsEntrada.FieldByName('vl_unitario').AsCurrency;
         if edtValorFrete.Text > '0,00' then
         begin
           vlFreteRateado := (StrToCurr(edtValorFrete.Text) / soma);
@@ -763,48 +811,31 @@ begin
         begin
           sqlInsertiNfi.ParamByName('vl_acrescimo_rateado').AsCurrency := 0;
         end;
-        sqlInsertiNfi.ParamByName('seq_item_nfi').AsInteger := cdsEntrada.FieldByName('Sequencia').AsInteger;
-        sqlInsertiNfi.ParamByName('icms_vl_base').AsCurrency := cdsEntrada.FieldByName('Vl Base ICMS').AsCurrency;
-        sqlInsertiNfi.ParamByName('icms_pc_aliq').AsFloat := cdsEntrada.FieldByName('Aliq. ICMS').AsFloat;
-        sqlInsertiNfi.ParamByName('icms_valor').AsCurrency := cdsEntrada.FieldByName('Vl ICMS').AsCurrency;
-        sqlInsertiNfi.ParamByName('ipi_vl_base').AsCurrency := cdsEntrada.FieldByName('Vl Base IPI').AsCurrency;
-        sqlInsertiNfi.ParamByName('ipi_pc_aliq').AsFloat := cdsEntrada.FieldByName('Aliq. IPI').AsFloat;
-        sqlInsertiNfi.ParamByName('ipi_valor').AsFloat := cdsEntrada.FieldByName('Vl IPI').AsCurrency;
-        sqlInsertiNfi.ParamByName('pis_cofins_vl_base').AsCurrency := cdsEntrada.FieldByName('Vl Base PIS/COFINS').AsCurrency;
-        sqlInsertiNfi.ParamByName('pis_cofins_pc_aliq').AsFloat := cdsEntrada.FieldByName('Aliq. PIS/COFINS').AsFloat;
-        sqlInsertiNfi.ParamByName('pis_cofins_valor').AsCurrency := cdsEntrada.FieldByName('Vl PIS/COFINS').AsCurrency;
+        sqlInsertiNfi.ParamByName('seq_item_nfi').AsInteger := cdsEntrada.FieldByName('seq_item_nfi').AsInteger;
+        sqlInsertiNfi.ParamByName('icms_vl_base').AsCurrency := cdsEntrada.FieldByName('icms_vl_base').AsCurrency;
+        sqlInsertiNfi.ParamByName('icms_pc_aliq').AsFloat := cdsEntrada.FieldByName('icms_pc_aliq').AsFloat;
+        sqlInsertiNfi.ParamByName('icms_valor').AsCurrency := cdsEntrada.FieldByName('icms_valor').AsCurrency;
+        sqlInsertiNfi.ParamByName('ipi_vl_base').AsCurrency := cdsEntrada.FieldByName('ipi_vl_base').AsCurrency;
+        sqlInsertiNfi.ParamByName('ipi_pc_aliq').AsFloat := cdsEntrada.FieldByName('ipi_pc_aliq').AsFloat;
+        sqlInsertiNfi.ParamByName('ipi_valor').AsFloat := cdsEntrada.FieldByName('ipi_valor').AsCurrency;
+        sqlInsertiNfi.ParamByName('pis_cofins_vl_base').AsCurrency := cdsEntrada.FieldByName('pis_cofins_vl_base').AsCurrency;
+        sqlInsertiNfi.ParamByName('pis_cofins_pc_aliq').AsFloat := cdsEntrada.FieldByName('pis_cofins_pc_aliq').AsFloat;
+        sqlInsertiNfi.ParamByName('pis_cofins_valor').AsCurrency := cdsEntrada.FieldByName('pis_cofins_valor').AsCurrency;
 
         cdsEntrada.Next;
       end;
     end;
 
       //atualiza a quantidade em estoque
-      sqlUpdate.SQL.Text := 'select '+
-                                'qtd_estoque '+
-                            'from '+
-                                'produto '+
-                            'where '+
-                                'cd_produto = :cd_produto';
-      sqlUpdate.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('Cód. Produto').AsInteger;
-      sqlUpdate.Open();
-      qtdade := sqlUpdate.Fields[0].Value;
-      qtTotal := qtdade + cdsEntrada.FieldByName('Quantidade').AsCurrency;
-      sqlUpdate.SQL.Text := 'update '+
-                                'produto '+
-                            'set '+
-                                'qtd_estoque = :qtd_estoque '+
-                            'where cd_produto = :cd_produto';
-      sqlUpdate.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('Cód. Produto').AsInteger;
-      sqlUpdate.ParamByName('qtd_estoque').AsCurrency := qtTotal;
+      atualizaEstoqueProduto;
 
-      sqlUpdate.ExecSQL;
       sqlInsert.ExecSQL;
       sqlInsertiNfi.ExecSQL;
       frmConexao.conexao.Commit;
       ShowMessage('Nota gravada com sucesso!');
       sqlInsert.Close;
       sqlInsertiNfi.Close;
-      limpaCampos;
+      limpaCampos; //verificar que não está limpando o grid
   except
     on E : exception do
       begin
@@ -895,7 +926,7 @@ begin
     cdsEntrada.First;
     while not cdsEntrada.Eof do
     begin
-      vlTotalItens := (vlTotalItens + cdsEntrada.FieldByName('Valor Total').AsCurrency);
+      vlTotalItens := (vlTotalItens + cdsEntrada.FieldByName('vl_total').AsCurrency);
       cdsEntrada.Next;
     end;
     cdsEntrada.EnableControls;

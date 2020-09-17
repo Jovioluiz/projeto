@@ -30,7 +30,8 @@ uses
   uclPedidoVenda in 'Pedido Venda\uclPedidoVenda.pas',
   uGravaArquivo in 'Arquivos\uGravaArquivo.pas' {frmGravaArquivo},
   uVersao in 'Validacao\uVersao.pas',
-  uConsulta in 'Consulta\uConsulta.pas' {frmConsulta};
+  uConsulta in 'Consulta\uConsulta.pas' {frmConsulta},
+  uclValidacoesEntrada in 'Entrada\uclValidacoesEntrada.pas';
 
 {$R *.res}
 
