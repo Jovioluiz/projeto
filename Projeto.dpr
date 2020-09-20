@@ -31,7 +31,8 @@ uses
   uGravaArquivo in 'Arquivos\uGravaArquivo.pas' {frmGravaArquivo},
   uVersao in 'Validacao\uVersao.pas',
   uConsulta in 'Consulta\uConsulta.pas' {frmConsulta},
-  uclValidacoesEntrada in 'Entrada\uclValidacoesEntrada.pas';
+  uclValidacoesEntrada in 'Entrada\uclValidacoesEntrada.pas',
+  uGerador in 'uGerador.pas';
 
 {$R *.res}
 

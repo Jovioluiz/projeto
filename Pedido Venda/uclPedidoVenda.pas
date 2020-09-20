@@ -23,6 +23,8 @@ type TPedidoVenda = class
     function ValidaProduto(CodProduto: Integer): Boolean;
     function BuscaTabelaPreco(CodTabela, CodProduto: Integer): TList<string>;
     function ValidaTabelaPreco(CodTabela, CodProduto: Integer): Boolean;
+    function BuscaFormaPgto(CodForma: Integer): TList<string>;
+    function BuscaCondicaoPgto(CodCond, CodForma: Integer): TList<string>;
 end;
 
 implementation
@@ -98,6 +100,7 @@ begin
   end;
 end;
 
+
 function TPedidoVenda.ValidaFormaPgto(CdFormaPgto: Integer): Boolean;
 const
   sql_forma_pgto =  'select                                '+
@@ -161,6 +164,74 @@ begin
   end;
 end;
 
+function TPedidoVenda.BuscaCondicaoPgto(CodCond, CodForma: Integer): TList<string>;
+const
+  sql = 'select                                         '+
+                 '    ccp.cd_cond_pag,                           '+
+                 '    ccp.nm_cond_pag                            '+
+                 'from cta_cond_pagamento ccp                    '+
+                 '    join cta_forma_pagamento cfp on            '+
+                 'ccp.cd_cta_forma_pagamento = cfp.cd_forma_pag  '+
+                 '    where (ccp.cd_cond_pag = :cd_cond_pag) and '+
+                 '(cfp.cd_forma_pag = :cd_forma_pag) and         '+
+                 '(ccp.fl_ativo = true)';
+var
+  qry: TFDQuery;
+  lista: TList<string>;
+  nmCond: string;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.FDConnection1;
+  lista := TList<string>.Create;
+
+  try
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_cond_pag').AsInteger := CodCond;
+    qry.ParamByName('cd_forma_pag').AsInteger := CodForma;
+    qry.Open(sql);
+
+    nmCond := qry.FieldByName('nm_cond_pag').AsString;
+
+    lista.Add(nmCond);
+    Result := lista;
+
+  finally
+    qry.Free;
+  end;
+end;
+
+function TPedidoVenda.BuscaFormaPgto(CodForma: Integer): TList<string>;
+const
+  sql = 'select                                '+
+        '   cd_forma_pag,                      '+
+        '   nm_forma_pag                       '+
+        'from                                  '+
+        '   cta_forma_pagamento                '+
+        'where                                 '+
+        '   (cd_forma_pag = :cd_forma_pag) and '+
+        '   (fl_ativo = true)';
+var
+  qry: TFDQuery;
+  lista: TList<string>;
+  nmForma: string;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.FDConnection1;
+  lista := TList<string>.Create;
+
+  try
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_forma_pag').AsInteger := CodForma;
+    qry.Open(sql);
+
+    nmForma := qry.FieldByName('nm_forma_pag').AsString;
+    lista.Add(nmForma);
+    Result := lista;
+  finally
+    qry.Free;
+  end;
+end;
+
 function TPedidoVenda.BuscaProduto(CodProduto: Integer): TList<String>;
 const
   sql = 'select '+
@@ -210,7 +281,6 @@ begin
   finally
     qry.Free;
   end;
-
 end;
 
 function TPedidoVenda.BuscaTabelaPreco(CodTabela, CodProduto: Integer): TList<string>;
