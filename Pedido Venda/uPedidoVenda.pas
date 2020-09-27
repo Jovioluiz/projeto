@@ -78,6 +78,7 @@ type
     cdsPedidoVendapis_cofins_vl_base: TCurrencyField;
     cdsPedidoVendapis_cofins_pc_aliq: TCurrencyField;
     cdsPedidoVendapis_cofins_valor: TCurrencyField;
+    intgrfldPedidoVendaseq: TIntegerField;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtCdClienteChange(Sender: TObject);
     procedure edtCdClienteExit(Sender: TObject);
@@ -113,12 +114,15 @@ type
     procedure atualizaEstoqueProduto;
     function GeraNumeroPedido: Int8;
     function ProdutoJaLancado(CodProduto: Integer): Boolean;
+    function RetornaSequencia: Integer;
+    procedure AlteraSequenciaItem;
   public
     { Public declarations }
   end;
 
 var
   frmPedidoVenda: TfrmPedidoVenda;
+  seqItem: Integer = 1;
 
 implementation
 
@@ -127,6 +131,25 @@ uses
 
 {$R *.dfm}
 
+
+procedure TfrmPedidoVenda.AlteraSequenciaItem;
+//ajusta a sequencia do item no pedido de venda
+var
+  i: Integer;
+begin
+  cdsPedidoVenda.First;
+  
+  for i := 1 to cdsPedidoVenda.RecordCount do
+  begin
+    if cdsPedidoVenda.FieldByName('seq').AsInteger <> i then
+    begin
+      cdsPedidoVenda.Edit;
+      cdsPedidoVenda.FieldByName('seq').AsInteger := i;     
+    end;
+
+    cdsPedidoVenda.Next;  
+  end;
+end;
 
 procedure TfrmPedidoVenda.atualizaEstoqueProduto;
 const
@@ -279,7 +302,9 @@ begin
     end
     else
     begin
+      RetornaSequencia;
       cdsPedidoVenda.Append;
+      cdsPedidoVenda.FieldByName('seq').AsInteger := seqItem;
       cdsPedidoVenda.FieldByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
       cdsPedidoVenda.FieldByName('descricao').AsString := edtDescProduto.Text;
       cdsPedidoVenda.FieldByName('qtd_venda').AsInteger := StrToInt(edtQtdade.Text);
@@ -344,6 +369,8 @@ begin
       edtVlTotalPedido.Text := CurrToStr(vl_total_itens);
       cdsPedidoVenda.EnableControls;
     end;
+
+    seqItem := seqItem + 1;
   finally
     limpaCampos;
     qry.Free;
@@ -372,10 +399,11 @@ const
                      '    into '+
                      'pedido_venda_item (id_geral, id_pedido_venda, cd_produto, vl_unitario, vl_total_item, qtd_venda, '+
                      'vl_desconto, cd_tabela_preco, icms_vl_base, icms_pc_aliq, icms_valor, ipi_vl_base, ipi_pc_aliq, '+
-                     'ipi_valor, pis_cofins_vl_base, pis_cofins_pc_aliq, pis_cofins_valor, un_medida) '+
+                     'ipi_valor, pis_cofins_vl_base, pis_cofins_pc_aliq, pis_cofins_valor, un_medida, seq_item) '+
                      'values (:id_geral, :id_pedido_venda, :cd_produto, :vl_unitario, :vl_total_item, '+
                      ':qtd_venda, :vl_desconto, :cd_tabela_preco, :icms_vl_base, :icms_pc_aliq, :icms_valor, '+
-                     ':ipi_vl_base, :ipi_pc_aliq, :ipi_valor, :pis_cofins_vl_base, :pis_cofins_pc_aliq, :pis_cofins_valor, :un_medida)';
+                     ':ipi_vl_base, :ipi_pc_aliq, :ipi_valor, :pis_cofins_vl_base, :pis_cofins_pc_aliq, ' +
+                     ':pis_cofins_valor, :un_medida, :seq_item)';
 var
   nr_pedido, id_geral: Largeint;
   Tempo : Integer;
@@ -413,6 +441,8 @@ begin
       qry.ParamByName('dt_emissao').AsDate := StrToDate(edtDataEmissao.Text);
       qry.ExecSQL;
 
+      AlteraSequenciaItem;
+      
       //insert na pedido_venda_item
       with cdsPedidoVenda do
       begin
@@ -441,6 +471,7 @@ begin
           qryItens.ParamByName('pis_cofins_pc_aliq').AsCurrency := cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsCurrency;
           qryItens.ParamByName('pis_cofins_valor').AsCurrency := cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency;
           qryItens.ParamByName('un_medida').AsString := cdsPedidoVenda.FieldByName('un_medida').AsString;
+          qryItens.ParamByName('seq_item').AsInteger := cdsPedidoVenda.FieldByName('seq').AsInteger;
           qryItens.ExecSQL;
           cdsPedidoVenda.Next;
         end;
@@ -511,6 +542,7 @@ begin
     begin
       cdsPedidoVenda.Delete;
       edtCdProduto.SetFocus;
+      seqItem := seqItem - 1;
     end;
   end;
 end;
@@ -1045,6 +1077,27 @@ begin
 
   if cdsPedidoVenda.Locate('cd_produto', VarArrayOf([CodProduto]), []) then
     Result := True;
+end;
+
+function TfrmPedidoVenda.RetornaSequencia: Integer;
+begin
+  Result := 1;
+  
+  cdsPedidoVenda.DisableControls;
+
+  cdsPedidoVenda.First;
+
+  try
+    while not cdsPedidoVenda.Eof do
+    begin
+      if cdsPedidoVenda.FieldByName('seq').AsInteger = seqItem then
+        Result := seqItem + 1;
+
+      cdsPedidoVenda.Next;
+    end;
+  finally
+    cdsPedidoVenda.EnableControls;
+  end;
 end;
 
 end.

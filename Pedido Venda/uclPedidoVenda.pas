@@ -332,6 +332,7 @@ begin
   Result := vlTotal;
 end;
 
+
 function TPedidoVenda.ValidaQtdadeItem(CodProduto: Integer; QtdPedido: Double): Boolean;
 const
   qry = 'select               '+

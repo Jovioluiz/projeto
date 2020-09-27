@@ -401,7 +401,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   end
   object cdsPedidoVenda: TClientDataSet
     PersistDataPacket.Data = {
-      870200009619E0BD01000000180000001100000000000300000087020A63645F
+      930200009619E0BD01000000180000001200000000000300000093020A63645F
       70726F6475746F04000100000000000964657363726963616F01004900000001
       00055749445448020002001400097174645F76656E646108000400000000000F
       63645F746162656C615F707265636F040001000000000009756E5F6D65646964
@@ -421,15 +421,97 @@ object frmPedidoVenda: TfrmPedidoVenda
       450200490006004D6F6E657900127069735F636F66696E735F70635F616C6971
       080004000000010007535542545950450200490006004D6F6E65790010706973
       5F636F66696E735F76616C6F7208000400000001000753554254595045020049
-      0006004D6F6E6579000000}
+      0006004D6F6E6579000373657104000100000000000000}
     Active = True
     Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'cd_produto'
+        DataType = ftInteger
+      end
+      item
+        Name = 'descricao'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'qtd_venda'
+        DataType = ftFloat
+      end
+      item
+        Name = 'cd_tabela_preco'
+        DataType = ftInteger
+      end
+      item
+        Name = 'un_medida'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'vl_unitario'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'vl_desconto'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'vl_total_item'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'icms_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'icms_pc_aliq'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'icms_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'ipi_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'ipi_pc_aliq'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'ipi_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'pis_cofins_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'pis_cofins_pc_aliq'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'pis_cofins_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'seq'
+        DataType = ftInteger
+      end>
+    IndexDefs = <>
     Params = <>
+    StoreDefs = True
     Left = 328
     Top = 448
+    object intgrfldPedidoVendaseq: TIntegerField
+      DisplayLabel = 'Seq.'
+      DisplayWidth = 4
+      FieldName = 'seq'
+    end
     object intgrfldPedidoVendacd_produto: TIntegerField
       DisplayLabel = 'C'#243'd. Produto'
-      DisplayWidth = 11
+      DisplayWidth = 10
       FieldName = 'cd_produto'
     end
     object cdsPedidoVendadescricao: TStringField
@@ -439,7 +521,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object cdsPedidoVendaqtd_venda: TFloatField
       DisplayLabel = 'Qtdade'
-      DisplayWidth = 7
+      DisplayWidth = 5
       FieldName = 'qtd_venda'
     end
     object intgrfldPedidoVendacd_tabela_preco: TIntegerField
@@ -474,7 +556,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object cdsPedidoVendaicms_pc_aliq: TCurrencyField
       DisplayLabel = 'ICMS Aliq.'
-      DisplayWidth = 10
+      DisplayWidth = 8
       FieldName = 'icms_pc_aliq'
     end
     object cdsPedidoVendaicms_valor: TCurrencyField
