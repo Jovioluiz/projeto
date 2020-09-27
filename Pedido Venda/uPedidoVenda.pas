@@ -112,6 +112,7 @@ type
     procedure limpaDados;
     procedure atualizaEstoqueProduto;
     function GeraNumeroPedido: Int8;
+    function ProdutoJaLancado(CodProduto: Integer): Boolean;
   public
     { Public declarations }
   end;
@@ -122,7 +123,7 @@ var
 implementation
 
 uses
-  uclPedidoVenda, uDataModule, uGerador;
+  uclPedidoVenda, uDataModule, uGerador, uConfiguracoes;
 
 {$R *.dfm}
 
@@ -203,16 +204,23 @@ const
  var
   vl_total_itens : Currency;
   aliq_icms, aliq_ipi, aliq_pis_cofins : Double;
+  lancado: Boolean;
   qry: TFDQuery;
+  lancaProduto: TfrmConfiguracoes;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
+  lancaProduto := TfrmConfiguracoes.Create(Self);
 
   try
     qry.Close;
     qry.SQL.Add(sql);
     qry.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
     qry.Open(sql);
+
+    if ProdutoJaLancado(StrToInt(edtCdProduto.Text))
+      and (lancaProduto.cbbLancaItemPedido.ItemIndex = 1) then
+      raise Exception.Create('O produto já está lançado');
 
     aliq_icms := qry.FieldByName('aliquota_icms').AsCurrency;
     aliq_ipi := qry.FieldByName('aliquota_ipi').AsCurrency;
@@ -1029,6 +1037,14 @@ begin
   edtVlAcrescimoTotalPedido.Clear;
   edtVlTotalPedido.Clear;
   dbGridProdutos.DataSource := nil;
+end;
+
+function TfrmPedidoVenda.ProdutoJaLancado(CodProduto: Integer): Boolean;
+begin
+  Result := False;
+
+  if cdsPedidoVenda.Locate('cd_produto', VarArrayOf([CodProduto]), []) then
+    Result := True;
 end;
 
 end.

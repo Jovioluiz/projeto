@@ -392,26 +392,101 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
   end
   object cdsItens: TClientDataSet
     PersistDataPacket.Data = {
-      150200009619E0BD01000000180000000F00000000000300000015020A63645F
-      70726F6475746F0400010000000000097174645F76656E646108000400000000
-      0009756E5F6D656469646101004900000001000557494454480200020014000B
-      766C5F756E69746172696F080004000000010007535542545950450200490006
-      004D6F6E6579000B766C5F646573636F6E746F08000400000001000753554254
-      5950450200490006004D6F6E6579000D766C5F746F74616C5F6974656D080004
-      000000010007535542545950450200490006004D6F6E6579000C69636D735F76
-      6C5F62617365080004000000010007535542545950450200490006004D6F6E65
-      79000C69636D735F70635F616C697108000400000000000A69636D735F76616C
-      6F72080004000000010007535542545950450200490006004D6F6E6579000B69
-      70695F766C5F6261736508000400000001000753554254595045020049000600
-      4D6F6E6579000B6970695F70635F616C69710800040000000000096970695F76
-      616C6F72080004000000010007535542545950450200490006004D6F6E657900
-      127069735F636F66696E735F766C5F6261736508000400000001000753554254
-      5950450200490006004D6F6E657900127069735F636F66696E735F70635F616C
-      69710800040000000000107069735F636F66696E735F76616C6F720800040000
-      00010007535542545950450200490006004D6F6E6579000000}
+      4B0200009619E0BD0100000018000000110000000000030000004B020A63645F
+      70726F6475746F04000100000000000964657363726963616F01004900000001
+      00055749445448020002001400097174645F76656E6461080004000000000009
+      756E5F6D656469646101004900000001000557494454480200020014000B766C
+      5F756E69746172696F080004000000010007535542545950450200490006004D
+      6F6E6579000B766C5F646573636F6E746F080004000000010007535542545950
+      450200490006004D6F6E6579000D766C5F746F74616C5F6974656D0800040000
+      00010007535542545950450200490006004D6F6E6579000C69636D735F766C5F
+      62617365080004000000010007535542545950450200490006004D6F6E657900
+      0C69636D735F70635F616C697108000400000000000A69636D735F76616C6F72
+      080004000000010007535542545950450200490006004D6F6E6579000B697069
+      5F766C5F62617365080004000000010007535542545950450200490006004D6F
+      6E6579000B6970695F70635F616C69710800040000000000096970695F76616C
+      6F72080004000000010007535542545950450200490006004D6F6E6579001270
+      69735F636F66696E735F766C5F62617365080004000000010007535542545950
+      450200490006004D6F6E657900127069735F636F66696E735F70635F616C6971
+      0800040000000000107069735F636F66696E735F76616C6F7208000400000001
+      0007535542545950450200490006004D6F6E6579000F63645F746162656C615F
+      707265636F04000100000000000000}
     Active = True
     Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'cd_produto'
+        DataType = ftInteger
+      end
+      item
+        Name = 'descricao'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'qtd_venda'
+        DataType = ftFloat
+      end
+      item
+        Name = 'un_medida'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'vl_unitario'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'vl_desconto'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'vl_total_item'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'icms_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'icms_pc_aliq'
+        DataType = ftFloat
+      end
+      item
+        Name = 'icms_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'ipi_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'ipi_pc_aliq'
+        DataType = ftFloat
+      end
+      item
+        Name = 'ipi_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'pis_cofins_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'pis_cofins_pc_aliq'
+        DataType = ftFloat
+      end
+      item
+        Name = 'pis_cofins_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'cd_tabela_preco'
+        DataType = ftInteger
+      end>
+    IndexDefs = <>
     Params = <>
+    StoreDefs = True
     Left = 328
     Top = 416
     object intgrfldItenscd_produto: TIntegerField
@@ -422,9 +497,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
     object cdsItensdescricao: TStringField
       DisplayLabel = 'Descri'#231#227'o'
       DisplayWidth = 25
-      FieldKind = fkCalculated
       FieldName = 'descricao'
-      Calculated = True
     end
     object cdsItensqtd_venda: TFloatField
       DisplayLabel = 'Qtde Venda'
@@ -435,6 +508,10 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       DisplayLabel = 'UN Medida'
       DisplayWidth = 8
       FieldName = 'un_medida'
+    end
+    object intgrfldItenscd_tabela_preco: TIntegerField
+      DisplayLabel = 'Tabela Pre'#231'o'
+      FieldName = 'cd_tabela_preco'
     end
     object cdsItensvl_unitario: TCurrencyField
       DisplayLabel = 'Valor Unit'#225'rio'
@@ -500,60 +577,6 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
   object dsItens: TDataSource
     DataSet = cdsItens
     Left = 248
-    Top = 416
-  end
-  object sqlCarregaPedidoVenda: TFDQuery
-    Connection = frmConexao.conexao
-    SQL.Strings = (
-      'select'
-      #9'pv.nr_pedido,'
-      #9'pv.fl_orcamento,'
-      #9'pv.cd_cliente,'
-      #9'c.nome,'
-      #9'e.cidade,'
-      #9'e.uf,'
-      #9'pv.cd_forma_pag,'
-      #9'cfp.nm_forma_pag,'
-      #9'pv.cd_cond_pag,'
-      #9'ccp.nm_cond_pag,'
-      #9'pvi.cd_produto,'
-      #9'p.desc_produto,'
-      #9'pvi.qtd_venda,'
-      #9'pvi.cd_tabela_preco,'
-      #9'p.un_medida,'
-      #9'pvi.vl_unitario,'
-      #9'pvi.vl_desconto,'
-      #9'pvi.vl_total_item,'
-      #9'pvi.vl_total_item as icms_vl_base,'
-      #9'pvi.icms_pc_aliq,'
-      #9'((pvi.vl_total_item * pvi.icms_pc_aliq) / 100) as icms_valor,'
-      #9'pvi.vl_total_item as ipi_vl_base,'
-      #9'pvi.ipi_pc_aliq,'
-      #9'((pvi.vl_total_item * pvi.ipi_pc_aliq) / 100) as ipi_valor,'
-      #9'pvi.vl_total_item as pis_cofins_vl_base,'
-      #9'pvi.pis_cofins_pc_aliq,'
-      
-        #9'((pvi.vl_total_item * pvi.pis_cofins_pc_aliq) / 100) as pis_cof' +
-        'ins_valor,'
-      #9'pvi.vl_total_item,'
-      #9'pv.vl_desconto_pedido,'
-      #9'pv.vl_acrescimo,'
-      #9'pv.vl_total'
-      'from'
-      #9'pedido_venda pv'
-      'join pedido_venda_item pvi on'
-      #9'pv.id_geral = pvi.id_pedido_venda'
-      'join cta_forma_pagamento cfp on'
-      #9'pv.cd_forma_pag = cfp.cd_forma_pag'
-      'join cta_cond_pagamento ccp on'
-      #9'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento'
-      'join cliente c on'
-      #9'pv.cd_cliente = c.cd_cliente'
-      'join endereco_cliente e on'
-      #9'c.cd_cliente = e.cd_cliente'
-      'join produto p on'
-      #9'pvi.cd_produto = p.cd_produto')
-    Left = 432
     Top = 416
   end
   object query: TFDQuery

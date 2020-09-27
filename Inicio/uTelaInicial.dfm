@@ -11600,6 +11600,8 @@ object frmPrincipal: TfrmPrincipal
         Text = 'Hora'
         Width = 50
       end>
+    ParentShowHint = False
+    ShowHint = True
   end
   object MenuCadastro: TMainMenu
     Left = 24

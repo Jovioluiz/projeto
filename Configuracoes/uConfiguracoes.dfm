@@ -23,9 +23,16 @@ object frmConfiguracoes: TfrmConfiguracoes
     Height = 13
     Caption = 'Altera Cliente Pedido de Venda'
   end
+  object lbl1: TLabel
+    Left = 24
+    Top = 96
+    Width = 243
+    Height = 13
+    Caption = 'Permite Lan'#231'ar Produto v'#225'rias vezes pedido venda'
+  end
   object btnSalvar: TButton
-    Left = 440
-    Top = 266
+    Left = 463
+    Top = 250
     Width = 75
     Height = 25
     Caption = 'Salvar'
@@ -33,8 +40,8 @@ object frmConfiguracoes: TfrmConfiguracoes
     OnClick = btnSalvarClick
   end
   object Button2: TButton
-    Left = 521
-    Top = 266
+    Left = 544
+    Top = 250
     Width = 75
     Height = 25
     Caption = 'Cancelar'
@@ -42,17 +49,43 @@ object frmConfiguracoes: TfrmConfiguracoes
     OnClick = Button2Click
   end
   object cbConfigAlteraCliPv: TComboBox
-    Left = 178
-    Top = 37
+    Left = 24
+    Top = 59
     Width = 71
     Height = 21
     Hint = 'Permite Alterar Cliente na Edi'#231#227'o do Pedido de Venda'
-    ParentShowHint = False
-    ShowHint = True
     TabOrder = 2
     Items.Strings = (
       'Sim'
       'N'#227'o')
+  end
+  object cbbLancaItemPedido: TComboBox
+    Left = 24
+    Top = 115
+    Width = 71
+    Height = 21
+    Hint = 'Permite lan'#231'ar o produto mais de uma vez no pedido de venda.'
+    TabOrder = 3
+    Items.Strings = (
+      'Sim'
+      'N'#227'o')
+  end
+  object status: TStatusBar
+    Left = 0
+    Top = 297
+    Width = 627
+    Height = 19
+    Hint = 'StatusBar1.Panels[1].Text := Application.Hint;'
+    AutoHint = True
+    Panels = <
+      item
+        Width = 50
+      end>
+    ParentShowHint = False
+    ShowHint = True
+    ExplicitLeft = 520
+    ExplicitTop = 304
+    ExplicitWidth = 0
   end
   object FDQuery1: TFDQuery
     Connection = frmConexao.conexao

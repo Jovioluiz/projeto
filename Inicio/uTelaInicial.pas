@@ -198,9 +198,7 @@ begin
   if key = VK_ESCAPE then //ESC
   begin
     if (Application.MessageBox('Deseja realmente sair do sistema?','Atenção', MB_YESNO) = IDYES) then
-    begin
       Close;
-    end;
   end;
 end;
 

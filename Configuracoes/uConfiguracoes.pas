@@ -17,6 +17,9 @@ type
     FDQuery1: TFDQuery;
     Label1: TLabel;
     cbConfigAlteraCliPv: TComboBox;
+    lbl1: TLabel;
+    cbbLancaItemPedido: TComboBox;
+    status: TStatusBar;
     procedure btnSalvarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -31,32 +34,46 @@ var
 
 implementation
 
+uses
+  uDataModule;
+
 {$R *.dfm}
 
 //testar isso para ver se funciona
 
 //fazer um select para carregar as informações ao abrir
 procedure TfrmConfiguracoes.btnSalvarClick(Sender: TObject);
+const
+  sql_update = 'update configuracao set valor = :valor where cd_configuracao = :cd_configuracao';
+var
+  qryUpdate: TFDQuery;
 begin
-  try
-    FDQuery1.Close;
-    FDQuery1.SQL.Text := 'update configuracao set valor = :valor where cd_configuracao = :cd_configuracao';
-    case cbConfigAlteraCliPv.ItemIndex of
-    0:
-    begin
-      FDQuery1.ParamByName('valor').AsString := 'S';
-    end;
-    1:
-    begin
-      FDQuery1.ParamByName('valor').AsString := 'N';
-    end;
-    end;
+  qryUpdate := TFDQuery.Create(Self);
+  qryUpdate.Connection := dm.FDConnection1;
 
-    FDQuery1.ParamByName('cd_configuracao').AsInteger := 1;
-    FDQuery1.ExecSQL;
+
+  qryUpdate.SQL.Add(sql_update);
+
+  try
+    if cbConfigAlteraCliPv.ItemIndex = 0 then
+      qryUpdate.ParamByName('valor').AsString := 'S'
+    else
+      qryUpdate.ParamByName('valor').AsString := 'N';
+
+    qryUpdate.ParamByName('cd_configuracao').AsInteger := 1;
+    qryUpdate.ExecSQL;
+
+    if cbbLancaItemPedido.ItemIndex = 0 then
+      qryUpdate.ParamByName('valor').AsString := 'S'
+    else
+      qryUpdate.ParamByName('valor').AsString := 'N';
+
+    qryUpdate.ParamByName('cd_configuracao').AsInteger := 3;
+    qryUpdate.ExecSQL;
+
     ShowMessage('Gravado com Sucesso');
   finally
-    FDQuery1.Close;
+    qryUpdate.Free;
   end;
 end;
 
@@ -69,9 +86,9 @@ begin
 end;
 
 procedure TfrmConfiguracoes.FormCreate(Sender: TObject);
-var f, config : Integer;
+var
+  config : Integer;
 begin
-  f := 0;
    try
     FDQuery1.Close;
     FDQuery1.SQL.Text := 'select cd_configuracao, valor from configuracao order by cd_configuracao';
@@ -83,26 +100,24 @@ begin
     begin
       config := FDQuery1.FieldByName('cd_configuracao').AsInteger;
 
-      if FDQuery1.FieldByName('valor').AsString = 'S' then
-        begin
-          f := 0;
-        end
-      else if FDQuery1.FieldByName('valor').AsString = 'N' then
-        begin
-          f := 1;
-        end;
+      if (FDQuery1.FieldByName('valor').AsString <> 'S')
+      and (FDQuery1.FieldByName('valor').AsString <> 'N') then
+        raise Exception.Create('Valor da configuração incorreto');
 
-      if config = 1 then
+      case config of
+      1:
       begin
-        case f of
-        0:
-          begin
-            cbConfigAlteraCliPv.ItemIndex := 0;
-          end;
-        1:
-          begin
-            cbConfigAlteraCliPv.ItemIndex := 1;
-          end;
+        if FDQuery1.FieldByName('valor').AsString = 'S' then
+          cbConfigAlteraCliPv.ItemIndex := 0
+        else
+          cbConfigAlteraCliPv.ItemIndex := 1;
+      end;
+      3:
+        begin
+          if FDQuery1.FieldByName('valor').AsString = 'S' then
+            cbbLancaItemPedido.ItemIndex := 0
+          else
+            cbbLancaItemPedido.ItemIndex := 1;
         end;
       end;
       FDQuery1.Next;
