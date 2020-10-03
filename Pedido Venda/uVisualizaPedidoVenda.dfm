@@ -52,14 +52,14 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       Caption = 'Cliente'
     end
     object Label3: TLabel
-      Left = 261
+      Left = 231
       Top = 66
       Width = 75
       Height = 13
       Caption = 'Nome Completo'
     end
     object Label4: TLabel
-      Left = 672
+      Left = 575
       Top = 66
       Width = 50
       Height = 13
@@ -73,7 +73,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       Caption = 'Forma Pagamento'
     end
     object Label6: TLabel
-      Left = 630
+      Left = 575
       Top = 136
       Width = 86
       Height = 13
@@ -81,28 +81,42 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     end
     object Label16: TLabel
       Left = 131
-      Top = 608
+      Top = 560
       Width = 61
       Height = 13
       Caption = 'Desconto R$'
     end
     object Label17: TLabel
-      Left = 221
-      Top = 608
+      Left = 213
+      Top = 562
       Width = 64
       Height = 13
       Caption = 'Acr'#233'scimo R$'
     end
     object Label18: TLabel
-      Left = 309
-      Top = 608
+      Left = 301
+      Top = 562
       Width = 51
       Height = 13
       Caption = 'Valor Total'
     end
+    object lblStatus: TJvBehaviorLabel
+      Left = 22
+      Top = 622
+      Width = 148
+      Height = 23
+      Caption = 'Pedido Cancelado'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Visible = False
+    end
     object edtCdFormaPgto: TEdit
       Left = 131
-      Top = 167
+      Top = 155
       Width = 87
       Height = 21
       Enabled = False
@@ -110,8 +124,8 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       TabOrder = 1
     end
     object edtCdCondPgto: TEdit
-      Left = 630
-      Top = 167
+      Left = 574
+      Top = 155
       Width = 87
       Height = 21
       Enabled = False
@@ -119,8 +133,8 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       TabOrder = 2
     end
     object edtNomeCondPgto: TEdit
-      Left = 765
-      Top = 167
+      Left = 672
+      Top = 155
       Width = 236
       Height = 21
       Enabled = False
@@ -129,7 +143,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     end
     object dbGridProdutos: TDBGrid
       Left = 128
-      Top = 264
+      Top = 216
       Width = 873
       Height = 321
       DataSource = dsProdutos
@@ -144,7 +158,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     end
     object edtVlDescTotalPedido: TEdit
       Left = 131
-      Top = 627
+      Top = 581
       Width = 61
       Height = 21
       Enabled = False
@@ -152,8 +166,8 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       TabOrder = 3
     end
     object edtVlAcrescimoTotalPedido: TEdit
-      Left = 221
-      Top = 627
+      Left = 213
+      Top = 581
       Width = 61
       Height = 21
       Enabled = False
@@ -161,8 +175,8 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       TabOrder = 4
     end
     object edtVlTotalPedido: TEdit
-      Left = 309
-      Top = 627
+      Left = 301
+      Top = 581
       Width = 61
       Height = 21
       Enabled = False
@@ -170,7 +184,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       TabOrder = 5
     end
     object btnCancelar: TButton
-      Left = 864
+      Left = 906
       Top = 622
       Width = 95
       Height = 32
@@ -206,7 +220,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     TabOrder = 1
   end
   object edtNomeCliente: TEdit
-    Left = 263
+    Left = 233
     Top = 87
     Width = 329
     Height = 21
@@ -215,7 +229,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     TabOrder = 3
   end
   object edtCidadeCliente: TEdit
-    Left = 674
+    Left = 577
     Top = 87
     Width = 329
     Height = 21
@@ -224,8 +238,8 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     TabOrder = 4
   end
   object edtNomeFormaPgto: TEdit
-    Left = 263
-    Top = 169
+    Left = 233
+    Top = 157
     Width = 329
     Height = 21
     Enabled = False

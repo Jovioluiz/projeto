@@ -98,6 +98,8 @@ type
     procedure edtCdFormaPgtoChange(Sender: TObject);
     procedure edtCdCondPgtoExit(Sender: TObject);
     procedure edtCdCondPgtoChange(Sender: TObject);
+    procedure edtQtdadeExit(Sender: TObject);
+    procedure btnConfirmarClick(Sender: TObject);
   private
     { Private declarations }
     edicao : Boolean;
@@ -117,11 +119,41 @@ implementation
 uses uVisualizaPedidoVenda, uConfiguracoes, uConexao, uclPedidoVenda, uDataModule;
 
 procedure TfrmEdicaoPedidoVenda.btnCancelarClick(Sender: TObject);
+const
+  SQL = 'update pedido_venda set fl_cancelado = ''S'' where nr_pedido = :nr_pedido';
+var
+  qry: TFDQuery;
 begin
-  if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
-  begin
-    Close;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+  qry.Connection.StartTransaction;
+
+  try
+    try
+      if (Application.MessageBox('Deseja realmente fechar?','Atenção', MB_YESNO) = IDYES) then
+      begin
+        qry.SQL.Add(SQL);
+        qry.ParamByName('nr_pedido').AsInteger := StrToInt(edtNrPedido.Text);
+        qry.ExecSQL;
+        qry.Connection.Commit;
+        Close;
+      end;
+    except
+    on E : exception do
+      begin
+        qry.Connection.Rollback;
+        ShowMessage('Erro ao cancelar o pedido ' + edtNrPedido.Text + E.Message);
+        Exit;
+      end;
+    end;
+  finally
+    qry.Free;
   end;
+end;
+
+procedure TfrmEdicaoPedidoVenda.btnConfirmarClick(Sender: TObject);
+begin
+//atualiza pedido venda
 end;
 
 procedure TfrmEdicaoPedidoVenda.dbGridProdutosDblClick(Sender: TObject);
@@ -293,20 +325,53 @@ begin
 end;
 
 procedure TfrmEdicaoPedidoVenda.edtQtdadeChange(Sender: TObject);
-var valorTotal, vlUnitario, qtdade : Currency;
+var
+  valorTotal: Currency;
+  pv: TPedidoVenda;
 begin
-  if edtQtdade.Text = EmptyStr then
+  pv := TPedidoVenda.Create;
+
+  try
+    if edtQtdade.Text = EmptyStr then
     begin
       edtVlTotal.Text := '';
       Exit;
     end
-  else
-  begin
-    vlUnitario := StrToCurr(edtVlUnitario.Text);
-    qtdade := StrToCurr(edtQtdade.Text);
-    valorTotal := qtdade * vlUnitario;
-    edtVlTotal.Text := CurrToStr(valorTotal);
-    edtVlDesconto.Enabled := true;
+    else
+    begin
+      valorTotal := pv.CalcValorTotalItem(StrToFloat(edtVlUnitario.Text), StrToFloat(edtQtdade.Text));
+      edtVlTotal.Text := FloatToStr(valorTotal);
+      edtVlDesconto.Enabled := true;
+    end;
+  finally
+    FreeAndNil(pv);
+  end;
+end;
+
+procedure TfrmEdicaoPedidoVenda.edtQtdadeExit(Sender: TObject);
+var
+  ValidaQtdade : TPedidoVenda;
+  resposta : Boolean;
+begin
+  ValidaQtdade := TPedidoVenda.Create;
+  resposta := ValidaQtdade.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
+
+  try
+    if edtQtdade.Text = '0' then
+    begin
+      ShowMessage('Informe uma quantidade maior que 0');
+      edtCdProduto.SetFocus;
+    end;
+
+    if resposta then
+    begin
+      ShowMessage('Quantidade informada maior que a disponível.');
+      //+ #13 +'Quantidade disponível: ' + FloatToStr(qtdade));
+      edtQtdade.SetFocus;
+      Exit;
+    end;
+  finally
+    FreeAndNil(ValidaQtdade);
   end;
 end;
 

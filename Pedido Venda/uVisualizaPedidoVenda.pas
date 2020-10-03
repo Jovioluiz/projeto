@@ -8,7 +8,8 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao;
+  FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao,
+  JvExStdCtrls, JvBehaviorLabel;
 
 type
   TfrmVisualizaPedidoVenda = class(TForm)
@@ -57,6 +58,7 @@ type
     cdsProdutospis_cofins_vl_base: TCurrencyField;
     cdsProdutospis_cofins_pc_aliq: TCurrencyField;
     cdsProdutospis_cofins_valor: TCurrencyField;
+    lblStatus: TJvBehaviorLabel;
 
     procedure dbGridProdutosDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
@@ -92,15 +94,30 @@ end;
 
 
 procedure TfrmVisualizaPedidoVenda.btnEditarPedidoClick(Sender: TObject);
+const
+  SQL = 'select fl_cancelado from pedido_venda where nr_pedido = :nr_pedido';
+var
+  qry: TFDQuery;
 begin
-  if edtFl_orcamento.Checked = false then
-  begin
-    MessageDlg('O pedido não pode ser editado', mtWarning, [mbOK],0);
-  end
-  else
-  begin
-    frmEdicaoPedidoVenda := TfrmEdicaoPedidoVenda.Create(Self);
-    frmEdicaoPedidoVenda.ShowModal;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('nr_pedido').AsInteger := StrToInt(edtNrPedido.Text);
+    qry.Open();
+
+    if (not edtFl_orcamento.Checked) or (qry.FieldByName('fl_cancelado').AsString = 'S') then
+    begin
+      MessageDlg('O pedido não pode ser editado', mtWarning, [mbOK],0);
+    end
+    else
+    begin
+      frmEdicaoPedidoVenda := TfrmEdicaoPedidoVenda.Create(Self);
+      frmEdicaoPedidoVenda.ShowModal;
+    end;
+  finally
+    qry.Free;
   end;
 end;
 
@@ -218,7 +235,8 @@ const
                 'pvi.vl_total_item,                             '+
                 'pv.vl_desconto_pedido,                         '+
                 'pv.vl_acrescimo,                               '+
-                'pv.vl_total                                    '+
+                'pv.vl_total,                                   '+
+                'pv.fl_cancelado                                '+
             'from                                               '+
              '   pedido_venda pv                                '+
             'join pedido_venda_item pvi on                      '+
@@ -280,6 +298,11 @@ begin
       edtVlDescTotalPedido.Text := CurrToStr(qry.FieldByName('vl_desconto_pedido').AsCurrency);
       edtVlAcrescimoTotalPedido.Text := CurrToStr(qry.FieldByName('vl_acrescimo').AsCurrency);
       edtVlTotalPedido.Text := CurrToStr(qry.FieldByName('vl_total').AsCurrency);
+
+      if qry.FieldByName('fl_cancelado').AsString = 'S' then
+        lblStatus.Visible := True
+      else
+        lblStatus.Visible := False;
 
       //lista os itens do pedido
 

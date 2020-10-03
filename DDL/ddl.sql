@@ -1092,3 +1092,4 @@ ALTER TABLE public.usuario_acao ADD fl_permite_edicao bool NULL;
 ALTER TABLE public.produto DROP COLUMN imagem;
 ALTER TABLE public.produto ADD imagem bytea NULL;
 ALTER TABLE public.pedido_venda_item ADD seq_item COLUMN int4 NULL;
+ALTER TABLE public.pedido_venda ADD fl_cancelado varchar(1) NULL;

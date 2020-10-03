@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao, Vcl.Mask,
-  Vcl.ComCtrls, System.Generics.Collections;
+  Vcl.ComCtrls, System.Generics.Collections, JvExStdCtrls, JvBehaviorLabel;
 
 type
   TfrmPedidoVenda = class(TfrmConexao)
@@ -106,9 +106,11 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure dbGridProdutosDblClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure edtCdProdutoEnter(Sender: TObject);
   private
     { Private declarations }
     edicaoItem : Boolean;
+    FNumeroPedido: Integer;
     procedure limpaCampos;
     procedure limpaDados;
     procedure atualizaEstoqueProduto;
@@ -116,6 +118,8 @@ type
     function ProdutoJaLancado(CodProduto: Integer): Boolean;
     function RetornaSequencia: Integer;
     procedure AlteraSequenciaItem;
+
+    property NumeroPedido: Integer read FNumeroPedido write FNumeroPedido;
   public
     { Public declarations }
   end;
@@ -171,34 +175,42 @@ var
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
-  dm.FDConnection1.StartTransaction;
+  qry.Connection.StartTransaction;
 
   try
-    cdsPedidoVenda.DisableControls;
-    cdsPedidoVenda.First;
-    while not cdsPedidoVenda.Eof do
-    begin
-      qry.SQL.Clear;
-      qry.SQL.Add(sql_select);
-      qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
-      qry.Open(sql_select);
+    try
+      cdsPedidoVenda.DisableControls;
+      cdsPedidoVenda.First;
+      while not cdsPedidoVenda.Eof do
+      begin
+        qry.SQL.Clear;
+        qry.SQL.Add(sql_select);
+        qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+        qry.Open(sql_select);
 
-      qtdade := qry.FieldByName('qtd_estoque').AsFloat;//quantidade no banco
-      qttotal := qtdade - cdsPedidoVenda.FieldByName('qtd_venda').AsInteger; //diminui com a informada no pedido
+        qtdade := qry.FieldByName('qtd_estoque').AsFloat;//quantidade no banco
+        qttotal := qtdade - cdsPedidoVenda.FieldByName('qtd_venda').AsInteger; //diminui com a informada no pedido
 
-      qry.SQL.Clear;
+        qry.SQL.Clear;
 
-      qry.SQL.Add(sql_update);
-      qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
-      qry.ParamByName('qtd_estoque').AsFloat := qttotal;
+        qry.SQL.Add(sql_update);
+        qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+        qry.ParamByName('qtd_estoque').AsFloat := qttotal;
 
-      qry.ExecSQL;
-      cdsPedidoVenda.Next;
-      dm.FDConnection1.Commit;
+        qry.ExecSQL;
+        cdsPedidoVenda.Next;
+        qry.Connection.Commit;
+      end;
+    except
+    on E : exception do
+      begin
+        qry.Connection.Rollback;
+        ShowMessage('Erro ao gravar os dados do produto ' + cdsPedidoVenda.FieldByName('cd_produto').AsString + E.Message);
+        Exit;
+      end;
     end;
   finally
     qry.Free;
-    dm.FDConnection1.Rollback;
     cdsPedidoVenda.EnableControls;
   end;
 end;
@@ -377,12 +389,37 @@ begin
   end;
 end;
 
-
+//não funciona, pois não está gravado no banco o pedido
 procedure TfrmPedidoVenda.btnCancelarClick(Sender: TObject);
+const
+  SQL = 'update pedido_venda set fl_cancelado = ''S'' where nr_pedido = :nr_pedido';
+var
+  qry: TFDQuery;
 begin
-  if (Application.MessageBox('Deseja realmente fechar?','Atenção', MB_YESNO) = IDYES) then
-  begin
-    Close;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+  qry.Connection.StartTransaction;
+
+  try
+    try
+      if (Application.MessageBox('Deseja realmente fechar?','Atenção', MB_YESNO) = IDYES) then
+      begin
+        qry.SQL.Add(SQL);
+        qry.ParamByName('nr_pedido').AsInteger := NumeroPedido;
+        qry.ExecSQL;
+        qry.Connection.Commit;
+        Close;
+      end;
+    except
+    on E : exception do
+      begin
+        qry.Connection.Rollback;
+        ShowMessage('Erro ao cancelar o pedido ' + NumeroPedido.ToString + E.Message);
+        Exit;
+      end;
+    end;
+  finally
+    qry.Free;
   end;
 end;
 
@@ -392,9 +429,9 @@ const
   sql_Insert_pedido = 'insert ' +
                       '    into ' +
                       'pedido_venda (id_geral, nr_pedido, cd_cliente, cd_forma_pag, cd_cond_pag, vl_desconto_pedido, '+
-                      '              vl_acrescimo, vl_total, fl_orcamento, dt_emissao) ' +
+                      '              vl_acrescimo, vl_total, fl_orcamento, dt_emissao, fl_cancelado) ' +
                       'values (:id_geral, :nr_pedido, :cd_cliente, :cd_forma_pag, :cd_cond_pag, :vl_desconto_pedido, '+
-                      '        :vl_acrescimo, :vl_total, :fl_orcamento, :dt_emissao)';
+                      '        :vl_acrescimo, :vl_total, :fl_orcamento, :dt_emissao, :fl_cancelado)';
   sql_insert_itens = 'insert '+
                      '    into '+
                      'pedido_venda_item (id_geral, id_pedido_venda, cd_produto, vl_unitario, vl_total_item, qtd_venda, '+
@@ -405,7 +442,7 @@ const
                      ':ipi_vl_base, :ipi_pc_aliq, :ipi_valor, :pis_cofins_vl_base, :pis_cofins_pc_aliq, ' +
                      ':pis_cofins_valor, :un_medida, :seq_item)';
 var
-  nr_pedido, id_geral: Largeint;
+  id_geral: Largeint;
   Tempo : Integer;
   qry, qryItens: TFDQuery;
   idGeral, idGeralPvi: TGerador;
@@ -416,21 +453,18 @@ begin
   qryItens := TFDQuery.Create(Self);
   qryItens.Connection := dm.FDConnection1;
   qry.Connection.StartTransaction;
+  qryItens.Connection.StartTransaction;
   idGeral := TGerador.Create;
   idGeralPvi := TGerador.Create;
   try
     try
-      nr_pedido := 0;
-
-      nr_pedido := GeraNumeroPedido;
-      edtNrPedido.Text := IntToStr(nr_pedido);
       id_geral := idGeral.GeraIdGeral;
 
       //insert na pedido_venda
 
       qry.SQL.Add(sql_Insert_pedido);
       qry.ParamByName('id_geral').AsInteger := id_geral;
-      qry.ParamByName('nr_pedido').AsInteger := nr_pedido;
+      qry.ParamByName('nr_pedido').AsInteger := NumeroPedido;
       qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
       qry.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCdFormaPgto.Text);
       qry.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCdCondPgto.Text);
@@ -439,6 +473,7 @@ begin
       qry.ParamByName('vl_total').AsCurrency := StrToCurr(edtVlTotalPedido.Text);
       qry.ParamByName('fl_orcamento').AsBoolean := edtFl_orcamento.Checked;
       qry.ParamByName('dt_emissao').AsDate := StrToDate(edtDataEmissao.Text);
+      qry.ParamByName('fl_cancelado').AsString := 'N';
       qry.ExecSQL;
 
       AlteraSequenciaItem;
@@ -451,7 +486,6 @@ begin
         while not cdsPedidoVenda.Eof do
         begin
           qryItens.SQL.Clear;
-
           qryItens.SQL.Add(sql_insert_itens);
           qryItens.ParamByName('id_geral').AsInteger := idGeralPvi.GeraIdGeral;
           qryItens.ParamByName('id_pedido_venda').AsInteger := id_geral;
@@ -479,16 +513,16 @@ begin
 
       atualizaEstoqueProduto;
 
-      dm.FDConnection1.Commit;
-      dm.FDConnection1.Close;
+      qry.Connection.Commit;
+      qryItens.Connection.Commit;
 
       ShowMessage('Pedido ' + edtNrPedido.Text + ' Gravado Com Sucesso');
       limpaDados;
-
     except
       on E : exception do
       begin
-        dm.FDConnection1.Rollback;
+        qry.Connection.Rollback;
+        qryItens.Connection.Rollback;
         ShowMessage('Erro ao gravar os dados do pedido ' + edtNrPedido.Text + E.Message);
         Exit;
       end;
@@ -740,6 +774,16 @@ begin
   end;
 end;
 
+procedure TfrmPedidoVenda.edtCdProdutoEnter(Sender: TObject);
+begin
+  inherited;
+  if edtNrPedido.Text = '' then
+  begin
+    NumeroPedido := GeraNumeroPedido;
+    edtNrPedido.Text := NumeroPedido.ToString;
+  end;
+end;
+
 procedure TfrmPedidoVenda.edtCdProdutoExit(Sender: TObject);
 var
   produto: TPedidoVenda;
@@ -747,6 +791,9 @@ var
 begin
   produto := TPedidoVenda.Create;
   resposta := produto.ValidaProduto(StrToInt(edtCdCondPgto.Text));
+
+  if (Trim(edtCdProduto.Text) = '') and (cdsPedidoVenda.RecordCount > 0) then
+    edtVlDescTotalPedido.SetFocus;
 
   try
     if resposta then
@@ -823,8 +870,9 @@ end;
 
 //calcula o valor total do item ao alterar a quantidade
 procedure TfrmPedidoVenda.edtQtdadeChange(Sender: TObject);
-var pv: TPedidoVenda;
-valorTotal: Double;
+var
+  pv: TPedidoVenda;
+  valorTotal: Double;
 begin
   pv := TPedidoVenda.Create;
 
@@ -926,7 +974,10 @@ end;
 
 //altera o valor total ao sair do campo de desconto
 procedure TfrmPedidoVenda.edtVlDescontoItemExit(Sender: TObject);
-var vl_desconto, vl_total, vl_total_com_desc : Currency;
+var
+  vlDesconto, vlUnitario,
+  vlTotalComDesc: Currency;
+  qtd: Double;
 begin
   if edtVlDescontoItem.Text = EmptyStr then
   begin
@@ -934,11 +985,11 @@ begin
   end
   else
   begin
-    vl_desconto := StrToCurr(edtVlDescontoItem.Text);
-    vl_total := StrToCurr(edtVlTotal.Text);
-    vl_total_com_desc := vl_total - vl_desconto;
-    edtVlTotal.Text := CurrToStr(vl_total_com_desc);
-    edtVlDescontoItem.Enabled := false;
+    vlDesconto := StrToCurr(edtVlDescontoItem.Text);
+    vlUnitario := StrToCurr(edtVlUnitario.Text);
+    qtd := StrToFloat(edtQtdade.Text);
+    vlTotalComDesc := (vlUnitario * qtd) - vlDesconto;
+    edtVlTotal.Text := CurrToStr(vlTotalComDesc);
   end;
 end;
 
@@ -958,7 +1009,7 @@ begin
       cdsPedidoVenda.First;
       while not cdsPedidoVenda.Eof do
       begin
-        valor_total := (valor_total + cdsPedidoVenda.FieldByName('Valor Total').AsCurrency);
+        valor_total := (valor_total + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
         cdsPedidoVenda.Next;
       end;
       edtVlTotalPedido.Text := CurrToStr(valor_total);
@@ -975,7 +1026,7 @@ begin
       cdsPedidoVenda.First;
       while not cdsPedidoVenda.Eof do
       begin
-        vl_total_pedido := (vl_total_pedido + cdsPedidoVenda.FieldByName('Valor Total').AsCurrency);
+        vl_total_pedido := (vl_total_pedido + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
         cdsPedidoVenda.Next;
       end;
       //edtVlTotalPedido.Text := CurrToStr(valor_total);

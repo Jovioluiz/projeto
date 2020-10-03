@@ -3,7 +3,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Pedido de Venda'
-  ClientHeight = 673
+  ClientHeight = 622
   ClientWidth = 869
   Color = clSilver
   Font.Charset = DEFAULT_CHARSET
@@ -36,10 +36,12 @@ object frmPedidoVenda: TfrmPedidoVenda
     Left = 0
     Top = 0
     Width = 869
-    Height = 673
+    Height = 622
     Align = alClient
     BorderStyle = bsSingle
     TabOrder = 1
+    ExplicitTop = -16
+    ExplicitHeight = 673
     object Label1: TLabel
       Left = 24
       Top = 32
@@ -84,84 +86,84 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object Label7: TLabel
       Left = 26
-      Top = 240
+      Top = 208
       Width = 38
       Height = 13
       Caption = 'Produto'
     end
     object Label8: TLabel
       Left = 117
-      Top = 240
+      Top = 208
       Width = 46
       Height = 13
       Caption = 'Descri'#231#227'o'
     end
     object Label9: TLabel
       Left = 573
-      Top = 240
+      Top = 208
       Width = 36
       Height = 13
       Caption = 'Qtdade'
     end
     object Label10: TLabel
       Left = 661
-      Top = 240
+      Top = 208
       Width = 41
       Height = 13
       Caption = 'UN Med.'
     end
     object Label11: TLabel
       Left = 24
-      Top = 312
+      Top = 264
       Width = 62
       Height = 13
       Caption = 'Tabela Pre'#231'o'
     end
     object Label12: TLabel
       Left = 117
-      Top = 312
+      Top = 264
       Width = 46
       Height = 13
       Caption = 'Descri'#231#227'o'
     end
     object Label13: TLabel
       Left = 573
-      Top = 312
+      Top = 264
       Width = 64
       Height = 13
       Caption = 'Valor Unit'#225'rio'
     end
     object Label14: TLabel
       Left = 721
-      Top = 312
+      Top = 264
       Width = 51
       Height = 13
       Caption = 'Valor Total'
     end
     object Label15: TLabel
       Left = 650
-      Top = 312
+      Top = 264
       Width = 61
       Height = 13
       Caption = 'Desconto R$'
     end
     object Label16: TLabel
       Left = 26
-      Top = 608
+      Top = 544
       Width = 61
       Height = 13
       Caption = 'Desconto R$'
     end
     object Label17: TLabel
       Left = 117
-      Top = 608
+      Top = 544
       Width = 64
       Height = 13
       Caption = 'Acr'#233'scimo R$'
     end
     object Label18: TLabel
       Left = 213
-      Top = 608
+      Top = 544
       Width = 51
       Height = 13
       Caption = 'Valor Total'
@@ -201,16 +203,17 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtCdProduto: TEdit
       Left = 24
-      Top = 259
+      Top = 227
       Width = 87
       Height = 21
       TabOrder = 3
       OnChange = edtCdProdutoChange
+      OnEnter = edtCdProdutoEnter
       OnExit = edtCdProdutoExit
     end
     object edtDescProduto: TEdit
       Left = 117
-      Top = 259
+      Top = 227
       Width = 427
       Height = 21
       Enabled = False
@@ -218,7 +221,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtQtdade: TEdit
       Left = 573
-      Top = 259
+      Top = 227
       Width = 65
       Height = 21
       TabOrder = 4
@@ -227,14 +230,14 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtUnMedida: TComboBox
       Left = 662
-      Top = 259
+      Top = 227
       Width = 65
       Height = 21
       TabOrder = 5
     end
     object edtCdtabelaPreco: TEdit
       Left = 24
-      Top = 331
+      Top = 283
       Width = 87
       Height = 21
       TabOrder = 6
@@ -243,21 +246,21 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtVlUnitario: TEdit
       Left = 573
-      Top = 331
+      Top = 283
       Width = 65
       Height = 21
       TabOrder = 7
     end
     object edtVlTotal: TEdit
       Left = 721
-      Top = 331
+      Top = 283
       Width = 65
       Height = 21
       TabOrder = 9
     end
     object btnAdicionar: TButton
       Left = 792
-      Top = 329
+      Top = 281
       Width = 63
       Height = 25
       Caption = 'Adicionar'
@@ -265,8 +268,8 @@ object frmPedidoVenda: TfrmPedidoVenda
       OnClick = btnAdicionarClick
     end
     object dbGridProdutos: TDBGrid
-      Left = 24
-      Top = 384
+      Left = 26
+      Top = 320
       Width = 831
       Height = 201
       DataSource = dsPedidoVenda
@@ -284,7 +287,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtVlDescontoItem: TEdit
       Left = 650
-      Top = 331
+      Top = 283
       Width = 65
       Height = 21
       TabOrder = 8
@@ -292,7 +295,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtVlDescTotalPedido: TEdit
       Left = 26
-      Top = 627
+      Top = 563
       Width = 61
       Height = 21
       TabOrder = 11
@@ -300,7 +303,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtVlAcrescimoTotalPedido: TEdit
       Left = 117
-      Top = 627
+      Top = 563
       Width = 61
       Height = 21
       TabOrder = 12
@@ -308,14 +311,14 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtVlTotalPedido: TEdit
       Left = 213
-      Top = 627
+      Top = 563
       Width = 61
       Height = 21
       TabOrder = 13
     end
     object btnConfirmarPedido: TButton
-      Left = 562
-      Top = 622
+      Left = 661
+      Top = 563
       Width = 95
       Height = 32
       Caption = 'Confirmar'
@@ -323,8 +326,8 @@ object frmPedidoVenda: TfrmPedidoVenda
       OnClick = btnConfirmarPedidoClick
     end
     object btnCancelar: TButton
-      Left = 663
-      Top = 622
+      Left = 762
+      Top = 563
       Width = 95
       Height = 32
       Caption = 'Cancelar'
@@ -385,7 +388,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   end
   object edtDescTabelaPreco: TEdit
     Left = 119
-    Top = 333
+    Top = 285
     Width = 427
     Height = 21
     Enabled = False
@@ -502,8 +505,8 @@ object frmPedidoVenda: TfrmPedidoVenda
     IndexDefs = <>
     Params = <>
     StoreDefs = True
-    Left = 328
-    Top = 448
+    Left = 336
+    Top = 408
     object intgrfldPedidoVendaseq: TIntegerField
       DisplayLabel = 'Seq.'
       DisplayWidth = 4
@@ -598,6 +601,6 @@ object frmPedidoVenda: TfrmPedidoVenda
   object dsPedidoVenda: TDataSource
     DataSet = cdsPedidoVenda
     Left = 248
-    Top = 448
+    Top = 400
   end
 end

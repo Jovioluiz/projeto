@@ -167,6 +167,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Width = 95
       Height = 32
       Caption = 'Confirmar'
+      OnClick = btnConfirmarClick
     end
     object edtCdFormaPgto: TEdit
       Left = 86
@@ -266,6 +267,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Height = 21
       TabOrder = 6
       OnChange = edtQtdadeChange
+      OnExit = edtQtdadeExit
     end
     object edtTabelaPreco: TEdit
       Left = 86

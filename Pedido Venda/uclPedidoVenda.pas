@@ -320,16 +320,9 @@ begin
   end;
 end;
 
-function TPedidoVenda.CalcValorTotalItem(valorUnitario,
-  qtdadeItem: Double): Double;
-var
-  vlTotal, vlUnitario, qtdade: Double;
+function TPedidoVenda.CalcValorTotalItem(valorUnitario, qtdadeItem: Double): Double;
 begin
-  vlUnitario := valorUnitario;
-  qtdade := qtdadeItem;
-  vlTotal := vlUnitario * qtdade;
-
-  Result := vlTotal;
+  Result := valorUnitario * qtdadeItem;
 end;
 
 
