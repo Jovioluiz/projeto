@@ -239,17 +239,17 @@ const
                 'pv.fl_cancelado                                '+
             'from                                               '+
              '   pedido_venda pv                                '+
-            'join pedido_venda_item pvi on                      '+
+            'left join pedido_venda_item pvi on                      '+
              '   pv.id_geral = pvi.id_pedido_venda              '+
-             'join cta_forma_pagamento cfp on                   '+
+             'left join cta_forma_pagamento cfp on                   '+
                 'pv.cd_forma_pag = cfp.cd_forma_pag             '+
-            'join cta_cond_pagamento ccp on                     '+
+            'left join cta_cond_pagamento ccp on                     '+
                 'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento  '+
-            'join cliente c on                                  '+
+            'left join cliente c on                                  '+
              '   pv.cd_cliente = c.cd_cliente                   '+
-             'join endereco_cliente e on                        '+
+             'left join endereco_cliente e on                        '+
                 'c.cd_cliente = e.cd_cliente                    '+
-            'join produto p on                                  '+
+            'left join produto p on                                  '+
              '   pvi.cd_produto = p.cd_produto                  '+
             'where                                              '+
              '   pv.nr_pedido = :nr_pedido';

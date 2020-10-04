@@ -111,6 +111,7 @@ type
     { Private declarations }
     edicaoItem : Boolean;
     FNumeroPedido: Integer;
+    FFIdGeral: Int64;
     procedure limpaCampos;
     procedure limpaDados;
     procedure atualizaEstoqueProduto;
@@ -118,8 +119,11 @@ type
     function ProdutoJaLancado(CodProduto: Integer): Boolean;
     function RetornaSequencia: Integer;
     procedure AlteraSequenciaItem;
+    procedure SalvaCabecalho;
+    procedure SetFIdGeral(const Value: Int64);
 
     property NumeroPedido: Integer read FNumeroPedido write FNumeroPedido;
+    property FIdGeral: Int64 read FFIdGeral write SetFIdGeral;
   public
     { Public declarations }
   end;
@@ -389,7 +393,6 @@ begin
   end;
 end;
 
-//não funciona, pois não está gravado no banco o pedido
 procedure TfrmPedidoVenda.btnCancelarClick(Sender: TObject);
 const
   SQL = 'update pedido_venda set fl_cancelado = ''S'' where nr_pedido = :nr_pedido';
@@ -408,7 +411,7 @@ begin
         qry.ParamByName('nr_pedido').AsInteger := NumeroPedido;
         qry.ExecSQL;
         qry.Connection.Commit;
-        Close;
+        limpaDados;
       end;
     except
     on E : exception do
@@ -426,12 +429,10 @@ end;
 //grava os dados na pedido_venda e pedido_venda_item
 procedure TfrmPedidoVenda.btnConfirmarPedidoClick(Sender: TObject);
 const
-  sql_Insert_pedido = 'insert ' +
-                      '    into ' +
-                      'pedido_venda (id_geral, nr_pedido, cd_cliente, cd_forma_pag, cd_cond_pag, vl_desconto_pedido, '+
-                      '              vl_acrescimo, vl_total, fl_orcamento, dt_emissao, fl_cancelado) ' +
-                      'values (:id_geral, :nr_pedido, :cd_cliente, :cd_forma_pag, :cd_cond_pag, :vl_desconto_pedido, '+
-                      '        :vl_acrescimo, :vl_total, :fl_orcamento, :dt_emissao, :fl_cancelado)';
+  SQL_UPDATE_CABECALHO = 'update pedido_venda set cd_cliente = :cd_cliente,  '+
+                         ' cd_forma_pag = :cd_forma_pag, cd_cond_pag = :cd_cond_pag, vl_desconto_pedido = :vl_desconto_pedido,   '+
+                         ' vl_acrescimo = :vl_acrescimo, vl_total = :vl_total, fl_orcamento = :fl_orcamento, dt_emissao = :dt_emissao,'+
+                         ' fl_cancelado = :fl_cancelado where nr_pedido = :nr_pedido';
   sql_insert_itens = 'insert '+
                      '    into '+
                      'pedido_venda_item (id_geral, id_pedido_venda, cd_produto, vl_unitario, vl_total_item, qtd_venda, '+
@@ -442,28 +443,22 @@ const
                      ':ipi_vl_base, :ipi_pc_aliq, :ipi_valor, :pis_cofins_vl_base, :pis_cofins_pc_aliq, ' +
                      ':pis_cofins_valor, :un_medida, :seq_item)';
 var
-  id_geral: Largeint;
   Tempo : Integer;
   qry, qryItens: TFDQuery;
   idGeral, idGeralPvi: TGerador;
 
 begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
   qryItens := TFDQuery.Create(Self);
+  qry := TFDQuery.Create(Self);
   qryItens.Connection := dm.FDConnection1;
-  qry.Connection.StartTransaction;
   qryItens.Connection.StartTransaction;
+  qry.Connection := dm.FDConnection1;
+  qry.Connection.StartTransaction;
   idGeral := TGerador.Create;
   idGeralPvi := TGerador.Create;
   try
     try
-      id_geral := idGeral.GeraIdGeral;
-
-      //insert na pedido_venda
-
-      qry.SQL.Add(sql_Insert_pedido);
-      qry.ParamByName('id_geral').AsInteger := id_geral;
+      qry.SQL.Add(SQL_UPDATE_CABECALHO);
       qry.ParamByName('nr_pedido').AsInteger := NumeroPedido;
       qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
       qry.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCdFormaPgto.Text);
@@ -488,7 +483,7 @@ begin
           qryItens.SQL.Clear;
           qryItens.SQL.Add(sql_insert_itens);
           qryItens.ParamByName('id_geral').AsInteger := idGeralPvi.GeraIdGeral;
-          qryItens.ParamByName('id_pedido_venda').AsInteger := id_geral;
+          qryItens.ParamByName('id_pedido_venda').AsInteger := FIdGeral;
           qryItens.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
           qryItens.ParamByName('vl_unitario').AsCurrency := cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency;
           qryItens.ParamByName('vl_total_item').AsCurrency := cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency;
@@ -775,12 +770,31 @@ begin
 end;
 
 procedure TfrmPedidoVenda.edtCdProdutoEnter(Sender: TObject);
+const
+  SQL = 'select nr_pedido from pedido_venda where nr_pedido = :nr_pedido';
+var
+  qry:TFDQuery;
 begin
   inherited;
-  if edtNrPedido.Text = '' then
-  begin
-    NumeroPedido := GeraNumeroPedido;
-    edtNrPedido.Text := NumeroPedido.ToString;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    if edtNrPedido.Text = '' then
+    begin
+      NumeroPedido := GeraNumeroPedido;
+      edtNrPedido.Text := NumeroPedido.ToString;
+    end;
+
+    qry.SQL.Add(SQL);
+    qry.ParamByName('nr_pedido').AsInteger := NumeroPedido;
+    qry.Open();
+
+    if qry.FieldByName('nr_pedido').AsInteger <> NumeroPedido then
+      SalvaCabecalho;
+
+  finally
+    qry.Free
   end;
 end;
 
@@ -1106,6 +1120,7 @@ begin
   edtVlDescTotalPedido.Text := '0,00';
   edtVlAcrescimoTotalPedido.Text := '0,00';
 end;
+
 procedure TfrmPedidoVenda.limpaDados;
 begin
   edtNrPedido.Clear;
@@ -1149,6 +1164,62 @@ begin
   finally
     cdsPedidoVenda.EnableControls;
   end;
+end;
+
+procedure TfrmPedidoVenda.SalvaCabecalho;
+const
+  sql_Insert_pedido =
+  'insert ' +
+  '    into ' +
+  'pedido_venda (id_geral, nr_pedido, cd_cliente, cd_forma_pag, cd_cond_pag, vl_desconto_pedido, '+
+  '              vl_acrescimo, vl_total, fl_orcamento, dt_emissao, fl_cancelado) ' +
+  'values (:id_geral, :nr_pedido, :cd_cliente, :cd_forma_pag, :cd_cond_pag, :vl_desconto_pedido, '+
+  '        :vl_acrescimo, :vl_total, :fl_orcamento, :dt_emissao, :fl_cancelado)';
+var
+  qry: TFDQuery;
+  idGeral: TGerador;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+  qry.Connection.StartTransaction;
+  idGeral := TGerador.Create;
+
+  try
+    FIdGeral := idGeral.GeraIdGeral;
+
+    try
+      //insert na pedido_venda
+      qry.SQL.Add(sql_Insert_pedido);
+      qry.ParamByName('id_geral').AsInteger := FIdGeral;
+      qry.ParamByName('nr_pedido').AsInteger := NumeroPedido;
+      qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
+      qry.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCdFormaPgto.Text);
+      qry.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCdCondPgto.Text);
+      qry.ParamByName('vl_desconto_pedido').AsCurrency := 0;
+      qry.ParamByName('vl_acrescimo').AsCurrency := 0;
+      qry.ParamByName('vl_total').AsCurrency := 0;
+      qry.ParamByName('fl_orcamento').AsBoolean := edtFl_orcamento.Checked;
+      qry.ParamByName('dt_emissao').AsDate := StrToDate(edtDataEmissao.Text);
+      qry.ParamByName('fl_cancelado').AsString := 'N';
+      qry.ExecSQL;
+      qry.Connection.Commit;
+    except
+    on E : exception do
+      begin
+        qry.Connection.Rollback;
+        ShowMessage('Erro ao gravar o cabeçalho do pedido ' + edtNrPedido.Text + E.Message);
+        Exit;
+      end;
+    end;
+  finally
+    qry.Free;
+    FreeAndNil(idGeral);
+  end;
+end;
+
+procedure TfrmPedidoVenda.SetFIdGeral(const Value: Int64);
+begin
+  FFIdGeral := Value;
 end;
 
 end.

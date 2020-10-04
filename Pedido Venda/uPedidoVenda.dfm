@@ -40,8 +40,6 @@ object frmPedidoVenda: TfrmPedidoVenda
     Align = alClient
     BorderStyle = bsSingle
     TabOrder = 1
-    ExplicitTop = -16
-    ExplicitHeight = 673
     object Label1: TLabel
       Left = 24
       Top = 32
@@ -299,6 +297,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       Width = 61
       Height = 21
       TabOrder = 11
+      Text = '0.00'
       OnExit = edtVlDescTotalPedidoExit
     end
     object edtVlAcrescimoTotalPedido: TEdit
@@ -307,6 +306,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       Width = 61
       Height = 21
       TabOrder = 12
+      Text = '0.00'
       OnExit = edtVlAcrescimoTotalPedidoExit
     end
     object edtVlTotalPedido: TEdit
@@ -315,6 +315,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       Width = 61
       Height = 21
       TabOrder = 13
+      Text = '0.00'
     end
     object btnConfirmarPedido: TButton
       Left = 661
