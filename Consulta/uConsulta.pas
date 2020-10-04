@@ -94,20 +94,12 @@ begin
 end;
 
 procedure TfrmConsulta.dbgrd1DblClick(Sender: TObject);
-var
-  cliente: TfrmCadCliente;
 begin
-  cliente := TfrmCadCliente.Create(Self);
-
-  try
-    if chamada = 'cntCliente' then
-    begin
-      cliente.cdCliente := cdsConsulta.FieldByName('cd_cliente').AsInteger;
-      Close;
-      chamada := '';
-    end;
-  finally
-    FreeAndNil(cliente);
+  if chamada = 'cntCliente' then
+  begin
+    CodCliente := cdsConsulta.FieldByName('cd_cliente').AsInteger;
+    Close;
+    chamada := '';
   end;
 end;
 

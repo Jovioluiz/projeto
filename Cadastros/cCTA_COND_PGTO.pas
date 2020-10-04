@@ -26,7 +26,6 @@ type
     edtCTACONDPGTOVL_MINIMO: TEdit;
     sqlInsertCondPgto: TFDQuery;
     edtCTACONDPGTOFL_ATIVO: TCheckBox;
-    selectCDPGTO: TFDQuery;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtCTACONDPGTOCD_CTA_FORMA_PGTOChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -53,84 +52,93 @@ implementation
 uses uDataModule;
 
 procedure TfrmCadCondPgto.edtCTACONDPGTOCD_CONDExit(Sender: TObject);
+const
+  SQL = 'select '+
+            'c.fl_ativo, '+
+            'c.cd_cond_pag, '+
+            'c.nm_cond_pag, '+
+            'c.cd_cta_forma_pagamento, '+
+            'f.nm_forma_pag, '+
+            'c.vl_minimo_parcela, '+
+            'c.nr_parcelas '+
+          'from '+
+            'cta_cond_pagamento c '+
+          'join cta_forma_pagamento f on '+
+            'c.cd_cta_forma_pagamento = f.cd_forma_pag '+
+        'where cd_cond_pag = :cd_cond_pag';
+var
+  qry: TFDQuery;
 begin
-  if edtCTACONDPGTOCD_COND.Text = EmptyStr then
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
+  try
+
+    if edtCTACONDPGTOCD_COND.Text = EmptyStr then
     begin
       raise Exception.Create('Código não pode ser vazio');
       edtCTACONDPGTOCD_COND.SetFocus;
       Abort;
     end;
 
-  sqlInsertCondPgto.Close;
-  sqlInsertCondPgto.SQL.Clear;
-  sqlInsertCondPgto.SQL.Text := 'select '+
-                              'c.fl_ativo, '+
-                              'c.cd_cond_pag, '+
-                              'c.nm_cond_pag, '+
-                              'c.cd_cta_forma_pagamento, '+
-                              'f.nm_forma_pag, '+
-                              'c.vl_minimo_parcela, '+
-                              'c.nr_parcelas '+
-                            'from '+
-                              'cta_cond_pagamento c '+
-                            'join cta_forma_pagamento f on '+
-                              'c.cd_cta_forma_pagamento = f.cd_forma_pag '+
-                          'where cd_cond_pag = :cd_cond_pag';
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_COND.Text);
+    qry.Open();
 
-  sqlInsertCondPgto.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_COND.Text);
-
-  sqlInsertCondPgto.Open();
-
-  if not sqlInsertCondPgto.IsEmpty then
-  begin
-    edtCTACONDPGTOFL_ATIVO.Checked := sqlInsertCondPgto.FieldByName('fl_ativo').AsBoolean;
-    edtCTACONDPGTODESCRICAO.Text := sqlInsertCondPgto.FieldByName('nm_cond_pag').AsString;
-    edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text := IntToStr(sqlInsertCondPgto.FieldByName('cd_cta_forma_pagamento').AsInteger);
-    edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := sqlInsertCondPgto.FieldByName('nm_forma_pag').AsString;
-
-    if sqlInsertCondPgto.FieldByName('vl_minimo_parcela').AsCurrency = 0 then
+    if not qry.IsEmpty then
     begin
-      edtCTACONDPGTOVL_MINIMO.Text := '';
-    end
-    else
-    begin
-      edtCTACONDPGTOVL_MINIMO.Text := CurrToStr(sqlInsertCondPgto.FieldByName('vl_minimo_parcela').AsCurrency);
+      edtCTACONDPGTOFL_ATIVO.Checked := qry.FieldByName('fl_ativo').AsBoolean;
+      edtCTACONDPGTODESCRICAO.Text := qry.FieldByName('nm_cond_pag').AsString;
+      edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text := IntToStr(qry.FieldByName('cd_cta_forma_pagamento').AsInteger);
+      edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := qry.FieldByName('nm_forma_pag').AsString;
+
+      if qry.FieldByName('vl_minimo_parcela').AsCurrency = 0 then
+        edtCTACONDPGTOVL_MINIMO.Text := ''
+      else
+        edtCTACONDPGTOVL_MINIMO.Text := FormatCurr('#,##0.00', qry.FieldByName('vl_minimo_parcela').AsCurrency);
+
+      if qry.FieldByName('nr_parcelas').AsInteger = 0 then
+        edtCTACONDPGTONR_PARCELAS.Text := ''
+      else
+        edtCTACONDPGTONR_PARCELAS.Text := IntToStr(qry.FieldByName('nr_parcelas').AsInteger);
     end;
-
-    if sqlInsertCondPgto.FieldByName('nr_parcelas').AsInteger = 0 then
-    begin
-      edtCTACONDPGTONR_PARCELAS.Text := '';
-    end
-    else
-    begin
-      edtCTACONDPGTONR_PARCELAS.Text := IntToStr(sqlInsertCondPgto.FieldByName('nr_parcelas').AsInteger);
-    end;
+  finally
+    qry.Free;
   end;
 end;
 
 procedure TfrmCadCondPgto.edtCTACONDPGTOCD_CTA_FORMA_PGTOChange(Sender: TObject);
 //busca o nome da foma de pagamento
+const
+  SQL = 'select '+
+            'nm_forma_pag '+
+       'from '+
+            'cta_forma_pagamento '+
+       'where '+
+            'cd_forma_pag = :cd_forma_pag ';
+var
+  qry: TFDQuery;
 begin
   inherited;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
   begin
     if edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text = '' then
-      begin
-        edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := '';
-        exit;
-      end;
-
+    begin
+      edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := '';
+      exit;
+    end;
   end;
 
-    selectCDPGTO.Close;
-    selectCDPGTO.SQL.Text := 'select '+
-                                  'nm_forma_pag '+
-                             'from '+
-                                  'cta_forma_pagamento '+
-                             'where '+
-                                  'cd_forma_pag = :cd_forma_pag ';
-    selectCDPGTO.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text);
-    selectCDPGTO.Open();
-    edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := selectCDPGTO.FieldByName('nm_forma_pag').AsString;
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text);
+    qry.Open();
+    edtCTACONDPGTO_DESC_CTA_FORMA_PGTO.Text := qry.FieldByName('nm_forma_pag').AsString;
+  finally
+    qry.Free;
+  end;
 end;
 
 procedure TfrmCadCondPgto.excluir;

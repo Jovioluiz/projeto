@@ -41,7 +41,7 @@ implementation
 
 {$R *.dfm}
 
-uses uTelaInicial, uDataModule, uVersao;
+uses uTelaInicial, uDataModule, uVersao, uValidaDados;
 
 procedure TfrmLogin.btnCancelarClick(Sender: TObject);
 begin
@@ -57,13 +57,15 @@ const
               'from '+
               '  login_usuario '+
               'where '+
-              '  login = :login and senha = :senha';
+              '  login = :login';
 
 var
   usuario, senha: String;
   qry: TFDQuery;
+  verificaSenha: TValidaDados;
 begin
   try
+    verificaSenha := TValidaDados.Create();
     qry := TFDQuery.Create(Self);
     qry.Connection := dm.FDConnection1;
     qry.Close;
@@ -71,7 +73,6 @@ begin
 
     qry.SQL.Add(SQL_LOGIN);
     qry.ParamByName('login').AsString := edtUsuario.Text;
-    qry.ParamByName('senha').AsString := edtSenha.Text;
     qry.Prepare;
     qry.Open(SQL_LOGIN);
 
@@ -88,7 +89,8 @@ begin
       edtUsuario.SetFocus;
       Exit;
     end;
-    if (Trim(edtUsuario.Text) = usuario) and (Trim(edtSenha.Text) = senha) then
+    if (Trim(edtUsuario.Text) = usuario)
+        and (Trim(senha) = verificaSenha.DescriptografaSenha(edtSenha.Text, idUsuario,1,2)) then
     begin
       try
         frmPrincipal := TfrmPrincipal.Create(Self);

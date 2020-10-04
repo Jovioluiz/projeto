@@ -297,7 +297,7 @@ object frmLogin: TfrmLogin
   object lblVersao: TLabel
     Left = 456
     Top = 200
-    Width = 57
+    Width = 3
     Height = 13
     Anchors = [akTop, akRight]
   end

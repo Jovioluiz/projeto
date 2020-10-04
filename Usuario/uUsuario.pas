@@ -30,8 +30,10 @@ type
     procedure validaCampos;
     procedure salvar;
     procedure excluir;
+
   public
     { Public declarations }
+
   end;
 
 var
@@ -82,33 +84,31 @@ end;
 procedure TfrmUsuario.excluir;
 begin
   if (Application.MessageBox('Deseja Excluir o Usuário?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      try
-        dm.FDConnection1.StartTransaction;
-        sql.Close;
-        sql.SQL.Text := 'delete                   '+
-                            'from                    '+
-                        'login_usuario            '+
-                            'where                   '+
-                        'id_usuario = :id_usuario';
-        sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
+  begin
+    try
+      dm.FDConnection1.StartTransaction;
+      sql.Close;
+      sql.SQL.Text := 'delete                   '+
+                          'from                    '+
+                      'login_usuario            '+
+                          'where                   '+
+                      'id_usuario = :id_usuario';
+      sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
 
-        sql.ExecSQL;
-        ShowMessage('Usuário excluído com sucesso!');
-        dm.FDConnection1.Commit;
-        limpaCampos;
-      except
-        on E:exception do
-          begin
-            dm.FDConnection1.Rollback;
-            ShowMessage('Erro ao excluir os dados do usuário ' +edtIdUsuario.Text + E.Message);
-          end;
-      end;
-    end
-  else
-    begin
-      Exit;
+      sql.ExecSQL;
+      ShowMessage('Usuário excluído com sucesso!');
+      dm.FDConnection1.Commit;
+      limpaCampos;
+    except
+      on E:exception do
+        begin
+          dm.FDConnection1.Rollback;
+          ShowMessage('Erro ao excluir os dados do usuário ' +edtIdUsuario.Text + E.Message);
+        end;
     end;
+  end
+  else
+    Exit;
 end;
 
 procedure TfrmUsuario.FormKeyDown(Sender: TObject; var Key: Word;
@@ -116,20 +116,14 @@ procedure TfrmUsuario.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   inherited;
   if key = VK_F3 then //F3
-  begin
-    limpaCampos;
-  end
+    limpaCampos
   else if key = VK_F2 then  //F2
-  begin
-    salvar;
-  end
+    salvar
   else if key = VK_F4 then    //F4
-  begin
-    excluir;
-  end
+    excluir
   else if key = VK_ESCAPE then //ESC
   begin
-  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+    if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
     begin
       Close;
     end;
@@ -139,10 +133,10 @@ end;
 procedure TfrmUsuario.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
-    begin
-      Key := #0;
-      Perform(WM_NEXTDLGCTL,0,0)
-    end;
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL,0,0)
+  end;
 end;
 
 procedure TfrmUsuario.limpaCampos;
@@ -154,8 +148,11 @@ begin
 end;
 
 procedure TfrmUsuario.salvar;
+var
+  cripto: TValidaDados;
 begin
   try
+    cripto := TValidaDados.Create;
     dm.transacao.StartTransaction;
     validaCampos;
 
@@ -185,18 +182,22 @@ begin
 
           sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
           sql.ParamByName('login').AsString := edtNomeUsuario.Text;
-          sql.ParamByName('senha').AsString := edtSenhaUsuario.Text;
+          sql.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text,
+                                                                StrToInt(edtIdUsuario.Text),
+                                                                1,
+                                                                2);//se alterar esses números, alterar tbm no
+                                                                   //formulario de login
 
           sql.ExecSQL;
           dm.transacao.Commit;
           ShowMessage('Salvo');
-        except
-          on E:exception do
-            begin
-              dm.transacao.Rollback;
-              ShowMessage('Erro '+ E.Message);
-              Exit;
-            end;
+      except
+        on E:exception do
+          begin
+            dm.transacao.Rollback;
+            ShowMessage('Erro '+ E.Message);
+            Exit;
+          end;
         end;
     end
     else
@@ -215,18 +216,22 @@ begin
 
           sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
           sql.ParamByName('login').AsString := edtNomeUsuario.Text;
-          sql.ParamByName('senha').AsString := edtSenhaUsuario.Text;
+          sql.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text,
+                                                                StrToInt(edtIdUsuario.Text),
+                                                                1,
+                                                                2);//se alterar esses números, alterar tbm no
+                                                                   //formulario de login
 
           sql.ExecSQL;
           dm.transacao.Commit;
           ShowMessage('Salvo');
-        except
-          on E:exception do
-            begin
-              dm.transacao.Rollback;
-              ShowMessage('Erro '+ E.Message);
-              Exit;
-            end;
+      except
+        on E:exception do
+          begin
+            dm.transacao.Rollback;
+            ShowMessage('Erro '+ E.Message);
+            Exit;
+          end;
         end;
       end;
   finally
@@ -235,10 +240,10 @@ begin
 end;
 
 procedure TfrmUsuario.validaCampos;
-var usuario : TValidaDados;
+var
+  usuario : TValidaDados;
 begin
   usuario := TValidaDados.Create;
   usuario.validaCodigo(StrToInt(edtIdUsuario.Text));
 end;
-
 end.

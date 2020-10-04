@@ -58,18 +58,15 @@ type
       Shift: TShiftState);
     procedure FormActivate(Sender: TObject);
   private
-    FcdCliente: Integer;
     { Private declarations }
     procedure limpaCampos;
     //procedure validaCampos;
     procedure salvar;
     procedure excluir;
     procedure desabilitaCampos;
-    procedure SetcdCliente(const Value: Integer);
     //procedure listaEstados;
   public
     { Public declarations }
-    property cdCliente: Integer read FcdCliente write SetcdCliente;
   end;
 
 var
@@ -77,6 +74,7 @@ var
   temCep, camposDesabilitados: Boolean;
   cep, chamada: String;
   lista: TList<string>;
+  CodCliente: Integer;
 
 implementation
 
@@ -306,11 +304,11 @@ begin
         limpaCampos;
       except
       on E:exception do
-          begin
-            dm.transacao.Rollback;
-            ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
-            Exit;
-          end;
+        begin
+          dm.transacao.Rollback;
+          ShowMessage('Erro ao gravar os dados do cliente '+ E.Message);
+          Exit;
+        end;
       end;
     end;
   finally
@@ -318,11 +316,6 @@ begin
     qryCliente.Free;
     qryEnd.Free;
   end;
-end;
-
-procedure TfrmCadCliente.SetcdCliente(const Value: Integer);
-begin
-  FcdCliente := Value;
 end;
 
 procedure TfrmCadCliente.desabilitaCampos;
@@ -588,14 +581,12 @@ begin
   end
   else
     Exit;
-
 end;
 
 procedure TfrmCadCliente.FormActivate(Sender: TObject);
 begin
-  inherited;
   if chamada = 'cntCliente' then
-    edtCLIENTEcd_cliente.Text := cdCliente.ToString;
+    edtCLIENTEcd_cliente.Text := CodCliente.ToString;
 end;
 
 procedure TfrmCadCliente.FormClose(Sender: TObject; var Action: TCloseAction);

@@ -25,7 +25,8 @@ type TValidaDados = class
     function validaCodigo(cod : Integer) : Integer;
     function validaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
     function validaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode editar um cadastro
-
+    function criptografaSenha(Senha: string; StartKey,MultKey,AddKey:Integer): String;
+    function DescriptografaSenha(Senha: string; StartKey,MultKey,AddKey:Integer): String;
 
 end;
 
@@ -34,6 +35,31 @@ implementation
 { TValidaDados }
 
 uses uDataModule;
+
+function TValidaDados.criptografaSenha(Senha: string; StartKey,MultKey,AddKey:Integer): String;
+var
+  I : Byte;
+begin
+  Result := '\';
+  for i := 1 to Length(Senha) do
+  begin
+    Result := Result + CHAR(Byte(Senha[I]) xor (StartKey));
+    StartKey := (Byte(Result[I]) + StartKey) * MultKey + AddKey;
+  end;
+end;
+
+function TValidaDados.DescriptografaSenha(Senha: string; StartKey, MultKey,
+  AddKey: Integer): String;
+var
+  I : Byte;
+begin
+  Result := '\';
+  for I := 1 to Length(Senha) do
+  begin
+    Result := Result + CHAR(Byte(Senha[I]) xor (StartKey));
+    StartKey := (Byte(Senha[I]) + StartKey) * MultKey + AddKey;
+  end;
+end;
 
 procedure TValidaDados.SetcdCliente(const Value: Integer);
 begin
@@ -73,20 +99,20 @@ begin
   if not dm.query.IsEmpty then
     Result := True
   else
-    begin
-      ShowMessage('Usuário não possui permissão de acesso! Verifique!');
-      Abort;
-    end;
+  begin
+    ShowMessage('Usuário não possui permissão de acesso! Verifique!');
+    Abort;
+  end;
 end;
 
 function TValidaDados.validaCodigo(cod: Integer): Integer;
 begin
   if cod = null then
-    begin
-      ShowMessage('Código não pode ser vazio');
-      Abort;
-    end;
-    Result := 0;
+  begin
+    ShowMessage('Código não pode ser vazio');
+    Abort;
+  end;
+  Result := 0;
 end;
 
 function TValidaDados.validaEdicaoAcao(cdUsuario, cdAcao: Integer): Boolean;
@@ -120,7 +146,6 @@ begin
     ShowMessage('Nome e CPF não podem ser vazios');
     Abort;
   end;
-
 end;
 
 end.
