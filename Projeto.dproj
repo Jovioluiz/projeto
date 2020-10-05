@@ -89,6 +89,7 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <UWP_DelphiLogo44>imagens\logo48.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>imagens\logo150.png</UWP_DelphiLogo150>
+        <VerInfo_Keys>CompanyName=Jóvio L. Giacomolli;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -183,7 +184,9 @@
             <Form>frmConsulta</Form>
         </DCCReference>
         <DCCReference Include="Entrada\uclValidacoesEntrada.pas"/>
-        <DCCReference Include="uGerador.pas"/>
+        <DCCReference Include="uGerador.pas">
+            <Form>$R *.res</Form>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -1123,7 +1126,7 @@
             </Platforms>
             <ModelSupport>False</ModelSupport>
             <UnitTesting>
-                <TestProjectName>C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\Teste\ProjetoTeste.dproj</TestProjectName>
+                <TestProjectName>C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\Teste\ProjetoTestes.dproj</TestProjectName>
             </UnitTesting>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>

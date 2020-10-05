@@ -26,13 +26,13 @@ type
     procedure edtIdUsuarioChange(Sender: TObject);
   private
     { Private declarations }
+
+  public
+    { Public declarations }
     procedure limpaCampos;
     procedure validaCampos;
     procedure salvar;
     procedure excluir;
-
-  public
-    { Public declarations }
 
   end;
 
@@ -53,31 +53,38 @@ end;
 
 procedure TfrmUsuario.edtIdUsuarioExit(Sender: TObject);
 begin
-  if edtIdUsuario.Text = '' then
-  begin
-    validaCampos;
-    Exit;
-  end;
+  try
+    if edtIdUsuario.Text = EmptyStr then
+    begin
+      validaCampos;
+      Exit;
+    end;
 
 
-  sql.Close;
-  sql.SQL.Text := 'select '+
-                      'login, '+
-                      'senha  '+
-                  'from login_usuario '+
-                  'where '+
-                      'id_usuario = :id_usuario';
-  sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
-  sql.Open();
+    sql.Close;
+    sql.SQL.Text := 'select '+
+                        'login, '+
+                        'senha  '+
+                    'from login_usuario '+
+                    'where '+
+                        'id_usuario = :id_usuario';
+    sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
+    sql.Open();
 
-  if not sql.IsEmpty then
-  begin
-    edtNomeUsuario.Text := sql.FieldByName('login').AsString;
-    edtSenhaUsuario.Text := sql.FieldByName('senha').AsString;
-  end
-  else
-  begin
-    edtNomeUsuario.SetFocus;
+    if not sql.IsEmpty then
+    begin
+      edtNomeUsuario.Text := sql.FieldByName('login').AsString;
+      edtSenhaUsuario.Text := sql.FieldByName('senha').AsString;
+    end
+    else
+    begin
+      edtNomeUsuario.SetFocus;
+    end;
+  except
+    on E: Exception do
+    ShowMessage(
+      'Ocorreu um erro.' + #13 +
+      'Mensagem de erro: ' + E.Message);
   end;
 end;
 
@@ -86,7 +93,7 @@ begin
   if (Application.MessageBox('Deseja Excluir o Usuário?','Atenção', MB_YESNO) = IDYES) then
   begin
     try
-      dm.FDConnection1.StartTransaction;
+      //dm.FDConnection1.StartTransaction;
       sql.Close;
       sql.SQL.Text := 'delete                   '+
                           'from                    '+
@@ -97,12 +104,13 @@ begin
 
       sql.ExecSQL;
       ShowMessage('Usuário excluído com sucesso!');
-      dm.FDConnection1.Commit;
+      //dm.FDConnection1.Commit;
       limpaCampos;
+      //sql.Free;
     except
       on E:exception do
         begin
-          dm.FDConnection1.Rollback;
+          //dm.FDConnection1.Rollback;
           ShowMessage('Erro ao excluir os dados do usuário ' +edtIdUsuario.Text + E.Message);
         end;
     end;
@@ -144,7 +152,7 @@ begin
   edtIdUsuario.Clear;
   edtNomeUsuario.Clear;
   edtSenhaUsuario.Clear;
-  edtIdUsuario.SetFocus;
+  //edtIdUsuario.SetFocus;
 end;
 
 procedure TfrmUsuario.salvar;
@@ -153,7 +161,7 @@ var
 begin
   try
     cripto := TValidaDados.Create;
-    dm.transacao.StartTransaction;
+    //dm.transacao.StartTransaction;
     validaCampos;
 
     query.Close;
@@ -189,14 +197,13 @@ begin
                                                                    //formulario de login
 
           sql.ExecSQL;
-          dm.transacao.Commit;
+          //dm.transacao.Commit;
           ShowMessage('Salvo');
       except
         on E:exception do
           begin
-            dm.transacao.Rollback;
+            //dm.transacao.Rollback;
             ShowMessage('Erro '+ E.Message);
-            Exit;
           end;
         end;
     end
@@ -223,19 +230,19 @@ begin
                                                                    //formulario de login
 
           sql.ExecSQL;
-          dm.transacao.Commit;
+          //dm.transacao.Commit;
           ShowMessage('Salvo');
       except
         on E:exception do
           begin
-            dm.transacao.Rollback;
+            //dm.transacao.Rollback;
             ShowMessage('Erro '+ E.Message);
-            Exit;
           end;
         end;
       end;
   finally
     limpaCampos;
+    FreeAndNil(cripto);
   end;
 end;
 
@@ -243,7 +250,18 @@ procedure TfrmUsuario.validaCampos;
 var
   usuario : TValidaDados;
 begin
-  usuario := TValidaDados.Create;
-  usuario.validaCodigo(StrToInt(edtIdUsuario.Text));
+  try
+    try
+      usuario := TValidaDados.Create;
+      usuario.validaCodigo(StrToInt(edtIdUsuario.Text));
+    except
+      on E: Exception do
+      ShowMessage(
+        'Ocorreu um erro.' + #13 +
+        'Mensagem de erro: ' + E.Message);
+    end;
+  finally
+    FreeAndNil(usuario);
+  end;
 end;
 end.
