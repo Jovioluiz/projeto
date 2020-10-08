@@ -1053,6 +1053,7 @@ end;
 procedure TfrmPedidoVenda.FormCreate(Sender: TObject);
 begin
   edtDataEmissao.Text := DateToStr(Date());
+  seqItem := 1;
 end;
 
 procedure TfrmPedidoVenda.FormKeyDown(Sender: TObject; var Key: Word;
@@ -1227,20 +1228,23 @@ const
                'icms_pc_aliq = :icms_pc_aliq, icms_valor = :icms_valor, ipi_vl_base = :ipi_vl_base, ipi_pc_aliq = :ipi_pc_aliq, ipi_valor = :ipi_valor,              ' +
                'pis_cofins_vl_base = :pis_cofins_vl_base, pis_cofins_pc_aliq = :pis_cofins_pc_aliq, pis_cofins_valor = :pis_cofins_valor, un_medida = :un_medida, ' +
                'seq_item = :seq_item '+
-               'where cd_produto = :cd_produto';
+               'where cd_produto = :cd_produto and id_geral = :id_geral';
 var
   qry: TFDQuery;
   idGeral: TGerador;
+//  idGeralItem: Int64;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
   qry.Connection.StartTransaction;
   idGeral := TGerador.Create;
 
+  //NÃO ESTÁ GRAVANDO CORRETAMENTE O SEQ_ITEM NA PEDIDO_VENDA_ITEM
   try
     try
       if not EhEdicao then
       begin
+//        idGeralItem := idGeral.GeraIdGeral;
         qry.SQL.Add(SQL_INSERT);
         qry.ParamByName('id_geral').AsInteger := idGeral.GeraIdGeral;
         qry.ParamByName('id_pedido_venda').AsInteger := FIdGeral;
@@ -1268,6 +1272,7 @@ begin
       else
       begin
         qry.SQL.Add(SQL_UPDATE);
+//        qry.ParamByName('id_geral').AsInteger := FIdGeral;
         qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
         qry.ParamByName('vl_unitario').AsCurrency := cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency;
         qry.ParamByName('vl_total_item').AsCurrency := cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency;

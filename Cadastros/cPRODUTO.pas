@@ -277,7 +277,7 @@ begin
   qry.Close;
   qry.SQL.Clear;
 
-  if edtPRODUTOCD_PRODUTO.Text = EmptyStr then
+  if edtPRODUTOCD_PRODUTO.isEmpty then
   begin
     raise Exception.Create('Código não pode ser vazio');
     edtPRODUTOCD_PRODUTO.SetFocus;
@@ -368,7 +368,7 @@ begin
   qry.Close;
   qry.SQL.Clear;
 
-  if edtProdutoGrupoTributacaoICMS.Text = EmptyStr then
+  if edtProdutoGrupoTributacaoICMS.isEmpty then
   begin
     edtProdutoGrupoTributacaoICMS.Text := '';
     edtProdutoNomeGrupoTributacaoICMS.Text := '';
@@ -399,7 +399,7 @@ begin
   qry.Close;
   qry.SQL.Clear;
 
-  if edtProdutoGrupoTributacaoIPI.Text = EmptyStr then
+  if edtProdutoGrupoTributacaoIPI.isEmpty then
   begin
     edtProdutoGrupoTributacaoIPI.Text := '';
     edtProdutoNomeGrupoTributacaoIPI.Text := '';
@@ -430,7 +430,7 @@ begin
   qry.Close;
   qry.SQL.Clear;
 
-  if edtProdutoGrupoTributacaoPISCOFINS.Text = EmptyStr then
+  if edtProdutoGrupoTributacaoPISCOFINS.isEmpty then
   begin
     edtProdutoGrupoTributacaoPISCOFINS.Text := '';
     edtProdutoNomeGrupoTributacaoPISCOFINS.Text := '';
@@ -476,9 +476,7 @@ begin
       end;
     end
     else
-    begin
       Exit;
-    end;
   finally
     FreeAndNil(qry);
   end;
@@ -526,7 +524,7 @@ begin
   if Key = #13 then
   begin
     Key := #0;
-     Perform(WM_NEXTDLGCTL,0,0)
+    Perform(WM_NEXTDLGCTL,0,0)
   end;
 end;
 
@@ -542,9 +540,7 @@ begin
                                                       [StrToInt(edtPRODUTOCD_PRODUTO.Text)]);
     end
     else
-    begin
-      exit;
-    end;
+      Exit;
 end;
 
 procedure TfrmCadProduto.limpaCampos;

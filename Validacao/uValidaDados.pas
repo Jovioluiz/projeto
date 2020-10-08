@@ -14,8 +14,6 @@ type TValidaDados = class
     procedure SetcdCliente(const Value: Integer);
     procedure Setcpf(const Value: String);
 
-
-
   public
     property nomeCliente : String read FnomeCliente write SetnomeCliente;
     property cdCliente : Integer read FcdCliente write SetcdCliente;
@@ -29,6 +27,19 @@ type TValidaDados = class
     function DescriptografaSenha(Senha: string; StartKey,MultKey,AddKey:Integer): String;
 
 end;
+
+type TEditDocumento = class helper for TEdit
+  public
+    function isEmpty: Boolean;
+
+end;
+
+type TDataSetHelper = class helper for TDataSet
+  public
+
+    procedure Loop(Procedimento: TProc); overload;
+end;
+
 
 implementation
 
@@ -145,6 +156,35 @@ begin
   begin
     ShowMessage('Nome e CPF não podem ser vazios');
     Abort;
+  end;
+end;
+
+{ TEditDocumento }
+
+function TEditDocumento.isEmpty: Boolean;
+begin
+  Result := Trim(Self.Text) = EmptyStr;
+end;
+
+{ TDataSetHelper }
+
+procedure TDataSetHelper.Loop(Procedimento: TProc);
+begin
+  if Self.IsEmpty then
+    Exit;
+
+  Self.DisableControls;
+
+  try
+    Self.First;
+    while not Self.Eof do
+    begin
+      Procedimento;
+      Self.Next;
+    end;
+    Self.First;
+  finally
+    Self.EnableControls;
   end;
 end;
 
