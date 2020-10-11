@@ -1093,3 +1093,56 @@ ALTER TABLE public.produto DROP COLUMN imagem;
 ALTER TABLE public.produto ADD imagem bytea NULL;
 ALTER TABLE public.pedido_venda_item ADD seq_item int4 NULL;
 ALTER TABLE public.pedido_venda ADD fl_cancelado varchar(1) NULL;
+
+CREATE TABLE public.wms_endereco (
+	id_geral int8 NOT NULL,
+	cd_deposito int4 NULL,
+	ala text NULL,
+	rua text NULL,
+	complemento varchar NULL,
+	dt_atz date NULL,
+	CONSTRAINT pk_wms_endereco PRIMARY KEY (id_geral)
+);
+
+create trigger tr_dt_atz before
+insert
+    or
+update
+    on
+    public.wms_endereco for each row execute procedure func_grava_dt_atz();
+
+create trigger tr_gera_log after
+insert
+    or
+delete
+    or
+update
+    on
+    public.wms_endereco for each row execute procedure gera_log();
+
+CREATE TABLE public.wms_endereco_produto (
+    id_geral int8 NOT NULL,
+    id_endereco int8 NOT NULL,
+    nm_endereco varchar(20) NOT NULL,
+    cd_produto int4 not null,
+    dt_atz date NULL,
+    CONSTRAINT pk_wms_endereco_produto PRIMARY KEY (id_geral),
+    CONSTRAINT fk_wms_endereco_produto_wms_endereco FOREIGN KEY (id_endereco) REFERENCES wms_endereco(id_geral),
+    CONSTRAINT fk_wms_endereco_produto_produto FOREIGN KEY (cd_produto) REFERENCES produto(cd_produto)
+);
+
+create trigger tr_dt_atz before
+insert
+    or
+update
+    on
+    public.wms_endereco_produto for each row execute procedure func_grava_dt_atz();
+
+create trigger tr_gera_log after
+insert
+    or
+delete
+    or
+update
+    on
+    public.wms_endereco_produto for each row execute procedure gera_log();

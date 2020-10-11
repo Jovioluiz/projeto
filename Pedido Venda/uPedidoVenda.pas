@@ -136,7 +136,7 @@ var
 implementation
 
 uses
-  uclPedidoVenda, uDataModule, uGerador, uConfiguracoes;
+  uclPedidoVenda, uDataModule, uGerador, uConfiguracoes, uValidaDados;
 
 {$R *.dfm}
 
@@ -408,7 +408,7 @@ begin
 
   try
     try
-      if (Application.MessageBox('Deseja realmente fechar?','Atenção', MB_YESNO) = IDYES) then
+      if (Application.MessageBox('Deseja realmente Cancelar o pedido?','Atenção', MB_YESNO) = IDYES) then
       begin
         qry.SQL.Add(SQL);
         qry.ParamByName('nr_pedido').AsInteger := NumeroPedido;
@@ -491,6 +491,7 @@ begin
       end;
     end;
   finally
+    cdsPedidoVenda.EnableControls;
     idGeral.Free;
     idGeralPvi.Free;
     qry.Free;
@@ -931,51 +932,14 @@ end;
 procedure TfrmPedidoVenda.edtVlAcrescimoTotalPedidoExit(Sender: TObject);
 //recalcula o valor total se informado um valor de acrescimo no total do pedido
 var
-  vl_total_com_acrescimo, vl_acrescimo,
-  vl_total_pedido, valor_total, valor_desconto : Currency;
+  vl_acrescimo,
+  vl_total_pedido,
+  valor_desconto : Currency;
 begin
-  try
-    cdsPedidoVenda.DisableControls;
-
-    if (edtVlAcrescimoTotalPedido.Text = '0') or (edtVlAcrescimoTotalPedido.Text = '0,00') then
-    begin
-      edtVlAcrescimoTotalPedido.Text := CurrToStr(0);
-      valor_total := 0;
-
-      with cdsPedidoVenda do
-      begin
-        cdsPedidoVenda.First;
-        while not cdsPedidoVenda.Eof do
-        begin
-          valor_total := (valor_total + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
-          cdsPedidoVenda.Next;
-        end;
-        edtVlTotalPedido.Text := CurrToStr(valor_total);
-      end;
-    end
-    else
-    begin
-      valor_desconto := StrToCurr(edtVlDescTotalPedido.Text); //desconto no total do pedido
-      vl_total_pedido := 0;
-      vl_acrescimo := StrToCurr(edtVlAcrescimoTotalPedido.Text);
-
-      cdsPedidoVenda.DisableControls;
-      with cdsPedidoVenda do
-      begin
-        cdsPedidoVenda.First;
-        while not cdsPedidoVenda.Eof do
-        begin
-          vl_total_pedido := (vl_total_pedido + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
-          cdsPedidoVenda.Next;
-        end;
-      end;
-
-      vl_total_com_acrescimo := (vl_total_pedido + vl_acrescimo) - valor_desconto;
-      edtVlTotalPedido.Text := CurrToStr(vl_total_com_acrescimo);
-    end;
-  finally
-    cdsPedidoVenda.EnableControls;
-  end;
+  vl_acrescimo := StrToCurr(edtVlAcrescimoTotalPedido.Text);
+  valor_desconto := StrToCurr(edtVlDescTotalPedido.Text);
+  vl_total_pedido := StrToCurr(edtVlTotalPedido.Text);
+  edtVlTotalPedido.Text := CurrToStr(vl_total_pedido + vl_acrescimo);
 end;
 
 //altera o valor total ao sair do campo de desconto
@@ -1002,44 +966,36 @@ end;
 //recalcula o valor total se informado um valor de desconto no total do pedido
 procedure TfrmPedidoVenda.edtVlDescTotalPedidoExit(Sender: TObject);
 var
-  vl_total_com_desconto, vl_desconto, vl_total_pedido, valor_total : Currency;
+  vl_desconto, vl_total_pedido, valor_total : Currency;
 begin
   if (edtVlDescTotalPedido.Text = '0') or (edtVlDescTotalPedido.Text = '0,00') then
   begin
     edtVlDescTotalPedido.Text := CurrToStr(0);
     valor_total := 0;
+
     //soma os valores totais dos itens
-    with cdsPedidoVenda do
-    begin
-      cdsPedidoVenda.DisableControls;
-      cdsPedidoVenda.First;
-      while not cdsPedidoVenda.Eof do
+    cdsPedidoVenda.Loop(
+      procedure
       begin
         valor_total := (valor_total + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
-        cdsPedidoVenda.Next;
-      end;
-      edtVlTotalPedido.Text := CurrToStr(valor_total);
-      cdsPedidoVenda.EnableControls;
-    end;
+      end
+    );
+
+    edtVlTotalPedido.Text := CurrToStr(valor_total);
   end
   else
   begin
     vl_total_pedido := 0;
     vl_desconto := StrToCurr(edtVlDescTotalPedido.Text);
-    with cdsPedidoVenda do
-    begin
-      cdsPedidoVenda.DisableControls;
-      cdsPedidoVenda.First;
-      while not cdsPedidoVenda.Eof do
+
+    cdsPedidoVenda.Loop(
+      procedure
       begin
         vl_total_pedido := (vl_total_pedido + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
-        cdsPedidoVenda.Next;
-      end;
-      //edtVlTotalPedido.Text := CurrToStr(valor_total);
-      cdsPedidoVenda.EnableControls;
-    end;
-    vl_total_com_desconto := vl_total_pedido - vl_desconto;
-    edtVlTotalPedido.Text := CurrToStr(vl_total_com_desconto);
+      end
+    );
+
+    edtVlTotalPedido.Text := CurrToStr(vl_total_pedido - vl_desconto);
   end;
 end;
 
@@ -1141,6 +1097,14 @@ end;
 function TfrmPedidoVenda.RetornaSequencia: Integer;
 begin
   Result := 1;
+
+//  cdsPedidoVenda.Loop(
+//    procedure
+//    begin
+//      if cdsPedidoVenda.FieldByName('seq').AsInteger = seqItem then
+//        Result := seqItem + 1;
+//    end
+//  );
   
   cdsPedidoVenda.DisableControls;
 
@@ -1228,7 +1192,7 @@ const
                'icms_pc_aliq = :icms_pc_aliq, icms_valor = :icms_valor, ipi_vl_base = :ipi_vl_base, ipi_pc_aliq = :ipi_pc_aliq, ipi_valor = :ipi_valor,              ' +
                'pis_cofins_vl_base = :pis_cofins_vl_base, pis_cofins_pc_aliq = :pis_cofins_pc_aliq, pis_cofins_valor = :pis_cofins_valor, un_medida = :un_medida, ' +
                'seq_item = :seq_item '+
-               'where cd_produto = :cd_produto and id_geral = :id_geral';
+               'where cd_produto = :cd_produto';
 var
   qry: TFDQuery;
   idGeral: TGerador;
@@ -1239,7 +1203,7 @@ begin
   qry.Connection.StartTransaction;
   idGeral := TGerador.Create;
 
-  //NÃO ESTÁ GRAVANDO CORRETAMENTE O SEQ_ITEM NA PEDIDO_VENDA_ITEM
+  //NÃO ESTÁ GRAVANDO CORRETAMENTE O SEQ_ITEM NA PEDIDO_VENDA_ITEM se lançado duas vezes o mesmo item
   try
     try
       if not EhEdicao then
@@ -1271,6 +1235,7 @@ begin
       end
       else
       begin
+        qry.SQL.Clear;
         qry.SQL.Add(SQL_UPDATE);
 //        qry.ParamByName('id_geral').AsInteger := FIdGeral;
         qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
@@ -1292,7 +1257,6 @@ begin
         qry.ParamByName('seq_item').AsInteger := cdsPedidoVenda.FieldByName('seq').AsInteger;
         qry.ExecSQL;
         qry.Connection.Commit;
-        qry.SQL.Clear;
       end;
 
     except
