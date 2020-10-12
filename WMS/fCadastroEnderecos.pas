@@ -20,7 +20,7 @@ type
     JvLabel4: TJvLabel;
     edtAla: TEdit;
     edtRua: TEdit;
-    edtEdtComplemento: TEdit;
+    edtComplemento: TEdit;
     JvLabel5: TJvLabel;
     edtCodBarrasProduto: TEdit;
     edtNomeProduto: TEdit;
@@ -42,11 +42,16 @@ type
     procedure edtCodBarrasProdutoExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure btnAdicionarClick(Sender: TObject);
+    procedure btn1Click(Sender: TObject);
   private
     { Private declarations }
     procedure SalvaEnderecoProduto;
+    procedure SalvarEndereco;
     procedure LimpaCampos;
+    procedure LimpaDados;
     function GetIdPedido(NomeEndereco: String): Int64;
+    function Pesquisar(IdEndereco: Int64; CdProduto: Integer): Boolean; overload;
+    function Pesquisar(CdDeposito: Integer; Ala, Rua: string): Boolean; overload;
   public
     { Public declarations }
   end;
@@ -57,55 +62,37 @@ var
 implementation
 
 uses
-  uDataModule, uGerador;
+  uDataModule, uGerador, uValidaDados;
 
 {$R *.dfm}
 
-procedure TfrmCadastroEnderecos.btnAdicionarClick(Sender: TObject);
-const
-  SQL_INSERT_ENDERECO = 'insert into wms_endereco (id_geral, cd_deposito, ala, rua, complemento) ' +
-                        'values(:id_geral, :cd_deposito, :ala, :rua, :complemento)';
-var
-  qry: TFDQuery;
-  idGeral: TGerador;
+procedure TfrmCadastroEnderecos.btn1Click(Sender: TObject);
 begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
-  qry.Connection.StartTransaction;
-  idGeral := TGerador.Create;
+  SalvarEndereco;
+  SalvaEnderecoProduto;
+  LimpaDados;
+end;
 
-  try
+procedure TfrmCadastroEnderecos.btnAdicionarClick(Sender: TObject);
+begin
+  if not cdsEndereco.Locate('cd_deposito; ala; rua',
+     VarArrayOf([StrToInt(edtCodDeposito.Text), edtAla.Text, edtRua.Text]), []) then
+  begin
     cdsEndereco.Append;
     cdsEndereco.FieldByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
     cdsEndereco.FieldByName('nm_produto').AsString := edtNomeProduto.Text;
     cdsEndereco.FieldByName('cd_deposito').AsInteger := StrToInt(edtCodDeposito.Text);
     cdsEndereco.FieldByName('ala').AsString := edtAla.Text;
     cdsEndereco.FieldByName('rua').AsString := edtRua.Text;
-    cdsEndereco.FieldByName('complemento').AsString := edtEdtComplemento.Text;
+    cdsEndereco.FieldByName('complemento').AsString := edtComplemento.Text;
+    cdsEndereco.FieldByName('nm_endereco').AsString := Concat(edtCodDeposito.Text,'-',edtAla.Text,'-',
+                                                       edtRua.Text,'-', edtComplemento.Text);
     cdsEndereco.Post;
+  end
+  else
+    raise Exception.Create('Endereço Já cadastrado para este Produto');
 
-    try
-      qry.SQL.Add(SQL_INSERT_ENDERECO);
-      qry.ParamByName('id_geral').AsInteger := idGeral.GeraIdGeral;
-      qry.ParamByName('cd_deposito').AsInteger := cdsEndereco.FieldByName('cd_deposito').AsInteger;
-      qry.ParamByName('ala').AsString := cdsEndereco.FieldByName('ala').AsString;
-      qry.ParamByName('rua').AsString := cdsEndereco.FieldByName('rua').AsString;
-      qry.ParamByName('complemento').AsString := cdsEndereco.FieldByName('complemento').AsString;
-      qry.ExecSQL;
-      qry.Connection.Commit;
-
-    except
-      on E: Exception do
-      begin
-        qry.Connection.Rollback;
-        ShowMessage('Erro ao gravar o endereço ' + E.Message);
-        Exit;
-      end;
-    end;
-  finally
-    LimpaCampos;
-    qry.Free;
-  end;
+  LimpaCampos;
 end;
 
 procedure TfrmCadastroEnderecos.edtCodBarrasProdutoExit(Sender: TObject);
@@ -143,58 +130,61 @@ begin
   try
     cdsEndereco.EmptyDataSet;
 
-    if rgTipo.ItemIndex = 0 then
+    if not edtCodBarrasProduto.isEmpty then
     begin
-      qryProduto.SQL.Clear;
-      qryProduto.SQL.Add(SQL_PRODUTO);
-      qryProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
-      qryProduto.Open(SQL_PRODUTO);
-
-      if not qryProduto.IsEmpty then
-        edtNomeProduto.Text := qryProduto.FieldByName('desc_produto').AsString
-      else
+      if rgTipo.ItemIndex = 0 then
       begin
-        ShowMessage('Produto não encontrado');
-        edtCodBarrasProduto.SetFocus;
-      end;
-    end
-    else
-    begin
-      qryProduto.SQL.Clear;
-      qryProduto.SQL.Add(SQL_PROD_BARRAS);
-      qryProduto.ParamByName('codigo_barras').AsString := edtCodBarrasProduto.Text;
-      qryProduto.Open(SQL_PROD_BARRAS);
+        qryProduto.SQL.Clear;
+        qryProduto.SQL.Add(SQL_PRODUTO);
+        qryProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
+        qryProduto.Open(SQL_PRODUTO);
 
-      if not qryProduto.IsEmpty then
-        edtNomeProduto.Text := qryProduto.FieldByName('desc_produto').AsString
-      else
-      begin
-        ShowMessage('Produto não encontrado');
-        edtCodBarrasProduto.SetFocus;
-      end;
-    end;
-
-    if not qryProduto.IsEmpty then
-    begin
-      qryEnderecos.SQL.Add(SQL_ENDERECO);
-      qryEnderecos.ParamByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
-      qryEnderecos.Open(SQL_ENDERECO);
-
-      qryEnderecos.First;
-      if not qryEnderecos.IsEmpty then
-      begin
-        while not qryEnderecos.Eof do
+        if not qryProduto.IsEmpty then
+          edtNomeProduto.Text := qryProduto.FieldByName('desc_produto').AsString
+        else
         begin
-          cdsEndereco.Append;
-          cdsEndereco.FieldByName('cd_produto').AsInteger := qryEnderecos.FieldByName('cd_produto').AsInteger;
-          cdsEndereco.FieldByName('nm_produto').AsString := qryEnderecos.FieldByName('desc_produto').AsString;
-          cdsEndereco.FieldByName('cd_deposito').AsInteger := qryEnderecos.FieldByName('cd_deposito').AsInteger;
-          cdsEndereco.FieldByName('ala').AsString := qryEnderecos.FieldByName('ala').AsString;
-          cdsEndereco.FieldByName('rua').AsString := qryEnderecos.FieldByName('rua').AsString;
-          cdsEndereco.FieldByName('complemento').AsString := qryEnderecos.FieldByName('complemento').AsString;
-          cdsEndereco.FieldByName('nm_endereco').AsString := qryEnderecos.FieldByName('nm_endereco').AsString;
-          cdsEndereco.Post;
-          qryEnderecos.Next;
+          ShowMessage('Produto não encontrado');
+          edtCodBarrasProduto.SetFocus;
+        end;
+      end
+      else
+      begin
+        qryProduto.SQL.Clear;
+        qryProduto.SQL.Add(SQL_PROD_BARRAS);
+        qryProduto.ParamByName('codigo_barras').AsString := edtCodBarrasProduto.Text;
+        qryProduto.Open(SQL_PROD_BARRAS);
+
+        if not qryProduto.IsEmpty then
+          edtNomeProduto.Text := qryProduto.FieldByName('desc_produto').AsString
+        else
+        begin
+          ShowMessage('Produto não encontrado');
+          edtCodBarrasProduto.SetFocus;
+        end;
+      end;
+
+      if not qryProduto.IsEmpty then
+      begin
+        qryEnderecos.SQL.Add(SQL_ENDERECO);
+        qryEnderecos.ParamByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
+        qryEnderecos.Open(SQL_ENDERECO);
+
+        qryEnderecos.First;
+        if not qryEnderecos.IsEmpty then
+        begin
+          while not qryEnderecos.Eof do
+          begin
+            cdsEndereco.Append;
+            cdsEndereco.FieldByName('cd_produto').AsInteger := qryEnderecos.FieldByName('cd_produto').AsInteger;
+            cdsEndereco.FieldByName('nm_produto').AsString := qryEnderecos.FieldByName('desc_produto').AsString;
+            cdsEndereco.FieldByName('cd_deposito').AsInteger := qryEnderecos.FieldByName('cd_deposito').AsInteger;
+            cdsEndereco.FieldByName('ala').AsString := qryEnderecos.FieldByName('ala').AsString;
+            cdsEndereco.FieldByName('rua').AsString := qryEnderecos.FieldByName('rua').AsString;
+            cdsEndereco.FieldByName('complemento').AsString := qryEnderecos.FieldByName('complemento').AsString;
+            cdsEndereco.FieldByName('nm_endereco').AsString := qryEnderecos.FieldByName('nm_endereco').AsString;
+            cdsEndereco.Post;
+            qryEnderecos.Next;
+          end;
         end;
       end;
     end;
@@ -244,7 +234,67 @@ begin
   edtAla.Clear;
   edtRua.Clear;
   edtCodDeposito.Clear;
-  edtEdtComplemento.Clear;
+  edtComplemento.Clear;
+end;
+
+procedure TfrmCadastroEnderecos.LimpaDados;
+begin
+  edtCodBarrasProduto.Clear;
+  edtNomeProduto.Clear;
+  dbgrd1.DataSource := nil;
+end;
+
+function TfrmCadastroEnderecos.Pesquisar(CdDeposito: Integer; Ala, Rua: string): Boolean;
+const
+  SQL = 'select cd_deposito, ala, rua from wms_endereco ' +
+        'where cd_deposito = :cd_deposito and ' +
+        'ala = :ala and ' +
+        'rua = :rua';
+var
+  qry: TFDQuery;
+begin
+  Result := False;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_deposito').AsInteger := CdDeposito;
+    qry.ParamByName('ala').AsString := Ala;
+    qry.ParamByName('rua').AsString := Rua;
+    qry.Open(SQL);
+
+    if not qry.IsEmpty then
+      Result := True;
+
+  finally
+    qry.Free;
+  end;
+end;
+
+function TfrmCadastroEnderecos.Pesquisar(IdEndereco: Int64; CdProduto: Integer): Boolean;
+const
+  SQL = 'select nm_endereco from wms_endereco_produto ' +
+        'where id_endereco = :id_endereco and cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+begin
+  Result := False;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('id_endereco').AsInteger := IdEndereco;
+    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.Open(SQL);
+
+    if qry.FieldByName('nm_endereco').AsString = cdsEndereco.FieldByName('nm_endereco').AsString then
+      Result := True;
+  finally
+    qry.Free;
+  end;
+
 end;
 
 procedure TfrmCadastroEnderecos.SalvaEnderecoProduto;
@@ -258,22 +308,73 @@ begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
   idGeral := TGerador.Create;
-  //TERMINAR
   try
     qry.SQL.Add(SQL_INSERT);
 
     try
       cdsEndereco.First;
       while not cdsEndereco.Eof do
-      begin
-        qry.SQL.Clear;
-        qry.ParamByName('id_geral').AsInteger := idGeral.GeraIdGeral;
-        qry.ParamByName('id_endereco').AsInteger := GetIdPedido(cdsEndereco.FieldByName('nm_endereco').AsString);
-        qry.ParamByName('nm_endereco').AsString := cdsEndereco.FieldByName('nm_endereco').AsString;
-        qry.ParamByName('cd_produto').AsInteger := cdsEndereco.FieldByName('cd_produto').AsInteger;
-        qry.ExecSQL;
-        qry.Connection.Commit;
+      begin //verifica se já possui um endereço cadastrado para o produto
+        if not Pesquisar(GetIdPedido(cdsEndereco.FieldByName('nm_endereco').AsString),
+           cdsEndereco.FieldByName('cd_produto').AsInteger) then
+        begin
+          qry.ParamByName('id_geral').AsInteger := idGeral.GeraIdGeral;
+          qry.ParamByName('id_endereco').AsInteger := GetIdPedido(cdsEndereco.FieldByName('nm_endereco').AsString);
+          qry.ParamByName('nm_endereco').AsString := cdsEndereco.FieldByName('nm_endereco').AsString;
+          qry.ParamByName('cd_produto').AsInteger := cdsEndereco.FieldByName('cd_produto').AsInteger;
+          qry.ExecSQL;
+          qry.Connection.Commit;
+        end;
+        cdsEndereco.Next;
       end;
+    except
+      on E: Exception do
+      begin
+        qry.Connection.Rollback;
+        ShowMessage('Erro ao gravar o endereço ' + cdsEndereco.FieldByName('nm_endereco').AsString + E.Message);
+        Exit;
+      end;
+    end;
+  finally
+    FreeAndNil(idGeral);
+    qry.Free;
+  end;
+end;
+
+procedure TfrmCadastroEnderecos.SalvarEndereco;
+const
+  SQL_INSERT_ENDERECO = 'insert into wms_endereco (id_geral, cd_deposito, ala, rua, complemento) ' +
+                        'values(:id_geral, :cd_deposito, :ala, :rua, :complemento)';
+var
+  qry: TFDQuery;
+  idGeral: TGerador;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+  qry.Connection.StartTransaction;
+  idGeral := TGerador.Create;
+
+  try
+    try
+      qry.SQL.Add(SQL_INSERT_ENDERECO);
+      cdsEndereco.First;
+      while not cdsEndereco.Eof do
+      begin //verifica se já possui um endereço cadastrado
+        if not Pesquisar(cdsEndereco.FieldByName('cd_deposito').AsInteger,
+                 cdsEndereco.FieldByName('ala').AsString,
+                 cdsEndereco.FieldByName('rua').AsString) then
+        begin
+          qry.ParamByName('id_geral').AsInteger := idGeral.GeraIdGeral;
+          qry.ParamByName('cd_deposito').AsInteger := cdsEndereco.FieldByName('cd_deposito').AsInteger;
+          qry.ParamByName('ala').AsString := cdsEndereco.FieldByName('ala').AsString;
+          qry.ParamByName('rua').AsString := cdsEndereco.FieldByName('rua').AsString;
+          qry.ParamByName('complemento').AsString := cdsEndereco.FieldByName('complemento').AsString;
+          qry.ExecSQL;
+          qry.Connection.Commit;
+        end;
+        cdsEndereco.Next;
+      end;
+
     except
       on E: Exception do
       begin
@@ -282,8 +383,9 @@ begin
         Exit;
       end;
     end;
-
   finally
+    FreeAndNil(idGeral);
+    LimpaCampos;
     qry.Free;
   end;
 end;

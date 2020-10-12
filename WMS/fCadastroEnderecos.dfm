@@ -77,6 +77,7 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     Top = 152
     Width = 57
     Height = 21
+    CharCase = ecUpperCase
     TabOrder = 4
   end
   object edtRua: TEdit
@@ -84,13 +85,15 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     Top = 152
     Width = 57
     Height = 21
+    CharCase = ecUpperCase
     TabOrder = 5
   end
-  object edtEdtComplemento: TEdit
+  object edtComplemento: TEdit
     Left = 224
     Top = 152
     Width = 177
     Height = 21
+    CharCase = ecUpperCase
     TabOrder = 6
   end
   object edtCodBarrasProduto: TEdit
@@ -151,6 +154,7 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     Height = 25
     Caption = 'Confirmar'
     TabOrder = 9
+    OnClick = btn1Click
   end
   object btn2: TButton
     Left = 614
