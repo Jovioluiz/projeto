@@ -11675,6 +11675,13 @@ object frmPrincipal: TfrmPrincipal
         OnClick = Cadastro2Click
       end
     end
+    object Estoque1: TMenuItem
+      Caption = 'Estoque'
+      object CadastroEndereo1: TMenuItem
+        Caption = 'Cadastro Endere'#231'o'
+        OnClick = CadastroEndereo1Click
+      end
+    end
     object Sistem1: TMenuItem
       Caption = 'Sistema'
       object Configuraes1: TMenuItem

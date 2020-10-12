@@ -32,8 +32,6 @@ uses
   uVersao in 'Validacao\uVersao.pas',
   uConsulta in 'Consulta\uConsulta.pas' {frmConsulta},
   uclValidacoesEntrada in 'Entrada\uclValidacoesEntrada.pas',
-  {$R}
-  {$R}
   uGerador in 'uGerador.pas' {$R *.res},
   fCadastroEnderecos in 'WMS\fCadastroEnderecos.pas' {frmCadastroEnderecos};
 
@@ -47,7 +45,6 @@ begin
   Application.CreateForm(Tdm, dm);
   Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
   Application.CreateForm(TfrmConsulta, frmConsulta);
-  Application.CreateForm(TfrmCadastroEnderecos, frmCadastroEnderecos);
   Application.Run;
 
 end.

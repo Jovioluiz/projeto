@@ -1100,7 +1100,7 @@ CREATE TABLE public.wms_endereco (
 	ala text NULL,
 	rua text NULL,
 	complemento varchar NULL,
-	dt_atz date NULL,
+	dt_atz timestamp NULL,
 	CONSTRAINT pk_wms_endereco PRIMARY KEY (id_geral)
 );
 
@@ -1125,7 +1125,7 @@ CREATE TABLE public.wms_endereco_produto (
     id_endereco int8 NOT NULL,
     nm_endereco varchar(20) NOT NULL,
     cd_produto int4 not null,
-    dt_atz date NULL,
+    dt_atz timestamp NULL,
     CONSTRAINT pk_wms_endereco_produto PRIMARY KEY (id_geral),
     CONSTRAINT fk_wms_endereco_produto_wms_endereco FOREIGN KEY (id_endereco) REFERENCES wms_endereco(id_geral),
     CONSTRAINT fk_wms_endereco_produto_produto FOREIGN KEY (cd_produto) REFERENCES produto(cd_produto)
