@@ -933,11 +933,9 @@ procedure TfrmPedidoVenda.edtVlAcrescimoTotalPedidoExit(Sender: TObject);
 //recalcula o valor total se informado um valor de acrescimo no total do pedido
 var
   vl_acrescimo,
-  vl_total_pedido,
-  valor_desconto : Currency;
+  vl_total_pedido: Currency;
 begin
   vl_acrescimo := StrToCurr(edtVlAcrescimoTotalPedido.Text);
-  valor_desconto := StrToCurr(edtVlDescTotalPedido.Text);
   vl_total_pedido := StrToCurr(edtVlTotalPedido.Text);
   edtVlTotalPedido.Text := CurrToStr(vl_total_pedido + vl_acrescimo);
 end;

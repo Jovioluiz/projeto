@@ -45,8 +45,8 @@ uses
 function TfrmConsulta.abreConsulta(consulta: String): string;
 var
   qry: TFDQuery;
-  i: Integer;
-  campo: TField;
+  //i: Integer;
+  //campo: TField;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;

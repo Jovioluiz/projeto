@@ -39,6 +39,9 @@ type
     btn1: TButton;
     btn2: TButton;
     cdsEndereconm_endereco: TStringField;
+    edtOrdem: TEdit;
+    JvLabel7: TJvLabel;
+    intgrfldEnderecoordem: TIntegerField;
     procedure edtCodBarrasProdutoExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure btnAdicionarClick(Sender: TObject);
@@ -49,7 +52,7 @@ type
     procedure SalvarEndereco;
     procedure LimpaCampos;
     procedure LimpaDados;
-    function GetIdPedido(NomeEndereco: String): Int64;
+    function GetIdEndereco(NomeEndereco: String): Int64;
     function Pesquisar(IdEndereco: Int64; CdProduto: Integer): Boolean; overload;
     function Pesquisar(CdDeposito: Integer; Ala, Rua: string): Boolean; overload;
   public
@@ -75,8 +78,8 @@ end;
 
 procedure TfrmCadastroEnderecos.btnAdicionarClick(Sender: TObject);
 begin
-  if not cdsEndereco.Locate('cd_deposito; ala; rua',
-     VarArrayOf([StrToInt(edtCodDeposito.Text), edtAla.Text, edtRua.Text]), []) then
+  if not cdsEndereco.Locate('cd_deposito; ala; rua; ordem',
+     VarArrayOf([StrToInt(edtCodDeposito.Text), edtAla.Text, edtRua.Text, StrToInt(edtOrdem.Text)]), []) then
   begin
     cdsEndereco.Append;
     cdsEndereco.FieldByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
@@ -87,6 +90,7 @@ begin
     cdsEndereco.FieldByName('complemento').AsString := edtComplemento.Text;
     cdsEndereco.FieldByName('nm_endereco').AsString := Concat(edtCodDeposito.Text,'-',edtAla.Text,'-',
                                                        edtRua.Text,'-', edtComplemento.Text);
+    cdsEndereco.FieldByName('ordem').AsInteger := StrToInt(edtOrdem.Text);
     cdsEndereco.Post;
   end
   else
@@ -204,7 +208,7 @@ begin
   end;
 end;
 
-function TfrmCadastroEnderecos.GetIdPedido(NomeEndereco: String): Int64;
+function TfrmCadastroEnderecos.GetIdEndereco(NomeEndereco: String): Int64;
 const
   SQL = 'select ' +
         'id_geral    ' +
@@ -315,11 +319,11 @@ begin
       cdsEndereco.First;
       while not cdsEndereco.Eof do
       begin //verifica se já possui um endereço cadastrado para o produto
-        if not Pesquisar(GetIdPedido(cdsEndereco.FieldByName('nm_endereco').AsString),
+        if not Pesquisar(GetIdEndereco(cdsEndereco.FieldByName('nm_endereco').AsString),
            cdsEndereco.FieldByName('cd_produto').AsInteger) then
         begin
           qry.ParamByName('id_geral').AsInteger := idGeral.GeraIdGeral;
-          qry.ParamByName('id_endereco').AsInteger := GetIdPedido(cdsEndereco.FieldByName('nm_endereco').AsString);
+          qry.ParamByName('id_endereco').AsInteger := GetIdEndereco(cdsEndereco.FieldByName('nm_endereco').AsString);
           qry.ParamByName('nm_endereco').AsString := cdsEndereco.FieldByName('nm_endereco').AsString;
           qry.ParamByName('cd_produto').AsInteger := cdsEndereco.FieldByName('cd_produto').AsInteger;
           qry.ExecSQL;
@@ -343,7 +347,7 @@ end;
 
 procedure TfrmCadastroEnderecos.SalvarEndereco;
 const
-  SQL_INSERT_ENDERECO = 'insert into wms_endereco (id_geral, cd_deposito, ala, rua, complemento) ' +
+  SQL_INSERT_ENDERECO = 'insert into wms_endereco(id_geral, cd_deposito, ala, rua, complemento) ' +
                         'values(:id_geral, :cd_deposito, :ala, :rua, :complemento)';
 var
   qry: TFDQuery;

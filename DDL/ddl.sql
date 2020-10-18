@@ -1147,7 +1147,7 @@ update
     on
     public.wms_endereco_produto for each row execute procedure gera_log();
 
-create table wms_estoque(
+create table wms_mvto_estoque(
     id_geral int8 not null,
     id_endereco_produto int8 not null,
     cd_produto int4 not null,
@@ -1155,8 +1155,36 @@ create table wms_estoque(
     un_estoque varchar(10),
     fl_entrada_saida varchar(1),
     dt_atz timestamp,
-    CONSTRAINT uk_wms_estoque unique (id_geral, id_endereco_produto),
-    CONSTRAINT fk_wms_estoque_wms_endereco_produto FOREIGN KEY (id_endereco_produto) REFERENCES wms_endereco_produto(id_geral),
+    CONSTRAINT uk_wms_mvto_estoque unique (id_geral, id_endereco_produto),
+    CONSTRAINT fk_wms_mvto_estoque_wms_endereco_produto FOREIGN KEY (id_endereco_produto) REFERENCES wms_endereco_produto(id_geral),
+    CONSTRAINT fk_wms_mvto_estoque_produto FOREIGN KEY (cd_produto) REFERENCES produto(cd_produto)
+);
+
+create trigger tr_dt_atz before
+insert
+    or
+update
+    on
+    public.wms_mvto_estoque for each row execute procedure func_grava_dt_atz();
+
+create trigger tr_gera_log after
+insert
+    or
+delete
+    or
+update
+    on
+    public.wms_mvto_estoque for each row execute procedure gera_log();
+
+create table wms_estoque(
+    id_geral int8 not null,
+    id_wms_endereco_produto int8 not null,
+    cd_produto int4 not null,
+    qt_estoque numeric(12,4),
+    un_estoque varchar(10),
+    dt_atz timestamp,
+    CONSTRAINT pk_wms_estoque primary key (id_geral),
+    CONSTRAINT fk_wms_estoque_wms_endereco_produto FOREIGN KEY (id_wms_endereco_produto) REFERENCES wms_endereco_produto(id_geral),
     CONSTRAINT fk_wms_estoque_produto FOREIGN KEY (cd_produto) REFERENCES produto(cd_produto)
 );
 
@@ -1175,3 +1203,6 @@ delete
 update
     on
     public.wms_estoque for each row execute procedure gera_log();
+
+
+ALTER TABLE public.wms_endereco_produto ADD ordem int NULL;

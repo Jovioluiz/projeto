@@ -692,9 +692,4 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     Left = 600
     Top = 480
   end
-  object sqlUpdate: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 704
-    Top = 456
-  end
 end

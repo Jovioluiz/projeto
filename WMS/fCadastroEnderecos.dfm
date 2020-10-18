@@ -65,6 +65,14 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     Caption = 'Descri'#231#227'o'
     Transparent = True
   end
+  object JvLabel7: TJvLabel
+    Left = 415
+    Top = 120
+    Width = 34
+    Height = 13
+    Caption = 'Ordem'
+    Transparent = True
+  end
   object edtCodDeposito: TEdit
     Left = 8
     Top = 152
@@ -139,7 +147,7 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     TabOrder = 0
   end
   object btnAdicionar: TButton
-    Left = 420
+    Left = 500
     Top = 150
     Width = 75
     Height = 25
@@ -164,15 +172,23 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     Caption = 'Cancelar'
     TabOrder = 10
   end
+  object edtOrdem: TEdit
+    Left = 415
+    Top = 152
+    Width = 58
+    Height = 21
+    TabOrder = 11
+  end
   object cdsEndereco: TClientDataSet
     PersistDataPacket.Data = {
-      D00000009619E0BD010000001800000007000000000003000000D0000A63645F
+      DE0000009619E0BD010000001800000008000000000003000000DE000A63645F
       70726F6475746F04000100000000000A6E6D5F70726F6475746F010049000000
       01000557494454480200020014000B63645F6465706F7369746F040001000000
       000003616C610100490000000100055749445448020002001400037275610100
       4900000001000557494454480200020014000B636F6D706C656D656E746F0100
       4900000001000557494454480200020014000B6E6D5F656E64657265636F0100
-      4900000001000557494454480200020014000000}
+      490000000100055749445448020002001400056F7264656D0400010000000000
+      0000}
     Active = True
     Aggregates = <>
     FieldDefs = <
@@ -208,6 +224,10 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
         Name = 'nm_endereco'
         DataType = ftString
         Size = 20
+      end
+      item
+        Name = 'ordem'
+        DataType = ftInteger
       end>
     IndexDefs = <>
     Params = <>
@@ -241,13 +261,18 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     end
     object cdsEnderecocomplemento: TStringField
       DisplayLabel = 'Complemento'
-      DisplayWidth = 21
+      DisplayWidth = 18
       FieldName = 'complemento'
     end
     object cdsEndereconm_endereco: TStringField
       DisplayLabel = 'Endere'#231'o'
-      DisplayWidth = 20
+      DisplayWidth = 16
       FieldName = 'nm_endereco'
+    end
+    object intgrfldEnderecoordem: TIntegerField
+      DisplayLabel = 'Ordem'
+      DisplayWidth = 10
+      FieldName = 'ordem'
     end
   end
   object dsEndereco: TDataSource

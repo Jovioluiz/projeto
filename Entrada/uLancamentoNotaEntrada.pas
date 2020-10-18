@@ -81,7 +81,6 @@ type
     sqlIdGeral: TFDQuery;
     sqlInsert: TFDQuery;
     sqlInsertiNfi: TFDQuery;
-    sqlUpdate: TFDQuery;
     cdsEntradaseq_item_nfi: TIntegerField;
     cdsEntradacd_produto: TIntegerField;
     cdsEntradadescricao: TStringField;
@@ -150,6 +149,9 @@ var
   aliqIcms, aliqIpi, aliqPisCofins : Double; //guardar as aliquotas dos itens e mostrar no grid
 
 implementation
+
+uses
+  uGerador;
 
 {$R *.dfm}
 
@@ -527,41 +529,62 @@ end;
 
 procedure TfrmLancamentoNotaEntrada.atualizaEstoqueProduto;
 const
-  sql_update =  'update '+
-                    'produto '+
-                'set '+
-                    'qtd_estoque = :qtd_estoque '+
-                'where cd_produto = :cd_produto';
-  sql_select = 'select '+
-                  'qtd_estoque '+
-              'from '+
-                  'produto '+
-              'where '+
-                  'cd_produto = :cd_produto';
+  SQL_INSERT =  'insert into ' +
+                'wms_mvto_estoque(id_geral, '+
+                'id_endereco_produto, '+
+                'cd_produto, ' +
+                'qt_estoque, ' +
+                'un_estoque, ' +
+                'fl_entrada_saida) values '+
+                '(:id_geral, ' +                //lembrar de alterar o update no pedido de venda na tabela produto
+                ':id_endereco_produto, '+
+                ':cd_produto, ' +
+                ':qt_estoque, ' +
+                ':un_estoque, ' +
+                ':fl_entrada_saida)';
+
+  SQL_SELECT = 'select ' +
+               '   id_geral ' +
+               'from        ' +
+               '   wms_endereco_produto w    ' +
+               'where                        ' +
+               '   cd_produto = :cd_produto  ' +
+               '   and ordem = (             ' +
+               '   select                    ' +
+               '       min(ordem)            ' +
+               '   from                      ' +
+               '       wms_endereco_produto wep ' +
+               '   where                        ' +
+               '       cd_produto = :cd_produto)';
 var
-  qry: TFDQuery;
-  qtdade, qttotal: Double;
+  qry, qrySelect: TFDQuery;
+  IdGeral: TGerador;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
   dm.FDConnection1.StartTransaction;
+  qrySelect := TFDQuery.Create(Self);
+  qrySelect.Connection := dm.FDConnection1;
+  IdGeral := TGerador.Create;
 
   try
     cdsEntrada.DisableControls;
     cdsEntrada.First;
     while not cdsEntrada.Eof do
     begin
-      qry.SQL.Clear;
-      qry.SQL.Add(sql_select);
-      qry.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('cd_produto').AsInteger;
-      qry.Open(sql_select);
-      qtdade := qry.FieldByName('qtd_estoque').AsFloat;
-      qttotal := qtdade + cdsEntrada.FieldByName('qtd_total').AsFloat;
+      qrySelect.SQL.Clear;
+      qrySelect.SQL.Add(SQL_SELECT);
+      qrySelect.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('cd_produto').AsInteger;
+      qrySelect.Open(SQL_SELECT);
 
       qry.SQL.Clear;
-      qry.SQL.Add(sql_update);
-      qry.ParamByName('qtd_estoque').AsFloat := qttotal;
+      qry.SQL.Add(SQL_INSERT);
+      qry.ParamByName('id_geral').AsFloat := IdGeral.GeraIdGeral;
+      qry.ParamByName('id_endereco_produto').AsInteger := qrySelect.FieldByName('id_geral').AsInteger;
       qry.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('cd_produto').AsInteger;
+      qry.ParamByName('qt_estoque').AsFloat := cdsEntrada.FieldByName('qtd_estoque').AsFloat;
+      qry.ParamByName('un_estoque').AsString := cdsEntrada.FieldByName('un_medida').AsString;
+      qry.ParamByName('fl_entrada_saida').AsString := 'E';
 
       qry.ExecSQL;
       dm.FDConnection1.Commit;
@@ -569,6 +592,8 @@ begin
     end;
   finally
     qry.Free;
+    qrySelect.Free;
+    FreeAndNil(IdGeral);
     dm.FDConnection1.Rollback;
     cdsEntrada.EnableControls
   end;
