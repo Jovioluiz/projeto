@@ -1206,3 +1206,5 @@ update
 
 
 ALTER TABLE public.wms_endereco_produto ADD ordem int NULL;
+ALTER TABLE public.produto DROP COLUMN qtd_estoque;
+alter table nfi disable trigger atualiza_estoque_nfi;

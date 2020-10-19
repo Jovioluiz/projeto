@@ -60,7 +60,6 @@ begin
       Exit;
     end;
 
-
     sql.Close;
     sql.SQL.Text := 'select '+
                         'login, '+

@@ -17,9 +17,12 @@ program ProjetoTestes;
 uses
   DUnitTestRunner,
   TestuUsuario in 'TestuUsuario.pas',
-  uUsuario in '..\Usuario\uUsuario.pas',
+  uUsuario in '..\Usuario\uUsuario.pas' {$R *.RES},
   uDataModule in '..\Conexao\uDataModule.pas' {dm: TDataModule},
-  uValidaDados in '..\Validacao\uValidaDados.pas';
+  uValidaDados in '..\Validacao\uValidaDados.pas',
+  uGerador in 'uGerador.pas',
+  TestfCadastroEnderecos in 'TestfCadastroEnderecos.pas',
+  fCadastroEnderecos in '..\WMS\fCadastroEnderecos.pas';
 
 {$R *.RES}
 

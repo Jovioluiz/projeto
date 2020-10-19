@@ -138,7 +138,8 @@ type
     { Private declarations }
     procedure validaValoresNota;
     procedure limpaCampos;
-    procedure atualizaEstoqueProduto;
+    procedure InsereWmsMvto;
+    procedure AtualizaEstoque;
   public
     { Public declarations }
   end;
@@ -527,7 +528,7 @@ begin
   seq := 1;
 end;
 
-procedure TfrmLancamentoNotaEntrada.atualizaEstoqueProduto;
+procedure TfrmLancamentoNotaEntrada.InsereWmsMvto;
 const
   SQL_INSERT =  'insert into ' +
                 'wms_mvto_estoque(id_geral, '+
@@ -536,7 +537,7 @@ const
                 'qt_estoque, ' +
                 'un_estoque, ' +
                 'fl_entrada_saida) values '+
-                '(:id_geral, ' +                //lembrar de alterar o update no pedido de venda na tabela produto
+                '(:id_geral, ' +
                 ':id_endereco_produto, '+
                 ':cd_produto, ' +
                 ':qt_estoque, ' +
@@ -596,6 +597,68 @@ begin
     FreeAndNil(IdGeral);
     dm.FDConnection1.Rollback;
     cdsEntrada.EnableControls
+  end;
+end;
+
+procedure TfrmLancamentoNotaEntrada.AtualizaEstoque;
+const
+  SQL_UPDATE = 'update '+
+                    'wms_estoque '+
+              'set '+
+                    'qt_estoque = :qt_estoque '+
+              'where id_wms_endereco_produto = :id';
+
+  SQL = 'select ' +
+                  'qt_estoque, ' +
+                  'id_wms_endereco_produto ' +
+              'from ' +
+                  'wms_estoque ' +
+              'where ' +
+                  'cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+  qtdade, qttotal: Double;
+  id: Int64;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+  qry.Connection.StartTransaction;
+
+  try
+    try
+      cdsEntrada.DisableControls;
+      cdsEntrada.First;
+      while not cdsEntrada.Eof do
+      begin
+        qry.SQL.Clear;
+        qry.SQL.Add(SQL);
+        qry.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('cd_produto').AsInteger;
+        qry.Open(SQL);
+        id := qry.FieldByName('id_wms_endereco_produto').AsInteger;
+        qtdade := qry.FieldByName('qt_estoque').AsFloat;//quantidade no banco
+        qttotal := qtdade + cdsEntrada.FieldByName('qtd_total').AsInteger;
+
+        qry.SQL.Clear;
+
+        qry.SQL.Add(SQL_UPDATE);
+        qry.ParamByName('id').AsInteger := id;
+        qry.ParamByName('qt_estoque').AsFloat := qttotal;
+
+        qry.ExecSQL;
+        cdsEntrada.Next;
+        qry.Connection.Commit;
+      end;
+    except
+      on E : exception do
+        begin
+          qry.Connection.Rollback;
+          ShowMessage('Erro ao gravar os dados do produto ' + cdsEntrada.FieldByName('cd_produto').AsString + E.Message);
+          Exit;
+        end;
+    end;
+  finally
+    qry.Free;
+    cdsEntrada.EnableControls;
   end;
 end;
 
@@ -851,8 +914,9 @@ begin
       end;
     end;
 
-      //atualiza a quantidade em estoque
-      atualizaEstoqueProduto;
+      //insere na wms_mvto e atualiza a quantidade em estoque
+      InsereWmsMvto;
+      AtualizaEstoque;
 
       sqlInsert.ExecSQL;
       sqlInsertiNfi.ExecSQL;

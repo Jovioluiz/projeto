@@ -48,6 +48,8 @@ type
     procedure btn1Click(Sender: TObject);
   private
     { Private declarations }
+  public
+    { Public declarations }
     procedure SalvaEnderecoProduto;
     procedure SalvarEndereco;
     procedure LimpaCampos;
@@ -55,8 +57,6 @@ type
     function GetIdEndereco(NomeEndereco: String): Int64;
     function Pesquisar(IdEndereco: Int64; CdProduto: Integer): Boolean; overload;
     function Pesquisar(CdDeposito: Integer; Ala, Rua: string): Boolean; overload;
-  public
-    { Public declarations }
   end;
 
 var
@@ -78,25 +78,32 @@ end;
 
 procedure TfrmCadastroEnderecos.btnAdicionarClick(Sender: TObject);
 begin
-  if not cdsEndereco.Locate('cd_deposito; ala; rua; ordem',
-     VarArrayOf([StrToInt(edtCodDeposito.Text), edtAla.Text, edtRua.Text, StrToInt(edtOrdem.Text)]), []) then
-  begin
-    cdsEndereco.Append;
-    cdsEndereco.FieldByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
-    cdsEndereco.FieldByName('nm_produto').AsString := edtNomeProduto.Text;
-    cdsEndereco.FieldByName('cd_deposito').AsInteger := StrToInt(edtCodDeposito.Text);
-    cdsEndereco.FieldByName('ala').AsString := edtAla.Text;
-    cdsEndereco.FieldByName('rua').AsString := edtRua.Text;
-    cdsEndereco.FieldByName('complemento').AsString := edtComplemento.Text;
-    cdsEndereco.FieldByName('nm_endereco').AsString := Concat(edtCodDeposito.Text,'-',edtAla.Text,'-',
-                                                       edtRua.Text,'-', edtComplemento.Text);
-    cdsEndereco.FieldByName('ordem').AsInteger := StrToInt(edtOrdem.Text);
-    cdsEndereco.Post;
-  end
-  else
-    raise Exception.Create('Endereço Já cadastrado para este Produto');
+  try
+    if not cdsEndereco.Locate('cd_deposito; ala; rua; ordem',
+       VarArrayOf([StrToInt(edtCodDeposito.Text), edtAla.Text, edtRua.Text, StrToInt(edtOrdem.Text)]), []) then
+    begin
+      cdsEndereco.Append;
+      cdsEndereco.FieldByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
+      cdsEndereco.FieldByName('nm_produto').AsString := edtNomeProduto.Text;
+      cdsEndereco.FieldByName('cd_deposito').AsInteger := StrToInt(edtCodDeposito.Text);
+      cdsEndereco.FieldByName('ala').AsString := edtAla.Text;
+      cdsEndereco.FieldByName('rua').AsString := edtRua.Text;
+      cdsEndereco.FieldByName('complemento').AsString := edtComplemento.Text;
+      cdsEndereco.FieldByName('nm_endereco').AsString := Concat(edtCodDeposito.Text,'-',edtAla.Text,'-',
+                                                         edtRua.Text,'-', edtComplemento.Text);
+      cdsEndereco.FieldByName('ordem').AsInteger := StrToInt(edtOrdem.Text);
+      cdsEndereco.Post;
+    end
+    else
+      raise Exception.Create('Endereço Já cadastrado para este Produto');
 
-  LimpaCampos;
+    LimpaCampos;
+  except
+    on E: Exception do
+      ShowMessage(
+        'Ocorreu um erro.' + #13 +
+        'Mensagem de erro: ' + E.Message);
+  end;
 end;
 
 procedure TfrmCadastroEnderecos.edtCodBarrasProdutoExit(Sender: TObject);
@@ -133,70 +140,76 @@ begin
 
   try
     cdsEndereco.EmptyDataSet;
-
-    if not edtCodBarrasProduto.isEmpty then
-    begin
-      if rgTipo.ItemIndex = 0 then
+    try
+      if not edtCodBarrasProduto.isEmpty then
       begin
-        qryProduto.SQL.Clear;
-        qryProduto.SQL.Add(SQL_PRODUTO);
-        qryProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
-        qryProduto.Open(SQL_PRODUTO);
-
-        if not qryProduto.IsEmpty then
-          edtNomeProduto.Text := qryProduto.FieldByName('desc_produto').AsString
-        else
+        if rgTipo.ItemIndex = 0 then
         begin
-          ShowMessage('Produto não encontrado');
-          edtCodBarrasProduto.SetFocus;
-        end;
-      end
-      else
-      begin
-        qryProduto.SQL.Clear;
-        qryProduto.SQL.Add(SQL_PROD_BARRAS);
-        qryProduto.ParamByName('codigo_barras').AsString := edtCodBarrasProduto.Text;
-        qryProduto.Open(SQL_PROD_BARRAS);
+          qryProduto.SQL.Clear;
+          qryProduto.SQL.Add(SQL_PRODUTO);
+          qryProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
+          qryProduto.Open(SQL_PRODUTO);
 
-        if not qryProduto.IsEmpty then
-          edtNomeProduto.Text := qryProduto.FieldByName('desc_produto').AsString
-        else
-        begin
-          ShowMessage('Produto não encontrado');
-          edtCodBarrasProduto.SetFocus;
-        end;
-      end;
-
-      if not qryProduto.IsEmpty then
-      begin
-        qryEnderecos.SQL.Add(SQL_ENDERECO);
-        qryEnderecos.ParamByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
-        qryEnderecos.Open(SQL_ENDERECO);
-
-        qryEnderecos.First;
-        if not qryEnderecos.IsEmpty then
-        begin
-          while not qryEnderecos.Eof do
+          if not qryProduto.IsEmpty then
+            edtNomeProduto.Text := qryProduto.FieldByName('desc_produto').AsString
+          else
           begin
-            cdsEndereco.Append;
-            cdsEndereco.FieldByName('cd_produto').AsInteger := qryEnderecos.FieldByName('cd_produto').AsInteger;
-            cdsEndereco.FieldByName('nm_produto').AsString := qryEnderecos.FieldByName('desc_produto').AsString;
-            cdsEndereco.FieldByName('cd_deposito').AsInteger := qryEnderecos.FieldByName('cd_deposito').AsInteger;
-            cdsEndereco.FieldByName('ala').AsString := qryEnderecos.FieldByName('ala').AsString;
-            cdsEndereco.FieldByName('rua').AsString := qryEnderecos.FieldByName('rua').AsString;
-            cdsEndereco.FieldByName('complemento').AsString := qryEnderecos.FieldByName('complemento').AsString;
-            cdsEndereco.FieldByName('nm_endereco').AsString := qryEnderecos.FieldByName('nm_endereco').AsString;
-            cdsEndereco.Post;
-            qryEnderecos.Next;
+            ShowMessage('Produto não encontrado');
+            edtCodBarrasProduto.SetFocus;
+          end;
+        end
+        else
+        begin
+          qryProduto.SQL.Clear;
+          qryProduto.SQL.Add(SQL_PROD_BARRAS);
+          qryProduto.ParamByName('codigo_barras').AsString := edtCodBarrasProduto.Text;
+          qryProduto.Open(SQL_PROD_BARRAS);
+
+          if not qryProduto.IsEmpty then
+            edtNomeProduto.Text := qryProduto.FieldByName('desc_produto').AsString
+          else
+          begin
+            ShowMessage('Produto não encontrado');
+            edtCodBarrasProduto.SetFocus;
+          end;
+        end;
+
+        if not qryProduto.IsEmpty then
+        begin
+          qryEnderecos.SQL.Add(SQL_ENDERECO);
+          qryEnderecos.ParamByName('cd_produto').AsInteger := StrToInt(edtCodBarrasProduto.Text);
+          qryEnderecos.Open(SQL_ENDERECO);
+
+          qryEnderecos.First;
+          if not qryEnderecos.IsEmpty then
+          begin
+            while not qryEnderecos.Eof do
+            begin
+              cdsEndereco.Append;
+              cdsEndereco.FieldByName('cd_produto').AsInteger := qryEnderecos.FieldByName('cd_produto').AsInteger;
+              cdsEndereco.FieldByName('nm_produto').AsString := qryEnderecos.FieldByName('desc_produto').AsString;
+              cdsEndereco.FieldByName('cd_deposito').AsInteger := qryEnderecos.FieldByName('cd_deposito').AsInteger;
+              cdsEndereco.FieldByName('ala').AsString := qryEnderecos.FieldByName('ala').AsString;
+              cdsEndereco.FieldByName('rua').AsString := qryEnderecos.FieldByName('rua').AsString;
+              cdsEndereco.FieldByName('complemento').AsString := qryEnderecos.FieldByName('complemento').AsString;
+              cdsEndereco.FieldByName('nm_endereco').AsString := qryEnderecos.FieldByName('nm_endereco').AsString;
+              cdsEndereco.Post;
+              qryEnderecos.Next;
+            end;
           end;
         end;
       end;
+    except
+      on E: Exception do
+      ShowMessage(
+        'Ocorreu um erro.' + #13 +
+        'Mensagem de erro: ' + E.Message);
+
     end;
   finally
     qryProduto.Free;
     qryEnderecos.Free;
   end;
-
 end;
 
 procedure TfrmCadastroEnderecos.FormKeyPress(Sender: TObject; var Key: Char);

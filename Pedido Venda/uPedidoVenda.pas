@@ -163,20 +163,22 @@ end;
 procedure TfrmPedidoVenda.atualizaEstoqueProduto;
 const
   sql_update = 'update '+
-                    'produto '+
+                    'wms_estoque '+
               'set '+
-                    'qtd_estoque = :qtd_estoque '+
-              'where cd_produto = :cd_produto';
+                    'qt_estoque = :qt_estoque '+
+              'where id_wms_endereco_produto = :id';
 
-  sql_select = 'select '+
-                  'qtd_estoque '+
-              'from '+
-                  'produto '+
-              'where '+
+  sql_select = 'select ' +
+                  'qt_estoque, ' +
+                  'id_wms_endereco_produto ' +
+              'from ' +
+                  'wms_estoque ' +
+              'where ' +
                   'cd_produto = :cd_produto';
 var
   qry: TFDQuery;
   qtdade, qttotal: Double;
+  id: Int64;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
@@ -192,15 +194,15 @@ begin
         qry.SQL.Add(sql_select);
         qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
         qry.Open(sql_select);
-
-        qtdade := qry.FieldByName('qtd_estoque').AsFloat;//quantidade no banco
+        id := qry.FieldByName('id_wms_endereco_produto').AsInteger;
+        qtdade := qry.FieldByName('qt_estoque').AsFloat;//quantidade no banco
         qttotal := qtdade - cdsPedidoVenda.FieldByName('qtd_venda').AsInteger; //diminui com a informada no pedido
 
         qry.SQL.Clear;
 
         qry.SQL.Add(sql_update);
-        qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
-        qry.ParamByName('qtd_estoque').AsFloat := qttotal;
+        qry.ParamByName('id').AsInteger := id;
+        qry.ParamByName('qt_estoque').AsFloat := qttotal;
 
         qry.ExecSQL;
         cdsPedidoVenda.Next;
@@ -476,6 +478,7 @@ begin
         end;
       end;
 
+      //fazer o insert na wms_mvto_estoque
       atualizaEstoqueProduto;
 
       qry.Connection.Commit;
