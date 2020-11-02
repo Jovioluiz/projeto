@@ -604,4 +604,8 @@ object frmPedidoVenda: TfrmPedidoVenda
     Left = 248
     Top = 400
   end
+  object document: TXMLDocument
+    Left = 536
+    Top = 536
+  end
 end

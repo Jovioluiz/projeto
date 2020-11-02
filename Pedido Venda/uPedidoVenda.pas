@@ -9,7 +9,8 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao, Vcl.Mask,
-  Vcl.ComCtrls, System.Generics.Collections, JvExStdCtrls, JvBehaviorLabel;
+  Vcl.ComCtrls, System.Generics.Collections, JvExStdCtrls, JvBehaviorLabel,
+  Xml.xmldom, Xml.XMLIntf, Xml.XMLDoc;
 
 type
   TfrmPedidoVenda = class(TfrmConexao)
@@ -79,6 +80,7 @@ type
     cdsPedidoVendapis_cofins_pc_aliq: TCurrencyField;
     cdsPedidoVendapis_cofins_valor: TCurrencyField;
     intgrfldPedidoVendaseq: TIntegerField;
+    document: TXMLDocument;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtCdClienteChange(Sender: TObject);
     procedure edtCdClienteExit(Sender: TObject);
@@ -122,9 +124,11 @@ type
     procedure SalvaCabecalho;
     procedure SetFIdGeral(const Value: Int64);
     procedure SalvaItens(EhEdicao: Boolean);
+    procedure setDadosNota;
 
     property NumeroPedido: Integer read FNumeroPedido write FNumeroPedido;
     property FIdGeral: Int64 read FFIdGeral write SetFIdGeral;
+
   public
     { Public declarations }
   end;
@@ -442,7 +446,6 @@ var
   Tempo : Integer;
   qry: TFDQuery;
   idGeral, idGeralPvi: TGerador;
-
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
@@ -480,6 +483,8 @@ begin
 
       //fazer o insert na wms_mvto_estoque
       atualizaEstoqueProduto;
+
+      setDadosNota;
 
       qry.Connection.Commit;
 
@@ -838,7 +843,7 @@ begin
   try
     lista := tabela.BuscaTabelaPreco(StrToInt(edtCdtabelaPreco.Text), StrToInt(edtCdProduto.Text));
 
-    edtDescTabelaPreco.Text:= lista.Items[0];
+    edtDescTabelaPreco.Text := lista.Items[0];
     edtVlUnitario.Text := lista.Items[1];
   finally
     FreeAndNil(tabela);
@@ -910,7 +915,7 @@ var
   resposta : Boolean;
 begin
   ValidaQtdade := TPedidoVenda.Create;
-  resposta := ValidaQtdade.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
+  //resposta := ValidaQtdade.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
 
   try
     if edtQtdade.Text = '0' then
@@ -1054,6 +1059,25 @@ begin
   finally
     qry.Free;
   end;
+end;
+
+procedure TfrmPedidoVenda.setDadosNota;
+var
+  venda, cabecalho, pagamento: IXMLNode;
+begin
+  document.Active := True;
+  document.Version := '1.0';
+  document.Encoding := 'UTF-8';
+
+  venda := document.AddChild('venda');
+  cabecalho := venda.AddChild('cabecalho');
+  cabecalho.AddChild('nome').Text := edtNomeCliente.Text;
+  cabecalho.AddChild('endereco').Text := edtCidadeCliente.Text;
+  pagamento := venda.AddChild('pagamento');
+  pagamento.AddChild('fPag').Text := edtNomeFormaPgto.Text;
+  pagamento.AddChild('cPag').Text := edtNomeCondPgto.Text;
+
+  document.SaveToFile('C:\Users\jovio\Documents\xml\notafiscal_' +edtNrPedido.Text+ '.xml');
 end;
 
 procedure TfrmPedidoVenda.limpaCampos;
