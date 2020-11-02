@@ -215,8 +215,6 @@ object frmCadCliente: TfrmCadCliente
       Top = 120
       Width = 106
       Height = 21
-      EditMask = '!\(99\)00000-0000;0;_'
-      MaxLength = 14
       TabOrder = 10
       Text = ''
       OnExit = edtCLIENTECELULARExit
@@ -283,8 +281,6 @@ object frmCadCliente: TfrmCadCliente
       Top = 93
       Width = 102
       Height = 21
-      EditMask = '!\(99\)0000-0000;0;_'
-      MaxLength = 13
       TabOrder = 9
       Text = ''
       OnExit = edtCLIENTECELULARExit

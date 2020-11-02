@@ -152,13 +152,15 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.FDConnection1;
+  Result := False;
 
   try
     qry.SQL.Add(sql);
     qry.ParamByName('cd_produto').AsInteger := CodProduto;
     qry.Open(sql);
 
-    Result := qry.IsEmpty;
+    if qry.IsEmpty then
+      Result := True;
   finally
     qry.Free;
   end;

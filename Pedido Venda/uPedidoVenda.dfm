@@ -27,6 +27,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   Position = poScreenCenter
   Visible = True
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
@@ -602,7 +603,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   object dsPedidoVenda: TDataSource
     DataSet = cdsPedidoVenda
     Left = 248
-    Top = 400
+    Top = 408
   end
   object document: TXMLDocument
     Left = 536

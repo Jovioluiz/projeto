@@ -109,6 +109,7 @@ type
     procedure dbGridProdutosDblClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtCdProdutoEnter(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
     edicaoItem : Boolean;
@@ -125,6 +126,7 @@ type
     procedure SetFIdGeral(const Value: Int64);
     procedure SalvaItens(EhEdicao: Boolean);
     procedure setDadosNota;
+    procedure cancelaPedidoVenda;
 
     property NumeroPedido: Integer read FNumeroPedido write FNumeroPedido;
     property FIdGeral: Int64 read FFIdGeral write SetFIdGeral;
@@ -257,7 +259,6 @@ begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
   lancaProduto := TfrmConfiguracoes.Create(Self);
-
   try
     qry.Close;
     qry.SQL.Add(sql);
@@ -403,35 +404,11 @@ begin
 end;
 
 procedure TfrmPedidoVenda.btnCancelarClick(Sender: TObject);
-const
-  SQL = 'update pedido_venda set fl_cancelado = ''S'' where nr_pedido = :nr_pedido';
-var
-  qry: TFDQuery;
 begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
-  qry.Connection.StartTransaction;
-
-  try
-    try
-      if (Application.MessageBox('Deseja realmente Cancelar o pedido?','Atenção', MB_YESNO) = IDYES) then
-      begin
-        qry.SQL.Add(SQL);
-        qry.ParamByName('nr_pedido').AsInteger := NumeroPedido;
-        qry.ExecSQL;
-        qry.Connection.Commit;
-        limpaDados;
-      end;
-    except
-    on E : exception do
-      begin
-        qry.Connection.Rollback;
-        ShowMessage('Erro ao cancelar o pedido ' + NumeroPedido.ToString + E.Message);
-        Exit;
-      end;
-    end;
-  finally
-    qry.Free;
+  if (Application.MessageBox('Deseja realmente Cancelar o pedido?','Atenção', MB_YESNO) = IDYES) then
+  begin
+    cancelaPedidoVenda;
+    limpaDados;
   end;
 end;
 
@@ -506,6 +483,35 @@ begin
   end;
 end;
 
+
+procedure TfrmPedidoVenda.cancelaPedidoVenda;
+const
+  SQL = 'update pedido_venda set fl_cancelado = ''S'' where nr_pedido = :nr_pedido';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+  qry.Connection.StartTransaction;
+
+  try
+    try
+      qry.SQL.Add(SQL);
+      qry.ParamByName('nr_pedido').AsInteger := NumeroPedido;
+      qry.ExecSQL;
+      qry.Connection.Commit;
+
+    except on E:Exception do
+      begin
+        qry.Connection.Rollback;
+        ShowMessage('Erro ao cancelar o pedido ' + NumeroPedido.ToString + E.Message);
+        Exit;
+      end;
+    end;
+  finally
+    qry.Free;
+  end;
+end;
 
 procedure TfrmPedidoVenda.dbGridProdutosDblClick(Sender: TObject);
 //carrega os itens para edição
@@ -802,10 +808,12 @@ end;
 procedure TfrmPedidoVenda.edtCdProdutoExit(Sender: TObject);
 var
   produto: TPedidoVenda;
-  resposta : Boolean;
+  resposta: Boolean;
 begin
   produto := TPedidoVenda.Create;
-  resposta := produto.ValidaProduto(StrToInt(edtCdCondPgto.Text));
+
+  if edtCdProduto.Text <> '' then
+  resposta := produto.ValidaProduto(StrToInt(edtCdProduto.Text));
 
   if (Trim(edtCdProduto.Text) = '') and (cdsPedidoVenda.RecordCount > 0) then
     edtVlDescTotalPedido.SetFocus;
@@ -1012,6 +1020,21 @@ begin
   frmPedidoVenda := nil;
 end;
 
+procedure TfrmPedidoVenda.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  inherited;
+  if (edtNrPedido.Text <> '') or (cdsPedidoVenda.RecordCount > 0) then
+  begin
+    CanClose := False;
+    if (Application.MessageBox('Deseja Cancelar o Pedido?','Atenção', MB_YESNO) = IDYES) then
+    begin
+      cancelaPedidoVenda;
+      CanClose := True;
+    end;
+  end;
+end;
+
 procedure TfrmPedidoVenda.FormCreate(Sender: TObject);
 begin
   edtDataEmissao.Text := DateToStr(Date());
@@ -1023,9 +1046,12 @@ procedure TfrmPedidoVenda.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   if key = VK_ESCAPE then //ESC
   begin
-    if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+    if (edtNrPedido.Text = '') and (cdsPedidoVenda.RecordCount = 0) then
     begin
-      Close;
+      if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
+      begin
+        Close;
+      end;
     end;
   end;
 end;
@@ -1062,22 +1088,70 @@ begin
 end;
 
 procedure TfrmPedidoVenda.setDadosNota;
+const
+  SQL = 'select * from vcliente where cd_cliente = :cd_cliente';
 var
-  venda, cabecalho, pagamento: IXMLNode;
+  i: Integer;
+  venda, cabecalho, cliente, endCliente, itens, pagamento: IXMLNode;
+  qry: TFDQuery;
 begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
   document.Active := True;
-  document.Version := '1.0';
-  document.Encoding := 'UTF-8';
 
-  venda := document.AddChild('venda');
-  cabecalho := venda.AddChild('cabecalho');
-  cabecalho.AddChild('nome').Text := edtNomeCliente.Text;
-  cabecalho.AddChild('endereco').Text := edtCidadeCliente.Text;
-  pagamento := venda.AddChild('pagamento');
-  pagamento.AddChild('fPag').Text := edtNomeFormaPgto.Text;
-  pagamento.AddChild('cPag').Text := edtNomeCondPgto.Text;
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
+    qry.Open(SQL);
+    document.Version := '1.0';
+    document.Encoding := 'UTF-8';
 
-  document.SaveToFile('C:\Users\jovio\Documents\xml\notafiscal_' +edtNrPedido.Text+ '.xml');
+    venda := document.AddChild('venda');
+
+    cabecalho := venda.AddChild('cabecalho');
+    cabecalho.AddChild('nNota').Text := edtNrPedido.Text;
+    cabecalho.AddChild('dtEmissao').Text := DateToStr(now);
+
+    cliente := cabecalho.AddChild('cliente');
+    cliente.AddChild('nome').Text := qry.FieldByName('nome').AsString;
+    cliente.AddChild('CPF_CNPJ').Text := qry.FieldByName('cpf_cnpj').AsString;
+    cliente.AddChild('RG_IE').Text := qry.FieldByName('rg_ie').AsString;
+
+    endCliente := cliente.AddChild('enderCliente');
+    endCliente.AddChild('rua').Text := qry.FieldByName('logradouro').AsString;
+    endCliente.AddChild('bairro').Text := qry.FieldByName('bairro').AsString;
+    endCliente.AddChild('cidade').Text := qry.FieldByName('cidade').AsString;
+    endCliente.AddChild('cep').Text := qry.FieldByName('cep').AsString;
+    endCliente.AddChild('email').Text := qry.FieldByName('email').AsString;
+    endCliente.AddChild('fone').Text := qry.FieldByName('fone').AsString;
+
+    i := 1;
+    cdsPedidoVenda.DisableControls;
+    cdsPedidoVenda.First;
+    while not cdsPedidoVenda.Eof do
+    begin
+      itens := venda.AddChild('item');
+      itens.Attributes['numero'] := i;
+      itens.AddChild('cProd').Text := cdsPedidoVenda.FieldByName('cd_produto').AsString;
+      itens.AddChild('descricao').Text := cdsPedidoVenda.FieldByName('descricao').AsString;
+      itens.AddChild('uUN').Text := cdsPedidoVenda.FieldByName('un_medida').AsString;
+      itens.AddChild('qtVenda').Text := cdsPedidoVenda.FieldByName('qtd_venda').AsString;
+
+      cdsPedidoVenda.Next;
+      Inc(i);
+    end;
+
+
+    pagamento := venda.AddChild('pagamento');
+    pagamento.AddChild('fPag').Text := edtNomeFormaPgto.Text;
+    pagamento.AddChild('cPag').Text := edtNomeCondPgto.Text;
+    pagamento.AddChild('vTotal').Text := edtVlTotal.Text;
+
+    document.SaveToFile('C:\Users\jovio\Documents\xml\notafiscal' +edtNrPedido.Text+ '.xml');
+  finally
+    qry.Free;
+    cdsPedidoVenda.EnableControls;
+  end;
 end;
 
 procedure TfrmPedidoVenda.limpaCampos;
@@ -1217,7 +1291,8 @@ const
                'icms_pc_aliq = :icms_pc_aliq, icms_valor = :icms_valor, ipi_vl_base = :ipi_vl_base, ipi_pc_aliq = :ipi_pc_aliq, ipi_valor = :ipi_valor,              ' +
                'pis_cofins_vl_base = :pis_cofins_vl_base, pis_cofins_pc_aliq = :pis_cofins_pc_aliq, pis_cofins_valor = :pis_cofins_valor, un_medida = :un_medida, ' +
                'seq_item = :seq_item '+
-               'where cd_produto = :cd_produto';
+               'where cd_produto = :cd_produto and ' +
+               'id_pedido_venda = :id_pedido_venda';
 var
   qry: TFDQuery;
   idGeral: TGerador;
@@ -1264,6 +1339,7 @@ begin
         qry.SQL.Add(SQL_UPDATE);
 //        qry.ParamByName('id_geral').AsInteger := FIdGeral;
         qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+        qry.ParamByName('id_pedido_venda').AsInteger := FIdGeral;
         qry.ParamByName('vl_unitario').AsCurrency := cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency;
         qry.ParamByName('vl_total_item').AsCurrency := cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency;
         qry.ParamByName('qtd_venda').AsInteger := cdsPedidoVenda.FieldByName('qtd_venda').AsInteger;
