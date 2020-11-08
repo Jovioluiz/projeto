@@ -36,7 +36,7 @@ type
     cdsEnderecoala: TStringField;
     cdsEnderecorua: TStringField;
     cdsEnderecocomplemento: TStringField;
-    btn1: TButton;
+    btnConfirmar: TButton;
     btn2: TButton;
     cdsEndereconm_endereco: TStringField;
     edtOrdem: TEdit;
@@ -45,7 +45,7 @@ type
     procedure edtCodBarrasProdutoExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure btnAdicionarClick(Sender: TObject);
-    procedure btn1Click(Sender: TObject);
+    procedure btnConfirmarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -57,6 +57,7 @@ type
     function GetIdEndereco(NomeEndereco: String): Int64;
     function Pesquisar(IdEndereco: Int64; CdProduto: Integer): Boolean; overload;
     function Pesquisar(CdDeposito: Integer; Ala, Rua: string): Boolean; overload;
+    function ValidaCampos: Boolean;
   end;
 
 var
@@ -69,7 +70,7 @@ uses
 
 {$R *.dfm}
 
-procedure TfrmCadastroEnderecos.btn1Click(Sender: TObject);
+procedure TfrmCadastroEnderecos.btnConfirmarClick(Sender: TObject);
 begin
   SalvarEndereco;
   SalvaEnderecoProduto;
@@ -79,6 +80,11 @@ end;
 procedure TfrmCadastroEnderecos.btnAdicionarClick(Sender: TObject);
 begin
   try
+    if not ValidaCampos then
+    begin
+      ShowMessage('Os campos não podem ser vazios');
+      Exit;
+    end;
     if not cdsEndereco.Locate('cd_deposito; ala; rua; ordem',
        VarArrayOf([StrToInt(edtCodDeposito.Text), edtAla.Text, edtRua.Text, StrToInt(edtOrdem.Text)]), []) then
     begin
@@ -252,13 +258,14 @@ begin
   edtRua.Clear;
   edtCodDeposito.Clear;
   edtComplemento.Clear;
+  edtOrdem.Clear;
+  cdsEndereco.EmptyDataSet;
 end;
 
 procedure TfrmCadastroEnderecos.LimpaDados;
 begin
   edtCodBarrasProduto.Clear;
   edtNomeProduto.Clear;
-  dbgrd1.DataSource := nil;
 end;
 
 function TfrmCadastroEnderecos.Pesquisar(CdDeposito: Integer; Ala, Rua: string): Boolean;
@@ -270,7 +277,6 @@ const
 var
   qry: TFDQuery;
 begin
-  Result := False;
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
 
@@ -281,8 +287,7 @@ begin
     qry.ParamByName('rua').AsString := Rua;
     qry.Open(SQL);
 
-    if not qry.IsEmpty then
-      Result := True;
+    Result := not qry.IsEmpty;
 
   finally
     qry.Free;
@@ -316,8 +321,8 @@ end;
 
 procedure TfrmCadastroEnderecos.SalvaEnderecoProduto;
 const
-  SQL_INSERT = 'insert into wms_endereco_produto (id_geral, id_endereco, nm_endereco, cd_produto) ' +
-               'values(:id_geral, :id_endereco, :nm_endereco, :cd_produto)';
+  SQL_INSERT = 'insert into wms_endereco_produto (id_geral, id_endereco, nm_endereco, cd_produto, ordem) ' +
+               'values(:id_geral, :id_endereco, :nm_endereco, :cd_produto, :ordem)';
 var
   qry: TFDQuery;
   idGeral: TGerador;
@@ -339,6 +344,7 @@ begin
           qry.ParamByName('id_endereco').AsInteger := GetIdEndereco(cdsEndereco.FieldByName('nm_endereco').AsString);
           qry.ParamByName('nm_endereco').AsString := cdsEndereco.FieldByName('nm_endereco').AsString;
           qry.ParamByName('cd_produto').AsInteger := cdsEndereco.FieldByName('cd_produto').AsInteger;
+          qry.ParamByName('ordem').AsInteger := cdsEndereco.FieldByName('ordem').AsInteger;
           qry.ExecSQL;
           qry.Connection.Commit;
         end;
@@ -389,6 +395,7 @@ begin
           qry.ExecSQL;
           qry.Connection.Commit;
         end;
+
         cdsEndereco.Next;
       end;
 
@@ -405,6 +412,23 @@ begin
     LimpaCampos;
     qry.Free;
   end;
+end;
+
+function TfrmCadastroEnderecos.ValidaCampos: Boolean;
+begin
+  Result := True;
+
+  if edtCodDeposito.Text = EmptyStr then
+    Exit(False);
+
+  if edtAla.Text = EmptyStr then
+    Exit(False);
+
+  if edtRua.Text = EmptyStr then
+    Exit(False);
+
+  if edtOrdem.Text = EmptyStr then
+    Exit(False);
 end;
 
 end.

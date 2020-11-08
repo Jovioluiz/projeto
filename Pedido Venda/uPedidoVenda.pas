@@ -111,10 +111,18 @@ type
     procedure edtCdProdutoEnter(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
-    { Private declarations }
     edicaoItem : Boolean;
     FNumeroPedido: Integer;
     FFIdGeral: Int64;
+    { Private declarations }
+    procedure SetFIdGeral(const Value: Int64);
+
+    property NumeroPedido: Integer read FNumeroPedido write FNumeroPedido;
+    property FIdGeral: Int64 read FFIdGeral write SetFIdGeral;
+
+  public
+    { Public declarations }
+
     procedure limpaCampos;
     procedure limpaDados;
     procedure atualizaEstoqueProduto;
@@ -123,16 +131,11 @@ type
     function RetornaSequencia: Integer;
     procedure AlteraSequenciaItem;
     procedure SalvaCabecalho;
-    procedure SetFIdGeral(const Value: Int64);
+
     procedure SalvaItens(EhEdicao: Boolean);
     procedure setDadosNota;
     procedure cancelaPedidoVenda;
-
-    property NumeroPedido: Integer read FNumeroPedido write FNumeroPedido;
-    property FIdGeral: Int64 read FFIdGeral write SetFIdGeral;
-
-  public
-    { Public declarations }
+    procedure InsereWmsMvto;
   end;
 
 var
@@ -459,9 +462,10 @@ begin
       end;
 
       //fazer o insert na wms_mvto_estoque
+      InsereWmsMvto;
       atualizaEstoqueProduto;
 
-      setDadosNota;
+      //setDadosNota;
 
       qry.Connection.Commit;
 
@@ -634,19 +638,22 @@ var
   cliente: TPedidoVenda;
   resposta : Boolean;
 begin
-  cliente := TPedidoVenda.Create;
-  resposta := cliente.ValidaCliente(StrToInt(edtCdCliente.Text));
+  if not edtCdCliente.isEmpty then
+  begin
+    cliente := TPedidoVenda.Create;
+    resposta := cliente.ValidaCliente(StrToInt(edtCdCliente.Text));
 
-  try
-    if not resposta then
-    begin
-      if (Application.MessageBox('Cliente não encontrado ou Inativo','Atenção', MB_OK) = idOK) then
+    try
+      if not resposta then
       begin
-        edtCdCliente.SetFocus;
+        if (Application.MessageBox('Cliente não encontrado ou Inativo','Atenção', MB_OK) = idOK) then
+        begin
+          edtCdCliente.SetFocus;
+        end;
       end;
+    finally
+      FreeAndNil(cliente);
     end;
-  finally
-    FreeAndNil(cliente);
   end;
 end;
 
@@ -680,19 +687,22 @@ var
   condPgto: TPedidoVenda;
   resposta : Boolean;
 begin
-  condPgto := TPedidoVenda.Create;
-  resposta := condPgto.ValidaCondPgto(StrToInt(edtCdCondPgto.Text), StrToInt(edtCdFormaPgto.Text));
+  if not edtCdCondPgto.isEmpty then
+  begin
+    condPgto := TPedidoVenda.Create;
+    resposta := condPgto.ValidaCondPgto(StrToInt(edtCdCondPgto.Text), StrToInt(edtCdFormaPgto.Text));
 
-  try
-    if resposta then
-    begin
-      if (Application.MessageBox('Condição de pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+    try
+      if resposta then
       begin
-        edtCdCondPgto.SetFocus;
+        if (Application.MessageBox('Condição de pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+        begin
+          edtCdCondPgto.SetFocus;
+        end;
       end;
+    finally
+      FreeAndNil(condPgto);
     end;
-  finally
-    FreeAndNil(condPgto);
   end;
 end;
 
@@ -726,17 +736,20 @@ var
   formaPgto: TPedidoVenda;
   resposta : Boolean;
 begin
-  formaPgto := TPedidoVenda.Create;
-  resposta := formaPgto.ValidaFormaPgto(StrToInt(edtCdFormaPgto.Text));
+  if not edtCdFormaPgto.isEmpty then
+  begin
+    formaPgto := TPedidoVenda.Create;
+    resposta := formaPgto.ValidaFormaPgto(StrToInt(edtCdFormaPgto.Text));
 
-  try
-    if resposta then
-    begin
-      if (Application.MessageBox('Forma de Pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
-        edtCdFormaPgto.SetFocus;
+    try
+      if resposta then
+      begin
+        if (Application.MessageBox('Forma de Pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
+          edtCdFormaPgto.SetFocus;
+      end;
+    finally
+      FreeAndNil(formaPgto);
     end;
-  finally
-    FreeAndNil(formaPgto);
   end;
 end;
 
@@ -865,29 +878,32 @@ var
   tabela: TPedidoVenda;
   resposta : Boolean;
 begin
-  tabela := TPedidoVenda.Create;
-  resposta := tabela.ValidaTabelaPreco(StrToInt(edtCdtabelaPreco.Text), StrToInt(edtCdProduto.Text));
+  if not edtCdtabelaPreco.isEmpty then
+  begin
+    tabela := TPedidoVenda.Create;
+    resposta := tabela.ValidaTabelaPreco(StrToInt(edtCdtabelaPreco.Text), StrToInt(edtCdProduto.Text));
 
-  try
-    if resposta then
-    begin
-      if (Application.MessageBox('Tabela de Preço não encontrada', 'Atenção', MB_OK) = idOK) then
+    try
+      if resposta then
       begin
-        edtCdtabelaPreco.SetFocus;
+        if (Application.MessageBox('Tabela de Preço não encontrada', 'Atenção', MB_OK) = idOK) then
+        begin
+          edtCdtabelaPreco.SetFocus;
+        end;
+      end
+      else
+      begin
+        //recalcula o valor total do item ao alterar a tabela de preço
+        //fazer function na uclpedidovenda
+        vl_unitario := StrToCurr(edtVlUnitario.Text);
+        qtdade := StrToCurr(edtQtdade.Text);
+        valor_total := qtdade * vl_unitario;
+        edtVlTotal.Text := CurrToStr(valor_total);
+        edtVlDescontoItem.Enabled := true;
       end;
-    end
-    else
-    begin
-      //recalcula o valor total do item ao alterar a tabela de preço
-      //fazer function na uclpedidovenda
-      vl_unitario := StrToCurr(edtVlUnitario.Text);
-      qtdade := StrToCurr(edtQtdade.Text);
-      valor_total := qtdade * vl_unitario;
-      edtVlTotal.Text := CurrToStr(valor_total);
-      edtVlDescontoItem.Enabled := true;
+    finally
+      FreeAndNil(tabela);
     end;
-  finally
-    FreeAndNil(tabela);
   end;
 end;
 
@@ -982,34 +998,38 @@ procedure TfrmPedidoVenda.edtVlDescTotalPedidoExit(Sender: TObject);
 var
   vl_desconto, vl_total_pedido, valor_total : Currency;
 begin
-  if (edtVlDescTotalPedido.Text = '0') or (edtVlDescTotalPedido.Text = '0,00') then
+  if not edtVlDescTotalPedido.isEmpty then
   begin
-    edtVlDescTotalPedido.Text := CurrToStr(0);
-    valor_total := 0;
+    if (edtVlDescTotalPedido.Text = '0') or (edtVlDescTotalPedido.Text = '0,00') then
+    begin
+      edtVlDescTotalPedido.Text := CurrToStr(0);
+      valor_total := 0;
 
-    //soma os valores totais dos itens
-    cdsPedidoVenda.Loop(
-      procedure
-      begin
-        valor_total := (valor_total + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
-      end
-    );
+      //soma os valores totais dos itens
+      cdsPedidoVenda.Loop(
+        procedure
+        begin
+          valor_total := (valor_total + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
+        end
+      );
 
-    edtVlTotalPedido.Text := CurrToStr(valor_total);
-  end
-  else
-  begin
-    vl_total_pedido := 0;
-    vl_desconto := StrToCurr(edtVlDescTotalPedido.Text);
+      edtVlTotalPedido.Text := CurrToStr(valor_total);
+    end
+    else
+    begin
+      vl_total_pedido := 0;
 
-    cdsPedidoVenda.Loop(
-      procedure
-      begin
-        vl_total_pedido := (vl_total_pedido + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
-      end
-    );
+      vl_desconto := StrToCurr(FormatCurr('#,##0.00', StrToCurr(edtVlDescTotalPedido.Text)));
 
-    edtVlTotalPedido.Text := CurrToStr(vl_total_pedido - vl_desconto);
+      cdsPedidoVenda.Loop(
+        procedure
+        begin
+          vl_total_pedido := (vl_total_pedido + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
+        end
+      );
+
+      edtVlTotalPedido.Text := CurrToStr(vl_total_pedido - vl_desconto);
+    end;
   end;
 end;
 
@@ -1087,18 +1107,97 @@ begin
   end;
 end;
 
+procedure TfrmPedidoVenda.InsereWmsMvto;
+const
+  SQL_INSERT =  'insert into ' +
+                'wms_mvto_estoque(id_geral, '+
+                'id_endereco_produto, '+
+                'cd_produto, ' +
+                'qt_estoque, ' +
+                'un_estoque, ' +
+                'fl_entrada_saida) values '+
+                '(:id_geral, ' +
+                ':id_endereco_produto, '+
+                ':cd_produto, ' +
+                ':qt_estoque, ' +
+                ':un_estoque, ' +
+                ':fl_entrada_saida)';
+
+  SQL_SELECT = 'select ' +
+               '   id_geral ' +
+               'from        ' +
+               '   wms_endereco_produto w    ' +
+               'where                        ' +
+               '   cd_produto = :cd_produto  ' +
+               '   and ordem = (             ' +
+               '   select                    ' +
+               '       min(ordem)            ' +
+               '   from                      ' +
+               '       wms_endereco_produto wep ' +
+               '   where                        ' +
+               '       cd_produto = :cd_produto)';
+var
+  qry, qrySelect: TFDQuery;
+  IdGeral: TGerador;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+  dm.FDConnection1.StartTransaction;
+  qrySelect := TFDQuery.Create(Self);
+  qrySelect.Connection := dm.FDConnection1;
+  IdGeral := TGerador.Create;
+  try
+    try
+      cdsPedidoVenda.Loop(
+        procedure
+        begin
+          qrySelect.SQL.Clear;
+          qrySelect.SQL.Add(SQL_SELECT);
+          qrySelect.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+          qrySelect.Open(SQL_SELECT);
+
+          qry.SQL.Clear;
+          qry.SQL.Add(SQL_INSERT);
+          qry.ParamByName('id_geral').AsFloat := IdGeral.GeraIdGeral;
+          qry.ParamByName('id_endereco_produto').AsInteger := qrySelect.FieldByName('id_geral').AsInteger;
+          qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+          qry.ParamByName('qt_estoque').AsFloat := cdsPedidoVenda.FieldByName('qtd_venda').AsFloat;
+          qry.ParamByName('un_estoque').AsString := cdsPedidoVenda.FieldByName('un_medida').AsString;
+          qry.ParamByName('fl_entrada_saida').AsString := 'S';
+
+          qry.ExecSQL;
+        end
+      );
+      dm.FDConnection1.Commit;
+    except
+      on e:Exception do
+      begin
+        qry.Connection.Rollback;
+        ShowMessage('Erro ao gravar os dados do movimento do produto ' + IntToStr(cdsPedidoVenda.FieldByName('cd_produto').AsInteger) + E.Message);
+        Exit;
+      end;
+    end;
+  finally
+    qry.Free;
+    qrySelect.Free;
+  end;
+end;
+
 procedure TfrmPedidoVenda.setDadosNota;
 const
   SQL = 'select * from vcliente where cd_cliente = :cd_cliente';
 var
   i: Integer;
-  venda, cabecalho, cliente, endCliente, itens, pagamento: IXMLNode;
+  venda, cabecalho,
+  cliente, endCliente,
+  itens, pagamento,
+  impostoItem: IXMLNode;
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
   document.Active := True;
-
+  i := 1;
   try
     qry.SQL.Add(SQL);
     qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
@@ -1125,7 +1224,6 @@ begin
     endCliente.AddChild('email').Text := qry.FieldByName('email').AsString;
     endCliente.AddChild('fone').Text := qry.FieldByName('fone').AsString;
 
-    i := 1;
     cdsPedidoVenda.DisableControls;
     cdsPedidoVenda.First;
     while not cdsPedidoVenda.Eof do
@@ -1140,7 +1238,6 @@ begin
       cdsPedidoVenda.Next;
       Inc(i);
     end;
-
 
     pagamento := venda.AddChild('pagamento');
     pagamento.AddChild('fPag').Text := edtNomeFormaPgto.Text;
@@ -1182,7 +1279,7 @@ begin
   edtVlDescTotalPedido.Clear;
   edtVlAcrescimoTotalPedido.Clear;
   edtVlTotalPedido.Clear;
-  dbGridProdutos.DataSource := nil;
+  cdsPedidoVenda.EmptyDataSet;
 end;
 
 function TfrmPedidoVenda.ProdutoJaLancado(CodProduto: Integer): Boolean;

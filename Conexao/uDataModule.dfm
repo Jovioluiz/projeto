@@ -19,12 +19,12 @@ object dm: Tdm
     VendorLib = 
       'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
       'libpq.dll'
-    Left = 88
+    Left = 104
     Top = 16
   end
   object FDGUIxWaitCursor1: TFDGUIxWaitCursor
     Provider = 'Forms'
-    Left = 136
+    Left = 208
     Top = 16
   end
   object sqlCliente: TFDQuery
@@ -34,7 +34,7 @@ object dm: Tdm
   end
   object transacao: TFDTransaction
     Connection = FDConnection1
-    Left = 224
+    Left = 272
     Top = 16
   end
   object queryControleAcesso: TFDQuery

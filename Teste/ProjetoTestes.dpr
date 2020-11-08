@@ -22,7 +22,12 @@ uses
   uValidaDados in '..\Validacao\uValidaDados.pas',
   uGerador in 'uGerador.pas',
   TestfCadastroEnderecos in 'TestfCadastroEnderecos.pas',
-  fCadastroEnderecos in '..\WMS\fCadastroEnderecos.pas';
+  fCadastroEnderecos in '..\WMS\fCadastroEnderecos.pas',
+  TestuPedidoVenda in 'TestuPedidoVenda.pas',
+  uPedidoVenda in '..\Pedido Venda\uPedidoVenda.pas',
+  uConexao in '..\Conexao\uConexao.pas' {frmConexao},
+  uclPedidoVenda in '..\Pedido Venda\uclPedidoVenda.pas',
+  uConfiguracoes in '..\Configuracoes\uConfiguracoes.pas' {frmConfiguracoes};
 
 {$R *.RES}
 

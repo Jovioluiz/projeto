@@ -89,7 +89,7 @@ var
   Sender: TObject;
 begin
   // TODO: Setup method call parameters
-  FfrmCadastroEnderecos.btn1Click(Sender);
+  FfrmCadastroEnderecos.btnAdicionarClick(Sender);
   // TODO: Validate method results
 end;
 

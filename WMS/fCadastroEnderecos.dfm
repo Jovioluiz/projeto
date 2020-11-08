@@ -127,7 +127,7 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     Height = 209
     DataSource = dsEndereco
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
-    TabOrder = 8
+    TabOrder = 9
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
@@ -152,17 +152,17 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     Width = 75
     Height = 25
     Caption = 'Adicionar'
-    TabOrder = 7
+    TabOrder = 8
     OnClick = btnAdicionarClick
   end
-  object btn1: TButton
+  object btnConfirmar: TButton
     Left = 526
     Top = 440
     Width = 75
     Height = 25
     Caption = 'Confirmar'
-    TabOrder = 9
-    OnClick = btn1Click
+    TabOrder = 10
+    OnClick = btnConfirmarClick
   end
   object btn2: TButton
     Left = 614
@@ -170,14 +170,14 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     Width = 75
     Height = 25
     Caption = 'Cancelar'
-    TabOrder = 10
+    TabOrder = 11
   end
   object edtOrdem: TEdit
     Left = 415
     Top = 152
     Width = 58
     Height = 21
-    TabOrder = 11
+    TabOrder = 7
   end
   object cdsEndereco: TClientDataSet
     PersistDataPacket.Data = {

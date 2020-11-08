@@ -55,14 +55,21 @@ begin
   qry.SQL.Clear;
 
   try
-    qry.SQL.Add(sql_cliente);
-    qry.ParamByName('cd_cliente').AsInteger := CdCliente;
-    qry.Open(sql_cliente);
+    try
+      qry.SQL.Add(sql_cliente);
+      qry.ParamByName('cd_cliente').AsInteger := CdCliente;
+      qry.Open(sql_cliente);
 
-    if not qry.IsEmpty then
-      Result := True
-    else
-      Result := False;
+      if not qry.IsEmpty then
+        Result := True
+      else
+        Result := False;
+    except
+      on E: Exception do
+        ShowMessage(
+        'Ocorreu um erro.' + #13 +
+        'Mensagem de erro: ' + E.Message);
+    end;
   finally
     qry.Free;
   end;
@@ -117,14 +124,21 @@ begin
   qry.Connection := dm.FDConnection1;
 
   try
-    qry.Close;
-    qry.SQL.Clear;
+    try
+      qry.Close;
+      qry.SQL.Clear;
 
-    qry.SQL.Add(sql_forma_pgto);
-    qry.ParamByName('cd_forma_pag').AsInteger := CdFormaPgto;
-    qry.Open(sql_forma_pgto);
+      qry.SQL.Add(sql_forma_pgto);
+      qry.ParamByName('cd_forma_pag').AsInteger := CdFormaPgto;
+      qry.Open(sql_forma_pgto);
 
-    Result := qry.IsEmpty;
+      Result := qry.IsEmpty;
+    except
+      on E: Exception do
+        ShowMessage(
+        'Ocorreu um erro.' + #13 +
+        'Mensagem de erro: ' + E.Message);
+    end;
   finally
     qry.Free;
   end;

@@ -588,9 +588,9 @@ begin
       qry.ParamByName('fl_entrada_saida').AsString := 'E';
 
       qry.ExecSQL;
-      dm.FDConnection1.Commit;
       cdsEntrada.Next;
     end;
+    dm.FDConnection1.Commit;
   finally
     qry.Free;
     qrySelect.Free;
@@ -609,12 +609,12 @@ const
               'where id_wms_endereco_produto = :id';
 
   SQL = 'select ' +
-                  'qt_estoque, ' +
-                  'id_wms_endereco_produto ' +
-              'from ' +
-                  'wms_estoque ' +
-              'where ' +
-                  'cd_produto = :cd_produto';
+            'qt_estoque, ' +
+            'id_wms_endereco_produto ' +
+        'from ' +
+            'wms_estoque ' +
+        'where ' +
+            'cd_produto = :cd_produto';
 var
   qry: TFDQuery;
   qtdade, qttotal: Double;
@@ -646,8 +646,8 @@ begin
 
         qry.ExecSQL;
         cdsEntrada.Next;
-        qry.Connection.Commit;
       end;
+      qry.Connection.Commit;
     except
       on E : exception do
         begin
