@@ -215,8 +215,8 @@ begin
 
         qry.ExecSQL;
         cdsPedidoVenda.Next;
-        qry.Connection.Commit;
       end;
+      qry.Connection.Commit;
     except
     on E : exception do
       begin

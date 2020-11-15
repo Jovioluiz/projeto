@@ -201,6 +201,14 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       TabOrder = 8
       OnClick = btnImprimirClick
     end
+    object btnSalvar: TButton
+      Left = 22
+      Top = 127
+      Width = 81
+      Height = 34
+      Caption = 'Salvar'
+      TabOrder = 9
+    end
   end
   object edtNrPedido: TEdit
     Left = 233
@@ -365,5 +373,400 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     DataSet = cdsProdutos
     Left = 248
     Top = 352
+  end
+  object frxRelatorio: TfrxReport
+    Version = '6.2.1'
+    DotMatrixReport = False
+    IniFile = '\Software\Fast Reports'
+    PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick, pbCopy, pbSelection]
+    PreviewOptions.Zoom = 1.000000000000000000
+    PrintOptions.Printer = 'Default'
+    PrintOptions.PrintOnSheet = 0
+    ReportOptions.CreateDate = 44149.832557638900000000
+    ReportOptions.LastChange = 44149.892193865740000000
+    ScriptLanguage = 'PascalScript'
+    ScriptText.Strings = (
+      'begin'
+      ''
+      'end.')
+    Left = 448
+    Top = 576
+    Datasets = <
+      item
+        DataSet = frxdsPedido
+        DataSetName = 'dsPedido'
+      end>
+    Variables = <>
+    Style = <>
+    object Data: TfrxDataPage
+      Height = 1000.000000000000000000
+      Width = 1000.000000000000000000
+    end
+    object Page1: TfrxReportPage
+      PaperWidth = 210.000000000000000000
+      PaperHeight = 297.000000000000000000
+      PaperSize = 9
+      LeftMargin = 10.000000000000000000
+      RightMargin = 10.000000000000000000
+      TopMargin = 10.000000000000000000
+      BottomMargin = 10.000000000000000000
+      Frame.Typ = []
+      object ReportTitle1: TfrxReportTitle
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 22.677180000000000000
+        Top = 18.897650000000000000
+        Width = 718.110700000000000000
+        object Memo6: TfrxMemoView
+          AllowVectorExport = True
+          Left = 83.149660000000000000
+          Width = 230.551330000000000000
+          Height = 18.897650000000000000
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Impress'#227'o do Pedido de Venda Nr. ')
+          ParentFont = False
+        end
+        object dsPedidonr_pedido1: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 321.260050000000000000
+          Width = 90.708720000000000000
+          Height = 18.897650000000000000
+          DataField = 'nr_pedido'
+          DataSet = frxdsPedido
+          DataSetName = 'dsPedido'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[dsPedido."nr_pedido"]')
+          ParentFont = False
+        end
+      end
+      object MasterData1: TfrxMasterData
+        FillType = ftBrush
+        Frame.Typ = []
+        Height = 120.944960000000000000
+        Top = 102.047310000000000000
+        Width = 718.110700000000000000
+        DataSet = frxdsPedido
+        DataSetName = 'dsPedido'
+        RowCount = 0
+        object Memo3: TfrxMemoView
+          AllowVectorExport = True
+          Left = 18.897650000000000000
+          Top = 45.354360000000000000
+          Width = 139.842610000000000000
+          Height = 18.897650000000000000
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Forma Pagamento:')
+        end
+        object dsPedidonm_forma_pag: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 170.078850000000000000
+          Top = 45.354360000000000000
+          Width = 188.976500000000000000
+          Height = 18.897650000000000000
+          DataField = 'nm_forma_pag'
+          DataSet = frxdsPedido
+          DataSetName = 'dsPedido'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[dsPedido."nm_forma_pag"]')
+        end
+        object Memo4: TfrxMemoView
+          AllowVectorExport = True
+          Left = 3.779530000000000000
+          Top = 86.929190000000000000
+          Width = 151.181200000000000000
+          Height = 18.897650000000000000
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Condi'#231#227'o Pagamento:')
+        end
+        object dsPedidonm_cond_pag: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 170.078850000000000000
+          Top = 86.929190000000000000
+          Width = 192.756030000000000000
+          Height = 18.897650000000000000
+          DataField = 'nm_cond_pag'
+          DataSet = frxdsPedido
+          DataSetName = 'dsPedido'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[dsPedido."nm_cond_pag"]')
+        end
+        object Memo2: TfrxMemoView
+          AllowVectorExport = True
+          Left = 86.929190000000000000
+          Top = 11.338590000000000000
+          Width = 68.031540000000000000
+          Height = 18.897650000000000000
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Cliente:')
+        end
+        object dsPedidonome: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 170.078850000000000000
+          Top = 11.338590000000000000
+          Width = 188.976500000000000000
+          Height = 18.897650000000000000
+          DataField = 'nome'
+          DataSet = frxdsPedido
+          DataSetName = 'dsPedido'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[dsPedido."nome"]')
+        end
+        object Memo5: TfrxMemoView
+          AllowVectorExport = True
+          Left = 404.409710000000000000
+          Top = 11.338590000000000000
+          Width = 71.811070000000000000
+          Height = 18.897650000000000000
+          Frame.Typ = []
+          Memo.UTF8W = (
+            'Situa'#231#227'o:')
+        end
+        object dsPedidocancelado: TfrxMemoView
+          IndexTag = 1
+          AllowVectorExport = True
+          Left = 495.118430000000000000
+          Top = 11.338590000000000000
+          Width = 143.622140000000000000
+          Height = 18.897650000000000000
+          DataField = 'cancelado'
+          DataSet = frxdsPedido
+          DataSetName = 'dsPedido'
+          Frame.Typ = []
+          Memo.UTF8W = (
+            '[dsPedido."cancelado"]')
+        end
+      end
+      object dsPedidocd_produto: TfrxMemoView
+        IndexTag = 1
+        AllowVectorExport = True
+        Left = 15.118120000000000000
+        Top = 351.496290000000000000
+        Width = 79.370130000000000000
+        Height = 18.897650000000000000
+        DataField = 'cd_produto'
+        DataSet = frxdsPedido
+        DataSetName = 'dsPedido'
+        Frame.Typ = []
+        Memo.UTF8W = (
+          '[dsPedido."cd_produto"]')
+      end
+      object dsPedidodesc_produto: TfrxMemoView
+        IndexTag = 1
+        AllowVectorExport = True
+        Left = 128.504020000000000000
+        Top = 351.496290000000000000
+        Width = 139.842610000000000000
+        Height = 18.897650000000000000
+        DataField = 'desc_produto'
+        DataSet = frxdsPedido
+        DataSetName = 'dsPedido'
+        Frame.Typ = []
+        Memo.UTF8W = (
+          '[dsPedido."desc_produto"]')
+      end
+      object dsPedidoqtd_venda: TfrxMemoView
+        IndexTag = 1
+        AllowVectorExport = True
+        Left = 283.464750000000000000
+        Top = 347.716760000000000000
+        Width = 79.370130000000000000
+        Height = 18.897650000000000000
+        DataField = 'qtd_venda'
+        DataSet = frxdsPedido
+        DataSetName = 'dsPedido'
+        Frame.Typ = []
+        Memo.UTF8W = (
+          '[dsPedido."qtd_venda"]')
+      end
+      object dsPedidoun_medida: TfrxMemoView
+        IndexTag = 1
+        AllowVectorExport = True
+        Left = 377.953000000000000000
+        Top = 347.716760000000000000
+        Width = 79.370130000000000000
+        Height = 18.897650000000000000
+        DataField = 'un_medida'
+        DataSet = frxdsPedido
+        DataSetName = 'dsPedido'
+        Frame.Typ = []
+        Memo.UTF8W = (
+          '[dsPedido."un_medida"]')
+      end
+      object dsPedidovl_unitario: TfrxMemoView
+        IndexTag = 1
+        AllowVectorExport = True
+        Left = 483.779840000000000000
+        Top = 347.716760000000000000
+        Width = 79.370130000000000000
+        Height = 18.897650000000000000
+        DataField = 'vl_unitario'
+        DataSet = frxdsPedido
+        DataSetName = 'dsPedido'
+        Frame.Typ = []
+        Memo.UTF8W = (
+          '[dsPedido."vl_unitario"]')
+      end
+      object dsPedidototal_item: TfrxMemoView
+        IndexTag = 1
+        AllowVectorExport = True
+        Left = 578.268090000000000000
+        Top = 351.496290000000000000
+        Width = 79.370130000000000000
+        Height = 18.897650000000000000
+        DataField = 'total_item'
+        DataSet = frxdsPedido
+        DataSetName = 'dsPedido'
+        Frame.Typ = []
+        Memo.UTF8W = (
+          '[dsPedido."total_item"]')
+      end
+      object Memo12: TfrxMemoView
+        AllowVectorExport = True
+        Left = 582.047620000000000000
+        Top = 430.866420000000000000
+        Width = 86.929190000000000000
+        Height = 18.897650000000000000
+        Frame.Typ = []
+        Memo.UTF8W = (
+          'Valor Total')
+      end
+      object Memo10: TfrxMemoView
+        AllowVectorExport = True
+        Left = 487.559370000000000000
+        Top = 430.866420000000000000
+        Width = 86.929190000000000000
+        Height = 18.897650000000000000
+        Frame.Typ = []
+        Memo.UTF8W = (
+          'Valor Unit'#225'rio')
+      end
+      object Memo11: TfrxMemoView
+        AllowVectorExport = True
+        Left = 381.732530000000000000
+        Top = 430.866420000000000000
+        Width = 86.929190000000000000
+        Height = 18.897650000000000000
+        Frame.Typ = []
+        Memo.UTF8W = (
+          'UN Medida')
+      end
+      object Memo9: TfrxMemoView
+        AllowVectorExport = True
+        Left = 287.244280000000000000
+        Top = 430.866420000000000000
+        Width = 86.929190000000000000
+        Height = 18.897650000000000000
+        Frame.Typ = []
+        Memo.UTF8W = (
+          'Quantidade')
+      end
+      object Memo8: TfrxMemoView
+        AllowVectorExport = True
+        Left = 128.504020000000000000
+        Top = 430.866420000000000000
+        Width = 139.842610000000000000
+        Height = 18.897650000000000000
+        Frame.Typ = []
+        Memo.UTF8W = (
+          'Descri'#231#227'o')
+      end
+      object Memo7: TfrxMemoView
+        AllowVectorExport = True
+        Left = 15.118120000000000000
+        Top = 430.866420000000000000
+        Width = 102.047310000000000000
+        Height = 18.897650000000000000
+        Frame.Typ = []
+        Memo.UTF8W = (
+          'C'#243'd. Produto')
+      end
+    end
+  end
+  object frxdsPedido: TfrxDBDataset
+    UserName = 'dsPedido'
+    CloseDataSource = False
+    DataSet = qry
+    BCDToCurrency = False
+    Left = 528
+    Top = 576
+  end
+  object qry: TFDQuery
+    Connection = frmConexao.conexao
+    SQL.Strings = (
+      'select'
+      '    pv.nr_pedido,'
+      '    pvi.cd_produto,'
+      '    p.desc_produto,'
+      '    c.cd_cliente,'
+      '    c.nome,'
+      '    cfp.cd_forma_pag,'
+      '    cfp.nm_forma_pag,'
+      '    ccp.cd_cond_pag,'
+      '    ccp.nm_cond_pag,'
+      '    case when pv.fl_cancelado = '#39'S'#39' then'
+      '        '#39'CANCELADO'#39
+      '    when pv.fl_cancelado = '#39'N'#39' then '
+      '        '#39'N'#195'O CANCELADO'#39
+      '    end as cancelado,'
+      '    pvi.qtd_venda,'
+      '    pvi.un_medida,'
+      '    pvi.vl_unitario,'
+      '    sum(pvi.vl_unitario * pvi.qtd_venda) as total_item,'
+      '    pv.vl_total'
+      'from'
+      '    pedido_venda pv'
+      'join pedido_venda_item pvi on'
+      '    pv.id_geral = pvi.id_pedido_venda'
+      'join cliente c on'
+      '    pv.cd_cliente = c.cd_cliente'
+      'join produto p on'
+      '    p.cd_produto = pvi.cd_produto'
+      'join cta_forma_pagamento cfp on'
+      '    pv.cd_forma_pag = cfp.cd_forma_pag'
+      'join cta_cond_pagamento ccp on'
+      '    cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento'
+      'where'
+      '    pv.nr_pedido = nr_pedido'
+      'group by'
+      '    pv.nr_pedido,'
+      '    pvi.cd_produto,'
+      '    p.desc_produto,'
+      '    c.cd_cliente,'
+      '    c.nome,'
+      '    cfp.cd_forma_pag,'
+      '    cfp.nm_forma_pag,'
+      '    ccp.cd_cond_pag,'
+      '    ccp.nm_cond_pag,'
+      '    pv.fl_cancelado,'
+      '    pvi.qtd_venda,'
+      '    pvi.un_medida,'
+      '    pvi.vl_unitario,'
+      '    pv.vl_total'
+      'order by'
+      '    pv.nr_pedido')
+    Left = 512
+    Top = 376
   end
 end

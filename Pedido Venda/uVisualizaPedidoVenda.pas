@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao,
-  JvExStdCtrls, JvBehaviorLabel;
+  JvExStdCtrls, JvBehaviorLabel, frxClass, frxDBSet;
 
 type
   TfrmVisualizaPedidoVenda = class(TForm)
@@ -59,6 +59,10 @@ type
     cdsProdutospis_cofins_pc_aliq: TCurrencyField;
     cdsProdutospis_cofins_valor: TCurrencyField;
     lblStatus: TJvBehaviorLabel;
+    btnSalvar: TButton;
+    frxRelatorio: TfrxReport;
+    frxdsPedido: TfrxDBDataset;
+    qry: TFDQuery;
 
     procedure dbGridProdutosDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
@@ -124,66 +128,10 @@ end;
 
 procedure TfrmVisualizaPedidoVenda.btnImprimirClick(Sender: TObject);
 begin
-  with dm.sqlPedidoVenda do
-  begin
-    Close;
-    SQL.Clear;
-
-    SQL.Add('select                                                     '+
-                '    pv.nr_pedido,                                          '+
-                '    pvi.cd_produto,                                        '+
-                '    p.desc_produto,                                        '+
-                '    c.cd_cliente,                                          '+
-                '    c.nome,                                                '+
-                '    cfp.cd_forma_pag,                                      '+
-                '    cfp.nm_forma_pag,                                      '+
-                '    ccp.cd_cond_pag,                                       '+
-                '    ccp.nm_cond_pag,                                       '+
-                '    pvi.qtd_venda,                                         '+
-                '    pvi.un_medida,                                         '+
-                '    pvi.vl_unitario,                                       '+
-                '    sum(pvi.vl_unitario * pvi.qtd_venda) as total_item,    '+
-                '    pv.vl_total                                            '+
-                'from                                                       '+
-                '    pedido_venda pv                                        '+
-                'join pedido_venda_item pvi on                              '+
-                '    pv.id_geral = pvi.id_pedido_venda                      '+
-                'join cliente c on                                          '+
-                '    pv.cd_cliente = c.cd_cliente                           '+
-                'join produto p on                                          '+
-                '    p.cd_produto = pvi.cd_produto                          '+
-                'join cta_forma_pagamento cfp on                            '+
-                '    pv.cd_forma_pag = cfp.cd_forma_pag                     '+
-                'join cta_cond_pagamento ccp on                             '+
-                '    cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento          '+
-                'where pv.nr_pedido = :nr_pedido ');
-
-    ParamByName('nr_pedido').AsInteger := StrToInt(edtNrPedido.Text);
-
-                SQL.Add('group by             '+
-                        '    pv.nr_pedido,    '+
-                        '    pvi.cd_produto,  '+
-                        '    p.desc_produto,  '+
-                        '    c.cd_cliente,    '+
-                        '    c.nome,          '+
-                        '    cfp.cd_forma_pag,'+
-                        '    cfp.nm_forma_pag,'+
-                        '    ccp.cd_cond_pag, '+
-                        '    ccp.nm_cond_pag, '+
-                        '    pvi.qtd_venda,   '+
-                        '    pvi.un_medida,   '+
-                        '    pvi.vl_unitario, '+
-                        '    pv.vl_total      '+
-                        'order by             '+
-                        '    pv.nr_pedido');
-
-
-
-    Open();
-
-   // dm.reportPedidoVenda.LoadFromFile(GetCurrentDir + '\rel\rel_pedido_venda.fr3');
-   // dm.reportPedidoVenda.ShowReport();
-  end;
+  qry.ParamByName('nr_pedido').AsInteger := StrToInt(edtNrPedido.Text);
+  qry.Open();
+  frxRelatorio.LoadFromFile(GetCurrentDir + '\rel\relPedidoVenda.fr3');
+  frxRelatorio.ShowReport();
 end;
 
 //Faz a linha zebrada no grid dos itens
