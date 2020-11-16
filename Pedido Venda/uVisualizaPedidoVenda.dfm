@@ -208,6 +208,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       Height = 34
       Caption = 'Salvar'
       TabOrder = 9
+      OnClick = btnSalvarClick
     end
   end
   object edtNrPedido: TEdit
@@ -389,7 +390,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
       'begin'
       ''
       'end.')
-    Left = 448
+    Left = 472
     Top = 576
     Datasets = <
       item

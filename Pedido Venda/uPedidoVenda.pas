@@ -136,6 +136,7 @@ type
     procedure setDadosNota;
     procedure cancelaPedidoVenda;
     procedure InsereWmsMvto;
+    function getNumeroParcelas(CdCondPgto: Integer): Integer;
   end;
 
 var
@@ -465,7 +466,7 @@ begin
       InsereWmsMvto;
       atualizaEstoqueProduto;
 
-      //setDadosNota;
+      setDadosNota;
 
       qry.Connection.Commit;
 
@@ -1107,6 +1108,29 @@ begin
   end;
 end;
 
+function TfrmPedidoVenda.getNumeroParcelas(CdCondPgto: Integer): Integer;
+const
+  SQL = 'select ' +
+        ' nr_parcelas ' +
+        'from              ' +
+        '    cta_cond_pagamento ' +
+        'where cd_cond_pag = :cd_cond_pag';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.FDConnection1;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_cond_pag').AsInteger := CdCondPgto;
+    qry.Open();
+    Result := qry.FieldByName('nr_parcelas').AsInteger;
+  finally
+    qry.Free;
+  end;
+end;
+
 procedure TfrmPedidoVenda.InsereWmsMvto;
 const
   SQL_INSERT =  'insert into ' +
@@ -1187,18 +1211,20 @@ procedure TfrmPedidoVenda.setDadosNota;
 const
   SQL = 'select * from vcliente where cd_cliente = :cd_cliente';
 var
-  i: Integer;
+  i, j, nrParcelas: Integer;
   venda, cabecalho,
   cliente, endCliente,
   itens, pagamento,
-  impostoItem: IXMLNode;
+  impostoItem, parcelas: IXMLNode;
   qry: TFDQuery;
+  valorTotal: Currency;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.FDConnection1;
   document.Active := True;
   i := 1;
   try
+    valorTotal := StrToCurr(edtVlTotalPedido.Text);
     qry.SQL.Add(SQL);
     qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
     qry.Open(SQL);
@@ -1234,17 +1260,35 @@ begin
       itens.AddChild('descricao').Text := cdsPedidoVenda.FieldByName('descricao').AsString;
       itens.AddChild('uUN').Text := cdsPedidoVenda.FieldByName('un_medida').AsString;
       itens.AddChild('qtVenda').Text := cdsPedidoVenda.FieldByName('qtd_venda').AsString;
-
+      itens.AddChild('vlUni').Text := cdsPedidoVenda.FieldByName('vl_unitario').AsString;
+      if cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency > 0 then
+      begin
+        impostoItem := itens.AddChild('impostoItem');
+        impostoItem.AddChild('vBaseIcms').Text := FormatCurr('#,##0.00', cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency);
+        impostoItem.AddChild('icmsAliq').Text := cdsPedidoVenda.FieldByName('icms_pc_aliq').AsString;
+        impostoItem.AddChild('vIcms').Text := FormatCurr('#,##0.00', cdsPedidoVenda.FieldByName('icms_valor').AsCurrency);
+      end;
       cdsPedidoVenda.Next;
       Inc(i);
     end;
 
+    nrParcelas := getNumeroParcelas(StrToInt(edtCdCondPgto.Text));
     pagamento := venda.AddChild('pagamento');
     pagamento.AddChild('fPag').Text := edtNomeFormaPgto.Text;
     pagamento.AddChild('cPag').Text := edtNomeCondPgto.Text;
-    pagamento.AddChild('vTotal').Text := edtVlTotal.Text;
+    pagamento.AddChild('vTotal').Text := edtVlTotalPedido.Text;
 
-    document.SaveToFile('C:\Users\jovio\Documents\xml\notafiscal' +edtNrPedido.Text+ '.xml');
+    if nrParcelas > 0 then
+    begin
+      parcelas := pagamento.AddChild('parcelas');
+      for j := 1 to nrParcelas do
+      begin
+        parcelas.AddChild('nParcela').Text := j.ToString;
+        parcelas.AddChild('vlrParcela').Text := FormatCurr('#,##0.00', (valorTotal / nrParcelas));
+      end;
+    end;
+
+    document.SaveToFile('C:\Users\jovio\Documents\xml\notafiscal' + edtNrPedido.Text + '.xml');
   finally
     qry.Free;
     cdsPedidoVenda.EnableControls;

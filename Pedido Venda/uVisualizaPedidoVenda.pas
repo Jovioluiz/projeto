@@ -72,6 +72,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure btnImprimirClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -132,6 +133,11 @@ begin
   qry.Open();
   frxRelatorio.LoadFromFile(GetCurrentDir + '\rel\relPedidoVenda.fr3');
   frxRelatorio.ShowReport();
+end;
+
+procedure TfrmVisualizaPedidoVenda.btnSalvarClick(Sender: TObject);
+begin
+
 end;
 
 //Faz a linha zebrada no grid dos itens
