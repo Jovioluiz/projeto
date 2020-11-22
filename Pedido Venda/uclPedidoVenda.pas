@@ -53,6 +53,7 @@ begin
   qry.Connection := dm.conexaoBanco;
   qry.Close;
   qry.SQL.Clear;
+  Result := True;
 
   try
     try
@@ -122,6 +123,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
+  Result := True;
 
   try
     try

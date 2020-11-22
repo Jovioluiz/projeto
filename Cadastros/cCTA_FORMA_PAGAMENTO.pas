@@ -44,10 +44,7 @@ implementation
 {$R *.dfm}
 
 procedure TfrmCadFormaPagamento.edtCTA_FORMA_PGTOCODIGOExit(Sender: TObject);
-Var tipo : Integer;
 begin
-  tipo := 0;
-
   if edtCTA_FORMA_PGTOCODIGO.Text = EmptyStr then
   begin
     raise Exception.Create('Código não pode ser vazio');

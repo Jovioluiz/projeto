@@ -819,6 +819,7 @@ var
   resposta: Boolean;
 begin
   produto := TPedidoVenda.Create;
+  resposta := False;
 
   if edtCdProduto.Text <> '' then
     resposta := produto.ValidaProduto(StrToInt(edtCdProduto.Text));
