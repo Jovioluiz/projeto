@@ -200,9 +200,9 @@ var
   qryProduto, qryEnderecos: TFDQuery;
 begin
   qryProduto := TFDQuery.Create(Self);
-  qryProduto.Connection := dm.FDConnection1;
+  qryProduto.Connection := dm.conexaoBanco;
   qryEnderecos := TFDQuery.Create(Self);
-  qryEnderecos.Connection := dm.FDConnection1;
+  qryEnderecos.Connection := dm.conexaoBanco;
 
   try
     cdsEndereco.EmptyDataSet;
@@ -300,7 +300,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.SQL.Add(SQL);
@@ -349,7 +349,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.SQL.Add(SQL);
@@ -374,7 +374,7 @@ var
 begin
   Result := False;
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.SQL.Add(SQL);
@@ -398,7 +398,7 @@ var
   idGeral: TGerador;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   idGeral := TGerador.Create;
   try
     qry.SQL.Add(SQL_INSERT);
@@ -442,7 +442,7 @@ var
   idGeral: TGerador;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Connection.StartTransaction;
   idGeral := TGerador.Create;
 

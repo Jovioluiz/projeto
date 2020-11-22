@@ -104,12 +104,12 @@ object frmCadTabelaPrecoProduto: TfrmCadTabelaPrecoProduto
     end
   end
   object sqlTabelaPrecoProduto: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 424
     Top = 104
   end
   object sql: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 424
     Top = 176
   end

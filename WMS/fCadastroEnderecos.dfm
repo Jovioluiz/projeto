@@ -24,7 +24,6 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
     Height = 460
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 209
     object pgc1: TPageControl
       Left = 1
       Top = 1
@@ -33,11 +32,8 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
       ActivePage = tbsEndereco
       Align = alClient
       TabOrder = 0
-      ExplicitHeight = 486
       object tbsEndereco: TTabSheet
         Caption = 'Cadastro Endere'#231'o'
-        ExplicitLeft = 8
-        ExplicitTop = 28
         object JvLabel1: TJvLabel
           Left = 8
           Top = 27
@@ -145,6 +141,9 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
       object tbsProdutoEndereco: TTabSheet
         Caption = 'Cadastro Produto Endereco'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
         ExplicitHeight = 458
         object JvLabel5: TJvLabel
           Left = 12

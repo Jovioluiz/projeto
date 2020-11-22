@@ -582,7 +582,7 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
     Top = 416
   end
   object query: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 864
     Top = 184
   end

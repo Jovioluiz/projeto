@@ -66,12 +66,12 @@ object frmUsuario: TfrmUsuario
     Text = ''
   end
   object query: TFDQuery
-    Connection = dm.FDConnection1
+    Connection = dm.conexaoBanco
     Left = 376
     Top = 56
   end
   object sql: TFDQuery
-    Connection = dm.FDConnection1
+    Connection = dm.conexaoBanco
     Left = 376
     Top = 120
   end

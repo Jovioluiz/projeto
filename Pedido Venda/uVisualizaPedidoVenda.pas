@@ -8,7 +8,7 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao,
+  FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient,
   JvExStdCtrls, JvBehaviorLabel, frxClass, frxDBSet;
 
 type
@@ -92,9 +92,7 @@ uses uEdicaoPedidoVenda, uDataModule;
 procedure TfrmVisualizaPedidoVenda.btnCancelarClick(Sender: TObject);
 begin
   if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
-  begin
     Close;
-  end;
 end;
 
 
@@ -105,7 +103,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.SQL.Add(SQL);
@@ -113,9 +111,7 @@ begin
     qry.Open();
 
     if (not edtFl_orcamento.Checked) or (qry.FieldByName('fl_cancelado').AsString = 'S') then
-    begin
-      MessageDlg('O pedido não pode ser editado', mtWarning, [mbOK],0);
-    end
+      MessageDlg('O pedido não pode ser editado', mtWarning, [mbOK],0)
     else
     begin
       frmEdicaoPedidoVenda := TfrmEdicaoPedidoVenda.Create(Self);
@@ -212,7 +208,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     cdsProdutos.EmptyDataSet;

@@ -3,7 +3,7 @@ object dmConsultaProduto: TdmConsultaProduto
   Height = 225
   Width = 388
   object query: TFDQuery
-    Connection = dm.FDConnection1
+    Connection = dm.conexaoBanco
     SQL.Strings = (
       '')
     Left = 72

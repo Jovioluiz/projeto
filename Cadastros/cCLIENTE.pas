@@ -4,14 +4,14 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.UITypes, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, uValidaDcto, uConexao,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, uValidaDcto,
   Data.FMTBcd, Data.DB, Data.SqlExpr, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client, FireDAC.DApt,
   FireDAC.Comp.DataSet, Vcl.DBCtrls, Vcl.Buttons, StrUtils, System.Generics.Collections;
 
 type
-  TfrmCadCliente = class(TfrmConexao)
+  TfrmCadCliente = class(TForm)
     tpCadCliente: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -124,11 +124,11 @@ qry, qryCliente, qryEnd: TFDQuery;
 begin
   dm.transacao.StartTransaction;
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qryCliente := TFDQuery.Create(Self);
-  qryCliente.Connection := dm.FDConnection1;
+  qryCliente.Connection := dm.conexaoBanco;
   qryEnd := TFDQuery.Create(Self);
-  qryEnd.Connection := dm.FDConnection1;
+  qryEnd.Connection := dm.conexaoBanco;
 
   try
     cliente := TValidaDados.Create;
@@ -148,32 +148,26 @@ begin
     begin
       qryCliente.SQL.Clear;
       qryCliente.SQL.Text := 'update                                  '+
-                                      'cliente                              '+
-                                  'set                                      '+
-                                  '    nome = :nome,                        '+
-                                   '   fl_ativo = :fl_ativo,                '+
-                                    '  tp_pessoa = :tp_pessoa,              '+
-                                    '  telefone = :telefone,                '+
-                                    '  celular = :celular,                  '+
-                                    '  email = :email,                      '+
-                                    '  cpf_cnpj = :cpf_cnpj,                '+
-                                    '  rg_ie = :rg_ie,                      '+
-                                    '  dt_nasc_fundacao = :dt_nasc_fundacao '+
-                                  'where                                    '+
-                                    '  cd_cliente = :cd_cliente';
+                                'cliente                              '+
+                            'set                                      '+
+                            '    nome = :nome,                        '+
+                             '   fl_ativo = :fl_ativo,                '+
+                              '  tp_pessoa = :tp_pessoa,              '+
+                              '  telefone = :telefone,                '+
+                              '  celular = :celular,                  '+
+                              '  email = :email,                      '+
+                              '  cpf_cnpj = :cpf_cnpj,                '+
+                              '  rg_ie = :rg_ie,                      '+
+                              '  dt_nasc_fundacao = :dt_nasc_fundacao '+
+                            'where                                    '+
+                              '  cd_cliente = :cd_cliente';
 
       qryCliente.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
       qryCliente.ParamByName('nome').AsString := edtCLIENTENM_CLIENTE.Text;
       qryCliente.ParamByName('fl_ativo').AsBoolean := edtCLIENTEFL_ATIVO.Checked;
       case edtCLIENTETP_PESSOA.ItemIndex of
-      0:
-        begin
-          qryCliente.ParamByName('tp_pessoa').AsString := 'F';
-        end;
-      1:
-        begin
-          qryCliente.ParamByName('tp_pessoa').AsString := 'J';
-        end;
+        0: qryCliente.ParamByName('tp_pessoa').AsString := 'F';
+        1: qryCliente.ParamByName('tp_pessoa').AsString := 'J';
       end;
 
       qryCliente.ParamByName('telefone').AsString := edtCLIENTEFONE.Text;
@@ -184,17 +178,17 @@ begin
       qryCliente.ParamByName('dt_nasc_fundacao').AsDate := StrToDate(edtCLIENTEDATANASCIMENTO.Text);
 
       qryEnd.SQL.Text := 'update                           '+
-                                          'endereco_cliente           '+
-                                    'set                              '+
-                                     '   cd_cliente = :cd_cliente,    '+
-                                      '  logradouro = :logradouro,    '+
-                                      '  num = :num,                  '+
-                                      '  bairro = :bairro,            '+
-                                      '  cidade = :cidade,            '+
-                                      '  uf = :uf,                    '+
-                                      '  cep = :cep                   '+
-                                    'where                            '+
-                                      '  cd_cliente = :cd_cliente';
+                              'endereco_cliente           '+
+                        'set                              '+
+                         '   cd_cliente = :cd_cliente,    '+
+                          '  logradouro = :logradouro,    '+
+                          '  num = :num,                  '+
+                          '  bairro = :bairro,            '+
+                          '  cidade = :cidade,            '+
+                          '  uf = :uf,                    '+
+                          '  cep = :cep                   '+
+                        'where                            '+
+                          '  cd_cliente = :cd_cliente';
 
       qryEnd.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
       qryEnd.ParamByName('logradouro').AsString := edtCLIENTEENDERECO_LOGRADOURO.Text;
@@ -253,14 +247,8 @@ begin
       qryCliente.ParamByName('nome').AsString := edtCLIENTENM_CLIENTE.Text;
       //tipo da pessoa tá gravando F - Fisica, J - Juridica
       case edtCLIENTETP_PESSOA.ItemIndex of
-      0:
-        begin
-          qryCliente.ParamByName('tp_pessoa').AsString := 'F';
-        end;
-      1:
-        begin
-          qryCliente.ParamByName('tp_pessoa').AsString := 'J';
-        end;
+      0: qryCliente.ParamByName('tp_pessoa').AsString := 'F';
+      1: qryCliente.ParamByName('tp_pessoa').AsString := 'J';
       end;
 
       qryCliente.ParamByName('telefone').AsString := edtCLIENTEFONE.Text;
@@ -271,22 +259,22 @@ begin
       qryCliente.ParamByName('dt_nasc_fundacao').AsDate := StrToDate(edtCLIENTEDATANASCIMENTO.Text);
 
       qryEnd.SQL.Text := 'insert                     '+
-                                    '    into                   '+
-                                    '    endereco_cliente       '+
-                                    '   (cd_cliente,            '+
-                                    '    logradouro,            '+
-                                    '    num,                   '+
-                                    '    bairro,                '+
-                                    '    cidade,                '+
-                                    '    uf,                    '+
-                                    '    cep)                   '+
-                                    'values (:cd_cliente,       '+
-                                    ':logradouro,               '+
-                                    ':num,                      '+
-                                    ':bairro,                   '+
-                                    ':cidade,                   '+
-                                    ':uf,                       '+
-                                    ':cep)';
+                          '    into                   '+
+                          '    endereco_cliente       '+
+                          '   (cd_cliente,            '+
+                          '    logradouro,            '+
+                          '    num,                   '+
+                          '    bairro,                '+
+                          '    cidade,                '+
+                          '    uf,                    '+
+                          '    cep)                   '+
+                          'values (:cd_cliente,       '+
+                          ':logradouro,               '+
+                          ':num,                      '+
+                          ':bairro,                   '+
+                          ':cidade,                   '+
+                          ':uf,                       '+
+                          ':cep)';
 
       qryEnd.ParamByName('cd_cliente').AsInteger := StrToInt(edtCLIENTEcd_cliente.Text);
       qryEnd.ParamByName('logradouro').AsString := edtCLIENTEENDERECO_LOGRADOURO.Text;
@@ -361,7 +349,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.SQL.Add(SQL_ENDERECO_CLIENTE);
@@ -375,9 +363,7 @@ begin
       Exit;
 
     if not qry.IsEmpty then
-    begin
-      qry.Open();
-    end
+      qry.Open()
     else
     begin
       qry.SQL.Add('or c.cep = :cep limit 1');
@@ -427,16 +413,16 @@ const
               'where c.cd_cliente = :cd_cliente';
 
 var
- f : Integer;
+ f: Integer;
  temPermissaEdicao: Boolean;
- cliente : TValidaDados;
+ cliente: TValidaDados;
  qry: TFDQuery;
 begin
   temCep := False;
   cliente := TValidaDados.Create;
   temPermissaEdicao := cliente.validaEdicaoAcao(idUsuario, 1);
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     f := 0;
@@ -564,7 +550,7 @@ begin
   if (Application.MessageBox('Deseja Excluir o Cliente?','Atenção', MB_YESNO) = IDYES) then
   begin
     try
-      conexao.ExecSQL('delete                   '+
+      dm.conexaoBanco.ExecSQL('delete                   '+
                       ' from                    '+
                       'cliente                  '+
                       ' where                   '+
@@ -599,24 +585,14 @@ procedure TfrmCadCliente.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   inherited;
   if key = VK_F3 then //F3
-  begin
-    limpaCampos;
-  end
+    limpaCampos
   else if key = VK_F2 then  //F2
-  begin
-    salvar;
-  end
+    salvar
   else if key = VK_F4 then    //F4
-  begin
-    excluir;
-  end
+    excluir
   else if key = VK_ESCAPE then //ESC
-  begin
     if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
       Close;
-    end;
-  end;
 end;
 
 procedure TfrmCadCliente.FormKeyPress(Sender: TObject; var Key: Char);

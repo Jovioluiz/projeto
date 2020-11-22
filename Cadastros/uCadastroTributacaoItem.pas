@@ -77,7 +77,6 @@ begin
   edtCdGrupoTributacaoICMS.Enabled := False;
   edtNomeGrupoTributacaoICMS.Enabled := False;
   edtAliqICMS.Enabled := False;
-
   camposDesabilitados := True;
 end;
 
@@ -227,20 +226,12 @@ procedure TfrmCadastraTributacaoItem.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if key = VK_F3 then //F3
-  begin
-    limpaCampos;
-  end
+    limpaCampos
   else if key = VK_F2 then  //F2
-  begin
-    salvar;
-  end
+    salvar
   else if key = VK_ESCAPE then //ESC
-  begin
     if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
       Close;
-    end;
-  end;
 end;
 
 procedure TfrmCadastraTributacaoItem.FormKeyPress(Sender: TObject;

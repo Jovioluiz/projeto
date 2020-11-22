@@ -67,7 +67,7 @@ begin
   try
     verificaSenha := TValidaDados.Create();
     qry := TFDQuery.Create(Self);
-    qry.Connection := dm.FDConnection1;
+    qry.Connection := dm.conexaoBanco;
     qry.Close;
     qry.SQL.Clear;
 

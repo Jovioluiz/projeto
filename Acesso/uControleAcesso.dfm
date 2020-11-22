@@ -129,7 +129,7 @@ object frmControleAcesso: TfrmControleAcesso
       'N'#227'o')
   end
   object query: TFDQuery
-    Connection = dm.FDConnection1
+    Connection = dm.conexaoBanco
     Left = 456
     Top = 8
   end

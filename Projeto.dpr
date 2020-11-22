@@ -4,7 +4,6 @@ uses
   Vcl.Forms,
   uValidaDcto in 'Validacao\uValidaDcto.pas',
   uTelaInicial in 'Inicio\uTelaInicial.pas' {frmPrincipal},
-  uConexao in 'Conexao\uConexao.pas' {frmConexao},
   cCTA_FORMA_PAGAMENTO in 'Cadastros\cCTA_FORMA_PAGAMENTO.pas' {frmCadFormaPagamento},
   uCadTABELAPRECO in 'Cadastros\uCadTABELAPRECO.pas' {frmcadTabelaPreco},
   uCadTabelaPrecoProduto in 'Cadastros\uCadTabelaPrecoProduto.pas' {frmCadTabelaPrecoProduto},
@@ -41,7 +40,6 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TfrmLogin, frmLogin);
-  Application.CreateForm(TfrmConexao, frmConexao);
   Application.CreateForm(Tdm, dm);
   Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
   Application.CreateForm(TfrmConsulta, frmConsulta);

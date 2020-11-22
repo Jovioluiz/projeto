@@ -80,8 +80,8 @@ object frmCadFormaPagamento: TfrmCadFormaPagamento
     end
   end
   object sqlFormaPgto: TFDQuery
-    Connection = frmConexao.conexao
-    Left = 384
-    Top = 80
+    Connection = dm.conexaoBanco
+    Left = 408
+    Top = 144
   end
 end

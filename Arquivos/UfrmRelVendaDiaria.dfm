@@ -205,12 +205,12 @@ object frmRelVendaDiaria: TfrmRelVendaDiaria
     Top = 296
   end
   object sqlListaVendaDiaria: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 248
     Top = 296
   end
   object sqlSoma: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 336
     Top = 296
   end

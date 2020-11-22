@@ -8,11 +8,11 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids, uConexao, Vcl.ComCtrls,
+  Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls,
   Datasnap.Provider;
 
 type
-  TfrmConsultaProdutos = class(TfrmConexao)
+  TfrmConsultaProdutos = class(TForm)
     Panel1: TPanel;
     btnPesquisar: TButton;
     edtAtivo: TCheckBox;
@@ -82,12 +82,12 @@ const
                  'from                  '+
                       'produto ';
 var
-qry: TFDQuery;
+  qry: TFDQuery;
 begin
   cdsConsultaProduto.EmptyDataSet;
 
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.SQL.Add(sql_produto);
 
   try
@@ -148,7 +148,7 @@ begin
   cdsPrecos.EmptyDataSet;
 
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.Close;
@@ -213,7 +213,7 @@ begin
   cdsUltimasEntradas.EmptyDataSet;
 
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.Close;
@@ -272,10 +272,8 @@ procedure TfrmConsultaProdutos.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   if key = VK_ESCAPE then //ESC
   begin
-  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
+    if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
       Close;
-    end;
   end;
 end;
 

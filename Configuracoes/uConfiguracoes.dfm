@@ -83,12 +83,9 @@ object frmConfiguracoes: TfrmConfiguracoes
       end>
     ParentShowHint = False
     ShowHint = True
-    ExplicitLeft = 520
-    ExplicitTop = 304
-    ExplicitWidth = 0
   end
   object FDQuery1: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 488
     Top = 80
   end

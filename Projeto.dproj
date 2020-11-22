@@ -112,9 +112,6 @@
         <DCCReference Include="Inicio\uTelaInicial.pas">
             <Form>frmPrincipal</Form>
         </DCCReference>
-        <DCCReference Include="Conexao\uConexao.pas">
-            <Form>frmConexao</Form>
-        </DCCReference>
         <DCCReference Include="Cadastros\cCTA_FORMA_PAGAMENTO.pas">
             <Form>frmCadFormaPagamento</Form>
         </DCCReference>
@@ -214,16 +211,13 @@
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Program Files (x86)\FastReport 6 VCL Trial\LibD26\dclfrxTee26.bpl">FastReport 6.0 Tee Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Program Files (x86)\FastReport 6 VCL Trial\LibD26\dclfsTee26.bpl">FastScript 1.9 Tee Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Program Files (x86)\FastReport 6 VCL Trial\LibD26\dclfrxIBX26.bpl">FastReport 6.0 IBX Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Program Files (x86)\FastReport 6 VCL Trial\LibD26\dclfsIBX26.bpl">FastScript 1.9 IBX Components</Excluded_Packages>
                     <Excluded_Packages Name="C:\Componentes\acbr\Lib\Delphi\LibD26\Win32\DCLACBr_NFeDanfeFR.bpl">ACBr - (design-time) DANFe em Fast Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
                     <Excluded_Packages Name="C:\Componentes\acbr\Lib\Delphi\LibD26\Win32\DCLACBr_CTeDacteFR.bpl">ACBr - (design-time) DACTe em Fast Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
                     <Excluded_Packages Name="C:\Componentes\acbr\Lib\Delphi\LibD26\Win32\DCLACBr_NFSeDanfseFR.bpl">ACBr - (design-time) DANFSe em Fast Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
                     <Excluded_Packages Name="C:\Componentes\acbr\Lib\Delphi\LibD26\Win32\DCLACBr_BoletoFR.bpl">ACBr - (design-time) Boleto Impressão em  Fast Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
                     <Excluded_Packages Name="C:\Componentes\acbr\Lib\Delphi\LibD26\Win32\DCLACBr_MDFeDamdfeFR.bpl">ACBr - (design-time) DAMDFe em Fast Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
                     <Excluded_Packages Name="C:\Componentes\acbr\Lib\Delphi\LibD26\Win32\DCLACBr_GNREGuiaFR.bpl">ACBr - (design-time) GNRE Impressão da Guia em Fast Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReports\LibD26\dclfrxtee26.bpl">FastReport 6.0 Tee Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

@@ -3,15 +3,11 @@ object dm: Tdm
   OnCreate = DataModuleCreate
   Height = 461
   Width = 575
-  object FDConnection1: TFDConnection
+  object conexaoBanco: TFDConnection
     Params.Strings = (
-      'User_Name=postgres'
-      'Database=trabalho_engenharia'
-      'Password=postgres'
-      'Server=localhost'
-      'Port=5433'
+      'Server='
+      'Port='
       'DriverID=PG')
-    Connected = True
     Left = 32
     Top = 16
   end
@@ -28,17 +24,17 @@ object dm: Tdm
     Top = 16
   end
   object sqlCliente: TFDQuery
-    Connection = FDConnection1
+    Connection = conexaoBanco
     Left = 16
     Top = 136
   end
   object transacao: TFDTransaction
-    Connection = FDConnection1
+    Connection = conexaoBanco
     Left = 272
     Top = 16
   end
   object queryControleAcesso: TFDQuery
-    Connection = FDConnection1
+    Connection = conexaoBanco
     SQL.Strings = (
       'select'
       #9'*'
@@ -104,7 +100,7 @@ object dm: Tdm
     end
   end
   object tbControleAcesso: TFDTable
-    Connection = FDConnection1
+    Connection = conexaoBanco
     UpdateOptions.UpdateTableName = 'usuario_acao'
     TableName = 'usuario_acao'
     Left = 232
@@ -116,21 +112,21 @@ object dm: Tdm
     Top = 176
   end
   object query: TFDQuery
-    Connection = FDConnection1
+    Connection = conexaoBanco
     SQL.Strings = (
       'select id_usuario, login from login_usuario')
     Left = 16
     Top = 200
   end
   object tbCodBarraProduto: TFDTable
-    Connection = FDConnection1
+    Connection = conexaoBanco
     UpdateOptions.UpdateTableName = 'produto_cod_barras'
     TableName = 'produto_cod_barras'
     Left = 104
     Top = 136
   end
   object queryCodBarraProduto: TFDQuery
-    Connection = FDConnection1
+    Connection = conexaoBanco
     Left = 104
     Top = 80
   end
@@ -140,7 +136,7 @@ object dm: Tdm
     Top = 184
   end
   object sqlPedidoVenda: TFDQuery
-    Connection = FDConnection1
+    Connection = conexaoBanco
     SQL.Strings = (
       'select'
       '    pv.nr_pedido,'

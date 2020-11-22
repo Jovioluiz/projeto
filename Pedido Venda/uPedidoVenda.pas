@@ -8,12 +8,12 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uConexao, Vcl.Mask,
+  FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, Vcl.Mask,
   Vcl.ComCtrls, System.Generics.Collections, JvExStdCtrls, JvBehaviorLabel,
   Xml.xmldom, Xml.XMLIntf, Xml.XMLDoc;
 
 type
-  TfrmPedidoVenda = class(TfrmConexao)
+  TfrmPedidoVenda = class(TForm)
     Panel1: TPanel;
     Label1: TLabel;
     edtNrPedido: TEdit;
@@ -165,7 +165,6 @@ begin
       cdsPedidoVenda.Edit;
       cdsPedidoVenda.FieldByName('seq').AsInteger := i;     
     end;
-
     cdsPedidoVenda.Next;  
   end;
 end;
@@ -191,7 +190,7 @@ var
   id: Int64;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Connection.StartTransaction;
 
   try
@@ -261,7 +260,7 @@ const
   lancaProduto: TfrmConfiguracoes;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   lancaProduto := TfrmConfiguracoes.Create(Self);
   try
     qry.Close;
@@ -429,7 +428,7 @@ var
   idGeral, idGeralPvi: TGerador;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Connection.StartTransaction;
   idGeral := TGerador.Create;
   idGeralPvi := TGerador.Create;
@@ -496,7 +495,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Connection.StartTransaction;
 
   try
@@ -557,7 +556,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Connection.StartTransaction;
 
   try
@@ -615,7 +614,7 @@ begin
   end;
 
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.Close;
@@ -648,9 +647,7 @@ begin
       if not resposta then
       begin
         if (Application.MessageBox('Cliente não encontrado ou Inativo','Atenção', MB_OK) = idOK) then
-        begin
           edtCdCliente.SetFocus;
-        end;
       end;
     finally
       FreeAndNil(cliente);
@@ -697,9 +694,7 @@ begin
       if resposta then
       begin
         if (Application.MessageBox('Condição de pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
-        begin
           edtCdCondPgto.SetFocus;
-        end;
       end;
     finally
       FreeAndNil(condPgto);
@@ -778,7 +773,6 @@ begin
     lista := produto.BuscaProduto(StrToInt(edtCdProduto.Text));
 
     //preenche os dados da lista nos campos
-
     edtDescProduto.Text := lista.Items[0];
     edtUnMedida.Text := lista.Items[1];
     edtCdtabelaPreco.Text := lista.Items[2];
@@ -798,7 +792,7 @@ var
 begin
   inherited;
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     if edtNrPedido.Text = '' then
@@ -827,7 +821,7 @@ begin
   produto := TPedidoVenda.Create;
 
   if edtCdProduto.Text <> '' then
-  resposta := produto.ValidaProduto(StrToInt(edtCdProduto.Text));
+    resposta := produto.ValidaProduto(StrToInt(edtCdProduto.Text));
 
   if (Trim(edtCdProduto.Text) = '') and (cdsPedidoVenda.RecordCount > 0) then
     edtVlDescTotalPedido.SetFocus;
@@ -888,9 +882,7 @@ begin
       if resposta then
       begin
         if (Application.MessageBox('Tabela de Preço não encontrada', 'Atenção', MB_OK) = idOK) then
-        begin
           edtCdtabelaPreco.SetFocus;
-        end;
       end
       else
       begin
@@ -924,7 +916,7 @@ begin
     end
     else
     begin
-      valorTotal := pv.CalcValorTotalItem(StrToFloat(edtVlUnitario.Text), StrToFloat(edtQtdade.Text));
+      valorTotal := pv.CalculaValorTotalItem(StrToFloat(edtVlUnitario.Text), StrToFloat(edtQtdade.Text));
       edtVlTotal.Text := FloatToStr(valorTotal);
       edtVlDescontoItem.Enabled := true;
     end;
@@ -936,11 +928,11 @@ end;
 
 procedure TfrmPedidoVenda.edtQtdadeExit(Sender: TObject);
 var
-  ValidaQtdade : TPedidoVenda;
-  resposta : Boolean;
+  qtdadeEstoque : TPedidoVenda;
+  possuiEstoque : Boolean;
 begin
-  ValidaQtdade := TPedidoVenda.Create;
-  //resposta := ValidaQtdade.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
+  qtdadeEstoque := TPedidoVenda.Create;
+  possuiEstoque := qtdadeEstoque.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
 
   try
     if edtQtdade.Text = '0' then
@@ -949,15 +941,13 @@ begin
       edtCdProduto.SetFocus;
     end;
 
-    if resposta then
+    if not possuiEstoque then
     begin
-      ShowMessage('Quantidade informada maior que a disponível.');
-      //+ #13 +'Quantidade disponível: ' + FloatToStr(qtdade));
       edtQtdade.SetFocus;
       Exit;
     end;
   finally
-    FreeAndNil(ValidaQtdade);
+    FreeAndNil(qtdadeEstoque);
   end;
 end;
 
@@ -981,9 +971,7 @@ var
   qtd: Double;
 begin
   if edtVlDescontoItem.Text = EmptyStr then
-  begin
-    edtVlDescontoItem.Text := '0,00';
-  end
+    edtVlDescontoItem.Text := '0,00'
   else
   begin
     vlDesconto := StrToCurr(edtVlDescontoItem.Text);
@@ -1070,9 +1058,7 @@ begin
     if (edtNrPedido.Text = '') and (cdsPedidoVenda.RecordCount = 0) then
     begin
       if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-      begin
         Close;
-      end;
     end;
   end;
 end;
@@ -1096,7 +1082,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.SQL.Add(sqlNrPedido);
@@ -1119,7 +1105,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.SQL.Add(SQL);
@@ -1165,10 +1151,10 @@ var
   IdGeral: TGerador;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
-  dm.FDConnection1.StartTransaction;
+  qry.Connection := dm.conexaoBanco;
+  dm.conexaoBanco.StartTransaction;
   qrySelect := TFDQuery.Create(Self);
-  qrySelect.Connection := dm.FDConnection1;
+  qrySelect.Connection := dm.conexaoBanco;
   IdGeral := TGerador.Create;
   try
     try
@@ -1192,7 +1178,7 @@ begin
           qry.ExecSQL;
         end
       );
-      dm.FDConnection1.Commit;
+      dm.conexaoBanco.Commit;
     except
       on e:Exception do
       begin
@@ -1220,7 +1206,7 @@ var
   valorTotal: Currency;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   document.Active := True;
   i := 1;
   try
@@ -1377,7 +1363,7 @@ var
   idGeral: TGerador;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Connection.StartTransaction;
   idGeral := TGerador.Create;
 
@@ -1440,7 +1426,7 @@ var
 //  idGeralItem: Int64;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Connection.StartTransaction;
   idGeral := TGerador.Create;
 

@@ -8,10 +8,10 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, uConexao, Vcl.Buttons, StrUtils;
+  FireDAC.Comp.Client, Vcl.Buttons, StrUtils;
 
 type
-  TfrmCadCondPgto = class(TfrmConexao)
+  TfrmCadCondPgto = class(TForm)
     tpCondPgto: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -70,7 +70,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
 
@@ -121,7 +121,7 @@ var
 begin
   inherited;
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   begin
     if edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text = '' then
@@ -146,7 +146,7 @@ begin
   if (Application.MessageBox('Deseja Excluir a Condição de Pagamento?', 'Aviso', MB_YESNO) = IDYES) then
   begin
     try
-      conexao.ExecSQL('delete '+
+      dm.conexaoBanco.ExecSQL('delete '+
                       ' from '+
                       'cta_cond_pagamento '+
                       ' where '+
@@ -158,7 +158,7 @@ begin
       on E:exception do
       begin
         ShowMessage('Erro ao excluir a condição de pagamento' + edtCTACONDPGTOCD_COND.Text + E.Message);
-        conexao.Rollback;
+        dm.conexaoBanco.Rollback;
         Exit;
       end;
     end;
@@ -176,34 +176,24 @@ procedure TfrmCadCondPgto.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   inherited;
   if key = VK_F3 then //F3
-  begin
-    limpaCampos;
-  end
+    limpaCampos
   else if key = VK_F2 then  //F2
-  begin
-    salvar;
-  end
+    salvar
   else if key = VK_F4 then    //F4
-  begin
-    excluir;
-  end
+    excluir
   else if key = VK_ESCAPE then //ESC
-  begin
   if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      Close;
-    end;
-  end;
+    Close;
 end;
 
 procedure TfrmCadCondPgto.FormKeyPress(Sender: TObject; var Key: Char);
 //passa pelos campos pressionando enter
 begin
   if Key = #13 then
-    begin
-      Key := #0;
-      Perform(WM_NEXTDLGCTL,0,0)
-    end;
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL,0,0)
+  end;
 end;
 
 procedure TfrmCadCondPgto.limpaCampos;
@@ -225,12 +215,12 @@ begin
 try
   validaCampos;
 
-  resultado := conexao.ExecSQLScalar('select cd_cond_pag from cta_cond_pagamento where cd_cond_pag = :cd_cond_pag',
+  resultado := dm.conexaoBanco.ExecSQLScalar('select cd_cond_pag from cta_cond_pagamento where cd_cond_pag = :cd_cond_pag',
                             [StrToInt(edtCTACONDPGTOCD_COND.Text)]);
 
   if not resultado.IsEmpty then
     begin
-      conexao.StartTransaction;
+      dm.conexaoBanco.StartTransaction;
       sqlInsertCondPgto.SQL.Text :='update                                                  '+
                                         'cta_cond_pagamento                                 '+
                                     'set                                                    '+
@@ -265,61 +255,61 @@ try
       sqlInsertCondPgto.ParamByName('fl_ativo').AsBoolean := edtCTACONDPGTOFL_ATIVO.Checked;
 
       sqlInsertCondPgto.ExecSQL;
-      conexao.Commit;
+      dm.conexaoBanco.Commit;
       ShowMessage('Condição de Pagamento cadastrada com Sucesso!');
       limpaCampos;
     end
   else
+  begin
+    dm.conexaoBanco.StartTransaction;
+    sqlInsertCondPgto.SQL.Text := 'insert                           '+
+                                  'into                             '+
+                                  'cta_cond_pagamento (cd_cond_pag, '+
+                                  'nm_cond_pag,                     '+
+                                  'cd_cta_forma_pagamento,          '+
+                                  'nr_parcelas,                     '+
+                                  'vl_minimo_parcela,               '+
+                                  'fl_ativo)                        '+
+                              'values (:cd_cond_pag,                '+
+                                  ':nm_cond_pag,                    '+
+                                  ':cd_cta_forma_pagamento,         '+
+                                  ':nr_parcelas,                    '+
+                                  ':vl_minimo_parcela,              '+
+                                  ':fl_ativo)';
+
+    sqlInsertCondPgto.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_COND.Text);
+    sqlInsertCondPgto.ParamByName('nm_cond_pag').AsString := edtCTACONDPGTODESCRICAO.Text;
+    sqlInsertCondPgto.ParamByName('cd_cta_forma_pagamento').AsInteger := StrToInt(edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text);
+    if edtCTACONDPGTONR_PARCELAS.Text = '' then
     begin
-      conexao.StartTransaction;
-      sqlInsertCondPgto.SQL.Text := 'insert                           '+
-                                    'into                             '+
-                                    'cta_cond_pagamento (cd_cond_pag, '+
-                                    'nm_cond_pag,                     '+
-                                    'cd_cta_forma_pagamento,          '+
-                                    'nr_parcelas,                     '+
-                                    'vl_minimo_parcela,               '+
-                                    'fl_ativo)                        '+
-                                'values (:cd_cond_pag,                '+
-                                    ':nm_cond_pag,                    '+
-                                    ':cd_cta_forma_pagamento,         '+
-                                    ':nr_parcelas,                    '+
-                                    ':vl_minimo_parcela,              '+
-                                    ':fl_ativo)';
-
-      sqlInsertCondPgto.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCTACONDPGTOCD_COND.Text);
-      sqlInsertCondPgto.ParamByName('nm_cond_pag').AsString := edtCTACONDPGTODESCRICAO.Text;
-      sqlInsertCondPgto.ParamByName('cd_cta_forma_pagamento').AsInteger := StrToInt(edtCTACONDPGTOCD_CTA_FORMA_PGTO.Text);
-      if edtCTACONDPGTONR_PARCELAS.Text = '' then
-      begin
-        sqlInsertCondPgto.ParamByName('nr_parcelas').AsInteger := 0;
-      end
-      else
-      begin
-        sqlInsertCondPgto.ParamByName('nr_parcelas').AsInteger := StrToInt(edtCTACONDPGTONR_PARCELAS.Text);
-      end;
-      if edtCTACONDPGTOVL_MINIMO.Text = '' then
-      begin
-        sqlInsertCondPgto.ParamByName('vl_minimo_parcela').AsCurrency := 0;
-      end
-      else
-      begin
-         sqlInsertCondPgto.ParamByName('vl_minimo_parcela').AsCurrency := StrToCurr(edtCTACONDPGTOVL_MINIMO.Text);
-      end;
-      sqlInsertCondPgto.ParamByName('fl_ativo').AsBoolean := edtCTACONDPGTOFL_ATIVO.Checked;
-
-      sqlInsertCondPgto.ExecSQL;
-      conexao.Commit;
-      ShowMessage('Condição de Pagamento cadastrada com Sucesso!');
-      limpaCampos;
+      sqlInsertCondPgto.ParamByName('nr_parcelas').AsInteger := 0;
+    end
+    else
+    begin
+      sqlInsertCondPgto.ParamByName('nr_parcelas').AsInteger := StrToInt(edtCTACONDPGTONR_PARCELAS.Text);
     end;
+    if edtCTACONDPGTOVL_MINIMO.Text = '' then
+    begin
+      sqlInsertCondPgto.ParamByName('vl_minimo_parcela').AsCurrency := 0;
+    end
+    else
+    begin
+       sqlInsertCondPgto.ParamByName('vl_minimo_parcela').AsCurrency := StrToCurr(edtCTACONDPGTOVL_MINIMO.Text);
+    end;
+    sqlInsertCondPgto.ParamByName('fl_ativo').AsBoolean := edtCTACONDPGTOFL_ATIVO.Checked;
+
+    sqlInsertCondPgto.ExecSQL;
+    dm.conexaoBanco.Commit;
+    ShowMessage('Condição de Pagamento cadastrada com Sucesso!');
+    limpaCampos;
+  end;
 except
   on E : exception do
-    begin
-      conexao.Rollback;
-      ShowMessage('Erro ao gravar os dados '+ E.Message);
-      Exit;
-    end;
+  begin
+    dm.conexaoBanco.Rollback;
+    ShowMessage('Erro ao gravar os dados '+ E.Message);
+    Exit;
+  end;
 end;
 end;
 

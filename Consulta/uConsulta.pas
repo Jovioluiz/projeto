@@ -49,7 +49,7 @@ var
   //campo: TField;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Close;
   qry.SQL.Clear;
 
@@ -120,7 +120,7 @@ begin
     if Key = 13 then
     begin
       qry := TFDQuery.Create(Self);
-      qry.Connection := dm.FDConnection1;
+      qry.Connection := dm.conexaoBanco;
       qry.SQL.Add(sql);
 
       try

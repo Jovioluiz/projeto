@@ -11708,7 +11708,7 @@ object frmPrincipal: TfrmPrincipal
     Top = 600
   end
   object query: TFDQuery
-    Connection = dm.FDConnection1
+    Connection = dm.conexaoBanco
     Left = 880
     Top = 40
   end

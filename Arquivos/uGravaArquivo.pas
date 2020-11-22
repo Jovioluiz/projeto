@@ -74,7 +74,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Close;
   qry.SQL.Clear;
   qry.SQL.Add(sql);

@@ -15,7 +15,7 @@ type TPedidoVenda = class
   private
   public
     function ValidaQtdadeItem(CodProduto: Integer; QtdPedido: Double): Boolean;
-    function CalcValorTotalItem(valorUnitario, qtdadeItem: Double): Double;
+    function CalculaValorTotalItem(valorUnitario, qtdadeItem: Double): Double;
     function ValidaFormaPgto(CdFormaPgto: Integer): Boolean;
     function ValidaCliente(CdCliente: Integer): Boolean;
     function ValidaCondPgto(CdCond, CdForma: Integer): Boolean;
@@ -50,7 +50,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Close;
   qry.SQL.Clear;
 
@@ -90,7 +90,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.Close;
@@ -121,7 +121,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     try
@@ -165,7 +165,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   Result := False;
 
   try
@@ -197,7 +197,7 @@ var
   nmCond: string;
 begin
   qry := TFDQuery.Create(nil);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   lista := TList<string>.Create;
 
   try
@@ -232,7 +232,7 @@ var
   nmForma: string;
 begin
   qry := TFDQuery.Create(nil);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   lista := TList<string>.Create;
 
   try
@@ -272,7 +272,7 @@ var
   un_medida, cd_tabela, nm_tabela, valor: string;
 begin
   qry := TFDQuery.Create(nil);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   lista := TList<string>.Create;
 
   try
@@ -318,7 +318,7 @@ var
   lista: TList<string>;
 begin
   qry := TFDQuery.Create(nil);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   lista := TList<string>.Create;
 
   try
@@ -336,7 +336,7 @@ begin
   end;
 end;
 
-function TPedidoVenda.CalcValorTotalItem(valorUnitario, qtdadeItem: Double): Double;
+function TPedidoVenda.CalculaValorTotalItem(valorUnitario, qtdadeItem: Double): Double;
 begin
   Result := valorUnitario * qtdadeItem;
 end;
@@ -345,15 +345,13 @@ end;
 function TPedidoVenda.ValidaQtdadeItem(CodProduto: Integer; QtdPedido: Double): Boolean;
 const
   qry = 'select               '+
-        '  qtd_estoque        '+
+        '  qt_estoque         '+
         'from                 '+
-        '  produto            '+
+        '  wms_estoque        '+
         'where                '+
         '  cd_produto = :cd_produto';
-var
-  qtPedido, qtEstoque: Double;
 begin
-  Result := False;
+  Result := True;
   dm.query.Close;
   dm.query.SQL.Clear;
   dm.query.SQL.Add(qry);
@@ -363,12 +361,11 @@ begin
   if dm.query.IsEmpty then
     Exit;
 
-  qtPedido := QtdPedido;
-  qtEstoque := dm.query.FieldByName('qtd_estoque').AsFloat;
-
-  if qtPedido > qtEstoque then
+  if QtdPedido > dm.query.FieldByName('qt_estoque').AsFloat then
   begin
-    Result := True;
+    ShowMessage('Quantidade informada maior que a disponível.'
+    + #13 + 'Quantidade disponível: ' + FloatToStr(dm.query.FieldByName('qt_estoque').AsFloat));
+    Result := False;
   end;
 end;
 
@@ -390,7 +387,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.SQL.Add(sql);

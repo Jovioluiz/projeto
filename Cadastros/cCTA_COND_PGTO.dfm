@@ -118,7 +118,7 @@ object frmCadCondPgto: TfrmCadCondPgto
     end
   end
   object sqlInsertCondPgto: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 416
     Top = 200
   end

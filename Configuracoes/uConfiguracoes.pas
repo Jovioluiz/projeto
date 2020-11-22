@@ -4,14 +4,14 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, uConexao, Vcl.ExtCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, Vcl.ComCtrls, System.UITypes;
 
 type
-  TfrmConfiguracoes = class(TfrmConexao)
+  TfrmConfiguracoes = class(TForm)
     btnSalvar: TButton;
     Button2: TButton;
     FDQuery1: TFDQuery;
@@ -49,7 +49,7 @@ var
   qryUpdate: TFDQuery;
 begin
   qryUpdate := TFDQuery.Create(Self);
-  qryUpdate.Connection := dm.FDConnection1;
+  qryUpdate.Connection := dm.conexaoBanco;
 
 
   qryUpdate.SQL.Add(sql_update);
@@ -80,9 +80,7 @@ end;
 procedure TfrmConfiguracoes.Button2Click(Sender: TObject);
 begin
   if MessageDlg('Deseja realmente fechar?', mtConfirmation,[mbYes, mbNo],0) = 6 then
-  begin
     Close;
-  end;
 end;
 
 procedure TfrmConfiguracoes.FormCreate(Sender: TObject);
@@ -106,12 +104,12 @@ begin
 
       case config of
       1:
-      begin
-        if FDQuery1.FieldByName('valor').AsString = 'S' then
-          cbConfigAlteraCliPv.ItemIndex := 0
-        else
-          cbConfigAlteraCliPv.ItemIndex := 1;
-      end;
+        begin
+          if FDQuery1.FieldByName('valor').AsString = 'S' then
+            cbConfigAlteraCliPv.ItemIndex := 0
+          else
+            cbConfigAlteraCliPv.ItemIndex := 1;
+        end;
       3:
         begin
           if FDQuery1.FieldByName('valor').AsString = 'S' then

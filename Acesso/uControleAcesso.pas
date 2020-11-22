@@ -126,33 +126,33 @@ end;
 procedure TfrmControleAcesso.dbGridAcoesKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-   if Key = VK_DELETE then
+  if Key = VK_DELETE then
+  begin
+    if MessageDlg('Deseja excluir a ação do usuário?', mtConfirmation,[mbYes,mbNo], 0) = mrYes then
     begin
-      if MessageDlg('Deseja excluir a ação do usuário?', mtConfirmation,[mbYes,mbNo], 0) = mrYes then
-         begin
-            try
-              dm.query.Close;
-              dm.query.SQL.Clear;
-              dm.query.SQL.Text := 'delete '+
-                                   '  from '+
-                                   'usuario_acao '+
-                                   '  where '+
-                                   'cd_acao = :cd_acao and '+
-                                   'cd_usuario = :cd_usuario';
-              dm.query.ParamByName('cd_acao').AsInteger := dbGridAcoes.Fields[0].Value;
-              dm.query.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
-              dm.query.ExecSQL;
-              edtUsuario.SetFocus;
-            except
-                on E : exception do
-              begin
-                ShowMessage('Erro ' + E.Message);
-                Exit;
-              end;
-            end;
-         end;
+      try
+        dm.query.Close;
+        dm.query.SQL.Clear;
+        dm.query.SQL.Text := 'delete '+
+                             '  from '+
+                             'usuario_acao '+
+                             '  where '+
+                             'cd_acao = :cd_acao and '+
+                             'cd_usuario = :cd_usuario';
+        dm.query.ParamByName('cd_acao').AsInteger := dbGridAcoes.Fields[0].Value;
+        dm.query.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
+        dm.query.ExecSQL;
+        edtUsuario.SetFocus;
+      except
+      on E : exception do
+        begin
+          ShowMessage('Erro ' + E.Message);
+          Exit;
+        end;
+      end;
     end;
-    listar;
+  end;
+  listar;
 end;
 
 procedure TfrmControleAcesso.edtCdAcaoChange(Sender: TObject);
@@ -227,12 +227,12 @@ begin
       end;
     end
   else
-    begin
-      Exit;
-    end;
-    listar;
-    edtUsuario.Clear;
-    edtNomeUsuario.Clear;
+  begin
+    Exit;
+  end;
+  listar;
+  edtUsuario.Clear;
+  edtNomeUsuario.Clear;
 end;
 
 procedure TfrmControleAcesso.FormClose(Sender: TObject;
@@ -251,29 +251,21 @@ procedure TfrmControleAcesso.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   inherited;
   if key = VK_F3 then //F3
-  begin
-    limpaCampos;
-  end
+    limpaCampos
   else if key = VK_F4 then    //F4
-  begin
-    excluir;
-  end
+    excluir
   else if key = VK_ESCAPE then //ESC
-  begin
-  if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
+    if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
       Close;
-    end;
-  end;
 end;
 
 procedure TfrmControleAcesso.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
-    begin
-      Key := #0;
-      Perform(WM_NEXTDLGCTL,0,0)
-    end;
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL,0,0)
+  end;
 end;
 
 procedure TfrmControleAcesso.limpaCampos;

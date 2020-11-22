@@ -155,12 +155,12 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
     end
   end
   object sqlTabelaPreco: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 464
     Top = 112
   end
   object sqlTabelaPrecoProduto: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 456
     Top = 392
   end

@@ -5,14 +5,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.UITypes, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Data.DB,
-  Vcl.Grids, Vcl.DBGrids, Data.FMTBcd, Data.SqlExpr, uConexao,
+  Vcl.Grids, Vcl.DBGrids, Data.FMTBcd, Data.SqlExpr,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  Vcl.ComCtrls, Vcl.Buttons;
+  Vcl.ComCtrls, Vcl.Buttons, uDataModule;
 
 type
-  TfrmCadFormaPagamento = class(TfrmConexao)
+  TfrmCadFormaPagamento = class(TForm)
     tpCadFormaPgto: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -49,11 +49,11 @@ begin
   tipo := 0;
 
   if edtCTA_FORMA_PGTOCODIGO.Text = EmptyStr then
-    begin
-      raise Exception.Create('Código não pode ser vazio');
-      edtCTA_FORMA_PGTOCODIGO.SetFocus;
-      Abort;
-    end;
+  begin
+    raise Exception.Create('Código não pode ser vazio');
+    edtCTA_FORMA_PGTOCODIGO.SetFocus;
+    Abort;
+  end;
 
   sqlFormaPgto.Close;
   sqlFormaPgto.SQL.Text := 'select                          '+
@@ -72,49 +72,16 @@ begin
     begin
       edtCTA_FORMA_PGTODESCRICAO.Text := sqlFormaPgto.FieldByName('nm_forma_pag').AsString;
       edtCTA_FORMA_PGTOFL_ATIVO.Checked := sqlFormaPgto.FieldByName('fl_ativo').AsBoolean;
-      if sqlFormaPgto.FieldByName('tp_classificacao').AsInteger = 0 then
-        begin
-          tipo := 0;
-        end
-      else if sqlFormaPgto.FieldByName('tp_classificacao').AsInteger = 1 then
-        begin
-          tipo := 1;
-        end
-      else if sqlFormaPgto.FieldByName('tp_classificacao').AsInteger = 2 then
-        begin
-          tipo := 2;
-        end
-      else if sqlFormaPgto.FieldByName('tp_classificacao').AsInteger = 3 then
-        begin
-          tipo := 3;
-        end;
 
-        case tipo of
-          0:
-          begin
-            edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 0;
-          end;
-
-          1:
-          begin
-            edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 1;
-          end;
-
-          2:
-          begin
-            edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 2;
-          end;
-
-          3:
-          begin
-            edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 3;
-          end;
-        end;
+      case sqlFormaPgto.FieldByName('tp_classificacao').AsInteger of
+        0: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 0;
+        1: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 1;
+        2: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 2;
+        3: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 3;
+      end;
     end
   else
-    begin
-      Exit;
-    end;
+    Exit;
 end;
 
 procedure TfrmCadFormaPagamento.excluir;
@@ -122,7 +89,7 @@ begin
   if (Application.MessageBox('Deseja Excluir a Forma de Pagamento?', 'Atenção', MB_YESNO) = IDYES) then
   begin
     try
-      conexao.ExecSQL('delete '+
+      dm.conexaoBanco.ExecSQL('delete '+
                       ' from '+
                       'cta_forma_pagamento '+
                       ' where '+
@@ -134,7 +101,7 @@ begin
       on E:exception do
       begin
         ShowMessage('Erro ao excluir a Forma de Pagamento ' + edtCTA_FORMA_PGTOCODIGO.Text + E.Message);
-        conexao.Rollback;
+        dm.conexaoBanco.Rollback;
         Exit;
       end;
     end;
@@ -149,37 +116,27 @@ begin
   frmCadFormaPagamento := nil;
 end;
 
-procedure TfrmCadFormaPagamento.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TfrmCadFormaPagamento.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  inherited;
   if key = VK_F3 then //F3
-  begin
-    limpaCampos;
-  end
-  else if key = VK_F2 then  //F2
-  begin
-    salvar;
-  end
-  else if key = VK_F4 then    //F4
-  begin
-    excluir;
-  end
+    limpaCampos
+  else if key = VK_F2 then //F2
+    salvar
+  else if key = VK_F4 then //F4
+    excluir
   else if key = VK_ESCAPE then //ESC
-  begin
   if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      Close;
-    end;
-  end;
+    Close;
 end;
 
 procedure TfrmCadFormaPagamento.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
-    begin
-      Key := #0;
-      Perform(WM_NEXTDLGCTL,0,0)
-    end;
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL,0,0)
+  end;
 end;
 
 procedure TfrmCadFormaPagamento.limpaCampos;
@@ -197,11 +154,11 @@ begin
   try
     validaCampos;
 
-    resultado := conexao.ExecSQLScalar('select cd_forma_pag from cta_forma_pagamento where cd_forma_pag = :cd_forma_pag',
+    resultado := dm.conexaoBanco.ExecSQLScalar('select cd_forma_pag from cta_forma_pagamento where cd_forma_pag = :cd_forma_pag',
                                         [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text)]);
     if not resultado.IsEmpty then
     begin
-      conexao.ExecSQL('update                                     '+
+      dm.conexaoBanco.ExecSQL('update                             '+
                           'cta_forma_pagamento                    '+
                       'set                                        '+
                       '    cd_forma_pag = :cd_forma_pag,          '+
@@ -219,7 +176,7 @@ begin
     end
     else
     begin
-      conexao.ExecSQL('insert                                '+
+      dm.conexaoBanco.ExecSQL('insert                                '+
                           'into                              '+
                           'cta_forma_pagamento(cd_forma_pag, '+
                           'nm_forma_pag,                     '+
@@ -240,7 +197,7 @@ begin
   except
     on E : exception do
     begin
-      conexao.Rollback;
+      dm.conexaoBanco.Rollback;
       ShowMessage('Erro ao gravar os dados '+ E.Message);
       Exit;
     end;
@@ -252,9 +209,7 @@ begin
   //verifica se o código está vazio
   if (edtCTA_FORMA_PGTOCODIGO.Text = EmptyStr) or (edtCTA_FORMA_PGTODESCRICAO.Text = EmptyStr)
     or (edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex = -1) then
-  begin
-    raise Exception.Create('Código, Descição e Classificação não podem ser vazios');
-  end;
+    raise Exception.Create('Código, Descrição e Classificação não podem ser vazios');
 end;
 
 end.

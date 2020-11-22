@@ -8,7 +8,7 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Datasnap.DBClient, uConexao, System.UITypes, uclValidacoesEntrada, uDataModule;
+  FireDAC.Comp.Client, Datasnap.DBClient, System.UITypes, uclValidacoesEntrada, uDataModule;
 
 type
   TfrmLancamentoNotaEntrada = class(TForm)
@@ -170,7 +170,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     if edtCdFornecedor.Text = EmptyStr then
@@ -332,9 +332,7 @@ begin
   if edtNroNota.Text = EmptyStr then
   begin
     if (Application.MessageBox('Número da Nota não pode ser Vazio', 'Atenção', MB_OK) = IDOK) then
-    begin
       edtNroNota.SetFocus;
-    end;
   end
   else
   begin
@@ -487,13 +485,13 @@ end;
 
 procedure TfrmLancamentoNotaEntrada.FormKeyPress(Sender: TObject;
   var Key: Char);
+begin
+  if Key = #13 then
   begin
-    if Key = #13 then
-    begin
-      Key := #0;
-      Perform(WM_NEXTDLGCTL,0,0)
-    end;
+    Key := #0;
+    Perform(WM_NEXTDLGCTL,0,0)
   end;
+end;
 
 procedure TfrmLancamentoNotaEntrada.limpaCampos;
 begin
@@ -562,10 +560,10 @@ var
   IdGeral: TGerador;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
-  dm.FDConnection1.StartTransaction;
+  qry.Connection := dm.conexaoBanco;
+  dm.conexaoBanco.StartTransaction;
   qrySelect := TFDQuery.Create(Self);
-  qrySelect.Connection := dm.FDConnection1;
+  qrySelect.Connection := dm.conexaoBanco;
   IdGeral := TGerador.Create;
 
   try
@@ -590,12 +588,12 @@ begin
       qry.ExecSQL;
       cdsEntrada.Next;
     end;
-    dm.FDConnection1.Commit;
+    dm.conexaoBanco.Commit;
   finally
     qry.Free;
     qrySelect.Free;
     FreeAndNil(IdGeral);
-    dm.FDConnection1.Rollback;
+    dm.conexaoBanco.Rollback;
     cdsEntrada.EnableControls
   end;
 end;
@@ -621,7 +619,7 @@ var
   id: Int64;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Connection.StartTransaction;
 
   try
@@ -714,7 +712,7 @@ begin
   try
     idGeralNfc := 0;
     validaValoresNota;
-    frmConexao.conexao.StartTransaction;
+    dm.conexaoBanco.StartTransaction;
     //id_geral nfc
     sqlIdGeral.Close;
     sqlIdGeral.SQL.Text := 'select *from func_id_geral()';
@@ -728,9 +726,9 @@ begin
       end;
     except
       on E:exception do
-        begin
-          raise Exception.Create('Erro ao criar o id_geral');
-        end;
+      begin
+        raise Exception.Create('Erro ao criar o id_geral');
+      end;
     end;
 
     sqlInsert.Close;
@@ -914,24 +912,24 @@ begin
       end;
     end;
 
-      //insere na wms_mvto e atualiza a quantidade em estoque
-      InsereWmsMvto;
-      AtualizaEstoque;
+    //insere na wms_mvto e atualiza a quantidade em estoque
+    InsereWmsMvto;
+    AtualizaEstoque;
 
-      sqlInsert.ExecSQL;
-      sqlInsertiNfi.ExecSQL;
-      frmConexao.conexao.Commit;
-      ShowMessage('Nota gravada com sucesso!');
-      sqlInsert.Close;
-      sqlInsertiNfi.Close;
-      limpaCampos; //verificar que não está limpando o grid
+    sqlInsert.ExecSQL;
+    sqlInsertiNfi.ExecSQL;
+    dm.conexaoBanco.Commit;
+    ShowMessage('Nota gravada com sucesso!');
+    sqlInsert.Close;
+    sqlInsertiNfi.Close;
+    limpaCampos; //verificar que não está limpando o grid
   except
     on E : exception do
-      begin
-        frmConexao.conexao.Rollback;
-        ShowMessage('Erro ao gravar os dados da nota ' + edtNroNota.Text + E.Message);
-        Exit;
-      end;
+    begin
+      dm.conexaoBanco.Rollback;
+      ShowMessage('Erro ao gravar os dados da nota ' + edtNroNota.Text + E.Message);
+      Exit;
+    end;
   end;
 end;
 
@@ -1025,7 +1023,6 @@ begin
   begin
     raise Exception.Create(' O valor total dos itens não fecha com o valor total da nota! Verifique');
   end;
-
 end;
 
 procedure TfrmLancamentoNotaEntrada.valorTotalNota;
@@ -1052,8 +1049,6 @@ begin
     vlTotal := (vlTotal + vlProduto + vlFrete + vlIpi + vlAcrescimo + vlOutrasDespesas) - vlDesconto;
     edtValorTotalNota.Text := CurrToStr(vlTotal);
   end;
-
 end;
-
 
 end.

@@ -116,7 +116,7 @@ implementation
 
 {$R *.dfm}
 
-uses uVisualizaPedidoVenda, uConfiguracoes, uConexao, uclPedidoVenda, uDataModule;
+uses uVisualizaPedidoVenda, uConfiguracoes, uclPedidoVenda, uDataModule;
 
 procedure TfrmEdicaoPedidoVenda.btnCancelarClick(Sender: TObject);
 const
@@ -125,7 +125,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Connection.StartTransaction;
 
   try
@@ -203,9 +203,7 @@ begin
                                StrToInt(edtCdFormaPgto.Text)) then
     begin
       if (Application.MessageBox('Condição de pagamento não encontrada', 'Atenção', MB_OK) = idOK) then
-      begin
         edtCdCondPgto.SetFocus;
-      end;
     end;
   finally
     FreeAndNil(condPgto);
@@ -301,7 +299,6 @@ begin
     Exit;
   end;
 
-
   query.Close;
   query.SQL.Clear;
   query.SQL.Text := 'select                             '+
@@ -339,7 +336,7 @@ begin
     end
     else
     begin
-      valorTotal := pv.CalcValorTotalItem(StrToFloat(edtVlUnitario.Text), StrToFloat(edtQtdade.Text));
+      valorTotal := pv.CalculaValorTotalItem(StrToFloat(edtVlUnitario.Text), StrToFloat(edtQtdade.Text));
       edtVlTotal.Text := FloatToStr(valorTotal);
       edtVlDesconto.Enabled := true;
     end;
@@ -384,26 +381,25 @@ begin
     Exit;
   end;
 
+  query.Close;
+  query.SQL.Text := 'select                              '+
+                                           'tp.cd_tabela,                 '+
+                                           'tp.nm_tabela,                 '+
+                                           'tpp.valor                     '+
+                                      'from                               '+
+                                          'tabela_preco tp                '+
+                                      'join tabela_preco_produto tpp on   '+
+                                          'tp.cd_tabela = tpp.cd_tabela   '+
+                                      'join produto p on                  '+
+                                          'tpp.cd_produto = p.cd_produto  '+
+                                      'where (tp.cd_tabela = :cd_tabela)  '+
+                                      'and (p.cd_produto = :cd_produto)';
 
-    query.Close;
-    query.SQL.Text := 'select                              '+
-                                             'tp.cd_tabela,                 '+
-                                             'tp.nm_tabela,                 '+
-                                             'tpp.valor                     '+
-                                        'from                               '+
-                                            'tabela_preco tp                '+
-                                        'join tabela_preco_produto tpp on   '+
-                                            'tp.cd_tabela = tpp.cd_tabela   '+
-                                        'join produto p on                  '+
-                                            'tpp.cd_produto = p.cd_produto  '+
-                                        'where (tp.cd_tabela = :cd_tabela)  '+
-                                        'and (p.cd_produto = :cd_produto)';
-
-    query.ParamByName('cd_tabela').AsInteger := StrToInt(edtTabelaPreco.Text);
-    query.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
-    query.Open();
-    edtDescTabPreco.Text:= query.FieldByName('nm_tabela').AsString;
-    edtVlUnitario.Text := CurrToStr(query.FieldByName('valor').AsCurrency);
+  query.ParamByName('cd_tabela').AsInteger := StrToInt(edtTabelaPreco.Text);
+  query.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+  query.Open();
+  edtDescTabPreco.Text:= query.FieldByName('nm_tabela').AsString;
+  edtVlUnitario.Text := CurrToStr(query.FieldByName('valor').AsCurrency);
 end;
 
 procedure TfrmEdicaoPedidoVenda.edtTabelaPrecoExit(Sender: TObject);
@@ -431,7 +427,7 @@ begin
       edtVlDesconto.Enabled := true;
     end;
   finally
-
+    FreeAndNil(tabela);
   end;
 end;
 
@@ -449,12 +445,12 @@ begin
       cdsItens.DisableControls;
       cdsItens.First;
       while not cdsItens.Eof do
-        begin
-          valorTotal := (valorTotal + cdsItens.FieldByName('Valor Total').AsCurrency);
-          cdsItens.Next;
-        end;
-        edtVlTotalPedido.Text := CurrToStr(valorTotal);
-        cdsItens.EnableControls;
+      begin
+        valorTotal := (valorTotal + cdsItens.FieldByName('Valor Total').AsCurrency);
+        cdsItens.Next;
+      end;
+      edtVlTotalPedido.Text := CurrToStr(valorTotal);
+      cdsItens.EnableControls;
     end;
   end
   else
@@ -483,9 +479,7 @@ procedure TfrmEdicaoPedidoVenda.edtVlDescontoExit(Sender: TObject);
 var vlDesconto, vlTotal, vlTotalComDesc : Currency;
 begin
   if edtVlDesconto.Text = EmptyStr then
-  begin
-    edtVlDesconto.Text := '0,00';
-  end
+    edtVlDesconto.Text := '0,00'
   else
   begin
     //não está recalculando o valor corretamente, quando altera o valor de desconto para 0
@@ -533,8 +527,8 @@ begin
         vlTotalPedido := (vlTotalPedido + cdsItens.FieldByName('Valor Total').AsCurrency);
         cdsItens.Next;
       end;
-        //edtVlTotalPedido.Text := CurrToStr(valor_total);
-        cdsItens.EnableControls;
+      //edtVlTotalPedido.Text := CurrToStr(valor_total);
+      cdsItens.EnableControls;
     end;
     vlTotalComDesconto := vlTotalPedido - vlDesconto;
     edtVlTotalPedido.Text := CurrToStr(vlTotalComDesconto);
@@ -603,9 +597,9 @@ var
   editarPedido: TfrmConfiguracoes;
   qry: TFDQuery;
 begin
-    editarPedido := TfrmConfiguracoes.Create(Self);
-    qry := TFDQuery.Create(Self);
-    qry.Connection := dm.FDConnection1;
+  editarPedido := TfrmConfiguracoes.Create(Self);
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
 
   try
     cdsItens.EmptyDataSet;
@@ -678,9 +672,7 @@ begin
   if key = VK_ESCAPE then //ESC
   begin
     if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      Close;
-    end;
+      Close
   end;
 end;
 
@@ -734,7 +726,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.SQL.Add(sql);

@@ -76,9 +76,7 @@ begin
       edtSenhaUsuario.Text := sql.FieldByName('senha').AsString;
     end
     else
-    begin
       edtNomeUsuario.SetFocus;
-    end;
   except
     on E: Exception do
     ShowMessage(
@@ -131,9 +129,7 @@ begin
   else if key = VK_ESCAPE then //ESC
   begin
     if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
       Close;
-    end;
   end;
 end;
 

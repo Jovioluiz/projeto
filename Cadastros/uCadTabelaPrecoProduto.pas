@@ -8,10 +8,10 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet, System.UITypes,
-  FireDAC.Comp.Client, uConexao, Vcl.Buttons;
+  FireDAC.Comp.Client, Vcl.Buttons;
 
 type
-  TfrmCadTabelaPrecoProduto = class(TfrmConexao)
+  TfrmCadTabelaPrecoProduto = class(TForm)
     Panel1: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -44,30 +44,33 @@ var
   frmCadTabelaPrecoProduto: TfrmCadTabelaPrecoProduto;
   implementation
 
+uses
+  uDataModule;
+
 {$R *.dfm}
 
 procedure TfrmCadTabelaPrecoProduto.edtCodProdutoChange(Sender: TObject);
 begin
   if edtCodProduto.Text = '' then
-    begin
-      edtNomeProduto.Text := '';
-      Exit;
-    end
+  begin
+    edtNomeProduto.Text := '';
+    Exit;
+  end
   else
-    begin
-      sqlTabelaPrecoProduto.Close;
-      sqlTabelaPrecoProduto.SQL.Text := 'select               '+
-                                              'desc_produto,  '+
-                                              'un_medida      '+
-                                        'from                 '+
-                                              'produto        '+
-                                        'where                '+
-                                              'cd_produto = :cd_produto';
-      sqlTabelaPrecoProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
-      sqlTabelaPrecoProduto.Open();
-      edtNomeProduto.Text := sqlTabelaPrecoProduto.FieldByName('desc_produto').AsString;
-      edtUNMedida.Text := sqlTabelaPrecoProduto.FieldByName('un_medida').AsString;
-    end;
+  begin
+    sqlTabelaPrecoProduto.Close;
+    sqlTabelaPrecoProduto.SQL.Text := 'select               '+
+                                            'desc_produto,  '+
+                                            'un_medida      '+
+                                      'from                 '+
+                                            'produto        '+
+                                      'where                '+
+                                            'cd_produto = :cd_produto';
+    sqlTabelaPrecoProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
+    sqlTabelaPrecoProduto.Open();
+    edtNomeProduto.Text := sqlTabelaPrecoProduto.FieldByName('desc_produto').AsString;
+    edtUNMedida.Text := sqlTabelaPrecoProduto.FieldByName('un_medida').AsString;
+  end;
 end;
 
 procedure TfrmCadTabelaPrecoProduto.edtCodTabelaChange(Sender: TObject);
@@ -104,7 +107,7 @@ end;
 
 procedure TfrmCadTabelaPrecoProduto.excluir;
 begin
-if (Application.MessageBox('Deseja Excluir o produto da Tabela de Preço?', 'Atenção', MB_YESNO) = IDYES) then
+  if (Application.MessageBox('Deseja Excluir o produto da Tabela de Preço?', 'Atenção', MB_YESNO) = IDYES) then
   begin
     try
       sql.Close;
@@ -121,10 +124,10 @@ if (Application.MessageBox('Deseja Excluir o produto da Tabela de Preço?', 'Aten
 
     except
       on E:exception do
-        begin
-          ShowMessage('Erro ao excluir a tabela '+ E.Message);
-          Exit;
-        end;
+      begin
+        ShowMessage('Erro ao excluir a tabela '+ E.Message);
+        Exit;
+      end;
     end;
   end;
 end;
@@ -134,41 +137,31 @@ procedure TfrmCadTabelaPrecoProduto.FormClose(Sender: TObject;
 begin
   inherited;
   frmCadTabelaPrecoProduto := nil;
-  aberto := False;
+  //aberto := False;                      arrumar
 end;
 
 procedure TfrmCadTabelaPrecoProduto.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if key = VK_F3 then //F3
-  begin
-    limpaCampos;
-  end
+    limpaCampos
   else if key = VK_F2 then  //F2
-  begin
-    salvar;
-  end
+    salvar
   else if key = VK_F4 then    //F4
-  begin
-    excluir;
-  end
+    excluir
   else if key = VK_ESCAPE then //ESC
-  begin
   if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      Close;
-    end;
-  end;
+    Close;
 end;
 
 procedure TfrmCadTabelaPrecoProduto.FormKeyPress(Sender: TObject;
   var Key: Char);
 begin
   if Key = #13 then
-    begin
-      Key := #0;
-      Perform(WM_NEXTDLGCTL,0,0)
-    end;
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL,0,0)
+  end;
 end;
 
 procedure TfrmCadTabelaPrecoProduto.limpaCampos;
@@ -218,10 +211,10 @@ begin
       limpaCampos;
     except
       on E:exception do
-        begin
-          ShowMessage('Erro ao gravar os dados '+ E.Message);
-          Exit;
-        end;
+      begin
+        ShowMessage('Erro ao gravar os dados '+ E.Message);
+        Exit;
+      end;
     end;
   end
   else
@@ -249,14 +242,13 @@ begin
 
     except
       on E:exception do
-        begin
-          frmConexao.conexao.Rollback;
-          ShowMessage('Erro ao gravar os dados '+ E.Message);
-          Exit;
-        end;
+      begin
+        dm.conexaoBanco.Rollback;
+        ShowMessage('Erro ao gravar os dados '+ E.Message);
+        Exit;
+      end;
     end;
   end;
-
 end;
 
 end.

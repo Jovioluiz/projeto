@@ -678,17 +678,17 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     end
   end
   object sqlIdGeral: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 352
     Top = 472
   end
   object sqlInsert: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 424
     Top = 472
   end
   object sqlInsertiNfi: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 600
     Top = 480
   end

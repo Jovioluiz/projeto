@@ -5,14 +5,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.UITypes, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Menus, Vcl.StdCtrls,
-  Data.FMTBcd, Data.DB, Data.SqlExpr, uConexao, FireDAC.Stan.Intf,
+  Data.FMTBcd, Data.DB, Data.SqlExpr, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client,
   FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids,
   Datasnap.DBClient, Vcl.Buttons, Vcl.DBCtrls, Jpeg;
 
 type
-  TfrmCadProduto = class(TfrmConexao)
+  TfrmCadProduto = class(TForm)
     PageControl1: TPageControl;
     TabSheetCadastroProduto: TTabSheet;
     Label1: TLabel;
@@ -196,7 +196,7 @@ begin
           dm.query.ExecSQL;
           edtPRODUTOCD_PRODUTO.SetFocus;
         except
-            on E : exception do
+        on E : exception do
           begin
             ShowMessage('Erro ' + E.Message);
             Exit;
@@ -273,7 +273,7 @@ begin
   temPermissaoEdicao := produto.validaEdicaoAcao(idUsuario, 2);
 
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Close;
   qry.SQL.Clear;
 
@@ -304,43 +304,27 @@ begin
   memoObservacao.Text := qry.FieldByName('observacao').AsString;
 
   if qry.FieldByName('cd_tributacao_icms').Value = null then
-  begin
-    edtProdutoGrupoTributacaoICMS.Text := '';
-  end
+    edtProdutoGrupoTributacaoICMS.Text := ''
   else
-  begin
     edtProdutoGrupoTributacaoICMS.Text := qry.FieldByName('cd_tributacao_icms').Value;
-  end;
   edtProdutoNomeGrupoTributacaoICMS.Text := qry.FieldByName('nm_tributacao_icms').AsString;
 
   if qry.FieldByName('cd_tributacao_ipi').Value = null then
-  begin
-    edtProdutoGrupoTributacaoIPI.Text := '';
-  end
+    edtProdutoGrupoTributacaoIPI.Text := ''
   else
-  begin
     edtProdutoGrupoTributacaoIPI.Text := qry.FieldByName('cd_tributacao_ipi').Value;
-  end;
   edtProdutoNomeGrupoTributacaoIPI.Text := qry.FieldByName('nm_tributacao_ipi').AsString;
 
   if qry.FieldByName('cd_tributacao_pis_cofins').Value = null then
-  begin
-    edtProdutoGrupoTributacaoPISCOFINS.Text := '';
-  end
+    edtProdutoGrupoTributacaoPISCOFINS.Text := ''
   else
-  begin
     edtProdutoGrupoTributacaoPISCOFINS.Text := qry.FieldByName('cd_tributacao_pis_cofins').Value;
-  end;
   edtProdutoNomeGrupoTributacaoPISCOFINS.Text := qry.FieldByName('nm_tributacao_pis_cofins').AsString;
 
   if qry.FieldByName('imagem').AsBytes = null then
-  begin
-    imagem.Picture := nil;
-  end
+    imagem.Picture := nil
   else
-  begin
     carregaImagem(imagem, TBlobField(qry.FieldByName('imagem')));
-  end;
 
   listarCodBarras;
 
@@ -364,7 +348,7 @@ var
 begin
   inherited;
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Close;
   qry.SQL.Clear;
 
@@ -395,7 +379,7 @@ var
 begin
   inherited;
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Close;
   qry.SQL.Clear;
 
@@ -426,7 +410,7 @@ var
 begin
   inherited;
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
   qry.Close;
   qry.SQL.Clear;
 
@@ -458,7 +442,7 @@ begin
     if (Application.MessageBox('Deseja Excluir o Produto?','Atenção', MB_YESNO) = IDYES) then
     begin
       qry := TFDQuery.Create(Self);
-      qry.Connection := dm.FDConnection1;
+      qry.Connection := dm.conexaoBanco;
       qry.Close;
       qry.SQL.Clear;
       qry.SQL.Add(sql);
@@ -498,24 +482,14 @@ procedure TfrmCadProduto.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if key = VK_F3 then //F3
-  begin
-    limpaCampos;
-  end
+    limpaCampos
   else if key = VK_F2 then  //F2
-  begin
-    salvar;
-  end
+    salvar
   else if key = VK_F4 then    //F4
-  begin
-    excluir;
-  end
+    excluir
   else if key = VK_ESCAPE then //ESC
-  begin
     if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
-    begin
       Close;
-    end;
-  end;
 end;
 
 procedure TfrmCadProduto.FormKeyPress(Sender: TObject; var Key: Char);
@@ -533,14 +507,16 @@ procedure TfrmCadProduto.imagemMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   inherited;
   if Button = mbRight then
+  begin
     if (Application.MessageBox('Deseja Excluir a Imagem do Produto?', 'Aviso', MB_YESNO) = IDYES) then
     begin
       imagem.Picture := nil;
-      conexao.ExecSQL('update produto set imagem = NULL where cd_produto = :cd_produto',
+      dm.conexaoBanco.ExecSQL('update produto set imagem = NULL where cd_produto = :cd_produto',
                                                       [StrToInt(edtPRODUTOCD_PRODUTO.Text)]);
     end
     else
-      Exit;
+        Exit;
+  end;
 end;
 
 procedure TfrmCadProduto.limpaCampos;
@@ -607,7 +583,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.Close;
@@ -651,7 +627,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     qry.Close;
@@ -676,7 +652,7 @@ var
   Imagem: TFileStream;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     if dlgImagem.FileName <> '' then
@@ -765,14 +741,14 @@ var
 begin
   try
     validaCampos;
-    dm.FDConnection1.StartTransaction;
+    dm.conexaoBanco.StartTransaction;
     qryProd := TFDQuery.Create(Self);
     qryTrib := TFDQuery.Create(Self);
     qry := TFDQuery.Create(Self);
-    qryProd.Connection := dm.FDConnection1;
-    qryTrib.Connection := dm.FDConnection1;
-    qry.Connection := dm.FDConnection1;
-    qryTrib.Connection := dm.FDConnection1;
+    qryProd.Connection := dm.conexaoBanco;
+    qryTrib.Connection := dm.conexaoBanco;
+    qry.Connection := dm.conexaoBanco;
+    qryTrib.Connection := dm.conexaoBanco;
 
     //verifica se já esta cadastrado
     qryProd.Close;
@@ -812,12 +788,12 @@ begin
         try
           qry.ExecSQL;
           qryTrib.ExecSQL;
-          dm.FDConnection1.Commit;
+          dm.conexaoBanco.Commit;
           ShowMessage('Produto Alterado com Sucesso');
         except
           on E:exception do
             begin
-              dm.FDConnection1.Rollback;
+              dm.conexaoBanco.Rollback;
               ShowMessage('Erro ao gravar os dados'+ E.Message);
               Exit;
             end;
@@ -848,12 +824,12 @@ begin
       try
         qry.ExecSQL;
         qryTrib.ExecSQL;
-        dm.FDConnection1.Commit;
+        dm.conexaoBanco.Commit;
         ShowMessage('Produto cadastrado com Sucesso!');
       except
         on E:exception do
         begin
-          dm.FDConnection1.Rollback;
+          dm.conexaoBanco.Rollback;
           ShowMessage('Erro ao gravar os dados do produto '+ E.Message);
           Exit;
         end;
@@ -885,7 +861,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   try
     try
@@ -957,7 +933,7 @@ var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
-  qry.Connection := dm.FDConnection1;
+  qry.Connection := dm.conexaoBanco;
 
   if (Trim(edtCodigoBarras.Text) = EmptyStr) or (Trim(edtUnCodBarras.Text) = EmptyStr) or
   (cbTipoCodBarras.ItemIndex = -1) then

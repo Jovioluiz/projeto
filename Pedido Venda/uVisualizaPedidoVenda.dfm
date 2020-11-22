@@ -383,8 +383,8 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     PreviewOptions.Zoom = 1.000000000000000000
     PrintOptions.Printer = 'Default'
     PrintOptions.PrintOnSheet = 0
-    ReportOptions.CreateDate = 44149.832557638900000000
-    ReportOptions.LastChange = 44149.892193865740000000
+    ReportOptions.CreateDate = 44149.832557638910000000
+    ReportOptions.LastChange = 44149.892193865730000000
     ScriptLanguage = 'PascalScript'
     ScriptText.Strings = (
       'begin'
@@ -714,7 +714,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
     Top = 576
   end
   object qry: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     SQL.Strings = (
       'select'
       '    pv.nr_pedido,'
