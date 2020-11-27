@@ -17,7 +17,7 @@ INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUE
 INSERT INTO public.acoes_sistema (cd_acao, nm_acao, nm_formulario, dt_atz) VALUES(17, 'Cadastro Endereços', 'frmCadastroEnderecos', now());
 
 
-insert into login_usuario (id_usuario, login, senha) values (1, 'admin', 1);
+insert into login_usuario (id_usuario, login, senha) values (1, 'admin', '');
 
 INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 1, true, now());
 INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, dt_atz) VALUES(1, 2, true, now());

@@ -93,9 +93,9 @@ object frmCadCliente: TfrmCadCliente
     end
     object gbENDERECO: TGroupBox
       Left = 1
-      Top = 212
+      Top = 208
       Width = 847
-      Height = 177
+      Height = 181
       Align = alBottom
       Caption = 'Endere'#231'o'
       TabOrder = 11

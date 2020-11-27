@@ -80,7 +80,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, uValidaDados, uLogin, uConsulta;
+uses uDataModule, uUtil, uLogin, uConsulta;
 
 procedure TfrmCadCliente.pFormarCamposPessoa;
 begin

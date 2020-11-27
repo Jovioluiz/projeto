@@ -28,6 +28,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     TabOrder = 0
     object TabSheetICMS: TTabSheet
       Caption = 'ICMS'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 11
         Top = 16
@@ -76,6 +80,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetIPI: TTabSheet
       Caption = 'IPI'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label6: TLabel
         Left = 15
         Top = 80
@@ -124,6 +132,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetISS: TTabSheet
       Caption = 'ISS'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label9: TLabel
         Left = 11
         Top = 16
@@ -172,6 +184,10 @@ object frmCadastraTributacaoItem: TfrmCadastraTributacaoItem
     object TabSheetPISCOFINS: TTabSheet
       Caption = 'PIS/COFINS'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 11
         Top = 16

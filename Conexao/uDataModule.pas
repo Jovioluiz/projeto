@@ -64,14 +64,14 @@ begin
       conexaoBanco.Params.UserName := conexaoIni.ReadString('configuracoes', 'usuario', conexaoBanco.Params.UserName);
       conexaoBanco.Params.Password := conexaoIni.ReadString('configuracoes', 'senha', conexaoBanco.Params.Password);
       conexaoBanco.Params.Values['Port'] := conexaoIni.ReadString('configuracoes', 'porta', conexaoBanco.Params.Values['Port']);
+      //driver.VendorLib := GetCurrentDir + '\libpq.dll';
 
       conexaoBanco.Connected := true;
 
-      driver.VendorLib := GetCurrentDir + '\lib\libpq.dll';
     except
       on e:Exception do
       begin
-        msg := 'Erro ao conectar no banco de dados. ' + conexaoBanco.Params.Database
+        msg := 'Erro ao conectar no banco de dados ' + conexaoBanco.Params.Database
                + #13 + ' Verifique o arquivo de conexao.' + #13;
         raise Exception.Create(msg + e.Message);
       end;

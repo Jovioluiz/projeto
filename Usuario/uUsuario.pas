@@ -43,7 +43,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, uValidaDados;
+uses uDataModule, uUtil;
 
 procedure TfrmUsuario.edtIdUsuarioChange(Sender: TObject);
 begin
@@ -185,11 +185,7 @@ begin
 
           sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
           sql.ParamByName('login').AsString := edtNomeUsuario.Text;
-          sql.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text,
-                                                                StrToInt(edtIdUsuario.Text),
-                                                                1,
-                                                                2);//se alterar esses números, alterar tbm no
-                                                                   //formulario de login
+          sql.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text);
 
           sql.ExecSQL;
           //dm.transacao.Commit;
@@ -218,11 +214,7 @@ begin
 
           sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
           sql.ParamByName('login').AsString := edtNomeUsuario.Text;
-          sql.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text,
-                                                                StrToInt(edtIdUsuario.Text),
-                                                                1,
-                                                                2);//se alterar esses números, alterar tbm no
-                                                                   //formulario de login
+          sql.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text);
 
           sql.ExecSQL;
           //dm.transacao.Commit;

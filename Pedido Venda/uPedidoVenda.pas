@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, Vcl.Mask,
-  Vcl.ComCtrls, System.Generics.Collections, JvExStdCtrls, JvBehaviorLabel,
+  Vcl.ComCtrls, System.Generics.Collections, {JvExStdCtrls, JvBehaviorLabel}
   Xml.xmldom, Xml.XMLIntf, Xml.XMLDoc;
 
 type
@@ -137,6 +137,7 @@ type
     procedure cancelaPedidoVenda;
     procedure InsereWmsMvto;
     function getNumeroParcelas(CdCondPgto: Integer): Integer;
+    procedure CarregaItensEdicao;
   end;
 
 var
@@ -146,7 +147,7 @@ var
 implementation
 
 uses
-  uclPedidoVenda, uDataModule, uGerador, uConfiguracoes, uValidaDados;
+  uclPedidoVenda, uDataModule, uGerador, uConfiguracoes, uUtil;
 
 {$R *.dfm}
 
@@ -517,8 +518,7 @@ begin
   end;
 end;
 
-procedure TfrmPedidoVenda.dbGridProdutosDblClick(Sender: TObject);
-//carrega os itens para edição
+procedure TfrmPedidoVenda.CarregaItensEdicao;
 begin
   edtCdProduto.Text := cdsPedidoVenda.FieldByName('cd_produto').AsString;
   edtDescProduto.Text := cdsPedidoVenda.FieldByName('descricao').AsString;
@@ -529,6 +529,12 @@ begin
   edtVlDescontoItem.Text := cdsPedidoVenda.FieldByName('vl_desconto').AsString;
   edtVlTotal.Text := cdsPedidoVenda.FieldByName('vl_total_item').AsString;
   edicaoItem := true;
+end;
+
+procedure TfrmPedidoVenda.dbGridProdutosDblClick(Sender: TObject);
+//carrega os itens para edição
+begin
+  CarregaItensEdicao;
 end;
 
 //Faz a linha zebrada no grid dos itens

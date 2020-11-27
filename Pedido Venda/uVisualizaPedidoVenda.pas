@@ -8,8 +8,8 @@ uses
   Data.DB, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient,
-  JvExStdCtrls, JvBehaviorLabel, frxClass, frxDBSet;
+  FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient;
+  //JvExStdCtrls, JvBehaviorLabel, frxClass, frxDBSet;
 
 type
   TfrmVisualizaPedidoVenda = class(TForm)
@@ -58,11 +58,9 @@ type
     cdsProdutospis_cofins_vl_base: TCurrencyField;
     cdsProdutospis_cofins_pc_aliq: TCurrencyField;
     cdsProdutospis_cofins_valor: TCurrencyField;
-    lblStatus: TJvBehaviorLabel;
     btnSalvar: TButton;
-    frxRelatorio: TfrxReport;
-    frxdsPedido: TfrxDBDataset;
     qry: TFDQuery;
+    lblStatus: TLabel;
 
     procedure dbGridProdutosDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
@@ -127,8 +125,8 @@ procedure TfrmVisualizaPedidoVenda.btnImprimirClick(Sender: TObject);
 begin
   qry.ParamByName('nr_pedido').AsInteger := StrToInt(edtNrPedido.Text);
   qry.Open();
-  frxRelatorio.LoadFromFile(GetCurrentDir + '\rel\relPedidoVenda.fr3');
-  frxRelatorio.ShowReport();
+  //frxRelatorio.LoadFromFile(GetCurrentDir + '\rel\relPedidoVenda.fr3');
+  //frxRelatorio.ShowReport();
 end;
 
 procedure TfrmVisualizaPedidoVenda.btnSalvarClick(Sender: TObject);

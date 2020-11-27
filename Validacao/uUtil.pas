@@ -1,4 +1,4 @@
-unit uValidaDados;
+unit uUtil;
 
 interface
 
@@ -23,8 +23,8 @@ type TValidaDados = class
     function validaCodigo(cod : Integer) : Integer;
     function validaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
     function validaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode editar um cadastro
-    function criptografaSenha(Senha: string; StartKey,MultKey,AddKey:Integer): String;
-    function DescriptografaSenha(Senha: string; StartKey,MultKey,AddKey:Integer): String;
+    function criptografaSenha(Senha: String): String;
+    function DescriptografaSenha(Senha: string): String;
 
 end;
 
@@ -40,6 +40,9 @@ type TDataSetHelper = class helper for TDataSet
     procedure Loop(Procedimento: TProc); overload;
 end;
 
+var
+  s: string[255];
+  c: array[0..255] of Byte absolute s;
 
 implementation
 
@@ -47,29 +50,25 @@ implementation
 
 uses uDataModule;
 
-function TValidaDados.criptografaSenha(Senha: string; StartKey,MultKey,AddKey:Integer): String;
+function TValidaDados.criptografaSenha(Senha: String): String;
 var
-  I : Byte;
+  i : Integer;
 begin
-  Result := '\';
-  for i := 1 to Length(Senha) do
-  begin
-    Result := Result + CHAR(Byte(Senha[I]) xor (StartKey));
-    StartKey := (Byte(Result[I]) + StartKey) * MultKey + AddKey;
-  end;
+  s := Senha;
+  for i := 1 to ord(s[0]) do
+    c[i] := 23 xor c[i];
+
+  Result := s;
 end;
 
-function TValidaDados.DescriptografaSenha(Senha: string; StartKey, MultKey,
-  AddKey: Integer): String;
+function TValidaDados.DescriptografaSenha(Senha: string): String;
 var
-  I : Byte;
+  i : Integer;
 begin
-  Result := '\';
-  for I := 1 to Length(Senha) do
-  begin
-    Result := Result + CHAR(Byte(Senha[I]) xor (StartKey));
-    StartKey := (Byte(Senha[I]) + StartKey) * MultKey + AddKey;
-  end;
+  s := Senha;
+  for i := 1 to Length(s) do
+    s[i] := Ansichar(23 Xor ord(c[i]));
+  Result := s;
 end;
 
 procedure TValidaDados.SetcdCliente(const Value: Integer);

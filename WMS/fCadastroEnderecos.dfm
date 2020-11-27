@@ -29,42 +29,42 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
       Top = 1
       Width = 703
       Height = 458
-      ActivePage = tbsEndereco
+      ActivePage = tbsProdutoEndereco
       Align = alClient
       TabOrder = 0
       object tbsEndereco: TTabSheet
         Caption = 'Cadastro Endere'#231'o'
-        object JvLabel1: TJvLabel
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
+        object Label1: TLabel
           Left = 8
           Top = 27
-          Width = 44
+          Width = 42
           Height = 13
           Caption = 'Dep'#243'sito'
-          Transparent = True
         end
-        object JvLabel2: TJvLabel
+        object Label2: TLabel
           Left = 80
           Top = 27
-          Width = 17
+          Width = 15
           Height = 13
           Caption = 'Ala'
-          Transparent = True
         end
-        object JvLabel3: TJvLabel
-          Left = 152
+        object Label3: TLabel
+          Left = 150
           Top = 27
-          Width = 21
+          Width = 19
           Height = 13
           Caption = 'Rua'
-          Transparent = True
         end
-        object JvLabel4: TJvLabel
+        object Label4: TLabel
           Left = 226
           Top = 27
-          Width = 67
+          Width = 65
           Height = 13
           Caption = 'Complemento'
-          Transparent = True
         end
         object btnAdicionar: TButton
           Left = 609
@@ -144,62 +144,55 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
         ExplicitLeft = 0
         ExplicitTop = 0
         ExplicitWidth = 0
-        ExplicitHeight = 458
-        object JvLabel5: TJvLabel
-          Left = 12
+        ExplicitHeight = 0
+        object Label5: TLabel
+          Left = 16
           Top = 64
-          Width = 40
+          Width = 64
           Height = 13
-          Caption = 'Produto'
-          Transparent = True
+          Caption = 'C'#243'd. Produto'
         end
-        object JvLabel6: TJvLabel
+        object Label6: TLabel
           Left = 199
           Top = 64
-          Width = 48
+          Width = 38
           Height = 13
-          Caption = 'Descri'#231#227'o'
-          Transparent = True
+          Caption = 'Produto'
         end
-        object JvLabel8: TJvLabel
-          Left = 8
+        object Label7: TLabel
+          Left = 12
           Top = 123
-          Width = 44
+          Width = 42
           Height = 13
           Caption = 'Dep'#243'sito'
-          Transparent = True
         end
-        object JvLabel9: TJvLabel
+        object Label8: TLabel
           Left = 80
           Top = 123
-          Width = 17
+          Width = 15
           Height = 13
           Caption = 'Ala'
-          Transparent = True
         end
-        object JvLabel10: TJvLabel
-          Left = 152
+        object Label9: TLabel
+          Left = 150
           Top = 123
-          Width = 21
+          Width = 19
           Height = 13
           Caption = 'Rua'
-          Transparent = True
         end
-        object JvLabel11: TJvLabel
+        object Label10: TLabel
           Left = 226
           Top = 123
-          Width = 67
+          Width = 65
           Height = 13
           Caption = 'Complemento'
-          Transparent = True
         end
-        object JvLabel12: TJvLabel
+        object Label11: TLabel
           Left = 417
           Top = 123
-          Width = 34
+          Width = 32
           Height = 13
           Caption = 'Ordem'
-          Transparent = True
         end
         object edtCodBarrasProduto: TEdit
           Left = 12
@@ -218,7 +211,7 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
           TabOrder = 1
         end
         object rgTipo: TRadioGroup
-          Left = 8
+          Left = 16
           Top = 8
           Width = 129
           Height = 50

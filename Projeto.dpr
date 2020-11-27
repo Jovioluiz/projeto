@@ -24,7 +24,7 @@ uses
   uUsuario in 'Usuario\uUsuario.pas' {frmUsuario},
   UfrmRelVendaDiaria in 'Arquivos\UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
   uControleAcesso in 'Acesso\uControleAcesso.pas' {frmControleAcesso},
-  uValidaDados in 'Validacao\uValidaDados.pas',
+  uUtil in 'Validacao\uUtil.pas',
   dtmConsultaProduto in 'Consulta\dtmConsultaProduto.pas' {dmConsultaProduto: TDataModule},
   uclPedidoVenda in 'Pedido Venda\uclPedidoVenda.pas',
   uGravaArquivo in 'Arquivos\uGravaArquivo.pas' {frmGravaArquivo},
@@ -32,7 +32,8 @@ uses
   uConsulta in 'Consulta\uConsulta.pas' {frmConsulta},
   uclValidacoesEntrada in 'Entrada\uclValidacoesEntrada.pas',
   uGerador in 'uGerador.pas' {$R *.res},
-  fCadastroEnderecos in 'WMS\fCadastroEnderecos.pas' {frmCadastroEnderecos};
+  fCadastroEnderecos in 'WMS\fCadastroEnderecos.pas' {frmCadastroEnderecos},
+  uCadastrarSenha in 'Cadastros\uCadastrarSenha.pas' {frmCadastraSenha};
 
 {$R *.res}
 
@@ -42,7 +43,6 @@ begin
   Application.CreateForm(TfrmLogin, frmLogin);
   Application.CreateForm(Tdm, dm);
   Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
-  Application.CreateForm(TfrmConsulta, frmConsulta);
   Application.Run;
 
 end.

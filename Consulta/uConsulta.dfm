@@ -22,20 +22,6 @@ object frmConsulta: TfrmConsulta
     Height = 386
     Align = alClient
     TabOrder = 0
-    object JvLabel1: TJvLabel
-      Left = 16
-      Top = 345
-      Width = 40
-      Height = 16
-      Caption = 'Buscar'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      Transparent = True
-    end
     object dbgrd1: TDBGrid
       Left = 0
       Top = 1
@@ -51,21 +37,6 @@ object frmConsulta: TfrmConsulta
       TitleFont.Style = []
       OnDblClick = dbgrd1DblClick
     end
-    object edtBusca: TJvEdit
-      Left = 62
-      Top = 345
-      Width = 475
-      Height = 24
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 0
-      Text = ''
-      OnKeyDown = edtBuscaKeyDown
-    end
     object rgFiltros: TRadioGroup
       Left = 543
       Top = 295
@@ -77,6 +48,13 @@ object frmConsulta: TfrmConsulta
         'Nome'
         'C'#243'digo'
         'CPF/CNPJ')
+      TabOrder = 0
+    end
+    object edtBusca: TEdit
+      Left = 8
+      Top = 320
+      Width = 513
+      Height = 25
       TabOrder = 2
     end
   end

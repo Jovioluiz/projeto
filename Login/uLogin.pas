@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.XPMan,
+  Vcl.Controls, Vcl.Forms, Vcl.StdCtrls, Vcl.Mask, Vcl.XPMan,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
@@ -27,6 +27,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
+    procedure edtUsuarioExit(Sender: TObject);
   private
     { Private declarations }
   public
@@ -41,7 +42,8 @@ implementation
 
 {$R *.dfm}
 
-uses uTelaInicial, uDataModule, uVersao, uValidaDados;
+uses uTelaInicial, uDataModule, uVersao, uUtil, Vcl.Dialogs,
+  uCadastrarSenha;
 
 procedure TfrmLogin.btnCancelarClick(Sender: TObject);
 begin
@@ -64,10 +66,10 @@ var
   qry: TFDQuery;
   verificaSenha: TValidaDados;
 begin
+  verificaSenha := TValidaDados.Create();
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
   try
-    verificaSenha := TValidaDados.Create();
-    qry := TFDQuery.Create(Self);
-    qry.Connection := dm.conexaoBanco;
     qry.Close;
     qry.SQL.Clear;
 
@@ -89,8 +91,9 @@ begin
       edtUsuario.SetFocus;
       Exit;
     end;
+
     if (Trim(edtUsuario.Text) = usuario)
-        and (Trim(senha) = verificaSenha.DescriptografaSenha(edtSenha.Text, idUsuario,1,2)) then
+        and (Trim(senha) = verificaSenha.DescriptografaSenha(edtSenha.Text)) then
     begin
       try
         frmPrincipal := TfrmPrincipal.Create(Self);
@@ -110,6 +113,41 @@ begin
     end;
   finally
     FreeAndNil(qry);
+    FreeAndNil(verificaSenha);
+  end;
+end;
+
+procedure TfrmLogin.edtUsuarioExit(Sender: TObject);
+const
+  SQL_LOGIN = 'select '+
+              '  senha '+
+              'from '+
+              '  login_usuario '+
+              'where '+
+              '  login = :login';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+  frmCadastraSenha := TfrmCadastraSenha.Create(Self);
+  try
+    qry.SQL.Add(SQL_LOGIN);
+    qry.ParamByName('login').AsString := edtUsuario.Text;
+    qry.Open(SQL_LOGIN);
+
+    if qry.FieldByName('senha').Text = '' then
+    begin
+      ShowMessage('Usuário sem senha cadastrada');
+      try
+        frmCadastraSenha.ShowModal;
+      finally
+        FreeAndNil(frmCadastraSenha);
+      end;
+    end;
+  finally
+    qry.Free;
+    FreeAndNil(frmCadastraSenha);
   end;
 end;
 

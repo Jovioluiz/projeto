@@ -13,7 +13,7 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, UfrmRelVendaDiaria,
   uLancamentoNotaEntrada, uCadastroTributacaoItem, Vcl.ComCtrls, uLogin, uConsultaProduto,
-  uConfiguracoes, uValidaDados;
+  uConfiguracoes, uUtil;
 
 type
   TfrmPrincipal = class(TForm)
@@ -59,7 +59,6 @@ type
     procedure NotaEntrada1Click(Sender: TObject);
     procedure Cadastro2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
     procedure Produtos1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Configuraes1Click(Sender: TObject);
@@ -344,11 +343,6 @@ begin
   finally
     FreeAndNil(acesso);
   end;
-end;
-
-procedure TfrmPrincipal.Timer1Timer(Sender: TObject);
-begin
-  //StatusBar1.Panels.Items[1].Text := DateTimeToStr(Now);
 end;
 
 procedure TfrmPrincipal.Usurios1Click(Sender: TObject);

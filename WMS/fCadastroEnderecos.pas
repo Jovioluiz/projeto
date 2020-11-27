@@ -4,27 +4,22 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, JvExControls, JvLabel,
-  Data.DB, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient, Vcl.ExtCtrls, FireDAC.Stan.Intf,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  Datasnap.DBClient, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls,
+  Data.DB, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Vcl.ComCtrls;
+  FireDAC.Comp.Client;
 
 type
   TfrmCadastroEnderecos = class(TForm)
-    JvLabel1: TJvLabel;
-    JvLabel2: TJvLabel;
-    JvLabel3: TJvLabel;
     edtCodDeposito: TEdit;
-    JvLabel4: TJvLabel;
     edtAla: TEdit;
     edtRua: TEdit;
     edtComplemento: TEdit;
-    JvLabel5: TJvLabel;
     edtCodBarrasProduto: TEdit;
     edtNomeProduto: TEdit;
-    JvLabel6: TJvLabel;
     dbgrdEndereco: TDBGrid;
     rgTipo: TRadioGroup;
     btnAdicionar: TButton;
@@ -43,10 +38,6 @@ type
     pgc1: TPageControl;
     tbsEndereco: TTabSheet;
     tbsProdutoEndereco: TTabSheet;
-    JvLabel8: TJvLabel;
-    JvLabel9: TJvLabel;
-    JvLabel10: TJvLabel;
-    JvLabel11: TJvLabel;
     edtComplementoProdEndereco: TEdit;
     edtRuaProdEndereco: TEdit;
     edtAlaProdEndereco: TEdit;
@@ -62,8 +53,18 @@ type
     cdsProdutoEnderecorua: TStringField;
     cdsProdutoEnderecocomplemento: TStringField;
     cdsProdutoEndereconm_endereco: TStringField;
-    JvLabel12: TJvLabel;
     intgrfldProdutoEnderecoordem: TIntegerField;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
     procedure edtCodBarrasProdutoExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure btnAdicionarClick(Sender: TObject);
@@ -89,7 +90,7 @@ var
 implementation
 
 uses
-  uDataModule, uGerador, uValidaDados, StrUtils;
+  uDataModule, uGerador, uUtil, StrUtils;
 
 {$R *.dfm}
 

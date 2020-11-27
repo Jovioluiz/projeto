@@ -11703,7 +11703,6 @@ object frmPrincipal: TfrmPrincipal
     end
   end
   object Timer1: TTimer
-    OnTimer = Timer1Timer
     Left = 312
     Top = 600
   end

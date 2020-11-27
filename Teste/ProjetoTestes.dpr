@@ -17,16 +17,17 @@ program ProjetoTestes;
 uses
   DUnitTestRunner,
   TestuUsuario in 'TestuUsuario.pas',
+  {$R}
   uUsuario in '..\Usuario\uUsuario.pas' {$R *.RES},
   uDataModule in '..\Conexao\uDataModule.pas' {dm: TDataModule},
-  uValidaDados in '..\Validacao\uValidaDados.pas',
+  uUtil in '..\Validacao\uUtil.pas',
   uGerador in 'uGerador.pas',
   TestfCadastroEnderecos in 'TestfCadastroEnderecos.pas',
   fCadastroEnderecos in '..\WMS\fCadastroEnderecos.pas',
   TestuPedidoVenda in 'TestuPedidoVenda.pas',
-  uPedidoVenda in '..\Pedido Venda\uPedidoVenda.pas',
+  uPedidoVenda in '..\Pedido Venda\uPedidoVenda.pas' {$R *.RES},
   uConexao in '..\Conexao\uConexao.pas' {frmConexao},
-  uclPedidoVenda in '..\Pedido Venda\uclPedidoVenda.pas',
+  uclPedidoVenda in '..\Pedido Venda\uclPedidoVenda.pas' {$R *.RES},
   uConfiguracoes in '..\Configuracoes\uConfiguracoes.pas' {frmConfiguracoes};
 
 {$R *.RES}

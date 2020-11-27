@@ -109,7 +109,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, uValidaDados, uLogin;
+uses uDataModule, uUtil, uLogin;
 
 procedure TfrmCadProduto.btnAddCodBarrasClick(Sender: TObject);
 begin

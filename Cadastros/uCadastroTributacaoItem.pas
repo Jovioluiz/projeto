@@ -68,7 +68,7 @@ var
 implementation
 
 uses
-  uValidaDados, uDataModule, uLogin;
+  uUtil, uDataModule, uLogin;
 
 {$R *.dfm}
 

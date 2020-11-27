@@ -5,8 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FireDAC.Comp.Client, FireDAC.DApt, FireDAC.Stan.Param,
-  Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, Datasnap.DBClient,
-  JvExControls, JvLabel, Vcl.StdCtrls, JvExStdCtrls, JvEdit;
+  Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, Datasnap.DBClient, Vcl.StdCtrls;
 
 type
   TfrmConsulta = class(TForm)
@@ -14,12 +13,11 @@ type
     dbgrd1: TDBGrid;
     cdsConsulta: TClientDataSet;
     dsConsulta: TDataSource;
-    edtBusca: TJvEdit;
-    JvLabel1: TJvLabel;
     rgFiltros: TRadioGroup;
     cdsConsultacd_cliente: TIntegerField;
     cdsConsultanm_cliente: TStringField;
     cdsConsultacpf_cnpj: TStringField;
+    edtBusca: TEdit;
     procedure dbgrd1DblClick(Sender: TObject);
     procedure edtBuscaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);

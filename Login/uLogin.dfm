@@ -26,13 +26,13 @@ object frmLogin: TfrmLogin
   object Label1: TLabel
     Left = 16
     Top = 24
-    Width = 48
-    Height = 16
+    Width = 62
+    Height = 19
     Caption = 'Usu'#225'rio'
     Color = clWhite
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -13
+    Font.Height = -16
     Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentColor = False
@@ -41,12 +41,12 @@ object frmLogin: TfrmLogin
   object Label2: TLabel
     Left = 16
     Top = 88
-    Width = 40
-    Height = 16
+    Width = 50
+    Height = 19
     Caption = 'Senha'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -13
+    Font.Height = -16
     Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentFont = False
@@ -305,14 +305,27 @@ object frmLogin: TfrmLogin
     Left = 96
     Top = 21
     Width = 201
-    Height = 21
+    Height = 27
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 0
+    OnExit = edtUsuarioExit
   end
   object edtSenha: TMaskEdit
     Left = 96
     Top = 85
     Width = 201
-    Height = 21
+    Height = 27
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     PasswordChar = '*'
     TabOrder = 1
     Text = ''

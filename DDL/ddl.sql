@@ -1,4 +1,4 @@
-create database trabalho_engenharia
+create database trabalho_engenharia;
 
 
 CREATE OR REPLACE FUNCTION public.func_grava_dt_atz()
@@ -179,12 +179,6 @@ delete
 update
     on
     public.cliente for each row execute procedure gera_log();
--- DROP TRIGGER tr_tp_pessoa ON public.cliente;
-
-create trigger tr_tp_pessoa after
-insert
-    on
-    public.cliente for each row execute procedure func_tp_pessoa();
 
 ----------------------------------------------------------------------
 
