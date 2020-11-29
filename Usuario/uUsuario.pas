@@ -52,7 +52,19 @@ begin
 end;
 
 procedure TfrmUsuario.edtIdUsuarioExit(Sender: TObject);
+const
+  SQL_SELECT = 'select '+
+        '   login, '+
+        '   senha  '+
+        'from login_usuario '+
+        'where '+
+            'id_usuario = :id_usuario';
+var
+  qry: TFDQuery;
 begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
   try
     if edtIdUsuario.Text = EmptyStr then
     begin
@@ -60,20 +72,14 @@ begin
       Exit;
     end;
 
-    sql.Close;
-    sql.SQL.Text := 'select '+
-                        'login, '+
-                        'senha  '+
-                    'from login_usuario '+
-                    'where '+
-                        'id_usuario = :id_usuario';
-    sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
-    sql.Open();
+    qry.SQL.Add(SQL_SELECT);
+    qry.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
+    qry.Open();
 
     if not sql.IsEmpty then
     begin
-      edtNomeUsuario.Text := sql.FieldByName('login').AsString;
-      edtSenhaUsuario.Text := sql.FieldByName('senha').AsString;
+      edtNomeUsuario.Text := qry.FieldByName('login').AsString;
+      edtSenhaUsuario.Text := qry.FieldByName('senha').AsString;
     end
     else
       edtNomeUsuario.SetFocus;
