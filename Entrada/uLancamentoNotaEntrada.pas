@@ -134,14 +134,24 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridProdutosKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure DBGridProdutosDblClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
+    FidGeralNfc: Integer;
+    FEdicaoItem: Boolean;
     { Private declarations }
     procedure validaValoresNota;
     procedure limpaCampos;
     procedure InsereWmsMvto;
     procedure AtualizaEstoque;
+    procedure LancaFinanceiro;
+    procedure SetidGeralNfc(const Value: Integer);
+    procedure CarregaItensEdicao;
+    procedure SetEdicaoItem(const Value: Boolean);
   public
     { Public declarations }
+    property idGeralNfc: Integer read FidGeralNfc write SetidGeralNfc;
+    property EdicaoItem: Boolean read FEdicaoItem write SetEdicaoItem;
   end;
 
 var
@@ -152,7 +162,7 @@ var
 implementation
 
 uses
-  uGerador;
+  uGerador, uLogin;
 
 {$R *.dfm}
 
@@ -255,13 +265,16 @@ end;
 
 procedure TfrmLancamentoNotaEntrada.edtCodProdutoExit(Sender: TObject);
 begin
-  if edtCodProduto.Text = '' then
-    Exit;
-
-  if sqlCabecalho.IsEmpty then
+  if (Trim(edtCodProduto.Text) = '') and (cdsEntrada.RecordCount > 0) then
   begin
-    ShowMessage('Produto não Encontrado');
-    edtFatorConversao.Clear;
+    btnConfirmar.SetFocus;
+    Exit;
+  end;
+
+  if (edtCodProduto.Text = '') and (cdsEntrada.IsEmpty) then
+  begin
+    ShowMessage('Informe um Produto.');
+    edtCodProduto.SetFocus;
     Exit;
   end;
 
@@ -282,10 +295,16 @@ begin
   sqlCabecalho.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
   sqlCabecalho.Open();
 
+  if sqlCabecalho.IsEmpty then
+  begin
+    ShowMessage('Produto não Encontrado');
+    edtFatorConversao.Clear;
+    Exit;
+  end;
+
   aliqIcms := sqlCabecalho.FieldByName('aliquota_icms').AsFloat;
   aliqIpi := sqlCabecalho.FieldByName('aliquota_ipi').AsFloat;
   aliqPisCofins := sqlCabecalho.FieldByName('aliquota_pis_cofins').AsFloat;
-
 end;
 
 //busca o modelo da nota
@@ -475,12 +494,24 @@ begin
   frmLancamentoNotaEntrada := nil;
 end;
 
+procedure TfrmLancamentoNotaEntrada.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  if (edtNroNota.Text <> '') or (cdsEntrada.RecordCount > 0) then
+  begin
+    CanClose := False;
+    if (Application.MessageBox('Deseja Cancelar o lançamento da Nota?','Atenção', MB_YESNO) = IDYES) then
+      CanClose := True;
+  end;
+end;
+
 procedure TfrmLancamentoNotaEntrada.FormCreate(Sender: TObject);
 begin
   edtDataEmissao.Date := now;
   edtDataRecebimento.Date := now;
   edtDataLancamento.Date := now;
   seq := 1;
+  EdicaoItem := False;
 end;
 
 procedure TfrmLancamentoNotaEntrada.FormKeyPress(Sender: TObject;
@@ -522,8 +553,18 @@ begin
   edtValorAcrescimo.Text := '0,00';
   edtValorOutrasDespesas.Text := '0,00';
   edtValorTotalNota.Text := '0,00';
-  //cdsEntrada.EmptyDataSet;
+  cdsEntrada.EmptyDataSet;
   seq := 1;
+end;
+
+procedure TfrmLancamentoNotaEntrada.SetEdicaoItem(const Value: Boolean);
+begin
+  FEdicaoItem := Value;
+end;
+
+procedure TfrmLancamentoNotaEntrada.SetidGeralNfc(const Value: Integer);
+begin
+  FidGeralNfc := Value;
 end;
 
 procedure TfrmLancamentoNotaEntrada.InsereWmsMvto;
@@ -598,6 +639,62 @@ begin
   end;
 end;
 
+procedure TfrmLancamentoNotaEntrada.LancaFinanceiro;
+const
+  SQL = 'insert into cxa_financeiro(' +
+        '   id_geral,' +
+        '   id_nota_entrada,' +
+        '   cd_forma_pgto,' +
+        '   cd_cond_pgto,' +
+        '   valor,' +
+        '   cd_usuario,' +
+        '   fl_entrada_saida,' +
+        '   dt_pgto)' +
+        'values(:id_geral,' +
+        '   :id_nota_entrada,' +
+        '   :cd_forma_pgto,' +
+        '   :cd_cond_pgto,' +
+        '   :valor,' +
+        '   :cd_usuario,' +
+        '   :fl_entrada_saida,' +
+        '   :dt_pgto)';
+var
+  qry: TFDQuery;
+  msg: string;
+  idGeral: TGerador;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+  idGeral := TGerador.Create;
+  try
+    try
+      qry.SQL.Add(SQL);
+      qry.ParamByName('id_geral').AsInteger := idGeral.GeraIdGeral;
+      qry.ParamByName('id_nota_entrada').AsInteger := FidGeralNfc;
+      qry.ParamByName('cd_forma_pgto').AsInteger := 1;  //criar campos para informar forma e condição
+      qry.ParamByName('cd_cond_pgto').AsInteger := 1;
+      qry.ParamByName('valor').AsCurrency := StrToCurr(edtValorTotalNota.Text);
+      qry.ParamByName('cd_usuario').AsInteger := idUsuario;
+      qry.ParamByName('fl_entrada_saida').AsString := 'E';
+      qry.ParamByName('dt_pgto').AsDateTime := Now;
+      qry.ExecSQL;
+      qry.Connection.Commit;
+    except
+      on E : exception do
+      begin
+        msg := 'Erro ao gravar o financeiro da nota fiscal '
+               + edtNroNota.Text + E.Message;
+        qry.Connection.Rollback;
+        ShowMessage(msg);
+        Exit;
+      end;
+    end;
+  finally
+    qry.Free;
+    idGeral.Free;
+  end;
+end;
+
 procedure TfrmLancamentoNotaEntrada.AtualizaEstoque;
 const
   SQL_UPDATE = 'update '+
@@ -648,11 +745,11 @@ begin
       qry.Connection.Commit;
     except
       on E : exception do
-        begin
-          qry.Connection.Rollback;
-          ShowMessage('Erro ao gravar os dados do produto ' + cdsEntrada.FieldByName('cd_produto').AsString + E.Message);
-          Exit;
-        end;
+      begin
+        qry.Connection.Rollback;
+        ShowMessage('Erro ao gravar os dados do produto ' + cdsEntrada.FieldByName('cd_produto').AsString + E.Message);
+        Exit;
+      end;
     end;
   finally
     qry.Free;
@@ -663,26 +760,60 @@ end;
 procedure TfrmLancamentoNotaEntrada.btnAddItensClick(Sender: TObject);
 begin
   try
-    cdsEntrada.Append;
-    cdsEntrada.FieldByName('seq_item_nfi').AsInteger := seq;
-    cdsEntrada.FieldByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
-    cdsEntrada.FieldByName('descricao').AsString := edtDescricaoProduto.Text;
-    cdsEntrada.FieldByName('un_medida').AsString := edtUnMedida.Text;
-    cdsEntrada.FieldByName('qtd_estoque').AsInteger := StrToInt(edtQuantidade.Text);
-    cdsEntrada.FieldByName('fator_conversao').AsInteger := StrToInt(edtFatorConversao.Text);
-    cdsEntrada.FieldByName('qtd_total').AsInteger := StrToInt(edtQuantidadeTotalProduto.Text);
-    cdsEntrada.FieldByName('vl_unitario').AsCurrency := StrToCurr(edtValorUnitario.Text);
-    cdsEntrada.FieldByName('vl_total').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
-    cdsEntrada.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
-    cdsEntrada.FieldByName('icms_pc_aliq').AsFloat := aliqIcms;
-    cdsEntrada.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIcms) / 100;
-    cdsEntrada.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
-    cdsEntrada.FieldByName('ipi_pc_aliq').AsFloat := aliqIpi;
-    cdsEntrada.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIpi) / 100;
-    cdsEntrada.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
-    cdsEntrada.FieldByName('pis_cofins_pc_aliq').AsFloat := aliqPisCofins;
-    cdsEntrada.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqPisCofins) / 100;
-    cdsEntrada.Post;
+    if EdicaoItem then
+    begin
+      try
+        cdsEntrada.Edit;
+        cdsEntrada.FieldByName('seq_item_nfi').AsInteger := seq;
+        cdsEntrada.FieldByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
+        cdsEntrada.FieldByName('descricao').AsString := edtDescricaoProduto.Text;
+        cdsEntrada.FieldByName('un_medida').AsString := edtUnMedida.Text;
+        cdsEntrada.FieldByName('qtd_estoque').AsInteger := StrToInt(edtQuantidade.Text);
+        cdsEntrada.FieldByName('fator_conversao').AsInteger := StrToInt(edtFatorConversao.Text);
+        cdsEntrada.FieldByName('qtd_total').AsInteger := StrToInt(edtQuantidadeTotalProduto.Text);
+        cdsEntrada.FieldByName('vl_unitario').AsCurrency := StrToCurr(edtValorUnitario.Text);
+        cdsEntrada.FieldByName('vl_total').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+        cdsEntrada.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+        cdsEntrada.FieldByName('icms_pc_aliq').AsFloat := aliqIcms;
+        cdsEntrada.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIcms) / 100;
+        cdsEntrada.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+        cdsEntrada.FieldByName('ipi_pc_aliq').AsFloat := aliqIpi;
+        cdsEntrada.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIpi) / 100;
+        cdsEntrada.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+        cdsEntrada.FieldByName('pis_cofins_pc_aliq').AsFloat := aliqPisCofins;
+        cdsEntrada.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqPisCofins) / 100;
+        cdsEntrada.Post;
+      finally
+        EdicaoItem := False;
+      end;
+    end
+    else
+    begin
+      try
+        cdsEntrada.Append;
+        cdsEntrada.FieldByName('seq_item_nfi').AsInteger := seq;
+        cdsEntrada.FieldByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
+        cdsEntrada.FieldByName('descricao').AsString := edtDescricaoProduto.Text;
+        cdsEntrada.FieldByName('un_medida').AsString := edtUnMedida.Text;
+        cdsEntrada.FieldByName('qtd_estoque').AsInteger := StrToInt(edtQuantidade.Text);
+        cdsEntrada.FieldByName('fator_conversao').AsInteger := StrToInt(edtFatorConversao.Text);
+        cdsEntrada.FieldByName('qtd_total').AsInteger := StrToInt(edtQuantidadeTotalProduto.Text);
+        cdsEntrada.FieldByName('vl_unitario').AsCurrency := StrToCurr(edtValorUnitario.Text);
+        cdsEntrada.FieldByName('vl_total').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+        cdsEntrada.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+        cdsEntrada.FieldByName('icms_pc_aliq').AsFloat := aliqIcms;
+        cdsEntrada.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIcms) / 100;
+        cdsEntrada.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+        cdsEntrada.FieldByName('ipi_pc_aliq').AsFloat := aliqIpi;
+        cdsEntrada.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqIpi) / 100;
+        cdsEntrada.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtValorTotalProduto.Text);
+        cdsEntrada.FieldByName('pis_cofins_pc_aliq').AsFloat := aliqPisCofins;
+        cdsEntrada.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtValorTotalProduto.Text) * aliqPisCofins) / 100;
+        cdsEntrada.Post;
+      finally
+        EdicaoItem := False;
+      end;
+    end;
   finally
     edtCodProduto.Clear;
     edtDescricaoProduto.Clear;
@@ -705,12 +836,12 @@ end;
 
 procedure TfrmLancamentoNotaEntrada.btnConfirmarClick(Sender: TObject);
 var
-  idGeralNfc, idGeralNfi : Integer;
+  idGeralNfi : Integer;
   vlIcmsRateado, vlIpiRateado, vlIssRateado, vlFreteRateado,
   vlDescontoRateado, vlAcrescimoRateado, soma, qtdade, qtTotal: Currency;
 begin
   try
-    idGeralNfc := 0;
+    FidGeralNfc := 0;
     validaValoresNota;
     dm.conexaoBanco.StartTransaction;
     //id_geral nfc
@@ -721,14 +852,12 @@ begin
       sqlIdGeral.First;
       while not sqlIdGeral.Eof do
       begin
-        idGeralNfc := sqlIdGeral.FieldByName('func_id_geral').AsInteger;
+        FidGeralNfc := sqlIdGeral.FieldByName('func_id_geral').AsInteger;
         sqlIdGeral.Next;
       end;
     except
       on E:exception do
-      begin
         raise Exception.Create('Erro ao criar o id_geral');
-      end;
     end;
 
     sqlInsert.Close;
@@ -774,7 +903,7 @@ begin
                           '    :valor_acrescimo,        '+
                           '    :valor_outras_despesas,  '+
                           '    :valor_total_nota)' ;
-    sqlInsert.ParamByName('id_geral').AsInteger := idGeralNfc;
+    sqlInsert.ParamByName('id_geral').AsInteger := FidGeralNfc;
     sqlInsert.ParamByName('dcto_numero').AsInteger := StrToInt(edtNroNota.Text);
     sqlInsert.ParamByName('serie').AsString := edtSerie.Text;
     sqlInsert.ParamByName('cd_fornecedor').AsInteger := StrToInt(edtCdFornecedor.Text);
@@ -865,7 +994,7 @@ begin
                                   '    :vl_acrescimo_rateado,   '+
                                   '    :seq_item_nfi)';
         sqlInsertiNfi.ParamByName('id_geral').AsInteger := idGeralNfi;
-        sqlInsertiNfi.ParamByName('id_nfc').AsInteger := idGeralNfc;
+        sqlInsertiNfi.ParamByName('id_nfc').AsInteger := FidGeralNfc;
         sqlInsertiNfi.ParamByName('cd_produto').AsInteger := cdsEntrada.FieldByName('cd_produto').AsInteger;
         sqlInsertiNfi.ParamByName('qtd_estoque').AsCurrency := cdsEntrada.FieldByName('qtd_estoque').AsCurrency;
         sqlInsertiNfi.ParamByName('un_medida').AsString := cdsEntrada.FieldByName('un_medida').AsString;
@@ -876,27 +1005,22 @@ begin
           sqlInsertiNfi.ParamByName('vl_frete_rateado').AsCurrency := vlFreteRateado;
         end
         else
-        begin
           sqlInsertiNfi.ParamByName('vl_frete_rateado').AsCurrency := 0;
-        end;
         if edtValorDesconto.Text > '0,00' then
         begin
           vlDescontoRateado := (StrToCurr(edtValorDesconto.Text) / soma);
           sqlInsertiNfi.ParamByName('vl_desconto_rateado').AsCurrency := vlDescontoRateado;
         end
         else
-        begin
           sqlInsertiNfi.ParamByName('vl_desconto_rateado').AsCurrency := 0;
-        end;
         if edtValorAcrescimo.Text > '0,00' then
         begin
           vlAcrescimoRateado := (StrToCurr(edtValorAcrescimo.Text) / soma);
           sqlInsertiNfi.ParamByName('vl_acrescimo_rateado').AsCurrency := vlAcrescimoRateado;
         end
         else
-        begin
           sqlInsertiNfi.ParamByName('vl_acrescimo_rateado').AsCurrency := 0;
-        end;
+
         sqlInsertiNfi.ParamByName('seq_item_nfi').AsInteger := cdsEntrada.FieldByName('seq_item_nfi').AsInteger;
         sqlInsertiNfi.ParamByName('icms_vl_base').AsCurrency := cdsEntrada.FieldByName('icms_vl_base').AsCurrency;
         sqlInsertiNfi.ParamByName('icms_pc_aliq').AsFloat := cdsEntrada.FieldByName('icms_pc_aliq').AsFloat;
@@ -919,6 +1043,9 @@ begin
     sqlInsert.ExecSQL;
     sqlInsertiNfi.ExecSQL;
     dm.conexaoBanco.Commit;
+
+    LancaFinanceiro;
+
     ShowMessage('Nota gravada com sucesso!');
     sqlInsert.Close;
     sqlInsertiNfi.Close;
@@ -949,12 +1076,28 @@ var
   valor : Currency;
 begin
   if edtValorUnitario.Text = EmptyStr then
-  begin
-   Exit;
-  end;
+    Exit;
 
   valor := (StrToCurr(edtQuantidade.Text) * StrToCurr(edtValorUnitario.Text));
   edtValorTotalProduto.Text := CurrToStr(valor);
+end;
+
+procedure TfrmLancamentoNotaEntrada.CarregaItensEdicao;
+begin
+  edtCodProduto.Text := cdsEntrada.FieldByName('cd_produto').AsString;
+  edtDescricaoProduto.Text := cdsEntrada.FieldByName('descricao').AsString;
+  edtUnMedida.Text := cdsEntrada.FieldByName('un_medida').AsString;
+  edtQuantidade.Text := cdsEntrada.FieldByName('qtd_estoque').AsString;
+  edtFatorConversao.Text := cdsEntrada.FieldByName('fator_conversao').AsString;
+  edtQuantidadeTotalProduto.Text := cdsEntrada.FieldByName('qtd_total').AsString;
+  edtValorUnitario.Text := cdsEntrada.FieldByName('vl_unitario').AsString;
+  edtValorTotalProduto.Text := cdsEntrada.FieldByName('vl_total').AsString;
+  EdicaoItem := True;
+end;
+
+procedure TfrmLancamentoNotaEntrada.DBGridProdutosDblClick(Sender: TObject);
+begin
+  CarregaItensEdicao;
 end;
 
 procedure TfrmLancamentoNotaEntrada.DBGridProdutosKeyDown(Sender: TObject;
@@ -1020,9 +1163,7 @@ begin
   end;
 
   if (vlTotalItens <> StrToFloat(edtVlProduto.Text)) then
-  begin
     raise Exception.Create(' O valor total dos itens não fecha com o valor total da nota! Verifique');
-  end;
 end;
 
 procedure TfrmLancamentoNotaEntrada.valorTotalNota;

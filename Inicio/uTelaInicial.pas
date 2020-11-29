@@ -67,6 +67,7 @@ type
     procedure ControleAcesso1Click(Sender: TObject);
     procedure GravarVendas1Click(Sender: TObject);
     procedure CadastroEndereo1Click(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
   public
@@ -224,10 +225,16 @@ begin
   end;
 end;
 
-
 procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   frmPrincipal := nil;
+end;
+
+procedure TfrmPrincipal.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose := False;
+  if (Application.MessageBox('Deseja Sair do Sistema?','Atenção', MB_YESNO) = IDYES) then
+    CanClose := True;
 end;
 
 //mostra o usuário logado
@@ -241,7 +248,7 @@ procedure TfrmPrincipal.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   if key = VK_ESCAPE then //ESC
   begin
-    if (Application.MessageBox('Deseja realmente sair do sistema?','Atenção', MB_YESNO) = IDYES) then
+    if (Application.MessageBox('Deseja Sair do Sistema?','Atenção', MB_YESNO) = IDYES) then
       Close;
   end;
 end;

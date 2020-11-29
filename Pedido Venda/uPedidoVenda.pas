@@ -111,15 +111,11 @@ type
     procedure edtCdProdutoEnter(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
-    edicaoItem : Boolean;
+    edicaoItem: Boolean;
     FNumeroPedido: Integer;
     FFIdGeral: Int64;
     { Private declarations }
     procedure SetFIdGeral(const Value: Int64);
-
-    property NumeroPedido: Integer read FNumeroPedido write FNumeroPedido;
-    property FIdGeral: Int64 read FFIdGeral write SetFIdGeral;
-
   public
     { Public declarations }
 
@@ -138,6 +134,9 @@ type
     procedure InsereWmsMvto;
     function getNumeroParcelas(CdCondPgto: Integer): Integer;
     procedure CarregaItensEdicao;
+
+    property NumeroPedido: Integer read FNumeroPedido write FNumeroPedido;
+    property FIdGeral: Int64 read FFIdGeral write SetFIdGeral;
   end;
 
 var

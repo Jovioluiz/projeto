@@ -420,7 +420,7 @@ var
 begin
   temCep := False;
   cliente := TValidaDados.Create;
-  temPermissaEdicao := cliente.validaEdicaoAcao(idUsuario, 1);
+  temPermissaEdicao := cliente.validaEdicaoAcao(IdUsuario, 1);
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
 

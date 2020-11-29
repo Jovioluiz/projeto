@@ -34,10 +34,6 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
       TabOrder = 0
       object tbsEndereco: TTabSheet
         Caption = 'Cadastro Endere'#231'o'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label1: TLabel
           Left = 8
           Top = 27
@@ -141,10 +137,6 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
       object tbsProdutoEndereco: TTabSheet
         Caption = 'Cadastro Produto Endereco'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label5: TLabel
           Left = 16
           Top = 64

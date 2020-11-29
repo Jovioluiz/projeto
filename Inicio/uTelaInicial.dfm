@@ -11582,6 +11582,7 @@ object frmPrincipal: TfrmPrincipal
   Position = poScreenCenter
   WindowState = wsMaximized
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   PixelsPerInch = 96

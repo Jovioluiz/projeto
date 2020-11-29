@@ -16,6 +16,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
   Position = poScreenCenter
   Visible = True
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
@@ -506,6 +507,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnDblClick = DBGridProdutosDblClick
       OnKeyDown = DBGridProdutosKeyDown
     end
     object btnConfirmar: TButton
@@ -528,7 +530,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
     end
   end
   object sqlCabecalho: TFDQuery
-    Connection = frmConexao.conexao
+    Connection = dm.conexaoBanco
     Left = 112
     Top = 8
   end

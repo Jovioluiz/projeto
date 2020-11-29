@@ -1202,3 +1202,38 @@ update
 ALTER TABLE public.wms_endereco_produto ADD ordem int NULL;
 ALTER TABLE public.produto DROP COLUMN qtd_estoque;
 alter table nfi disable trigger atualiza_estoque_nfi;
+
+create table cxa_financeiro(
+    id_geral int8 not null,
+    id_pedido_venda int8,
+    id_nota_entrada int8,
+    cd_forma_pgto int4 not null,
+    cd_cond_pgto int4 not null,
+    valor numeric(12,4),
+    cd_usuario int4 not null,
+    fl_entrada_saida varchar(2),
+    dt_pgto date,
+    dt_atz timestamp,
+    constraint pk_cxa_financeiro primary key(id_geral),
+    CONSTRAINT fk_cxa_financeiro_pedido_venda FOREIGN KEY (id_pedido_venda) REFERENCES pedido_venda(id_geral),
+    CONSTRAINT fk_cxa_financeiro_nfc FOREIGN KEY (id_nota_entrada) REFERENCES nfc(id_geral),
+    CONSTRAINT fk_cxa_financeiro_forma_pgto FOREIGN KEY (cd_forma_pgto) REFERENCES cta_forma_pagamento(cd_forma_pag),
+    CONSTRAINT fk_cxa_financeiro_cond_pgto FOREIGN KEY (cd_cond_pgto) REFERENCES cta_cond_pagamento(cd_cond_pag),
+    CONSTRAINT fk_cxa_financeiro_usuario FOREIGN KEY (cd_usuario) REFERENCES login_usuario(id_usuario)    
+);
+
+
+create trigger tr_dt_atz before
+insert
+    or
+update
+    on
+    public.cxa_financeiro for each row execute procedure func_grava_dt_atz();
+create trigger tr_gera_log after
+insert
+    or
+delete
+    or
+update
+    on
+    public.cxa_financeiro for each row execute procedure gera_log();
