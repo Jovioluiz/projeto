@@ -679,19 +679,4 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Visible = False
     end
   end
-  object sqlIdGeral: TFDQuery
-    Connection = dm.conexaoBanco
-    Left = 352
-    Top = 472
-  end
-  object sqlInsert: TFDQuery
-    Connection = dm.conexaoBanco
-    Left = 424
-    Top = 472
-  end
-  object sqlInsertiNfi: TFDQuery
-    Connection = dm.conexaoBanco
-    Left = 600
-    Top = 480
-  end
 end
