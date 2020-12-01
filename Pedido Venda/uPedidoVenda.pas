@@ -110,6 +110,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtCdProdutoEnter(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure dbGridProdutosTitleClick(Column: TColumn);
   private
     edicaoItem: Boolean;
     FNumeroPedido: Integer;
@@ -465,7 +466,7 @@ begin
       InsereWmsMvto;
       atualizaEstoqueProduto;
 
-      setDadosNota;
+      //setDadosNota;
 
       qry.Connection.Commit;
 
@@ -590,6 +591,43 @@ begin
   finally
     qry.Free;
   end;
+end;
+
+procedure TfrmPedidoVenda.dbGridProdutosTitleClick(Column: TColumn);
+var
+  sIndexName: string;
+  oOrdenacao: TIndexOptions;
+  i: smallint;
+begin
+  // retira a formatação em negrito de todas as colunas
+  for i := 0 to dbGridProdutos.Columns.Count - 1 do
+    dbGridProdutos.Columns[i].Title.Font.Style := [];
+
+  // configura a ordenação ascendente ou descendente
+  if cdsPedidoVenda.IndexName = Column.FieldName + '_ASC' then
+  begin
+    sIndexName := Column.FieldName + '_DESC';
+    oOrdenacao := [ixDescending];
+  end
+  else
+  begin
+    sIndexName := Column.FieldName + '_ASC';
+    oOrdenacao := [];
+  end;
+
+  // adiciona a ordenação no DataSet, caso não exista
+  if cdsPedidoVenda.IndexDefs.IndexOf(sIndexName) < 0 then
+    cdsPedidoVenda.AddIndex(sIndexName, Column.FieldName, oOrdenacao);
+
+  cdsPedidoVenda.IndexDefs.Update;
+
+  // formata o título da coluna em negrito
+  Column.Title.Font.Style := [fsBold];
+
+  // atribui a ordenação selecionada
+  cdsPedidoVenda.IndexName := sIndexName;
+
+  cdsPedidoVenda.First;
 end;
 
 //busca o cliente

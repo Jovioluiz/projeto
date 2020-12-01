@@ -717,7 +717,7 @@ const
                             'fator_conversao,     '+
                             'peso_liquido,        '+
                             'peso_bruto,          '+
-                            'observacao,          '+
+                            'observacao)          '+
                     ' values (:cd_produto,         '+
                             ':fl_ativo,           '+
                             ':desc_produto,       '+
@@ -725,7 +725,7 @@ const
                             ':fator_conversao,    '+
                             ':peso_liquido,       '+
                             ':peso_bruto,         '+
-                            ':observacao         ';
+                            ':observacao)         ';
 
   sql_insert_trib = 'insert into                      '+
                             'produto_tributacao(cd_produto, '+
@@ -790,6 +790,7 @@ begin
           qryTrib.ExecSQL;
           dm.conexaoBanco.Commit;
           ShowMessage('Produto Alterado com Sucesso');
+          limpaCampos;
         except
           on E:exception do
             begin
@@ -826,6 +827,7 @@ begin
         qryTrib.ExecSQL;
         dm.conexaoBanco.Commit;
         ShowMessage('Produto cadastrado com Sucesso!');
+        limpaCampos;
       except
         on E:exception do
         begin
@@ -839,7 +841,6 @@ begin
     salvarCodBarras;
     salvaFoto;
   finally
-    limpaCampos;
     FreeAndNil(qry);
     FreeAndNil(qryTrib);
     FreeAndNil(qryProd);

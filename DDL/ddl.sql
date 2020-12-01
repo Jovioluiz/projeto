@@ -1237,3 +1237,6 @@ delete
 update
     on
     public.cxa_financeiro for each row execute procedure gera_log();
+
+alter table pedido_venda_item disable trigger atualiza_estoque_pedido;
+alter table pedido_venda_item disable trigger verifica_estoque_pedido_venda_item;

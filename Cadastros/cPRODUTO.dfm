@@ -43,10 +43,6 @@ object frmCadProduto: TfrmCadProduto
     TabOrder = 3
     object TabSheetCadastroProduto: TTabSheet
       Caption = 'Produto'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label3: TLabel
         Left = 3
         Top = 40

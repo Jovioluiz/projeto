@@ -148,8 +148,8 @@ begin
       ShowMessage('Os campos não podem ser vazios');
       Exit;
     end;
-    if not cdsEndereco.Locate('cd_deposito; ala; rua; ordem',
-       VarArrayOf([StrToInt(edtCodDeposito.Text), edtAla.Text, edtRua.Text, StrToInt(edtOrdem.Text)]), []) then
+    if not cdsEndereco.Locate('cd_deposito; ala; rua',
+       VarArrayOf([StrToInt(edtCodDeposito.Text), edtAla.Text, edtRua.Text]), []) then
     begin
       cdsEndereco.Append;
       cdsEndereco.FieldByName('cd_deposito').AsInteger := StrToInt(edtCodDeposito.Text);
@@ -158,7 +158,6 @@ begin
       cdsEndereco.FieldByName('complemento').AsString := edtComplemento.Text;
       cdsEndereco.FieldByName('nm_endereco').AsString := edtCodDeposito.Text + '-' + edtAla.Text + '-'+
                                                          edtRua.Text + IfThen(edtComplemento.Text = '', '','-' + edtComplemento.Text);
-      cdsEndereco.FieldByName('ordem').AsInteger := StrToInt(edtOrdem.Text);
       cdsEndereco.Post;
     end
     else
@@ -382,7 +381,9 @@ begin
     qry.ParamByName('id_endereco').AsInteger := IdEndereco;
     qry.Open(SQL);
 
-    if qry.FieldByName('nm_endereco').AsString = cdsEndereco.FieldByName('nm_endereco').AsString then
+    if qry.FieldByName('nm_endereco').AsString = edtCodDepositoProdEndereco.Text + '-'
+                                                 + edtAlaProdEndereco.Text + '-'+
+                                                 edtRuaProdEndereco.Text then
       Result := True;
   finally
     qry.Free;

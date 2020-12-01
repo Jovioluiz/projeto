@@ -53,41 +53,44 @@ end;
 
 procedure TfrmUsuario.edtIdUsuarioExit(Sender: TObject);
 const
-  SQL_SELECT = 'select '+
-        '   login, '+
-        '   senha  '+
-        'from login_usuario '+
-        'where '+
-            'id_usuario = :id_usuario';
+  SQL_SELECT = 'select ' +
+              '   login, ' +
+              '   senha  ' +
+              'from login_usuario ' +
+              'where ' +
+                  'id_usuario = :id_usuario';
 var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
-
   try
-    if edtIdUsuario.Text = EmptyStr then
-    begin
-      validaCampos;
-      Exit;
+    try
+      if edtIdUsuario.Text = EmptyStr then
+      begin
+        validaCampos;
+        Exit;
+      end;
+
+      qry.SQL.Add(SQL_SELECT);
+      qry.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
+      qry.Open();
+
+      if not qry.IsEmpty then
+      begin
+        edtNomeUsuario.Text := qry.FieldByName('login').AsString;
+        edtSenhaUsuario.Text := qry.FieldByName('senha').AsString;
+      end
+      else
+        edtNomeUsuario.SetFocus;
+    except
+      on E: Exception do
+      ShowMessage(
+        'Ocorreu um erro.' + #13 +
+        'Mensagem de erro: ' + E.Message);
     end;
-
-    qry.SQL.Add(SQL_SELECT);
-    qry.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
-    qry.Open();
-
-    if not sql.IsEmpty then
-    begin
-      edtNomeUsuario.Text := qry.FieldByName('login').AsString;
-      edtSenhaUsuario.Text := qry.FieldByName('senha').AsString;
-    end
-    else
-      edtNomeUsuario.SetFocus;
-  except
-    on E: Exception do
-    ShowMessage(
-      'Ocorreu um erro.' + #13 +
-      'Mensagem de erro: ' + E.Message);
+  finally
+    qry.Free;
   end;
 end;
 

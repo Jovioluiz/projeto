@@ -283,6 +283,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       OnDrawColumnCell = dbGridProdutosDrawColumnCell
       OnDblClick = dbGridProdutosDblClick
       OnKeyDown = dbGridProdutosKeyDown
+      OnTitleClick = dbGridProdutosTitleClick
     end
     object edtVlDescontoItem: TEdit
       Left = 650
