@@ -47,6 +47,7 @@ type
     GravarVendas1: TMenuItem;
     Estoque1: TMenuItem;
     CadastroEndereo1: TMenuItem;
+    ImportarDados1: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -68,6 +69,7 @@ type
     procedure GravarVendas1Click(Sender: TObject);
     procedure CadastroEndereo1Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure ImportarDados1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -103,7 +105,8 @@ implementation
 
 {$R *.dfm}
 
-uses uUsuario, uControleAcesso, uDataModule, uGravaArquivo, fCadastroEnderecos;
+uses uUsuario, uControleAcesso, uDataModule, uGravaArquivo, fCadastroEnderecos,
+  uImportaDados;
 
 
 procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
@@ -257,6 +260,12 @@ procedure TfrmPrincipal.GravarVendas1Click(Sender: TObject);
 begin
   frmGravaArquivo := TfrmGravaArquivo.Create(Self);
   frmGravaArquivo.ShowModal
+end;
+
+procedure TfrmPrincipal.ImportarDados1Click(Sender: TObject);
+begin
+  frmImportaDados := TfrmImportaDados.Create(Self);
+  frmImportaDados.ShowModal;
 end;
 
 procedure TfrmPrincipal.NotaEntrada1Click(Sender: TObject);

@@ -33,7 +33,8 @@ uses
   uclValidacoesEntrada in 'Entrada\uclValidacoesEntrada.pas',
   uGerador in 'uGerador.pas' {$R *.res},
   fCadastroEnderecos in 'WMS\fCadastroEnderecos.pas' {frmCadastroEnderecos},
-  uCadastrarSenha in 'Cadastros\uCadastrarSenha.pas' {frmCadastraSenha};
+  uCadastrarSenha in 'Cadastros\uCadastrarSenha.pas' {frmCadastraSenha},
+  uImportaDados in 'Arquivos\uImportaDados.pas' {frmImportaDados};
 
 {$R *.res}
 
@@ -43,6 +44,7 @@ begin
   Application.CreateForm(TfrmLogin, frmLogin);
   Application.CreateForm(Tdm, dm);
   Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
+  Application.CreateForm(TfrmImportaDados, frmImportaDados);
   Application.Run;
 
 end.

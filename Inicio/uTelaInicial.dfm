@@ -11661,6 +11661,10 @@ object frmPrincipal: TfrmPrincipal
         Caption = 'Gravar Vendas'
         OnClick = GravarVendas1Click
       end
+      object ImportarDados1: TMenuItem
+        Caption = 'Importar Dados'
+        OnClick = ImportarDados1Click
+      end
     end
     object LanamentoNotas1: TMenuItem
       Caption = 'Lan'#231'amento Notas'
