@@ -40,3 +40,11 @@ INSERT INTO public.usuario_acao (cd_usuario, cd_acao, fl_permite_acesso, fl_perm
 
 INSERT INTO public.configuracao (cd_configuracao, nm_configuracao, descricao_configuracao, valor) VALUES(2, 'Alterar Forma/Condição na Edição Pedido de Venda', 'Se ativa, permite alterar a forma e condição de pagamento na edição do pedido de venda', 'N');
 INSERT INTO public.configuracao (cd_configuracao, nm_configuracao, descricao_configuracao, valor) VALUES(1, 'Alterar Cliente na Edição Pedido de Venda', 'Se ativa, permite alterar o Cliente na edição do pedido de venda', 'N');
+
+
+INSERT INTO public.modelo_nota_fiscal (cd_modelo, nm_modelo) VALUES('01', 'Nota Fiscal');
+INSERT INTO public.operacao (cd_operacao, nm_operacao, fl_ent_sai, cd_modelo_nota_fiscal) VALUES(1, 'Compra', 'E', '01');
+INSERT INTO public.serie_nf (cd_serie, nr_serie, descricao, cd_modelo_nota_fiscal) VALUES(1, '1', 'Serie', NULL);
+
+
+

@@ -13,8 +13,8 @@ object dm: Tdm
   end
   object driver: TFDPhysPgDriverLink
     VendorLib = 
-      'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
-      'libpq.dll'
+      'C:\Users\jovio\OneDrive\Documentos\Projeto\trunk\Win32\Debug\lib' +
+      '\libpq.dll'
     Left = 104
     Top = 16
   end

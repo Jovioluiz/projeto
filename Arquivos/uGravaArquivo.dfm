@@ -15,22 +15,6 @@ object frmGravaArquivo: TfrmGravaArquivo
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object JvLabel1: TJvLabel
-    Left = 8
-    Top = 58
-    Width = 112
-    Height = 13
-    Caption = 'Detalhes Pedido Venda'
-    Transparent = True
-  end
-  object JvLabel2: TJvLabel
-    Left = 82
-    Top = 16
-    Width = 38
-    Height = 13
-    Caption = 'Per'#237'odo'
-    Transparent = True
-  end
   object btnPedidoVenda: TButton
     Left = 391
     Top = 48
@@ -39,14 +23,6 @@ object frmGravaArquivo: TfrmGravaArquivo
     Caption = 'Gravar'
     TabOrder = 0
     OnClick = btnPedidoVendaClick
-  end
-  object edtArquivo: TJvFilenameEdit
-    Left = 134
-    Top = 50
-    Width = 241
-    Height = 21
-    TabOrder = 1
-    Text = ''
   end
   object edtDataIni: TDateTimePicker
     Left = 134
@@ -64,6 +40,6 @@ object frmGravaArquivo: TfrmGravaArquivo
     Height = 21
     Date = 44066.000000000000000000
     Time = 0.881014872684318100
-    TabOrder = 3
+    TabOrder = 1
   end
 end

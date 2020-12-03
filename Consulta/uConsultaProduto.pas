@@ -73,14 +73,16 @@ uses uDataModule, dtmConsultaProduto;
 
 procedure TfrmConsultaProdutos.btnPesquisarClick(Sender: TObject);
 const
-  sql_produto =  'select           '+
-                      'cd_produto,      '+
-                      'desc_produto,    '+
-                      'un_medida,       '+
-                      'fator_conversao, '+
-                      'qtd_estoque      '+
-                 'from                  '+
-                      'produto ';
+  sql_produto =  'select ' +
+                 '  p.cd_produto,  ' +
+                 '  p.desc_produto,' +
+                 '  p.un_medida,   ' +
+                 '  p.fator_conversao, ' +
+                 '  we.qt_estoque      ' +
+                 'from                 ' +
+                 '  produto p           ' +
+                 'left join wms_estoque we on  ' +
+                 '  we.cd_produto = p.cd_produto ';
 var
   qry: TFDQuery;
 begin
@@ -101,14 +103,14 @@ begin
       qry.Open(sql_produto);
 
     if edtCodigo.Checked then
-      qry.SQL.Add(' where cast(cd_produto as varchar) ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));
+      qry.SQL.Add(' where cast(p.cd_produto as varchar) ilike ' + QuotedStr('%'+edtPesquisa.Text+'%'));
 
     if edtDescricao.Checked then
-      qry.SQL.Add(' or desc_produto ilike '+QuotedStr('%'+edtPesquisa.Text+'%'));
+      qry.SQL.Add(' or desc_produto ilike ' + QuotedStr('%'+edtPesquisa.Text+'%'));
     if edtAtivo.Checked then
       qry.SQL.Add(' and fl_ativo = true');
     if edtEstoque.Checked then
-      qry.SQL.Add(' and qtd_estoque > 0');
+      qry.SQL.Add(' and qt_estoque > 0');
 
     qry.Open();
     dsConsultaProduto.DataSet.Active := True;
@@ -121,7 +123,7 @@ begin
       cdsConsultaProduto.FieldByName('desc_produto').AsString := qry.FieldByName('desc_produto').AsString;
       cdsConsultaProduto.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
       cdsConsultaProduto.FieldByName('fator_conversao').AsInteger := qry.FieldByName('fator_conversao').AsInteger;
-      cdsConsultaProduto.FieldByName('qtd_estoque').AsFloat := qry.FieldByName('qtd_estoque').AsFloat;
+      cdsConsultaProduto.FieldByName('qtd_estoque').AsFloat := qry.FieldByName('qt_estoque').AsFloat;
       cdsConsultaProduto.Post;
       qry.Next;
     end;

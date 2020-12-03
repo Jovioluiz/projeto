@@ -5,19 +5,19 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtDlgs,
-  JvComponentBase, JvDSADialogs, JvDialogs, Vcl.Mask, JvExMask, JvToolEdit,
-  JvExControls, JvLabel, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param,
+  //JvComponentBase, JvDSADialogs, JvDialogs, Vcl.Mask, JvExMask, JvToolEdit, JvExControls, JvLabel,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param,
   FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client,
   FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ComCtrls, System.Math, Data.DB;
 
 type
   TfrmGravaArquivo = class(TForm)
     btnPedidoVenda: TButton;
-    edtArquivo: TJvFilenameEdit;
-    JvLabel1: TJvLabel;
+    //edtArquivo: TJvFilenameEdit;
+    //JvLabel1: TJvLabel;
     edtDataIni: TDateTimePicker;
     edtDataFim: TDateTimePicker;
-    JvLabel2: TJvLabel;
+    //JvLabel2: TJvLabel;
     procedure btnPedidoVendaClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
@@ -82,7 +82,7 @@ begin
   qry.ParamByName('dt_final').AsDate := edtDataFim.Date;
   qry.Open(sql);
 
-  caminho := edtArquivo.FileName;
+  //caminho := edtArquivo.FileName;
 
   if caminho <> '' then
   begin

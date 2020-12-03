@@ -158,8 +158,8 @@ object frmCadProduto: TfrmCadProduto
       object memoObservacao: TMemo
         Left = 3
         Top = 99
-        Width = 178
-        Height = 102
+        Width = 382
+        Height = 54
         CharCase = ecUpperCase
         TabOrder = 4
       end
@@ -234,10 +234,6 @@ object frmCadProduto: TfrmCadProduto
     object TabSheet1: TTabSheet
       Caption = 'Tributa'#231#227'o'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label10: TLabel
         Left = 49
         Top = 24
@@ -305,55 +301,6 @@ object frmCadProduto: TfrmCadProduto
         TabOrder = 5
       end
     end
-    object tsOutrasUnidades: TTabSheet
-      Caption = 'Outras Unidades'
-      ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-      object Label16: TLabel
-        Left = 11
-        Top = 48
-        Width = 76
-        Height = 13
-        Caption = 'Unidade Medida'
-      end
-      object Label17: TLabel
-        Left = 164
-        Top = 48
-        Width = 81
-        Height = 13
-        Caption = 'Fator Convers'#227'o'
-      end
-      object edtOutrasUnidades: TEdit
-        Left = 93
-        Top = 45
-        Width = 65
-        Height = 21
-        CharCase = ecUpperCase
-        TabOrder = 0
-      end
-      object edtOutrasUnFatorConv: TEdit
-        Left = 251
-        Top = 45
-        Width = 65
-        Height = 21
-        TabOrder = 1
-      end
-      object DBGrid1: TDBGrid
-        Left = 11
-        Top = 88
-        Width = 306
-        Height = 120
-        TabOrder = 2
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -11
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Style = []
-      end
-    end
   end
   object edtPRODUTOCD_PRODUTO: TEdit
     Left = 119
@@ -396,11 +343,11 @@ object frmCadProduto: TfrmCadProduto
   end
   object cdsBarras: TClientDataSet
     PersistDataPacket.Data = {
-      850000009619E0BD01000000180000000400000000000300000085000A63645F
+      910000009619E0BD01000000180000000400000000000300000091000A63645F
       70726F6475746F040001000000000009756E5F6D656469646101004900000001
-      000557494454480200020014000F7469706F5F636F645F626172726173040001
-      00000000000D636F6469676F5F62617272617301004900000001000557494454
-      480200020014000000}
+      000557494454480200020014000F7469706F5F636F645F626172726173010049
+      00000001000557494454480200020014000D636F6469676F5F62617272617301
+      004900000001000557494454480200020014000000}
     Active = True
     Aggregates = <>
     FieldDefs = <
@@ -415,7 +362,8 @@ object frmCadProduto: TfrmCadProduto
       end
       item
         Name = 'tipo_cod_barras'
-        DataType = ftInteger
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'codigo_barras'
@@ -431,8 +379,8 @@ object frmCadProduto: TfrmCadProduto
       DisplayLabel = 'UN. Medida'
       FieldName = 'un_medida'
     end
-    object intgrfldBarrastipo_cod_barras: TIntegerField
-      DisplayLabel = 'Tipo'
+    object cdsBarrastipo_cod_barras: TStringField
+      DisplayLabel = 'C'#243'd Barras'
       FieldName = 'tipo_cod_barras'
     end
     object cdsBarrascodigo_barras: TStringField
