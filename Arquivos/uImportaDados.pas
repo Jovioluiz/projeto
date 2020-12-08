@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask,
-  JvExMask, JvToolEdit, Vcl.Buttons, Vcl.ExtDlgs, Vcl.ComCtrls,
+  Vcl.Buttons, Vcl.ExtDlgs, Vcl.ComCtrls,
   Vcl.Samples.Gauges, Data.DB, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids;
 
 type
@@ -27,10 +27,14 @@ type
     cdsRegistrosfator_conversao: TIntegerField;
     cdsRegistrospeso_liquido: TFloatField;
     cdsRegistrospeso_bruto: TFloatField;
+    cdsRegistrosseq: TIntegerField;
     procedure btnGravarClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
   private
+    procedure ParseDelimited(const sl: TStrings; const value,
+      delimiter: string);
+
     { Private declarations }
   public
     { Public declarations }
@@ -121,28 +125,28 @@ end;
 
 procedure TfrmImportaDados.Button2Click(Sender: TObject);
 var
-  linha: TStringList;
-  arquivo: TextFile;
-  i: Integer;
+  arquivo: string;
+  linhas, temp: TStringList;
+  i: integer;
 begin
-  linha := TStringList.Create;
+  arquivo := edtArquivo.Text;
+  linhas := TStringList.Create;
+  temp := TStringList.Create;
+  linhas.LoadFromFile(arquivo);
 
-  linha.LoadFromFile(edtArquivo.Text);
+  for i := 0 to Pred(linhas.Count) do
+  begin
+    ParseDelimited(temp, linhas[i], ',');
 
-  try
-    for i := 0 to Pred(linha.Count) do
-    begin
-      cdsRegistros.Append;
-      cdsRegistros.FieldByName('cd_produto').AsInteger := StrToInt(Copy(linha.Strings[0], 0, Pos(',', linha[0])));
-//      cdsRegistros.FieldByName('desc_produto').AsString := Copy(linha.Strings[1]);
-//      cdsRegistros.FieldByName('un_medida').AsString := Copy(linha.Strings[2]);
-//      cdsRegistros.FieldByName('fator_conversao').AsInteger := StrToInt(Copy(linha.Strings[3]));
-//      cdsRegistros.FieldByName('peso_liquido').AsFloat := StrToFloat(Copy(linha.Strings[4]));
-//      cdsRegistros.FieldByName('peso_bruto').AsFloat := StrToFloat(Copy(linha.Strings[5]));
-      cdsRegistros.Post;
-    end;
-  finally
-    linha.Free;
+    cdsRegistros.Append;
+    cdsRegistros.FieldByName('seq').AsInteger := i + 1;
+    cdsRegistros.FieldByName('cd_produto').AsInteger := StrToInt(temp[0]);
+    cdsRegistros.FieldByName('desc_produto').AsString := temp[1];
+    cdsRegistros.FieldByName('un_medida').AsString := temp[2];
+    cdsRegistros.FieldByName('fator_conversao').AsInteger := StrToInt(temp[3]);
+    cdsRegistros.FieldByName('peso_liquido').AsFloat := StrToFloat(temp[4]);
+    cdsRegistros.FieldByName('peso_bruto').AsFloat := StrToFloat(temp[5]);
+    cdsRegistros.Post;
   end;
 end;
 
@@ -151,6 +155,31 @@ begin
   dlArquivo.Filter := ('*.csv*.CSV');
   if dlArquivo.Execute then
     edtArquivo.Text := dlArquivo.FileName;
+end;
+
+procedure TfrmImportaDados.ParseDelimited(const sl : TStrings;
+const value : string; const delimiter : string);
+var
+  dx : integer;
+  ns : string;
+  txt : string;
+  delta : integer;
+begin
+  delta := Length(delimiter) ;
+  txt := value + delimiter;
+  sl.BeginUpdate;
+  sl.Clear;
+  try
+    while Length(txt) > 0 do
+    begin
+      dx := Pos(delimiter, txt) ;
+      ns := Copy(txt,0,dx-1) ;
+      sl.Add(ns) ;
+      txt := Copy(txt,dx+delta,MaxInt);
+    end;
+  finally
+    sl.EndUpdate;
+  end;
 end;
 
 end.

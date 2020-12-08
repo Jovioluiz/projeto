@@ -71,7 +71,6 @@ object frmImportaDados: TfrmImportaDados
     Height = 346
     Align = alBottom
     TabOrder = 3
-    ExplicitTop = 142
     object DBGrid1: TDBGrid
       Left = 1
       Top = 0
@@ -98,17 +97,54 @@ object frmImportaDados: TfrmImportaDados
   end
   object cdsRegistros: TClientDataSet
     PersistDataPacket.Data = {
-      AC0000009619E0BD010000001800000006000000000003000000AC000A63645F
-      70726F6475746F04000100000000000C646573635F70726F6475746F01004900
-      0000010005574944544802000200140009756E5F6D6564696461010049000000
-      01000557494454480200020014000F6661746F725F636F6E76657273616F0400
-      0100000000000C7065736F5F6C69717569646F08000400000000000A7065736F
-      5F627275746F08000400000000000000}
+      B80000009619E0BD010000001800000007000000000003000000B80003736571
+      04000100000000000A63645F70726F6475746F04000100000000000C64657363
+      5F70726F6475746F010049000000010005574944544802000200140009756E5F
+      6D656469646101004900000001000557494454480200020014000F6661746F72
+      5F636F6E76657273616F04000100000000000C7065736F5F6C69717569646F08
+      000400000000000A7065736F5F627275746F08000400000000000000}
     Active = True
     Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'seq'
+        DataType = ftInteger
+      end
+      item
+        Name = 'cd_produto'
+        DataType = ftInteger
+      end
+      item
+        Name = 'desc_produto'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'un_medida'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'fator_conversao'
+        DataType = ftInteger
+      end
+      item
+        Name = 'peso_liquido'
+        DataType = ftFloat
+      end
+      item
+        Name = 'peso_bruto'
+        DataType = ftFloat
+      end>
+    IndexDefs = <>
     Params = <>
+    StoreDefs = True
     Left = 360
     Top = 264
+    object cdsRegistrosseq: TIntegerField
+      DisplayWidth = 6
+      FieldName = 'seq'
+    end
     object cdsRegistroscd_produto: TIntegerField
       DisplayLabel = 'C'#243'd. Produto'
       DisplayWidth = 10

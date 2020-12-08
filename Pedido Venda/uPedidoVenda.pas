@@ -123,7 +123,6 @@ type
     procedure limpaCampos;
     procedure limpaDados;
     procedure atualizaEstoqueProduto;
-    function GeraNumeroPedido: Integer;
     function ProdutoJaLancado(CodProduto: Integer): Boolean;
     function RetornaSequencia: Integer;
     procedure AlteraSequenciaItem;
@@ -832,15 +831,17 @@ const
   SQL = 'select nr_pedido from pedido_venda where nr_pedido = :nr_pedido';
 var
   qry:TFDQuery;
+  geraNrPedido: TGerador;
 begin
   inherited;
+  geraNrPedido := TGerador.Create;
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
 
   try
     if edtNrPedido.Text = '' then
     begin
-      NumeroPedido := GeraNumeroPedido;
+      NumeroPedido := geraNrPedido.GeraNumeroPedido;
       edtNrPedido.Text := NumeroPedido.ToString;
     end;
 
@@ -1116,27 +1117,6 @@ begin
   end;
 end;
 
-
-function TfrmPedidoVenda.GeraNumeroPedido: Integer;
-const
-  sqlNrPedido = 'select '+
-                '*  '+
-                'from func_nr_pedido()';
-var
-  qry: TFDQuery;
-begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.conexaoBanco;
-
-  try
-    qry.SQL.Add(sqlNrPedido);
-    qry.Open(sqlNrPedido);
-
-    Result := qry.FieldByName('func_nr_pedido').AsInteger;
-  finally
-    qry.Free;
-  end;
-end;
 
 function TfrmPedidoVenda.getNumeroParcelas(CdCondPgto: Integer): Integer;
 const
