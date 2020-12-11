@@ -1174,26 +1174,24 @@ end;
 
 procedure TfrmLancamentoNotaEntrada.valorTotalNota;
 //calcula o valor total da nota
-var vlTotal, vlServico, vlProduto, vlFrete, vlIpi, vlDesconto, vlAcrescimo, vlOutrasDespesas : Currency;
+var vlTotal: Currency;
 begin
-  vlServico := StrToCurr(edtVlServico.Text);
-  vlProduto := StrToCurr(edtVlProduto.Text);
-  vlFrete := StrToCurr(edtValorFrete.Text);
-  vlIpi := StrToCurr(edtValorIPI.Text);
-  vlDesconto := StrToCurr(edtValorDesconto.Text);
-  vlAcrescimo := StrToCurr(edtValorAcrescimo.Text);
-  vlOutrasDespesas := StrToCurr(edtValorOutrasDespesas.Text);
 
-  if vlServico > 0 then
+  if StrToCurr(edtVlServico.Text) > 0 then
   begin
     vlTotal := 0;
-    vlTotal := vlTotal + vlServico;
+    vlTotal := vlTotal + StrToCurr(edtVlServico.Text);
     edtValorTotalNota.Text := CurrToStr(vlTotal);
   end
-  else if vlProduto > 0 then
+  else if StrToCurr(edtVlProduto.Text) > 0 then
   begin
     vlTotal := 0;
-    vlTotal := (vlTotal + vlProduto + vlFrete + vlIpi + vlAcrescimo + vlOutrasDespesas) - vlDesconto;
+    vlTotal := (vlTotal + StrToCurr(edtVlProduto.Text)
+                        + StrToCurr(edtValorFrete.Text)
+                        + StrToCurr(edtValorIPI.Text)
+                        + StrToCurr(edtValorAcrescimo.Text)
+                        + StrToCurr(edtValorOutrasDespesas.Text))
+                        - StrToCurr(edtValorDesconto.Text);
     edtValorTotalNota.Text := CurrToStr(vlTotal);
   end;
 end;
