@@ -94,14 +94,7 @@ begin
 
     if (Trim(edtUsuario.Text) = usuario)
         and (Trim(senha) = verificaSenha.DescriptografaSenha(edtSenha.Text)) then
-    begin
-      try
-        frmPrincipal := TfrmPrincipal.Create(Self);
-        frmPrincipal.ShowModal;
-      finally
-        frmLogin.Close;
-      end;
-    end
+      ModalResult := mrOk
     else
     begin
       lblInfo.Font.Color := clRed;

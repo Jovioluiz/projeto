@@ -82,7 +82,7 @@ object frmControleAcesso: TfrmControleAcesso
     Width = 161
     Height = 21
     Enabled = False
-    TabOrder = 1
+    TabOrder = 3
     OnExit = edtUsuarioExit
   end
   object dbGridAcoes: TDBGrid
@@ -106,7 +106,7 @@ object frmControleAcesso: TfrmControleAcesso
     Top = 65
     Width = 73
     Height = 21
-    TabOrder = 2
+    TabOrder = 1
     OnChange = edtCdAcaoChange
   end
   object edtNomeAcao: TEdit
@@ -115,7 +115,7 @@ object frmControleAcesso: TfrmControleAcesso
     Width = 161
     Height = 21
     Enabled = False
-    TabOrder = 3
+    TabOrder = 4
     OnExit = edtUsuarioExit
   end
   object cbEdicao: TComboBox
@@ -123,7 +123,7 @@ object frmControleAcesso: TfrmControleAcesso
     Top = 92
     Width = 73
     Height = 21
-    TabOrder = 4
+    TabOrder = 2
     Items.Strings = (
       'Sim'
       'N'#227'o')

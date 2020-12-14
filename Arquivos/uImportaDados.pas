@@ -15,7 +15,6 @@ type
     edtArquivo: TEdit;
     SpeedButton1: TSpeedButton;
     dlArquivo: TOpenTextFileDialog;
-    Gauge1: TGauge;
     btnVisualizarProdutos: TButton;
     Panel1: TPanel;
     dbGridProdutos: TDBGrid;
@@ -49,6 +48,9 @@ type
     cdsProdutosfator_conversao: TIntegerField;
     cdsProdutospeso_liquido: TFloatField;
     cdsProdutospeso_bruto: TFloatField;
+    cdsProdutosseq: TIntegerField;
+    gaugeClientes: TGauge;
+    gaugeProdutos: TGauge;
     procedure btnGravarClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure btnVisualizarProdutosClick(Sender: TObject);
@@ -113,12 +115,12 @@ begin
       // Configura o tamanho do array de inserções
       qry.Params.ArraySize := stringListFile.Count;
 
-      Gauge1.MaxValue := stringListFile.Count;
+      gaugeProdutos.MaxValue := stringListFile.Count;
 
       for cont := 0 to Pred(stringListFile.Count) do
       begin
-        Gauge1.Visible := True;
-        Gauge1.Progress := Gauge1.Progress + 1;
+        gaugeProdutos.Visible := True;
+        gaugeProdutos.Progress := gaugeProdutos.Progress + 1;
         strinListLinha.StrictDelimiter := True;
 
         // TStringList recebe o conteúdo da linha atual
@@ -146,7 +148,7 @@ begin
     end;
 
   finally
-    Gauge1.Visible := False;
+    gaugeProdutos.Visible := False;
     stringListFile.Free;
     strinListLinha.Free;
     qry.Free;
@@ -186,12 +188,12 @@ begin
       // Configura o tamanho do array de inserções
       qry.Params.ArraySize := stringListFile.Count;
 
-      Gauge1.MaxValue := stringListFile.Count;
+      gaugeClientes.MaxValue := stringListFile.Count;
 
       for cont := 0 to Pred(stringListFile.Count) do
       begin
-        Gauge1.Visible := True;
-        Gauge1.Progress := Gauge1.Progress + 1;
+        gaugeClientes.Visible := True;
+        gaugeClientes.Progress := gaugeClientes.Progress + 1;
         strinListLinha.StrictDelimiter := True;
 
         // TStringList recebe o conteúdo da linha atual
@@ -222,7 +224,7 @@ begin
     end;
 
   finally
-    Gauge1.Visible := False;
+    gaugeClientes.Visible := False;
     stringListFile.Free;
     strinListLinha.Free;
     qry.Free;
@@ -245,20 +247,26 @@ begin
   linhas := TStringList.Create;
   temp := TStringList.Create;
   linhas.LoadFromFile(arquivo);
+  gaugeProdutos.MaxValue := Pred(linhas.Count);
+  try
+    for i := 0 to Pred(linhas.Count) do
+    begin
+      ParseDelimited(temp, linhas[i], ',');
+      gaugeProdutos.Visible := True;
+      gaugeProdutos.Progress := gaugeProdutos.Progress + 1;
 
-  for i := 0 to Pred(linhas.Count) do
-  begin
-    ParseDelimited(temp, linhas[i], ',');
-
-    cdsProdutos.Append;
-    cdsProdutos.FieldByName('seq').AsInteger := i + 1;
-    cdsProdutos.FieldByName('cd_produto').AsInteger := StrToInt(temp[0]);
-    cdsProdutos.FieldByName('desc_produto').AsString := temp[1];
-    cdsProdutos.FieldByName('un_medida').AsString := temp[2];
-    cdsProdutos.FieldByName('fator_conversao').AsInteger := StrToInt(temp[3]);
-    cdsProdutos.FieldByName('peso_liquido').AsFloat := StrToFloat(temp[4]);
-    cdsProdutos.FieldByName('peso_bruto').AsFloat := StrToFloat(temp[5]);
-    cdsProdutos.Post;
+      cdsProdutos.Append;
+      cdsProdutos.FieldByName('seq').AsInteger := i + 1;
+      cdsProdutos.FieldByName('cd_produto').AsInteger := StrToInt(temp[0]);
+      cdsProdutos.FieldByName('desc_produto').AsString := temp[1];
+      cdsProdutos.FieldByName('un_medida').AsString := temp[2];
+      cdsProdutos.FieldByName('fator_conversao').AsInteger := StrToInt(temp[3]);
+      cdsProdutos.FieldByName('peso_liquido').AsFloat := StrToFloat(temp[4]);
+      cdsProdutos.FieldByName('peso_bruto').AsFloat := StrToFloat(temp[5]);
+      cdsProdutos.Post;
+    end;
+  finally
+    gaugeProdutos.Visible := False;
   end;
 end;
 

@@ -39,14 +39,6 @@ object frmImportaDados: TfrmImportaDados
           Height = 13
           Caption = 'Arquivo:'
         end
-        object Gauge1: TGauge
-          Left = -241
-          Top = 148
-          Width = 522
-          Height = 17
-          Progress = 0
-          Visible = False
-        end
         object SpeedButton1: TSpeedButton
           Left = 346
           Top = 15
@@ -64,7 +56,7 @@ object frmImportaDados: TfrmImportaDados
         end
         object btnVisualizarProdutos: TButton
           Left = 3
-          Top = 78
+          Top = 70
           Width = 98
           Height = 25
           Caption = 'Visualizar'
@@ -82,17 +74,25 @@ object frmImportaDados: TfrmImportaDados
         end
         object Panel1: TPanel
           Left = 0
-          Top = 110
+          Top = 109
           Width = 625
-          Height = 346
+          Height = 347
           Align = alBottom
           TabOrder = 3
+          object gaugeProdutos: TGauge
+            Left = 50
+            Top = 32
+            Width = 521
+            Height = 18
+            Progress = 0
+            Visible = False
+          end
           object dbGridProdutos: TDBGrid
             Left = 1
-            Top = 1
+            Top = 56
             Width = 623
-            Height = 344
-            Align = alClient
+            Height = 290
+            Align = alBottom
             DataSource = dsProdutos
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
@@ -107,38 +107,46 @@ object frmImportaDados: TfrmImportaDados
         Caption = 'Clientes'
         ImageIndex = 1
         object Label2: TLabel
-          Left = 11
-          Top = 27
+          Left = 3
+          Top = 19
           Width = 41
           Height = 13
           Caption = 'Arquivo:'
         end
         object btnBuscaArquivoCliente: TSpeedButton
-          Left = 354
-          Top = 23
+          Left = 346
+          Top = 15
           Width = 26
           Height = 22
           Caption = '...'
           OnClick = btnBuscaArquivoClienteClick
         end
+        object gaugeClientes: TGauge
+          Left = 50
+          Top = 144
+          Width = 542
+          Height = 18
+          Progress = 0
+          Visible = False
+        end
         object edtArquivoCliente: TEdit
-          Left = 58
-          Top = 24
+          Left = 50
+          Top = 16
           Width = 290
           Height = 21
           TabOrder = 0
         end
         object btnVisualizarCliente: TButton
-          Left = 11
-          Top = 86
+          Left = 3
+          Top = 70
           Width = 98
           Height = 25
           Caption = 'Visualizar'
           TabOrder = 1
         end
         object btnGravarCliente: TButton
-          Left = 386
-          Top = 22
+          Left = 378
+          Top = 14
           Width = 98
           Height = 25
           Caption = 'Gravar Cliente'
@@ -147,9 +155,9 @@ object frmImportaDados: TfrmImportaDados
         end
         object dbGridClientes: TDBGrid
           Left = 0
-          Top = 144
+          Top = 168
           Width = 625
-          Height = 312
+          Height = 288
           Align = alBottom
           DataSource = dsClientes
           TabOrder = 3
@@ -286,17 +294,53 @@ object frmImportaDados: TfrmImportaDados
   end
   object cdsProdutos: TClientDataSet
     PersistDataPacket.Data = {
-      AC0000009619E0BD010000001800000006000000000003000000AC000A63645F
-      70726F6475746F04000100000000000C646573635F70726F6475746F01004900
-      0000010005574944544802000200140009756E5F6D6564696461010049000000
-      01000557494454480200020014000F6661746F725F636F6E76657273616F0400
-      0100000000000C7065736F5F6C69717569646F08000400000000000A7065736F
-      5F627275746F08000400000000000000}
+      B80000009619E0BD010000001800000007000000000003000000B80003736571
+      04000100000000000A63645F70726F6475746F04000100000000000C64657363
+      5F70726F6475746F010049000000010005574944544802000200140009756E5F
+      6D656469646101004900000001000557494454480200020014000F6661746F72
+      5F636F6E76657273616F04000100000000000C7065736F5F6C69717569646F08
+      000400000000000A7065736F5F627275746F08000400000000000000}
     Active = True
     Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'seq'
+        DataType = ftInteger
+      end
+      item
+        Name = 'cd_produto'
+        DataType = ftInteger
+      end
+      item
+        Name = 'desc_produto'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'un_medida'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'fator_conversao'
+        DataType = ftInteger
+      end
+      item
+        Name = 'peso_liquido'
+        DataType = ftFloat
+      end
+      item
+        Name = 'peso_bruto'
+        DataType = ftFloat
+      end>
+    IndexDefs = <>
     Params = <>
+    StoreDefs = True
     Left = 133
     Top = 225
+    object cdsProdutosseq: TIntegerField
+      FieldName = 'seq'
+    end
     object cdsProdutoscd_produto: TIntegerField
       DisplayLabel = 'C'#243'd Produto'
       FieldName = 'cd_produto'

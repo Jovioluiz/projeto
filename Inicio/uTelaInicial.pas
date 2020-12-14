@@ -107,7 +107,7 @@ implementation
 {$R *.dfm}
 
 uses uUsuario, uControleAcesso, uDataModule, uGravaArquivo, fCadastroEnderecos,
-  uImportaDados;
+  uImportaDados, uSplash;
 
 
 procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
@@ -244,7 +244,9 @@ end;
 //mostra o usuário logado
 procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
-  StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frmLogin.edtUsuario.Text);
+  //StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frmLogin.edtUsuario.Text);
+  frmsplash := TfrmSplash.Create(Self);
+  frmSplash.ShowModal;
 end;
 
 procedure TfrmPrincipal.FormKeyDown(Sender: TObject; var Key: Word;

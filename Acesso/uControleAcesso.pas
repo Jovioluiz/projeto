@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids,
-  Vcl.Buttons, System.UITypes;
+  Vcl.Buttons, System.UITypes, uDataModule, uUtil;
 
 type
   TfrmControleAcesso = class(TForm)
@@ -25,7 +25,7 @@ type
     Label2: TLabel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtUsuarioExit(Sender: TObject);
-    procedure limpaCampos;
+
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnAddClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -35,11 +35,19 @@ type
     procedure FormCreate(Sender: TObject);
     procedure dbGridAcoesDblClick(Sender: TObject);
   private
+    FDados: Tdm;
+    FEdicao: Boolean;
     { Private declarations }
     procedure listar;
     procedure excluir;
+    procedure CarregaGrid;
+    function Pesquisar(CdUsuario, CdAcao: Integer): Boolean;
+    procedure Salvar;
+    procedure limpaCampos;
   public
     { Public declarations }
+    property Dados: Tdm read FDados;
+    property Edicao: Boolean read FEdicao;
   end;
 
 var
@@ -50,7 +58,6 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule;
 
 //realizar as validações de edição nos formulários de cadastro
 
@@ -63,7 +70,11 @@ begin
     Exit;
   end;
 
-//já salva os dados na tabela usuario_acao
+  if dm.cdsControleAcesso.Locate('cd_acao',
+                          VarArrayOf([StrToInt(edtCdAcao.Text)]), []) then
+    raise Exception.Create('Usuário já possui a ação cadastrada');
+
+  //já salva os dados na tabela usuario_acao
   dm.query.Close;
   dm.query.SQL.Clear;
   dm.query.SQL.Text := 'select '+
@@ -74,33 +85,34 @@ begin
                        ' cd_acao = :cd_acao';
   dm.query.ParamByName('cd_acao').AsInteger := StrToInt(edtCdAcao.Text);
   dm.query.Open();
+
   if dm.query.IsEmpty then
     Exit;
 
-  if edicao then
+  if FEdicao then
   begin
-    dm.dsControleAcesso.DataSet.Edit;
+    dm.cdsControleAcesso.Edit;
     if cbEdicao.ItemIndex = 0 then
-      dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := True
+      dm.cdsControleAcesso.FieldByName('fl_permite_edicao').AsBoolean := True
     else
-      dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := False;
+      dm.cdsControleAcesso.FieldByName('fl_permite_edicao').AsBoolean := False;
 
-    dm.dsControleAcesso.DataSet.Post; //da erro, mas atualiza corretamente
+    dm.cdsControleAcesso.Post;
   end
   else
   begin
-    dm.dsControleAcesso.DataSet.Append;
-    dm.dsControleAcesso.DataSet.FieldByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
-    dm.dsControleAcesso.DataSet.FieldByName('cd_acao').AsInteger := StrToInt(edtCdAcao.Text);
-    dm.dsControleAcesso.DataSet.FieldByName('nm_acao').AsString := edtNomeAcao.Text;
-    dm.dsControleAcesso.DataSet.FieldByName('fl_permite_acesso').AsBoolean := True;
+    dm.cdsControleAcesso.Append;
+    dm.cdsControleAcesso.FieldByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
+    dm.cdsControleAcesso.FieldByName('cd_acao').AsInteger := StrToInt(edtCdAcao.Text);
+    dm.cdsControleAcesso.FieldByName('nm_acao').AsString := edtNomeAcao.Text;
+    dm.cdsControleAcesso.FieldByName('fl_permite_acesso').AsBoolean := True;
 
     if cbEdicao.ItemIndex = 0 then
-      dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := True
+      dm.cdsControleAcesso.FieldByName('fl_permite_edicao').AsBoolean := True
     else
-      dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean := False;
+      dm.cdsControleAcesso.FieldByName('fl_permite_edicao').AsBoolean := False;
 
-    dm.dsControleAcesso.DataSet.Post;
+    dm.cdsControleAcesso.Post;
   end;
 
   edtCdAcao.Clear;
@@ -108,7 +120,46 @@ begin
   cbEdicao.ItemIndex := 1;
   listar;
 
-  edicao := False;
+  FEdicao := False;
+end;
+
+procedure TfrmControleAcesso.CarregaGrid;
+const
+  SQL_ACOES = 'select ' +
+              '  *    ' +
+              'from    ' +
+              '  acoes_sistema a ' +
+              '  join usuario_acao ua on ' +
+              '  a.cd_acao = ua.cd_acao ' +
+              'where ua.cd_usuario = :cd_usuario';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    dm.cdsControleAcesso.EmptyDataSet;
+    qry.SQL.Add(SQL_ACOES);
+
+    qry.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
+    qry.Open();
+    qry.First;
+
+    while not qry.Eof do
+    begin
+      dm.cdsControleAcesso.Append;
+      dm.cdsControleAcesso.FieldByName('cd_usuario').AsInteger := qry.FieldByName('cd_usuario').AsInteger;
+      dm.cdsControleAcesso.FieldByName('cd_acao').AsInteger := qry.FieldByName('cd_acao').AsInteger;
+      dm.cdsControleAcesso.FieldByName('nm_acao').AsString := qry.FieldByName('nm_acao').AsString;
+      dm.cdsControleAcesso.FieldByName('fl_permite_acesso').AsBoolean := qry.FieldByName('fl_permite_acesso').AsBoolean;
+      dm.cdsControleAcesso.FieldByName('fl_permite_edicao').AsBoolean := qry.FieldByName('fl_permite_edicao').AsBoolean;
+      dm.cdsControleAcesso.Post;
+      qry.Next;
+    end;
+  finally
+    qry.Free;
+  end;
 end;
 
 procedure TfrmControleAcesso.dbGridAcoesDblClick(Sender: TObject);
@@ -120,7 +171,7 @@ begin
   else
     cbEdicao.ItemIndex := 1;
 
-  edicao := True;
+  FEdicao := True;
 end;
 
 procedure TfrmControleAcesso.dbGridAcoesKeyDown(Sender: TObject; var Key: Word;
@@ -144,7 +195,7 @@ begin
         dm.query.ExecSQL;
         edtUsuario.SetFocus;
       except
-      on E : exception do
+        on E : exception do
         begin
           ShowMessage('Erro ' + E.Message);
           Exit;
@@ -201,6 +252,7 @@ begin
   query.ParamByName('id_usuario').AsInteger := StrToInt(edtUsuario.Text);
   query.Open(sql_login);
   edtNomeUsuario.Text := query.FieldByName('login').AsString;
+  CarregaGrid;
   listar;
 end;
 
@@ -221,9 +273,9 @@ begin
         edtUsuario.SetFocus;
       except
         on E:exception do
-          begin
-            ShowMessage('Erro ao excluir os dados' + E.Message);
-          end;
+        begin
+          ShowMessage('Erro ao excluir os dados' + E.Message);
+        end;
       end;
     end
   else
@@ -244,13 +296,18 @@ end;
 procedure TfrmControleAcesso.FormCreate(Sender: TObject);
 begin
  cbEdicao.ItemIndex := 1;
+ dm.cdsControleAcesso.EmptyDataSet;
+// FDados := dm.Create(nil);
+// dbGridAcoes.DataSource := FDados.dsControleAcesso;
 end;
 
 procedure TfrmControleAcesso.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
-  if key = VK_F3 then //F3
+  if Key = VK_F2 then
+    Salvar
+  else if key = VK_F3 then //F3
     limpaCampos
   else if key = VK_F4 then    //F4
     excluir
@@ -276,7 +333,7 @@ begin
   edtCdAcao.Clear;
   edtNomeAcao.Clear;
   cbEdicao.ItemIndex := 1;
-  dm.queryControleAcesso.Close;
+  dm.cdsControleAcesso.EmptyDataSet;
 end;
 
 procedure TfrmControleAcesso.listar;
@@ -295,6 +352,99 @@ begin
   dm.queryControleAcesso.SQL.Add(sql_acao);
   dm.queryControleAcesso.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
   dm.queryControleAcesso.Open(sql_acao);
+end;
+
+function TfrmControleAcesso.Pesquisar(CdUsuario, CdAcao: Integer): Boolean;
+const
+  SQL = 'select ' +
+        '    cd_usuario, ' +
+        '    cd_acao ' +
+        'from ' +
+        '    usuario_acao ua ' +
+        'where ' +
+        '    cd_usuario = :cd_usuario ' +
+        '    and cd_acao = :cd_acao ';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_usuario').AsInteger := CdUsuario;
+    qry.ParamByName('cd_acao').AsInteger := CdAcao;
+    qry.Open();
+
+    Result := not qry.IsEmpty;
+  finally
+    qry.Free;
+  end;
+end;
+procedure TfrmControleAcesso.Salvar;
+const
+  SQL_INSERT = 'insert ' +
+              '    into ' +
+              '    usuario_acao (cd_usuario, ' +
+              '    cd_acao, ' +
+              '    fl_permite_acesso, ' +
+              '    fl_permite_edicao) ' +
+              'values(:cd_usuario, ' +
+              ':cd_acao, ' +
+              ':fl_permite_acesso, ' +
+              ':fl_permite_edicao)';
+
+  SQL_UPDATE = 'update ' +
+              '    usuario_acao ' +
+              'set ' +
+              '    fl_permite_acesso = :fl_permite_acesso, ' +
+              '    fl_permite_edicao = :fl_permite_edicao ' +
+              'where ' +
+              '    cd_usuario = :cd_usuario ' +
+              '    and cd_acao = :cd_acao';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+  qry.Connection.StartTransaction;
+  dm.cdsControleAcesso.DisableControls;
+  dm.cdsControleAcesso.First;
+
+  try
+    try
+      while not dm.cdsControleAcesso.Eof do
+      begin
+        if not Pesquisar(dm.cdsControleAcesso.FieldByName('cd_usuario').AsInteger,
+                         dm.cdsControleAcesso.FieldByName('cd_acao').AsInteger) then
+          qry.SQL.Add(SQL_INSERT)
+        else
+          qry.SQL.Add(SQL_UPDATE);
+
+        qry.ParamByName('cd_usuario').AsInteger := dm.cdsControleAcesso.FieldByName('cd_usuario').AsInteger;
+        qry.ParamByName('cd_acao').AsInteger := dm.cdsControleAcesso.FieldByName('cd_acao').AsInteger;
+        qry.ParamByName('fl_permite_acesso').AsBoolean := dm.cdsControleAcesso.FieldByName('fl_permite_acesso').AsBoolean;
+        qry.ParamByName('fl_permite_edicao').AsBoolean := dm.cdsControleAcesso.FieldByName('fl_permite_edicao').AsBoolean;
+        qry.ExecSQL;
+        qry.SQL.Clear;
+        dm.cdsControleAcesso.Next;
+      end;
+
+      qry.Connection.Commit;
+
+    except
+      on E : exception do
+      begin
+        qry.Connection.Rollback;
+        ShowMessage('Erro ao gravar os dados ' + E.Message);
+        Exit;
+      end;
+    end;
+  finally
+    dm.cdsControleAcesso.EnableControls;
+    qry.Free;
+    limpaCampos;
+  end;
 end;
 
 end.

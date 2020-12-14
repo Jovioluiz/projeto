@@ -1,7 +1,8 @@
 object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
   Left = 0
   Top = 0
-  BorderStyle = bsDialog
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = 'Lan'#231'amento Nota Entrada'
   ClientHeight = 720
   ClientWidth = 857

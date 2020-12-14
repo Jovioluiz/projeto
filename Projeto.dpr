@@ -2,6 +2,8 @@ program Projeto;
 
 uses
   Vcl.Forms,
+  SysUtils,
+  Controls,
   uValidaDcto in 'Validacao\uValidaDcto.pas',
   uTelaInicial in 'Inicio\uTelaInicial.pas' {frmPrincipal},
   cCTA_FORMA_PAGAMENTO in 'Cadastros\cCTA_FORMA_PAGAMENTO.pas' {frmCadFormaPagamento},
@@ -34,17 +36,21 @@ uses
   uGerador in 'uGerador.pas' {$R *.res},
   fCadastroEnderecos in 'WMS\fCadastroEnderecos.pas' {frmCadastroEnderecos},
   uCadastrarSenha in 'Cadastros\uCadastrarSenha.pas' {frmCadastraSenha},
-  uImportaDados in 'Arquivos\uImportaDados.pas' {frmImportaDados};
+  uImportaDados in 'Arquivos\uImportaDados.pas' {frmImportaDados},
+  uSplash in 'Inicio\uSplash.pas' {frmSplash};
 
 {$R *.res}
 
 begin
-  Application.Initialize;
-  Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TfrmLogin, frmLogin);
   Application.CreateForm(Tdm, dm);
-  Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
-  Application.CreateForm(TfrmImportaDados, frmImportaDados);
-  Application.Run;
-
+  frmLogin := TfrmLogin.Create(nil);
+  if frmLogin.ShowModal = mrOK then
+  begin
+    FreeAndNil(frmLogin);
+    Application.Initialize;
+    Application.MainFormOnTaskbar := True;
+    Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
+    Application.CreateForm(TfrmPrincipal, frmPrincipal);
+    Application.Run;
+  end;
 end.

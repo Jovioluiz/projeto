@@ -1,7 +1,8 @@
 object frmPedidoVenda: TfrmPedidoVenda
   Left = 0
   Top = 0
-  BorderStyle = bsDialog
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = 'Pedido de Venda'
   ClientHeight = 622
   ClientWidth = 869

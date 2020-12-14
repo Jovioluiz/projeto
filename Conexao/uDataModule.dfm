@@ -107,7 +107,7 @@ object dm: Tdm
     Top = 128
   end
   object dsControleAcesso: TDataSource
-    DataSet = queryControleAcesso
+    DataSet = cdsControleAcesso
     Left = 232
     Top = 176
   end
@@ -167,5 +167,38 @@ object dm: Tdm
       '    cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento')
     Left = 24
     Top = 264
+  end
+  object cdsControleAcesso: TClientDataSet
+    PersistDataPacket.Data = {
+      8D0000009619E0BD0100000018000000050000000000030000008D000A63645F
+      7573756172696F04000100000000000763645F6163616F040001000000000007
+      6E6D5F6163616F010049000000010005574944544802000200140011666C5F70
+      65726D6974655F61636573736F020003000000000011666C5F7065726D697465
+      5F65646963616F02000300000000000000}
+    Active = True
+    Aggregates = <>
+    Params = <>
+    Left = 328
+    Top = 176
+    object cdsControleAcessocd_usuario: TIntegerField
+      DisplayLabel = 'C'#243'd Usu'#225'rio'
+      FieldName = 'cd_usuario'
+    end
+    object cdsControleAcessocd_acao: TIntegerField
+      DisplayLabel = 'C'#243'd. A'#231#227'o'
+      FieldName = 'cd_acao'
+    end
+    object cdsControleAcessonm_acao: TStringField
+      DisplayLabel = 'Nome A'#231#227'o'
+      FieldName = 'nm_acao'
+    end
+    object cdsControleAcessofl_permite_acesso: TBooleanField
+      DisplayLabel = 'Permite Acesso'
+      FieldName = 'fl_permite_acesso'
+    end
+    object cdsControleAcessofl_permite_edicao: TBooleanField
+      DisplayLabel = 'Permite Edi'#231#227'o'
+      FieldName = 'fl_permite_edicao'
+    end
   end
 end

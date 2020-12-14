@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.PGDef,
   FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
   FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  FireDAC.Comp.UI, FireDAC.Phys.PG, IniFiles;
+  FireDAC.Comp.UI, FireDAC.Phys.PG, IniFiles, Datasnap.DBClient;
 
 type
   Tdm = class(TDataModule)
@@ -34,6 +34,12 @@ type
     dsCodBarraProduto: TDataSource;
     queryControleAcessofl_permite_edicao: TBooleanField;
     sqlPedidoVenda: TFDQuery;
+    cdsControleAcesso: TClientDataSet;
+    cdsControleAcessocd_usuario: TIntegerField;
+    cdsControleAcessocd_acao: TIntegerField;
+    cdsControleAcessonm_acao: TStringField;
+    cdsControleAcessofl_permite_acesso: TBooleanField;
+    cdsControleAcessofl_permite_edicao: TBooleanField;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
