@@ -13,7 +13,7 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, UfrmRelVendaDiaria,
   uLancamentoNotaEntrada, uCadastroTributacaoItem, Vcl.ComCtrls, uLogin, uConsultaProduto,
-  uConfiguracoes, uUtil;
+  uConfiguracoes, uUtil, uLista;
 
 type
   TfrmPrincipal = class(TForm)
@@ -49,6 +49,7 @@ type
     CadastroEndereo1: TMenuItem;
     Importao1: TMenuItem;
     ImportarProdutos1: TMenuItem;
+    este1: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -71,6 +72,7 @@ type
     procedure CadastroEndereo1Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure ImportarProdutos1Click(Sender: TObject);
+    procedure este1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -210,6 +212,12 @@ begin
   finally
     FreeAndNil(acesso);
   end;
+end;
+
+procedure TfrmPrincipal.este1Click(Sender: TObject);
+begin
+  frmlista := Tfrmlista.Create(Self);
+  frmlista.ShowModal;
 end;
 
 procedure TfrmPrincipal.FormaPagamento1Click(Sender: TObject);

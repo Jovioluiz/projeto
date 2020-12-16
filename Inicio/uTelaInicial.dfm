@@ -11689,6 +11689,10 @@ object frmPrincipal: TfrmPrincipal
         Caption = 'Importar Dados'
         OnClick = ImportarProdutos1Click
       end
+      object este1: TMenuItem
+        Caption = 'Teste'
+        OnClick = este1Click
+      end
     end
     object Sistem1: TMenuItem
       Caption = 'Sistema'

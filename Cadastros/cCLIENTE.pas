@@ -528,7 +528,7 @@ begin
   if key = VK_F9 then
   begin
     chamada := 'cntCliente';
-    consulta.abreConsulta(sql);
+    consulta.MontaDataset(sql);
     consulta.Show;
   end;
 end;

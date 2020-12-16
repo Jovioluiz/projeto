@@ -37,7 +37,8 @@ uses
   fCadastroEnderecos in 'WMS\fCadastroEnderecos.pas' {frmCadastroEnderecos},
   uCadastrarSenha in 'Cadastros\uCadastrarSenha.pas' {frmCadastraSenha},
   uImportaDados in 'Arquivos\uImportaDados.pas' {frmImportaDados},
-  uSplash in 'Inicio\uSplash.pas' {frmSplash};
+  uSplash in 'Inicio\uSplash.pas' {frmSplash},
+  uLista in 'Outros\uLista.pas' {frmLista};
 
 {$R *.res}
 

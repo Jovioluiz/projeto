@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FireDAC.Comp.Client, FireDAC.DApt, FireDAC.Stan.Param,
-  Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, Datasnap.DBClient, Vcl.StdCtrls;
+  Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, Datasnap.DBClient, Vcl.StdCtrls, System.StrUtils;
 
 type
   TfrmConsulta = class(TForm)
@@ -18,6 +18,8 @@ type
     cdsConsultanm_cliente: TStringField;
     cdsConsultacpf_cnpj: TStringField;
     edtBusca: TEdit;
+    cds: TClientDataSet;
+    ds: TDataSource;
     procedure dbgrd1DblClick(Sender: TObject);
     procedure edtBuscaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -26,6 +28,7 @@ type
   public
     { Public declarations }
     function abreConsulta(consulta: String): string;
+    function MontaDataset(consulta: string): string;
   end;
 
 var
@@ -34,7 +37,7 @@ var
 implementation
 
 uses
-  uDataModule, cCLIENTE;
+  uDataModule, cCLIENTE, System.Math, System.UITypes;
 
 {$R *.dfm}
 
@@ -51,7 +54,6 @@ begin
   qry.Close;
   qry.SQL.Clear;
 
-  //cdsConsulta.EmptyDataSet;
 
   //cdsConsulta.Create(Self);
 
@@ -159,6 +161,45 @@ begin
       end;
     end;
   end;
+end;
+
+function TfrmConsulta.MontaDataset(consulta: string): string;
+var
+  cdsClone: TClientDataSet;
+  i, j: Integer;
+  qry: TFDQuery;
+  campo: TField;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  qry.SQL.Add(consulta);
+  qry.Open();
+
+  campo := TField.Create(cds);
+  for i := 0 to Pred(qry.FieldCount) do
+  begin
+    //monta os fields de acordo com os campos da consulta
+    campo.FieldName := qry.Fields[i].FieldName;
+    campo.SetFieldType(qry.Fields[i].DataType);
+    cds.FieldDefs.Add(campo.FieldName, qry.Fields[i].DataType, ifthen(qry.Fields[i].DataType = ftInteger, 0, 40), false);
+  end;
+
+  cds.CreateDataSet;
+
+
+  for i := 0 to Pred(cds.FieldCount) do
+  begin
+    qry.First;
+    while not qry.Eof do
+    begin
+      cds.Append;
+      cds.Fields[j].Value := qry.Fields[j].Value;
+      cds.Post;
+      qry.Next;
+    end;
+  end;
+
 end;
 
 end.

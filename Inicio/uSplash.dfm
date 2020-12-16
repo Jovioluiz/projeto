@@ -28,7 +28,7 @@ object frmSplash: TfrmSplash
   object Label1: TLabel
     Left = 8
     Top = 24
-    Width = 366
+    Width = 46
     Height = 19
     Caption = 'Label1'
     Color = clGreen
@@ -41,7 +41,7 @@ object frmSplash: TfrmSplash
     ParentFont = False
   end
   object Timer1: TTimer
-    Interval = 50
+    Interval = 5
     OnTimer = Timer1Timer
     Left = 344
     Top = 16

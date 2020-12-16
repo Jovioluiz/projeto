@@ -27,7 +27,7 @@ object frmConsulta: TfrmConsulta
       Top = 1
       Width = 726
       Height = 288
-      DataSource = dsConsulta
+      DataSource = ds
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 1
       TitleFont.Charset = DEFAULT_CHARSET
@@ -54,17 +54,11 @@ object frmConsulta: TfrmConsulta
       Left = 8
       Top = 320
       Width = 513
-      Height = 25
+      Height = 21
       TabOrder = 2
     end
   end
   object cdsConsulta: TClientDataSet
-    PersistDataPacket.Data = {
-      690000009619E0BD01000000180000000300000000000300000069000A63645F
-      636C69656E746504000100000000000A6E6D5F636C69656E7465010049000000
-      0100055749445448020002001400086370665F636E706A010049000000010005
-      57494454480200020014000000}
-    Active = True
     Aggregates = <>
     FieldDefs = <
       item
@@ -105,6 +99,17 @@ object frmConsulta: TfrmConsulta
   object dsConsulta: TDataSource
     DataSet = cdsConsulta
     Left = 304
+    Top = 192
+  end
+  object cds: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 616
+    Top = 184
+  end
+  object ds: TDataSource
+    DataSet = cds
+    Left = 544
     Top = 192
   end
 end
