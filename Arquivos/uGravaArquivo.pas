@@ -5,21 +5,23 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtDlgs,
-  //JvComponentBase, JvDSADialogs, JvDialogs, Vcl.Mask, JvExMask, JvToolEdit, JvExControls, JvLabel,
-  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param,
+  Vcl.Mask, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param,
   FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client,
-  FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ComCtrls, System.Math, Data.DB;
+  FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ComCtrls, System.Math, Data.DB,
+  Vcl.Buttons;
 
 type
   TfrmGravaArquivo = class(TForm)
     btnPedidoVenda: TButton;
-    //edtArquivo: TJvFilenameEdit;
-    //JvLabel1: TJvLabel;
     edtDataIni: TDateTimePicker;
     edtDataFim: TDateTimePicker;
-    //JvLabel2: TJvLabel;
+    edtArquivo: TEdit;
+    Label1: TLabel;
+    SpeedButton1: TSpeedButton;
+    opArquivo: TOpenTextFileDialog;
     procedure btnPedidoVendaClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -82,7 +84,7 @@ begin
   qry.ParamByName('dt_final').AsDate := edtDataFim.Date;
   qry.Open(sql);
 
-  //caminho := edtArquivo.FileName;
+  caminho := edtArquivo.Text;
 
   if caminho <> '' then
   begin
@@ -137,9 +139,7 @@ begin
     CloseFile(arquivo);
   end
   else
-  begin
     ShowMessage('Selecione um arquivo!');
-  end;
 
 end;
 
@@ -147,6 +147,12 @@ procedure TfrmGravaArquivo.FormCreate(Sender: TObject);
 begin
   edtDataIni.Date := Now;
   edtDataFim.Date := Now;
+end;
+
+procedure TfrmGravaArquivo.SpeedButton1Click(Sender: TObject);
+begin
+  if opArquivo.Execute then
+    edtArquivo.Text := opArquivo.FileName;
 end;
 
 end.

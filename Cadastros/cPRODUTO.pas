@@ -74,6 +74,8 @@ type
     procedure DBGridCodigoBarrasKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
+    procedure edtPRODUTOCD_PRODUTOKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     procedure limpaCampos;
@@ -103,7 +105,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, uUtil, uLogin;
+uses uDataModule, uUtil, uLogin, uConsulta;
 
 procedure TfrmCadProduto.btnAddCodBarrasClick(Sender: TObject);
 begin
@@ -327,6 +329,31 @@ begin
     Exit
   else
     desabilitaCampos;
+end;
+
+procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+const
+  SQL = 'select ' +
+        '    cd_produto, ' +
+        '    desc_produto, ' +
+        '    un_medida, ' +
+        '    fator_conversao, ' +
+        '    peso_bruto, ' +
+        '    peso_liquido, ' +
+        '    observacao  ' +
+        'from ' +
+        '    produto  ';
+var
+  consulta: TfrmConsulta;
+begin
+  consulta := TfrmConsulta.Create(Self);
+  if key = VK_F9 then
+  begin
+    //chamada := 'cntCliente';
+    consulta.MontaDataset(SQL);
+    consulta.ShowModal;
+  end;
 end;
 
 procedure TfrmCadProduto.edtProdutoGrupoTributacaoICMSChange(Sender: TObject);

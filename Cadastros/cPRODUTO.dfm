@@ -312,6 +312,7 @@ object frmCadProduto: TfrmCadProduto
     ShowHint = True
     TabOrder = 0
     OnExit = edtPRODUTOCD_PRODUTOExit
+    OnKeyDown = edtPRODUTOCD_PRODUTOKeyDown
   end
   object edtPRODUTODESCRICAO: TEdit
     Left = 119

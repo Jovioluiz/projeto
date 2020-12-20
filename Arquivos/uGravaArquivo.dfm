@@ -15,8 +15,23 @@ object frmGravaArquivo: TfrmGravaArquivo
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 8
+    Top = 53
+    Width = 37
+    Height = 13
+    Caption = 'Arquivo'
+  end
+  object SpeedButton1: TSpeedButton
+    Left = 375
+    Top = 50
+    Width = 26
+    Height = 23
+    Caption = '...'
+    OnClick = SpeedButton1Click
+  end
   object btnPedidoVenda: TButton
-    Left = 391
+    Left = 415
     Top = 48
     Width = 73
     Height = 25
@@ -41,5 +56,16 @@ object frmGravaArquivo: TfrmGravaArquivo
     Date = 44066.000000000000000000
     Time = 0.881014872684318100
     TabOrder = 1
+  end
+  object edtArquivo: TEdit
+    Left = 51
+    Top = 50
+    Width = 318
+    Height = 21
+    TabOrder = 3
+  end
+  object opArquivo: TOpenTextFileDialog
+    Left = 576
+    Top = 16
   end
 end

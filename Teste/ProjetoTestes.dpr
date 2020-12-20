@@ -17,7 +17,6 @@ program ProjetoTestes;
 uses
   DUnitTestRunner,
   TestuUsuario in 'TestuUsuario.pas',
-  {$R}
   uUsuario in '..\Usuario\uUsuario.pas' {$R *.RES},
   uDataModule in '..\Conexao\uDataModule.pas' {dm: TDataModule},
   uUtil in '..\Validacao\uUtil.pas',

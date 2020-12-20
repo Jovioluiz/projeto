@@ -27,7 +27,6 @@ type
     { Private declarations }
   public
     { Public declarations }
-    function abreConsulta(consulta: String): string;
     function MontaDataset(consulta: string): string;
   end;
 
@@ -41,57 +40,7 @@ uses
 
 {$R *.dfm}
 
-//passa no sql os campos que quer retornar na consulta
-//se adicionar mais campos na consulta, precisa adicionar esses campos no dataset
-function TfrmConsulta.abreConsulta(consulta: String): string;
-var
-  qry: TFDQuery;
-  //i: Integer;
-  //campo: TField;
-begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.conexaoBanco;
-  qry.Close;
-  qry.SQL.Clear;
 
-
-  //cdsConsulta.Create(Self);
-
-  //qry.FieldList.Create(qry);
-
-  try
-    qry.SQL.Add(consulta);
-    qry.Open();
-
-   { for i := 0 to qry.FieldCount - 1 do
-    begin
-      campo := TField.Create(cdsConsulta);
-      campo.FieldName := qry.Fields[i].FieldName;
-      campo.SetFieldType(qry.Fields[i].DataType);
-      cdsConsulta.Fields.Add(campo);
-    end; }
-
-
-    if qry.IsEmpty then
-      cdsConsulta.EmptyDataSet
-    else
-    begin
-      qry.First;
-
-      while not qry.Eof do
-      begin
-        cdsConsulta.Append;
-        cdsConsulta.FieldByName('cd_cliente').AsInteger := qry.FieldByName('cd_cliente').AsInteger;
-        cdsConsulta.FieldByName('nm_cliente').AsString := qry.FieldByName('nome').AsString;
-        cdsConsulta.FieldByName('cpf_cnpj').AsString := qry.FieldByName('cpf_cnpj').AsString;
-        cdsConsulta.Post;
-        qry.Next;
-      end;
-    end;
-  finally
-    qry.Free;
-  end;
-end;
 
 procedure TfrmConsulta.dbgrd1DblClick(Sender: TObject);
 begin
@@ -169,6 +118,7 @@ var
   i, j: Integer;
   qry: TFDQuery;
   campo: TField;
+  tamanhoCampo: Integer;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
@@ -181,24 +131,34 @@ begin
   begin
     //monta os fields de acordo com os campos da consulta
     campo.FieldName := qry.Fields[i].FieldName;
+
+    case qry.Fields[i].DataType of
+      ftString: tamanhoCampo := 30;
+      ftInteger: tamanhoCampo := 0;
+      ftFloat: tamanhoCampo := 0;
+      ftCurrency: tamanhoCampo := 0;
+      ftWideString: tamanhoCampo := 30;
+      ftBCD: tamanhoCampo := 0;
+      ftWideMemo: tamanhoCampo := 100;
+    end;
     campo.SetFieldType(qry.Fields[i].DataType);
-    cds.FieldDefs.Add(campo.FieldName, qry.Fields[i].DataType, ifthen(qry.Fields[i].DataType = ftInteger, 0, 40), false);
+    cds.FieldDefs.Add(UpperCase(campo.FieldName), qry.Fields[i].DataType, tamanhoCampo, false);
   end;
+
 
   cds.CreateDataSet;
 
-
-  for i := 0 to Pred(cds.FieldCount) do
-  begin
-    qry.First;
-    while not qry.Eof do
-    begin
-      cds.Append;
-      cds.Fields[j].Value := qry.Fields[j].Value;
-      cds.Post;
-      qry.Next;
-    end;
-  end;
+//  for i := 0 to Pred(cds.FieldCount) do
+//  begin
+//    qry.First;
+//    while not qry.Eof do
+//    begin
+//      cds.Append;
+//      cds.Fields[j].Value := qry.Fields[j].Value;
+//      cds.Post;
+//      qry.Next;
+//    end;
+//  end;
 
 end;
 
