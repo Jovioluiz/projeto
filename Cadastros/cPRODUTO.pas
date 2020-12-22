@@ -334,25 +334,16 @@ end;
 procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 const
-  SQL = 'select ' +
-        '    cd_produto, ' +
-        '    desc_produto, ' +
-        '    un_medida, ' +
-        '    fator_conversao, ' +
-        '    peso_bruto, ' +
-        '    peso_liquido, ' +
-        '    observacao  ' +
-        'from ' +
-        '    produto  ';
+  sql = 'select cd_produto, desc_produto, un_medida, fator_conversao, peso_bruto, peso_liquido, observacao from produto';
 var
   consulta: TfrmConsulta;
 begin
   consulta := TfrmConsulta.Create(Self);
   if key = VK_F9 then
   begin
-    //chamada := 'cntCliente';
-    consulta.MontaDataset(SQL);
-    consulta.ShowModal;
+    //chamada := 'cntProduto';
+    consulta.MontaDataset(sql);
+    consulta.Show;
   end;
 end;
 

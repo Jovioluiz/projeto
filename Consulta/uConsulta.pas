@@ -3,9 +3,10 @@ unit uConsulta;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FireDAC.Comp.Client, FireDAC.DApt, FireDAC.Stan.Param,
-  Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, Datasnap.DBClient, Vcl.StdCtrls, System.StrUtils;
+  Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls, Datasnap.DBClient, Vcl.StdCtrls, System.StrUtils,
+  System.Classes;
 
 type
   TfrmConsulta = class(TForm)
@@ -32,11 +33,13 @@ type
 
 var
   frmConsulta: TfrmConsulta;
+  Matriz: array of array of Integer;
 
 implementation
 
 uses
-  uDataModule, cCLIENTE, System.Math, System.UITypes;
+  uDataModule, cCLIENTE, System.Math, System.UITypes,
+  System.Generics.Collections;
 
 {$R *.dfm}
 
@@ -114,8 +117,7 @@ end;
 
 function TfrmConsulta.MontaDataset(consulta: string): string;
 var
-  cdsClone: TClientDataSet;
-  i, j: Integer;
+  linha, coluna: Integer;
   qry: TFDQuery;
   campo: TField;
   tamanhoCampo: Integer;
@@ -123,8 +125,9 @@ begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
 
-  qry.SQL.Add(consulta);
-  qry.Open();
+  try
+    qry.SQL.Add(consulta);
+    qry.Open();
 
   campo := TField.Create(cds);
   for i := 0 to Pred(qry.FieldCount) do
@@ -145,8 +148,7 @@ begin
     cds.FieldDefs.Add(UpperCase(campo.FieldName), qry.Fields[i].DataType, tamanhoCampo, false);
   end;
 
-
-  cds.CreateDataSet;
+    cds.CreateDataSet;
 
 //  for i := 0 to Pred(cds.FieldCount) do
 //  begin
@@ -160,6 +162,23 @@ begin
 //    end;
 //  end;
 
+    qry.First;
+      cds.First;
+    for linha := 0 to cds.Fields.Count do
+    begin
+      for coluna := 0 to qry.RecordCount -1 do
+      begin
+        cds.Append;
+        cds.Fields[linha].Value := qry.Fields[coluna].Value;
+        cds.Post;
+      end;
+      qry.Next;
+      cds.Next;
+    end;
+
+  finally
+    qry.Free;
+  end;
 end;
 
 end.
