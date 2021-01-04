@@ -196,6 +196,7 @@
             <Form>frmLista</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Cadastros\Persistencia\uclCliente.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

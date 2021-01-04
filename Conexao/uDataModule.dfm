@@ -8,13 +8,14 @@ object dm: Tdm
       'Server='
       'Port='
       'DriverID=PG')
+    Transaction = transacao
     Left = 32
     Top = 16
   end
   object driver: TFDPhysPgDriverLink
     VendorLib = 
-      'C:\Users\jovio\OneDrive\Documentos\Projeto\trunk\Win32\Debug\lib' +
-      '\libpq.dll'
+      'C:\Users\jovio\Desktop\codigos_fontes\Delphi\AProjeto\trunk\lib\' +
+      'libpq.dll'
     Left = 104
     Top = 16
   end

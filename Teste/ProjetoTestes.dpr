@@ -27,7 +27,9 @@ uses
   uPedidoVenda in '..\Pedido Venda\uPedidoVenda.pas' {$R *.RES},
   uConexao in '..\Conexao\uConexao.pas' {frmConexao},
   uclPedidoVenda in '..\Pedido Venda\uclPedidoVenda.pas' {$R *.RES},
-  uConfiguracoes in '..\Configuracoes\uConfiguracoes.pas' {frmConfiguracoes};
+  uConfiguracoes in '..\Configuracoes\uConfiguracoes.pas' {frmConfiguracoes},
+  TestcCLIENTE in 'TestcCLIENTE.pas',
+  cCLIENTE in '..\Cadastros\cCLIENTE.pas';
 
 {$R *.RES}
 

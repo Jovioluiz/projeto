@@ -1240,3 +1240,5 @@ update
 
 alter table pedido_venda_item disable trigger atualiza_estoque_pedido;
 alter table pedido_venda_item disable trigger verifica_estoque_pedido_venda_item;
+
+ALTER TABLE public.endereco_cliente ALTER COLUMN num TYPE varchar USING num::varchar;

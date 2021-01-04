@@ -102,6 +102,11 @@
         <DCCReference Include="..\Configuracoes\uConfiguracoes.pas">
             <Form>frmConfiguracoes</Form>
         </DCCReference>
+        <DCCReference Include="TestcCLIENTE.pas"/>
+        <DCCReference Include="..\Cadastros\cCLIENTE.pas">
+            <Form>TfrmCadCliente</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

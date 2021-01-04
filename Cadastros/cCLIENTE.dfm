@@ -217,7 +217,6 @@ object frmCadCliente: TfrmCadCliente
       Height = 21
       TabOrder = 10
       Text = ''
-      OnExit = edtCLIENTECELULARExit
     end
     object edtCLIENTEEMAIL: TEdit
       Left = 351
@@ -283,7 +282,6 @@ object frmCadCliente: TfrmCadCliente
       Height = 21
       TabOrder = 9
       Text = ''
-      OnExit = edtCLIENTECELULARExit
     end
   end
 end

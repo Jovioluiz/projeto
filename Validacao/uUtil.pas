@@ -7,17 +7,8 @@ uses Winapi.Windows, Winapi.Messages, System.SysUtils, System.UITypes, System.Va
 
 type TValidaDados = class
   private
-    FnomeCliente: String;
-    FcdCliente: Integer;
-    Fcpf: String;
-    procedure SetnomeCliente(const Value: String);
-    procedure SetcdCliente(const Value: Integer);
-    procedure Setcpf(const Value: String);
 
   public
-    property nomeCliente : String read FnomeCliente write SetnomeCliente;
-    property cdCliente : Integer read FcdCliente write SetcdCliente;
-    property cpf : String read Fcpf write Setcpf;
 
     function validaNomeCpf(nome : String; cpf : String) : String;
     function validaCodigo(cod : Integer) : Integer;
@@ -69,21 +60,6 @@ begin
   for i := 1 to Length(s) do
     s[i] := Ansichar(23 Xor ord(c[i]));
   Result := s;
-end;
-
-procedure TValidaDados.SetcdCliente(const Value: Integer);
-begin
-  FcdCliente := Value;
-end;
-
-procedure TValidaDados.Setcpf(const Value: String);
-begin
-  Fcpf := Value;
-end;
-
-procedure TValidaDados.SetnomeCliente(const Value: String);
-begin
-  FnomeCliente := Value;
 end;
 
 function TValidaDados.validaAcessoAcao(cdUsuario, cdAcao: Integer): Boolean;

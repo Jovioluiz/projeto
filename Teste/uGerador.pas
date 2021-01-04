@@ -10,9 +10,10 @@ uses
 type TGerador = class
   private
 
-  public
 
-  function GeraIdGeral: Int64;
+  public
+    function GeraNumeroPedido: Integer;
+    function GeraIdGeral: Int64;
 end;
 
 implementation
@@ -38,6 +39,27 @@ begin
     qry.Open(sqlIdGeral);
 
     Result := qry.FieldByName('func_id_geral').AsLargeInt;
+  finally
+    qry.Free;
+  end;
+end;
+
+function TGerador.GeraNumeroPedido: Integer;
+const
+  sqlNrPedido = 'select '+
+                '*  '+
+                'from func_nr_pedido()';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(sqlNrPedido);
+    qry.Open(sqlNrPedido);
+
+    Result := qry.FieldByName('func_nr_pedido').AsInteger;
   finally
     qry.Free;
   end;

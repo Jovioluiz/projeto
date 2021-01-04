@@ -12,7 +12,7 @@ unit TestfCadastroEnderecos;
 interface
 
 uses
-  TestFramework, JvLabel, JvExControls, FireDAC.DApt.Intf, FireDAC.DatS,
+  TestFramework, {JvLabel, JvExControls} FireDAC.DApt.Intf, FireDAC.DatS,
   FireDAC.Stan.Param, Winapi.Messages, System.Classes, Vcl.ExtCtrls, Vcl.StdCtrls,
   FireDAC.Stan.Intf, Vcl.Grids, FireDAC.Stan.Error, Vcl.Graphics, FireDAC.Phys.Intf,
   FireDAC.Comp.Client, fCadastroEnderecos, Winapi.Windows, System.Variants,
@@ -134,7 +134,7 @@ var
   IdEndereco: Int64;
 begin
   // TODO: Setup method call parameters
-  ReturnValue := FfrmCadastroEnderecos.Pesquisar(IdEndereco, CdProduto);
+  //ReturnValue := FfrmCadastroEnderecos.Pesquisar(IdEndereco, CdProduto);
   // TODO: Validate method results
 end;
 

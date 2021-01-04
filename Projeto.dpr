@@ -38,7 +38,8 @@ uses
   uCadastrarSenha in 'Cadastros\uCadastrarSenha.pas' {frmCadastraSenha},
   uImportaDados in 'Arquivos\uImportaDados.pas' {frmImportaDados},
   uSplash in 'Inicio\uSplash.pas' {frmSplash},
-  uLista in 'Outros\uLista.pas' {frmLista};
+  uLista in 'Outros\uLista.pas' {frmLista},
+  uclCliente in 'Cadastros\Persistencia\uclCliente.pas';
 
 {$R *.res}
 
