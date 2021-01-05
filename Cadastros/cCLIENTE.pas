@@ -144,16 +144,17 @@ begin
     begin
       persistencia.Inserir;
       endereco.Inserir;
+      limpaCampos;
     end
     else
     begin
       persistencia.Atualizar;
       endereco.Atualizar;
+      limpaCampos;
     end;
   finally
     persistencia.Free;
     endereco.Free;
-    limpaCampos;
   end;
 end;
 

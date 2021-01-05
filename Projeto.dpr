@@ -39,7 +39,8 @@ uses
   uImportaDados in 'Arquivos\uImportaDados.pas' {frmImportaDados},
   uSplash in 'Inicio\uSplash.pas' {frmSplash},
   uLista in 'Outros\uLista.pas' {frmLista},
-  uclCliente in 'Cadastros\Persistencia\uclCliente.pas';
+  uclCliente in 'Cadastros\Persistencia\uclCliente.pas',
+  uclCta_Cond_Pgto in 'Cadastros\Persistencia\uclCta_Cond_Pgto.pas';
 
 {$R *.res}
 

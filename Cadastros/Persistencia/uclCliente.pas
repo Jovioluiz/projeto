@@ -226,7 +226,7 @@ begin
     on E:exception do
       begin
         qry.Connection.Rollback;
-        raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
+        raise Exception.Create('Erro ao excluir os dados do cliente ' + Fcd_cliente.ToString + E.Message);
       end;
     end;
   finally
