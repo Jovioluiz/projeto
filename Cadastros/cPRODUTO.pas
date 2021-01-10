@@ -112,12 +112,8 @@ begin
   validaCamposCodBarra;
 
   dsBarras.DataSet.Active := True;
-//  cdsBarras.Append;
+
   cdsBarras.AppendRecord([edtUnCodBarras.Text, cbTipoCodBarras.ItemIndex, edtCodigoBarras.Text]);
-//  cdsBarras.FieldByName('un_medida').AsString := edtUnCodBarras.Text;
-//  cdsBarras.FieldByName('tipo_cod_barras').AsInteger := cbTipoCodBarras.ItemIndex;
-//  cdsBarras.FieldByName('codigo_barras').AsString := edtCodigoBarras.Text;
-//  cdsBarras.Post;
 
   cbTipoCodBarras.ItemIndex := -1;
   edtUnCodBarras.Clear;

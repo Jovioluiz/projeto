@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
+  FireDAC.Comp.Client, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.Buttons;
 
 type
   TfrmLogin = class(TForm)
@@ -22,12 +22,14 @@ type
     Image1: TImage;
     lblInfo: TLabel;
     lblVersao: TLabel;
+    btnConexao: TBitBtn;
     procedure btnCancelarClick(Sender: TObject);
     procedure btnEntrarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure edtUsuarioExit(Sender: TObject);
+    procedure btnConexaoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -43,11 +45,17 @@ implementation
 {$R *.dfm}
 
 uses uTelaInicial, uDataModule, uVersao, uUtil, Vcl.Dialogs,
-  uCadastrarSenha;
+  uCadastrarSenha, fConexao;
 
 procedure TfrmLogin.btnCancelarClick(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TfrmLogin.btnConexaoClick(Sender: TObject);
+begin
+  frmConexao := TfrmConexao.Create(Self);
+  frmConexao.ShowModal;
 end;
 
 procedure TfrmLogin.btnEntrarClick(Sender: TObject);
@@ -125,17 +133,20 @@ begin
   qry.Connection := dm.conexaoBanco;
   frmCadastraSenha := TfrmCadastraSenha.Create(Self);
   try
-    qry.SQL.Add(SQL_LOGIN);
-    qry.ParamByName('login').AsString := edtUsuario.Text;
-    qry.Open(SQL_LOGIN);
-
-    if qry.FieldByName('senha').Text = '' then
+    if edtUsuario.Text <> '' then
     begin
-      ShowMessage('Usuário sem senha cadastrada');
-      try
-        frmCadastraSenha.ShowModal;
-      finally
-        FreeAndNil(frmCadastraSenha);
+      qry.SQL.Add(SQL_LOGIN);
+      qry.ParamByName('login').AsString := edtUsuario.Text;
+      qry.Open(SQL_LOGIN);
+
+      if qry.FieldByName('senha').Text = '' then
+      begin
+        ShowMessage('Usuário sem senha cadastrada');
+        try
+          frmCadastraSenha.ShowModal;
+        finally
+          FreeAndNil(frmCadastraSenha);
+        end;
       end;
     end;
   finally

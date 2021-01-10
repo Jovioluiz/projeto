@@ -65,7 +65,7 @@ begin
 
   try
     try
-      conexaoBanco.Params.Values['Server'] := conexaoIni.ReadString('configuracoes', 'servidor',conexaoBanco.Params.Values['Server']);
+      conexaoBanco.Params.Values['Server'] := conexaoIni.ReadString('configuracoes', 'servidor', conexaoBanco.Params.Values['Server']);
       conexaoBanco.Params.Database := conexaoIni.ReadString('configuracoes', 'banco', conexaoBanco.Params.Database);
       conexaoBanco.Params.UserName := conexaoIni.ReadString('configuracoes', 'usuario', conexaoBanco.Params.UserName);
       conexaoBanco.Params.Password := conexaoIni.ReadString('configuracoes', 'senha', conexaoBanco.Params.Password);
