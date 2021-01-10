@@ -40,7 +40,8 @@ uses
   uSplash in 'Inicio\uSplash.pas' {frmSplash},
   uLista in 'Outros\uLista.pas' {frmLista},
   uclCliente in 'Cadastros\Persistencia\uclCliente.pas',
-  uclCta_Cond_Pgto in 'Cadastros\Persistencia\uclCta_Cond_Pgto.pas';
+  uclCta_Cond_Pgto in 'Cadastros\Persistencia\uclCta_Cond_Pgto.pas',
+  uclCtaFormaPagamento in 'Cadastros\Persistencia\uclCtaFormaPagamento.pas';
 
 {$R *.res}
 

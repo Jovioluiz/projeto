@@ -31,6 +31,7 @@ type
     procedure salvar;
     procedure excluir;
     procedure validaCampos;
+
   public
     { Public declarations }
 
@@ -41,71 +42,79 @@ var
 
 implementation
 
+uses
+  uclCtaFormaPagamento;
+
 {$R *.dfm}
 
 procedure TfrmCadFormaPagamento.edtCTA_FORMA_PGTOCODIGOExit(Sender: TObject);
+const
+  SQL = 'select                          '+
+         '  cd_forma_pag,                 '+
+         '  nm_forma_pag,                 '+
+         '  fl_ativo,                     '+
+         '  tp_classificacao              '+
+         'from                            '+
+         '  cta_forma_pagamento           '+
+         'where                           '+
+         '  cd_forma_pag = :cd_forma_pag';
+var
+  qry: TFDQuery;
 begin
   if edtCTA_FORMA_PGTOCODIGO.Text = EmptyStr then
   begin
     raise Exception.Create('Código não pode ser vazio');
     edtCTA_FORMA_PGTOCODIGO.SetFocus;
-    Abort;
   end;
 
-  sqlFormaPgto.Close;
-  sqlFormaPgto.SQL.Text := 'select                          '+
-                           '  cd_forma_pag,                 '+
-                           '  nm_forma_pag,                 '+
-                           '  fl_ativo,                     '+
-                           '  tp_classificacao              '+
-                           'from                            '+
-                           '  cta_forma_pagamento           '+
-                           'where                           '+
-                           '  cd_forma_pag = :cd_forma_pag';
-  sqlFormaPgto.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCTA_FORMA_PGTOCODIGO.Text);
-  sqlFormaPgto.Open();
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
 
-  if not sqlFormaPgto.IsEmpty then
-    begin
-      edtCTA_FORMA_PGTODESCRICAO.Text := sqlFormaPgto.FieldByName('nm_forma_pag').AsString;
-      edtCTA_FORMA_PGTOFL_ATIVO.Checked := sqlFormaPgto.FieldByName('fl_ativo').AsBoolean;
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCTA_FORMA_PGTOCODIGO.Text);
+    qry.Open();
 
-      case sqlFormaPgto.FieldByName('tp_classificacao').AsInteger of
-        0: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 0;
-        1: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 1;
-        2: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 2;
-        3: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 3;
-      end;
-    end
-  else
-    Exit;
+    if not qry.IsEmpty then
+      begin
+        edtCTA_FORMA_PGTODESCRICAO.Text := qry.FieldByName('nm_forma_pag').AsString;
+        edtCTA_FORMA_PGTOFL_ATIVO.Checked := qry.FieldByName('fl_ativo').AsBoolean;
+
+        case qry.FieldByName('tp_classificacao').AsInteger of
+          0: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 0;
+          1: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 1;
+          2: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 2;
+          3: edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex := 3;
+        end;
+      end
+    else
+      Exit;
+  finally
+    qry.Free;
+  end;
 end;
 
 procedure TfrmCadFormaPagamento.excluir;
+var
+  persistencia: TCtaFormaPagamento;
 begin
-  if (Application.MessageBox('Deseja Excluir a Forma de Pagamento?', 'Atenção', MB_YESNO) = IDYES) then
-  begin
-    try
-      dm.conexaoBanco.ExecSQL('delete '+
-                      ' from '+
-                      'cta_forma_pagamento '+
-                      ' where '+
-                      'cd_forma_pag = :cd_forma_pag',
-                          [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text)]);
-      ShowMessage('Forma de Pagamento excluída com sucesso!');
-      LimpaCampos;
-    except
-      on E:exception do
+  persistencia := TCtaFormaPagamento.Create;
+
+  try
+    if edtCTA_FORMA_PGTOCODIGO.Text <> '' then
+    begin
+      if (Application.MessageBox('Deseja Excluir a Forma de Pagamento?', 'Aviso', MB_YESNO) = IDYES) then
       begin
-        ShowMessage('Erro ao excluir a Forma de Pagamento ' + edtCTA_FORMA_PGTOCODIGO.Text + E.Message);
-        dm.conexaoBanco.Rollback;
-        Exit;
+        persistencia.cd_forma_pgto := StrToInt(edtCTA_FORMA_PGTOCODIGO.Text);
+        persistencia.Excluir;
+        limpaCampos;
       end;
     end;
+  finally
+    persistencia.Free;
   end;
 end;
 
-//passa pelos campos pressionando enter
 procedure TfrmCadFormaPagamento.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
@@ -127,6 +136,7 @@ begin
     Close;
 end;
 
+//passa pelos campos pressionando enter
 procedure TfrmCadFormaPagamento.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
@@ -146,58 +156,31 @@ begin
 end;
 
 procedure TfrmCadFormaPagamento.salvar;
-var resultado : String;
+var
+  persistencia: TCtaFormaPagamento;
 begin
-  try
-    validaCampos;
+  validaCampos;
 
-    resultado := dm.conexaoBanco.ExecSQLScalar('select cd_forma_pag from cta_forma_pagamento where cd_forma_pag = :cd_forma_pag',
-                                        [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text)]);
-    if not resultado.IsEmpty then
+  persistencia := TCtaFormaPagamento.Create;
+
+  try
+    persistencia.cd_forma_pgto := StrToInt(edtCTA_FORMA_PGTOCODIGO.Text);
+    persistencia.nm_forma_pgto := edtCTA_FORMA_PGTODESCRICAO.Text;
+    persistencia.fl_ativo := edtCTA_FORMA_PGTOFL_ATIVO.Checked;
+    persistencia.tp_classificacao := edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex;
+
+    if not persistencia.Pesquisar(StrToInt(edtCTA_FORMA_PGTOCODIGO.Text)) then
     begin
-      dm.conexaoBanco.ExecSQL('update                             '+
-                          'cta_forma_pagamento                    '+
-                      'set                                        '+
-                      '    cd_forma_pag = :cd_forma_pag,          '+
-                       '   nm_forma_pag = :nm_forma_pag,          '+
-                        '  fl_ativo = :fl_ativo,                  '+
-                        '  tp_classificacao = :tp_classificacao   '+
-                      'where                                      '+
-                        'cd_forma_pag = :cd_forma_pag',
-                        [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text),
-                        edtCTA_FORMA_PGTODESCRICAO.Text,
-                        edtCTA_FORMA_PGTOFL_ATIVO.Checked,
-                        edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex.ToString]);
-      ShowMessage('Forma de Pagamento cadastrada com Sucesso!');
-      LimpaCampos;
+      persistencia.Inserir;
+      limpaCampos;
     end
     else
     begin
-      dm.conexaoBanco.ExecSQL('insert                                '+
-                          'into                              '+
-                          'cta_forma_pagamento(cd_forma_pag, '+
-                          'nm_forma_pag,                     '+
-                          'fl_ativo,                         '+
-                          'tp_classificacao)                 '+
-                      'values (:cd_forma_pag,                '+
-                          ':nm_forma_pag,                    '+
-                          ':fl_ativo,                        '+
-                          ':tp_classificacao)',
-                  [StrToInt(edtCTA_FORMA_PGTOCODIGO.Text),
-                  edtCTA_FORMA_PGTODESCRICAO.Text,
-                  edtCTA_FORMA_PGTOFL_ATIVO.Checked,
-                  edtCTA_FORMA_PGTOCLASSIFICACAO.ItemIndex.ToString],
-                  [ftInteger, ftString, ftBoolean, ftInteger]);
-      ShowMessage('Forma de Pagamento cadastrada com Sucesso!');
-      LimpaCampos;
+      persistencia.Atualizar;
+      limpaCampos;
     end;
-  except
-    on E : exception do
-    begin
-      dm.conexaoBanco.Rollback;
-      ShowMessage('Erro ao gravar os dados '+ E.Message);
-      Exit;
-    end;
+  finally
+    persistencia.Free;
   end;
 end;
 
