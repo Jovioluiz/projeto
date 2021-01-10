@@ -86,84 +86,84 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object Label7: TLabel
       Left = 26
-      Top = 208
+      Top = 182
       Width = 38
       Height = 13
       Caption = 'Produto'
     end
     object Label8: TLabel
       Left = 117
-      Top = 208
+      Top = 182
       Width = 46
       Height = 13
       Caption = 'Descri'#231#227'o'
     end
     object Label9: TLabel
       Left = 573
-      Top = 208
+      Top = 182
       Width = 36
       Height = 13
       Caption = 'Qtdade'
     end
     object Label10: TLabel
       Left = 661
-      Top = 208
+      Top = 182
       Width = 41
       Height = 13
       Caption = 'UN Med.'
     end
     object Label11: TLabel
-      Left = 24
-      Top = 264
+      Left = 25
+      Top = 228
       Width = 62
       Height = 13
       Caption = 'Tabela Pre'#231'o'
     end
     object Label12: TLabel
-      Left = 117
-      Top = 264
+      Left = 118
+      Top = 228
       Width = 46
       Height = 13
       Caption = 'Descri'#231#227'o'
     end
     object Label13: TLabel
-      Left = 573
-      Top = 264
+      Left = 574
+      Top = 228
       Width = 64
       Height = 13
       Caption = 'Valor Unit'#225'rio'
     end
     object Label14: TLabel
-      Left = 721
-      Top = 264
+      Left = 722
+      Top = 228
       Width = 51
       Height = 13
       Caption = 'Valor Total'
     end
     object Label15: TLabel
-      Left = 650
-      Top = 264
+      Left = 651
+      Top = 228
       Width = 61
       Height = 13
       Caption = 'Desconto R$'
     end
     object Label16: TLabel
       Left = 26
-      Top = 544
+      Top = 565
       Width = 61
       Height = 13
       Caption = 'Desconto R$'
     end
     object Label17: TLabel
       Left = 117
-      Top = 544
+      Top = 565
       Width = 64
       Height = 13
       Caption = 'Acr'#233'scimo R$'
     end
     object Label18: TLabel
-      Left = 213
-      Top = 544
+      Left = 203
+      Top = 565
       Width = 51
       Height = 13
       Caption = 'Valor Total'
@@ -177,7 +177,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtCdFormaPgto: TEdit
       Left = 24
-      Top = 167
+      Top = 155
       Width = 87
       Height = 21
       TabOrder = 1
@@ -186,7 +186,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtCdCondPgto: TEdit
       Left = 494
-      Top = 167
+      Top = 155
       Width = 87
       Height = 21
       TabOrder = 2
@@ -195,7 +195,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtNomeCondPgto: TEdit
       Left = 587
-      Top = 167
+      Top = 155
       Width = 236
       Height = 21
       Enabled = False
@@ -203,7 +203,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtCdProduto: TEdit
       Left = 24
-      Top = 227
+      Top = 201
       Width = 87
       Height = 21
       TabOrder = 3
@@ -213,7 +213,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtDescProduto: TEdit
       Left = 117
-      Top = 227
+      Top = 201
       Width = 427
       Height = 21
       Enabled = False
@@ -221,23 +221,24 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtQtdade: TEdit
       Left = 573
-      Top = 227
+      Top = 201
       Width = 65
       Height = 21
       TabOrder = 4
+      Text = '0'
       OnChange = edtQtdadeChange
       OnExit = edtQtdadeExit
     end
     object edtUnMedida: TComboBox
       Left = 662
-      Top = 227
+      Top = 201
       Width = 65
       Height = 21
       TabOrder = 5
     end
     object edtCdtabelaPreco: TEdit
-      Left = 24
-      Top = 283
+      Left = 25
+      Top = 247
       Width = 87
       Height = 21
       TabOrder = 6
@@ -245,22 +246,22 @@ object frmPedidoVenda: TfrmPedidoVenda
       OnExit = edtCdtabelaPrecoExit
     end
     object edtVlUnitario: TEdit
-      Left = 573
-      Top = 283
+      Left = 574
+      Top = 247
       Width = 65
       Height = 21
       TabOrder = 7
     end
     object edtVlTotal: TEdit
-      Left = 721
-      Top = 283
+      Left = 722
+      Top = 247
       Width = 65
       Height = 21
       TabOrder = 9
     end
     object btnAdicionar: TButton
-      Left = 792
-      Top = 281
+      Left = 793
+      Top = 245
       Width = 63
       Height = 25
       Caption = 'Adicionar'
@@ -269,9 +270,9 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object dbGridProdutos: TDBGrid
       Left = 26
-      Top = 320
+      Top = 288
       Width = 831
-      Height = 201
+      Height = 271
       DataSource = dsPedidoVenda
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       ReadOnly = True
@@ -287,16 +288,16 @@ object frmPedidoVenda: TfrmPedidoVenda
       OnTitleClick = dbGridProdutosTitleClick
     end
     object edtVlDescontoItem: TEdit
-      Left = 650
-      Top = 283
+      Left = 651
+      Top = 247
       Width = 65
       Height = 21
       TabOrder = 8
       OnExit = edtVlDescontoItemExit
     end
     object edtVlDescTotalPedido: TEdit
-      Left = 26
-      Top = 563
+      Left = 24
+      Top = 584
       Width = 61
       Height = 21
       TabOrder = 11
@@ -304,7 +305,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtVlAcrescimoTotalPedido: TEdit
       Left = 117
-      Top = 563
+      Top = 584
       Width = 61
       Height = 21
       TabOrder = 12
@@ -312,8 +313,8 @@ object frmPedidoVenda: TfrmPedidoVenda
       OnExit = edtVlAcrescimoTotalPedidoExit
     end
     object edtVlTotalPedido: TEdit
-      Left = 213
-      Top = 563
+      Left = 203
+      Top = 584
       Width = 61
       Height = 21
       TabOrder = 13
@@ -321,7 +322,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object btnConfirmarPedido: TButton
       Left = 661
-      Top = 563
+      Top = 579
       Width = 95
       Height = 32
       Caption = 'Confirmar'
@@ -330,7 +331,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object btnCancelar: TButton
       Left = 762
-      Top = 563
+      Top = 579
       Width = 95
       Height = 32
       Caption = 'Cancelar'
@@ -383,15 +384,15 @@ object frmPedidoVenda: TfrmPedidoVenda
   end
   object edtNomeFormaPgto: TEdit
     Left = 119
-    Top = 169
+    Top = 157
     Width = 329
     Height = 21
     Enabled = False
     TabOrder = 5
   end
   object edtDescTabelaPreco: TEdit
-    Left = 119
-    Top = 285
+    Left = 120
+    Top = 249
     Width = 427
     Height = 21
     Enabled = False

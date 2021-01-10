@@ -383,17 +383,17 @@ begin
 
   query.Close;
   query.SQL.Text := 'select                              '+
-                                           'tp.cd_tabela,                 '+
-                                           'tp.nm_tabela,                 '+
-                                           'tpp.valor                     '+
-                                      'from                               '+
-                                          'tabela_preco tp                '+
-                                      'join tabela_preco_produto tpp on   '+
-                                          'tp.cd_tabela = tpp.cd_tabela   '+
-                                      'join produto p on                  '+
-                                          'tpp.cd_produto = p.cd_produto  '+
-                                      'where (tp.cd_tabela = :cd_tabela)  '+
-                                      'and (p.cd_produto = :cd_produto)';
+                         'tp.cd_tabela,                 '+
+                         'tp.nm_tabela,                 '+
+                         'tpp.valor                     '+
+                    'from                               '+
+                        'tabela_preco tp                '+
+                    'join tabela_preco_produto tpp on   '+
+                        'tp.cd_tabela = tpp.cd_tabela   '+
+                    'join produto p on                  '+
+                        'tpp.cd_produto = p.cd_produto  '+
+                    'where (tp.cd_tabela = :cd_tabela)  '+
+                    'and (p.cd_produto = :cd_produto)';
 
   query.ParamByName('cd_tabela').AsInteger := StrToInt(edtTabelaPreco.Text);
   query.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);

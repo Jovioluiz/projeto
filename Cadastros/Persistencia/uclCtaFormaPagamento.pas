@@ -27,7 +27,7 @@ end;
 implementation
 
 uses
-  FireDAC.Comp.Client, uDataModule, System.SysUtils;
+  FireDAC.Comp.Client, uDataModule, System.SysUtils, FireDAC.Stan.Param, Data.DB;
 
 { TCtaFormaPagamento }
 

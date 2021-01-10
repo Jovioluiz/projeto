@@ -20,7 +20,6 @@ type
     edtCTA_FORMA_PGTODESCRICAO: TEdit;
     edtCTA_FORMA_PGTOFL_ATIVO: TCheckBox;
     edtCTA_FORMA_PGTOCLASSIFICACAO: TRadioGroup;
-    sqlFormaPgto: TFDQuery;
     procedure edtCTA_FORMA_PGTOCODIGOExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

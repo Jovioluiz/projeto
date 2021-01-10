@@ -381,6 +381,7 @@ begin
     qry.Free;
   end;
 end;
+
 procedure TfrmControleAcesso.Salvar;
 const
   SQL_INSERT = 'insert ' +

@@ -19,12 +19,14 @@ type TPedidoVenda = class
     function ValidaFormaPgto(CdFormaPgto: Integer): Boolean;
     function ValidaCliente(CdCliente: Integer): Boolean;
     function ValidaCondPgto(CdCond, CdForma: Integer): Boolean;
-    function BuscaProduto(CodProduto: Integer): TList<String>;
+    function BuscaProduto(CodProduto: Integer): TList<String>; overload;
+    function BuscaProduto(CodBarras: String): TList<String>; overload;
     function ValidaProduto(CodProduto: Integer): Boolean;
     function BuscaTabelaPreco(CodTabela, CodProduto: Integer): TList<string>;
     function ValidaTabelaPreco(CodTabela, CodProduto: Integer): Boolean;
     function BuscaFormaPgto(CodForma: Integer): TList<string>;
     function BuscaCondicaoPgto(CodCond, CodForma: Integer): TList<string>;
+    function isCodBarrasProduto(Cod: String): Boolean;
 end;
 
 implementation
@@ -148,13 +150,8 @@ end;
 
 function TPedidoVenda.ValidaProduto(CodProduto: Integer): Boolean;
 const
-  sql = 'select '+
-            'p.cd_produto,                  '+
-            'p.desc_produto,                '+
-            'tpp.un_medida,                 '+
-            'tpp.cd_tabela,                 '+
-            'tp.nm_tabela,                  '+
-            'tpp.valor                      '+
+  SQL_COD = 'select '+
+            'p.cd_produto                  '+
         'from                               '+
             'produto p                      '+
         'join tabela_preco_produto tpp on   '+
@@ -163,20 +160,46 @@ const
             'tpp.cd_tabela = tp.cd_tabela   '+
         'where (p.cd_produto = :cd_produto) '+
         'and (p.fl_ativo = true)';
+
+  SQL_BARRAS =
+   'select ' +
+        '    p.cd_produto ' +
+        'from ' +
+        '    produto p ' +
+        'join tabela_preco_produto tpp on ' +
+        '    p.cd_produto = tpp.cd_produto ' +
+        'join tabela_preco tp on ' +
+        '    tpp.cd_tabela = tp.cd_tabela ' +
+        'join produto_cod_barras pcb on ' +
+        '    pcb.cd_produto = p.cd_produto ' +
+        'where ' +
+        '    (pcb.codigo_barras = :codigo_barras) ' +
+        '    and (p.fl_ativo = true) ' +
+        'limit 1 ';
 var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  Result := False;
 
   try
-    qry.SQL.Add(sql);
+    qry.SQL.Add(SQL_COD);
     qry.ParamByName('cd_produto').AsInteger := CodProduto;
-    qry.Open(sql);
+    qry.Open(SQL_COD);
 
-    if qry.IsEmpty then
-      Result := True;
+    if not qry.IsEmpty then
+      Exit(True);
+
+    Result := True;
+    qry.Close;
+    qry.SQL.Clear;
+    qry.SQL.Add(SQL_BARRAS);
+    qry.ParamByName('codigo_barras').AsString := IntToStr(CodProduto);
+    qry.Open(SQL_BARRAS);
+
+    if not qry.IsEmpty then
+      Exit(True);
+
   finally
     qry.Free;
   end;
@@ -248,6 +271,58 @@ begin
   finally
     qry.Free;
   end;
+end;
+
+function TPedidoVenda.BuscaProduto(CodBarras: String): TList<String>;
+const
+  sql = 'select ' +
+        '    p.cd_produto, ' +
+        '    p.desc_produto, ' +
+        '    tpp.un_medida, ' +
+        '    tpp.cd_tabela, ' +
+        '    tp.nm_tabela, ' +
+        '    tpp.valor ' +
+        'from ' +
+        '    produto p ' +
+        'join tabela_preco_produto tpp on ' +
+        '    p.cd_produto = tpp.cd_produto ' +
+        'join tabela_preco tp on ' +
+        '    tpp.cd_tabela = tp.cd_tabela ' +
+        'join produto_cod_barras pcb on ' +
+        '    pcb.cd_produto = p.cd_produto ' +
+        'where ' +
+        '    (pcb.codigo_barras = :codigo_barras) ' +
+        '    and (p.fl_ativo = true) ' +
+        'limit 1 ';
+var
+  qry: TFDQuery;
+  lista: TList<string>;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  lista := TList<string>.Create;
+
+  try
+    qry.SQL.Add(sql);
+    qry.ParamByName('codigo_barras').AsString := CodBarras;
+    qry.Open();
+
+    if not qry.IsEmpty then
+    begin
+      lista.Add(qry.FieldByName('cd_produto').AsString);
+      lista.Add(qry.FieldByName('desc_produto').AsString);
+      lista.Add(qry.FieldByName('un_medida').AsString);
+      lista.Add(qry.FieldByName('cd_tabela').AsString);
+      lista.Add(qry.FieldByName('nm_tabela').AsString);
+      lista.Add(qry.FieldByName('valor').AsString);
+    end;
+
+    Result := lista;
+
+  finally
+    qry.Free;
+  end;
+
 end;
 
 function TPedidoVenda.BuscaProduto(CodProduto: Integer): TList<String>;
@@ -343,6 +418,34 @@ begin
   Result := valorUnitario * qtdadeItem;
 end;
 
+
+function TPedidoVenda.isCodBarrasProduto(Cod: String): Boolean;
+const
+  SQL =
+    'select ' +
+    '    * ' +
+    'from ' +
+    '    produto_cod_barras pcb ' +
+    'where ' +
+    '    codigo_barras = :codigo_barras ';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  Result := False;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('codigo_barras').AsString := Cod;
+    qry.Open();
+
+    if not qry.IsEmpty then
+      Result := True;
+  finally
+    qry.Free;
+  end;
+end;
 
 function TPedidoVenda.ValidaQtdadeItem(CodProduto: Integer; QtdPedido: Double): Boolean;
 const

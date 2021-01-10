@@ -384,22 +384,17 @@ begin
     //soma os valores totais dos itens e preenche o valor total do pedido
     vl_total_itens := 0;
 
-    with cdsPedidoVenda do
+    cdsPedidoVenda.Loop(
+    procedure
     begin
-      cdsPedidoVenda.DisableControls;
-      cdsPedidoVenda.First;
+      vl_total_itens := (vl_total_itens + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
+    end);
 
-      while not cdsPedidoVenda.Eof do
-      begin
-        vl_total_itens := (vl_total_itens + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
-        cdsPedidoVenda.Next;
-      end;
-
-      edtVlTotalPedido.Text := CurrToStr(vl_total_itens);
-      cdsPedidoVenda.EnableControls;
-    end;
+    edtVlTotalPedido.Text := CurrToStr(vl_total_itens);
 
     seqItem := seqItem + 1;
+
+    edtQtdade.Text := '0';
   finally
     limpaCampos;
     qry.Free;
@@ -450,16 +445,12 @@ begin
       AlteraSequenciaItem;
       
       //insert na pedido_venda_item
-      with cdsPedidoVenda do
+
+      cdsPedidoVenda.Loop(
+      procedure
       begin
-        cdsPedidoVenda.DisableControls;
-        cdsPedidoVenda.First;
-        while not cdsPedidoVenda.Eof do
-        begin
-          SalvaItens(True);
-          cdsPedidoVenda.Next;
-        end;
-      end;
+        SalvaItens(True);
+      end);
 
       //fazer o insert na wms_mvto_estoque
       InsereWmsMvto;
@@ -793,13 +784,7 @@ end;
 
 
 procedure TfrmPedidoVenda.edtCdProdutoChange(Sender: TObject);
-var
-  produto: TPedidoVenda;
-  lista: TList<String>;
 begin
-  produto := TPedidoVenda.Create;
-  lista := TList<string>.Create;
-  
   if edtCdProduto.Text = EmptyStr then
   begin
     edtDescProduto.Text := '';
@@ -809,20 +794,6 @@ begin
     edtDescTabelaPreco.Text := '';
     edtVlUnitario.Text := '';
     Exit;
-  end;
-
-  try
-    lista := produto.BuscaProduto(StrToInt(edtCdProduto.Text));
-
-    //preenche os dados da lista nos campos
-    edtDescProduto.Text := lista.Items[0];
-    edtUnMedida.Text := lista.Items[1];
-    edtCdtabelaPreco.Text := lista.Items[2];
-    edtDescTabelaPreco.Text := lista.Items[3];
-    edtVlUnitario.Text := lista.Items[4];
-  finally
-    FreeAndNil(produto);
-    FreeAndNil(lista);
   end;
 end;
 
@@ -861,27 +832,56 @@ procedure TfrmPedidoVenda.edtCdProdutoExit(Sender: TObject);
 var
   produto: TPedidoVenda;
   resposta: Boolean;
+  lista: TList<String>;
 begin
   produto := TPedidoVenda.Create;
   resposta := False;
-
-  if edtCdProduto.Text <> '' then
-    resposta := produto.ValidaProduto(StrToInt(edtCdProduto.Text));
-
-  if (Trim(edtCdProduto.Text) = '') and (cdsPedidoVenda.RecordCount > 0) then
-    edtVlDescTotalPedido.SetFocus;
+  lista := TList<string>.Create;
 
   try
-    if resposta then
+    if edtCdProduto.Text <> '' then
+      resposta := produto.ValidaProduto(StrToInt(edtCdProduto.Text));
+
+    if (Trim(edtCdProduto.Text) = '') and (cdsPedidoVenda.RecordCount > 0) then
+    begin
+      edtVlDescTotalPedido.SetFocus;
+      Exit;
+    end;
+
+    if not resposta then
     begin
       if (Application.MessageBox('Produto sem preço Cadastrado ou Inativo!', 'Verifique', MB_OK) = idOK) then
       begin
         edtCdtabelaPreco.Text := '';
         edtCdProduto.SetFocus;
+        Exit;
       end;
     end;
+
+    //preenche os dados da lista nos campos
+    if produto.isCodBarrasProduto(edtCdProduto.Text) then
+    begin
+      lista := produto.BuscaProduto(edtCdProduto.Text);
+      edtCdProduto.Text := lista.Items[0];
+      edtDescProduto.Text := lista.Items[1];
+      edtUnMedida.Text := lista.Items[2];
+      edtCdtabelaPreco.Text := lista.Items[3];
+      edtDescTabelaPreco.Text := lista.Items[4];
+      edtVlUnitario.Text := lista.Items[5];
+    end
+    else
+    begin
+      lista := produto.BuscaProduto(StrToInt(edtCdProduto.Text));
+      edtDescProduto.Text := lista.Items[0];
+      edtUnMedida.Text := lista.Items[1];
+      edtCdtabelaPreco.Text := lista.Items[2];
+      edtDescTabelaPreco.Text := lista.Items[3];
+      edtVlUnitario.Text := lista.Items[4];
+    end;
+
   finally
     FreeAndNil(produto);
+    FreeAndNil(lista);
   end;
 end;
 
@@ -983,7 +983,7 @@ begin
     if edtQtdade.Text = '0' then
     begin
       ShowMessage('Informe uma quantidade maior que 0');
-      edtCdProduto.SetFocus;
+      edtQtdade.SetFocus;
     end;
 
     if not possuiEstoque then
@@ -1346,31 +1346,16 @@ end;
 
 function TfrmPedidoVenda.RetornaSequencia: Integer;
 begin
-  Result := 1;
 
-//  cdsPedidoVenda.Loop(
-//    procedure
-//    begin
-//      if cdsPedidoVenda.FieldByName('seq').AsInteger = seqItem then
-//        Result := seqItem + 1;
-//    end
-//  );
-  
-  cdsPedidoVenda.DisableControls;
-
-  cdsPedidoVenda.First;
-
-  try
-    while not cdsPedidoVenda.Eof do
+  cdsPedidoVenda.Loop(
+    procedure
     begin
       if cdsPedidoVenda.FieldByName('seq').AsInteger = seqItem then
-        Result := seqItem + 1;
+        seqItem := seqItem + 1;
+    end
+  );
 
-      cdsPedidoVenda.Next;
-    end;
-  finally
-    cdsPedidoVenda.EnableControls;
-  end;
+  Result := seqItem;
 end;
 
 procedure TfrmPedidoVenda.SalvaCabecalho;

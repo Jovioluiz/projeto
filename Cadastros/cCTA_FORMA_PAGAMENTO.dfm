@@ -79,9 +79,4 @@ object frmCadFormaPagamento: TfrmCadFormaPagamento
       TabOrder = 3
     end
   end
-  object sqlFormaPgto: TFDQuery
-    Connection = dm.conexaoBanco
-    Left = 408
-    Top = 144
-  end
 end
