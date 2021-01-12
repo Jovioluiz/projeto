@@ -1,3 +1,6 @@
+{$REGION
+  Autor: 'Jóvio Luiz Giacomolli'}
+{$ENDREGION}
 program Projeto;
 
 uses

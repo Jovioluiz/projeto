@@ -178,30 +178,24 @@
         </DCCReference>
         <DCCReference Include="WMS\fCadastroEnderecos.pas">
             <Form>frmCadastroEnderecos</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Cadastros\uCadastrarSenha.pas">
             <Form>frmCadastraSenha</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Arquivos\uImportaDados.pas">
             <Form>frmImportaDados</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Inicio\uSplash.pas">
             <Form>frmSplash</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Outros\uLista.pas">
             <Form>frmLista</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Cadastros\Persistencia\uclCliente.pas"/>
         <DCCReference Include="Cadastros\Persistencia\uclCta_Cond_Pgto.pas"/>
         <DCCReference Include="Cadastros\Persistencia\uclCtaFormaPagamento.pas"/>
         <DCCReference Include="Conexao\fConexao.pas">
             <Form>frmConexao</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
