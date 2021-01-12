@@ -11723,4 +11723,15 @@ object frmPrincipal: TfrmPrincipal
     Left = 880
     Top = 40
   end
+  object TrayIcon1: TTrayIcon
+    Visible = True
+    OnDblClick = TrayIcon1DblClick
+    Left = 896
+    Top = 296
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMinimize = ApplicationEvents1Minimize
+    Left = 904
+    Top = 384
+  end
 end

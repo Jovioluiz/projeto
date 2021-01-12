@@ -13,7 +13,7 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uVisualizaPedidoVenda, UfrmRelVendaDiaria,
   uLancamentoNotaEntrada, uCadastroTributacaoItem, Vcl.ComCtrls, uLogin, uConsultaProduto,
-  uConfiguracoes, uUtil, uLista;
+  uConfiguracoes, uUtil, uLista, Vcl.AppEvnts;
 
 type
   TfrmPrincipal = class(TForm)
@@ -50,6 +50,8 @@ type
     Importao1: TMenuItem;
     ImportarProdutos1: TMenuItem;
     este1: TMenuItem;
+    TrayIcon1: TTrayIcon;
+    ApplicationEvents1: TApplicationEvents;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -73,6 +75,8 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure ImportarProdutos1Click(Sender: TObject);
     procedure este1Click(Sender: TObject);
+    procedure ApplicationEvents1Minimize(Sender: TObject);
+    procedure TrayIcon1DblClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -111,6 +115,15 @@ implementation
 uses uUsuario, uControleAcesso, uDataModule, uGravaArquivo, fCadastroEnderecos,
   uImportaDados, uSplash;
 
+
+procedure TfrmPrincipal.ApplicationEvents1Minimize(Sender: TObject);
+begin
+  Self.Hide;
+  Self.WindowState := wsMinimized;
+  TrayIcon1.Visible := True;
+  TrayIcon1.Animate := True;
+  TrayIcon1.ShowBalloonHint;
+end;
 
 procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
 begin
@@ -371,6 +384,14 @@ begin
   finally
     FreeAndNil(acesso);
   end;
+end;
+
+procedure TfrmPrincipal.TrayIcon1DblClick(Sender: TObject);
+begin
+  TrayIcon1.Visible := False;
+  Show;
+  WindowState := wsMaximized;
+  Application.BringToFront;
 end;
 
 procedure TfrmPrincipal.Usurios1Click(Sender: TObject);
