@@ -348,9 +348,7 @@ begin
         persistencia.cd_cliente := StrToInt(edtCLIENTEcd_cliente.Text);
         persistencia.Excluir;
         limpaCampos;
-      end
-      else
-        Exit;
+      end;
     end;
   finally
     persistencia.Free;

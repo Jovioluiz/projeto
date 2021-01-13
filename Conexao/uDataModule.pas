@@ -71,7 +71,7 @@ begin
       conexaoBanco.Params.Password := conexaoIni.ReadString('configuracoes', 'senha', conexaoBanco.Params.Password);
       conexaoBanco.Params.Values['Port'] := conexaoIni.ReadString('configuracoes', 'porta', conexaoBanco.Params.Values['Port']);
 
-      conexaoBanco.Connected := true;
+      conexaoBanco.Connected := True;
 
     except
       on e:Exception do

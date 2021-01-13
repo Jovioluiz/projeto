@@ -157,7 +157,7 @@ end;
 
 procedure TfrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  frmLogin := nil;
+  //frmLogin := nil;
 end;
 
 procedure TfrmLogin.FormCreate(Sender: TObject);

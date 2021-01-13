@@ -105,7 +105,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, uUtil, uLogin, uConsulta;
+uses uDataModule, uUtil, uLogin, uConsulta, uclProduto;
 
 procedure TfrmCadProduto.btnAddCodBarrasClick(Sender: TObject);
 begin
@@ -438,40 +438,23 @@ end;
 
 
 procedure TfrmCadProduto.excluir;
-const
-  sql = 'delete                    '+
-        '  from                    '+
-        'produto                   '+
-        '  where                   '+
-        'cd_produto = :cd_produto';
 var
-  qry: TFDQuery;
+  persistencia: TProduto;
 begin
-  try
-    if (Application.MessageBox('Deseja Excluir o Produto?','Atenção', MB_YESNO) = IDYES) then
-    begin
-      qry := TFDQuery.Create(Self);
-      qry.Connection := dm.conexaoBanco;
-      qry.Close;
-      qry.SQL.Clear;
-      qry.SQL.Add(sql);
-      qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+  persistencia := TProduto.Create;
 
-      try
-        qry.ExecSQL;
-        ShowMessage('Produto Excluído com Sucesso!');
+  try
+    if edtPRODUTOCD_PRODUTO.Text <> '' then
+    begin
+      if (Application.MessageBox('Deseja Excluir o Produto?','Atenção', MB_YESNO) = IDYES) then
+      begin
+        persistencia.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+        persistencia.Excluir;
         limpaCampos;
-      except
-        on E:Exception do
-          begin
-            ShowMessage('Erro ao excluir o produto ' + edtPRODUTOCD_PRODUTO.Text + E.Message);
-          end;
       end;
-    end
-    else
-      Exit;
+    end;
   finally
-    FreeAndNil(qry);
+    persistencia.Free;
   end;
 end;
 

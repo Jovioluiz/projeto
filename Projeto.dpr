@@ -45,7 +45,9 @@ uses
   uclCliente in 'Cadastros\Persistencia\uclCliente.pas',
   uclCta_Cond_Pgto in 'Cadastros\Persistencia\uclCta_Cond_Pgto.pas',
   uclCtaFormaPagamento in 'Cadastros\Persistencia\uclCtaFormaPagamento.pas',
-  fConexao in 'Conexao\fConexao.pas' {frmConexao};
+  fConexao in 'Conexao\fConexao.pas' {frmConexao},
+  uclPadrao in 'Outros\uclPadrao.pas',
+  uclProduto in 'Cadastros\Persistencia\uclProduto.pas';
 
 {$R *.res}
 
