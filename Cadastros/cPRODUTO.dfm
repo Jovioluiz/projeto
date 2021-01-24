@@ -168,7 +168,7 @@ object frmCadProduto: TfrmCadProduto
         Top = 331
         Width = 407
         Height = 120
-        DataSource = dsBarras
+        DataSource = dmProdutoCodBarras.dsBarras
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
         TabOrder = 9
         TitleFont.Charset = DEFAULT_CHARSET
@@ -216,7 +216,7 @@ object frmCadProduto: TfrmCadProduto
         Top = 291
         Width = 105
         Height = 21
-        TabOrder = 6
+        TabOrder = 5
         Items.Strings = (
           'Interno'
           'GTIN'
@@ -228,16 +228,12 @@ object frmCadProduto: TfrmCadProduto
         Width = 65
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 5
+        TabOrder = 6
       end
     end
     object TabSheet1: TTabSheet
       Caption = 'Tributa'#231#227'o'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label10: TLabel
         Left = 49
         Top = 24
@@ -324,7 +320,7 @@ object frmCadProduto: TfrmCadProduto
     Width = 586
     Height = 21
     CharCase = ecUpperCase
-    TabOrder = 1
+    TabOrder = 2
   end
   object ckPRODUTOATIVO: TCheckBox
     Left = 224
@@ -335,62 +331,10 @@ object frmCadProduto: TfrmCadProduto
     Caption = 'Ativo'
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 2
+    TabOrder = 1
   end
   object dlgImagem: TOpenDialog
     Left = 684
     Top = 304
-  end
-  object dsBarras: TDataSource
-    DataSet = cdsBarras
-    Left = 164
-    Top = 496
-  end
-  object cdsBarras: TClientDataSet
-    PersistDataPacket.Data = {
-      910000009619E0BD01000000180000000400000000000300000091000A63645F
-      70726F6475746F040001000000000009756E5F6D656469646101004900000001
-      000557494454480200020014000F7469706F5F636F645F626172726173010049
-      00000001000557494454480200020014000D636F6469676F5F62617272617301
-      004900000001000557494454480200020014000000}
-    Active = True
-    Aggregates = <>
-    FieldDefs = <
-      item
-        Name = 'cd_produto'
-        DataType = ftInteger
-      end
-      item
-        Name = 'un_medida'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'tipo_cod_barras'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'codigo_barras'
-        DataType = ftString
-        Size = 20
-      end>
-    IndexDefs = <>
-    Params = <>
-    StoreDefs = True
-    Left = 268
-    Top = 496
-    object cdsBarrasun_medida: TStringField
-      DisplayLabel = 'UN. Medida'
-      FieldName = 'un_medida'
-    end
-    object cdsBarrastipo_cod_barras: TStringField
-      DisplayLabel = 'C'#243'd Barras'
-      FieldName = 'tipo_cod_barras'
-    end
-    object cdsBarrascodigo_barras: TStringField
-      DisplayLabel = 'C'#243'digo Barras'
-      FieldName = 'codigo_barras'
-    end
   end
 end

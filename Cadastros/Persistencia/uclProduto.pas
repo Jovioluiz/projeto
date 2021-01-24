@@ -3,7 +3,8 @@ unit uclProduto;
 interface
 
 uses
-  uclPadrao, FireDAC.Comp.Client, FireDAC.Stan.Param;
+  uclPadrao, FireDAC.Comp.Client, FireDAC.Stan.Param, Data.DB,
+  dProdutoCodBarras;
 
 type TProduto = class(TPadrao)
   private
@@ -30,6 +31,7 @@ type TProduto = class(TPadrao)
     procedure Atualizar; override;
     procedure Inserir; override;
     procedure Excluir; override;
+    function Pesquisar(CdProduto: Integer): Boolean;
 
     property cd_produto: Integer read Fcd_produto write Setcd_produto;
     property fl_ativo: Boolean read Ffl_ativo write Setfl_ativo;
@@ -42,6 +44,28 @@ type TProduto = class(TPadrao)
     property imagem: Byte read Fimagem write Setimagem;
 end;
 
+type TProdutoCodigoBarras = class(TProduto)
+  private
+    Fcodigo_barras: String;
+    Ftipo_cod_barras: String;
+    FDados: TdmProdutoCodBarras;
+    procedure Setcodigo_barras(const Value: String);
+    procedure Settipo_cod_barras(const Value: String);
+
+  public
+    procedure Atualizar; override;
+    procedure Inserir; override;
+    procedure Excluir; override;
+    function Pesquisar(CdProduto: Integer): Boolean; overload;
+    function Pesquisar(CdProduto: Integer; CodBarras: String): Boolean;overload;
+    constructor Create;
+    destructor Destroy; override;
+
+    property tipo_cod_barras: String read Ftipo_cod_barras write Settipo_cod_barras;
+    property codigo_barras: String read Fcodigo_barras write Setcodigo_barras;
+    property Dados: TdmProdutoCodBarras read FDados;
+end;
+
 implementation
 
 uses
@@ -50,11 +74,53 @@ uses
 { TProduto }
 
 procedure TProduto.Atualizar;
+const
+  SQL = 'update                               '+
+         '  produto                            '+
+         'set                                  '+
+         '  fl_ativo = :fl_ativo,              '+
+         '  desc_produto = :desc_produto,      '+
+         '  un_medida = :un_medida,            '+
+         '  fator_conversao = :fator_conversao,'+
+         '  peso_liquido = :peso_liquido,      '+
+         '  peso_bruto = :peso_bruto,          '+
+         '  observacao = :observacao           '+
+         'where                                '+
+         '  cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
 begin
-  inherited;
+  //inherited;
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  qry.Connection.StartTransaction;
 
+  try
+    try
+      qry.SQL.Add(SQL);
+      qry.ParamByName('fl_ativo').AsBoolean := Ffl_ativo;
+      qry.ParamByName('desc_produto').AsString := Fdesc_produto;
+      qry.ParamByName('un_medida').AsString := Fun_medida;
+      qry.ParamByName('fator_conversao').AsCurrency := Ffator_conversao;
+      qry.ParamByName('peso_liquido').AsCurrency := Fpeso_liquido;
+      qry.ParamByName('peso_bruto').AsCurrency := Fpeso_bruto;
+      qry.ParamByName('observacao').AsString := Fobservacao;
+      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+
+      qry.ExecSQL;
+      qry.Connection.Commit;
+    except
+    on E:exception do
+      begin
+        qry.Connection.Rollback;
+        raise Exception.Create('Erro ao gravar os dados do produto ' + E.Message);
+      end;
+    end;
+  finally
+    qry.Connection.Rollback;
+    qry.Free;
+  end;
 end;
-
 
 procedure TProduto.Excluir;
 const
@@ -91,9 +157,83 @@ begin
 end;
 
 procedure TProduto.Inserir;
+const
+  SQL = 'insert into               '+
+                'produto (cd_produto, '+
+                'fl_ativo,            '+
+                'desc_produto,        '+
+                'un_medida,           '+
+                'fator_conversao,     '+
+                'peso_liquido,        '+
+                'peso_bruto,          '+
+                'observacao)          '+
+        ' values (:cd_produto,         '+
+                ':fl_ativo,           '+
+                ':desc_produto,       '+
+                ':un_medida,          '+
+                ':fator_conversao,    '+
+                ':peso_liquido,       '+
+                ':peso_bruto,         '+
+                ':observacao)         ';
+var
+  qry: TFDQuery;
 begin
-  inherited;
+  //inherited;
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  qry.Connection.StartTransaction;
 
+  try
+    try
+      qry.SQL.Add(SQL);
+      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('fl_ativo').AsBoolean := Ffl_ativo;
+      qry.ParamByName('desc_produto').AsString := Fdesc_produto;
+      qry.ParamByName('un_medida').AsString := Fun_medida;
+      qry.ParamByName('fator_conversao').AsCurrency := Ffator_conversao;
+      qry.ParamByName('peso_liquido').AsCurrency := Fpeso_liquido;
+      qry.ParamByName('peso_bruto').AsCurrency := Fpeso_bruto;
+      qry.ParamByName('observacao').AsString := Fobservacao;
+
+      qry.ExecSQL;
+      qry.Connection.Commit;
+    except
+    on E:exception do
+      begin
+        qry.Connection.Rollback;
+        raise Exception.Create('Erro ao gravar os dados do produto ' + E.Message);
+      end;
+    end;
+  finally
+    qry.Connection.Rollback;
+    qry.Free;
+  end;
+end;
+
+function TProduto.Pesquisar(CdProduto: Integer): Boolean;
+const
+  SQL = 'select         '+
+        '   cd_produto  '+
+        'from           '+
+        '   produto     '+
+        'where          '+
+        '   cd_produto = :cd_produto';
+var
+  qry: TFDquery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.Open();
+
+    Result := not qry.IsEmpty;
+
+  finally
+    qry.Free;
+  end;
 end;
 
 procedure TProduto.Setcd_produto(const Value: Integer);
@@ -139,6 +279,178 @@ end;
 procedure TProduto.Setun_medida(const Value: string);
 begin
   Fun_medida := Value;
+end;
+
+{ TProdutoCodigoBarras }
+
+procedure TProdutoCodigoBarras.Atualizar;
+const
+  SQL_UPDATE = 'update produto_cod_barras set '+
+               '  cd_produto = :cd_produto, '+
+               '  un_medida = :un_medida, '+
+               '  tipo_cod_barras = :tipo_cod_barras, '+
+               '  codigo_barras = :codigo_barras '+
+               'where cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+begin
+  inherited;
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  qry.Connection.StartTransaction;
+
+  try
+    try
+      qry.SQL.Add(sql_update);
+
+      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('un_medida').AsString := Dados.cdsBarras.FieldByName('un_medida').AsString;
+      if Dados.cdsBarras.FieldByName('tipo_cod_barras').AsString = 'Interno' then
+        qry.ParamByName('tipo_cod_barras').AsInteger := 0
+      else if Dados.cdsBarras.FieldByName('tipo_cod_barras').AsString = 'GTIN' then
+        qry.ParamByName('tipo_cod_barras').AsInteger := 1
+      else
+        qry.ParamByName('tipo_cod_barras').AsInteger := 2;
+      qry.ParamByName('codigo_barras').AsString := Dados.cdsBarras.FieldByName('codigo_barras').AsString;
+      qry.ExecSQL;
+      qry.Connection.Commit;
+    except
+    on E:exception do
+      begin
+        qry.Connection.Rollback;
+        raise Exception.Create('Erro ao gravar os códigos de barras do produto ' + E.Message);
+      end;
+    end;
+  finally
+    qry.Free;
+  end;
+end;
+
+constructor TProdutoCodigoBarras.Create;
+begin
+  FDados := TdmProdutoCodBarras.Create(nil);
+end;
+
+destructor TProdutoCodigoBarras.Destroy;
+begin
+  FDados.Free;
+end;
+
+procedure TProdutoCodigoBarras.Excluir;
+const SQL =
+        'delete '+
+         '  from '+
+         'produto_cod_barras '+
+         '  where '+
+         'cd_produto = :cd_produto and '+
+         'codigo_barras = :codigo_barras and ' +
+         'un_medida = :un_medida';
+
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  qry.Connection.StartTransaction;
+
+  try
+    try
+      qry.SQL.Add(SQL);
+      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('codigo_barras').AsString := Fcodigo_barras;
+      qry.ParamByName('un_medida').AsString := Fun_medida;
+      qry.ExecSQL;
+      qry.Connection.Commit;
+    except
+      on E : exception do
+      begin
+        qry.Connection.Rollback;
+        raise Exception.Create('Erro ao gravar os códigos de barras do produto ' + E.Message);
+      end;
+    end;
+  finally
+    qry.Connection.Rollback;
+    qry.Free;
+  end;
+end;
+
+procedure TProdutoCodigoBarras.Inserir;
+const
+  SQL_INSERT = 'insert into produto_cod_barras(cd_produto, un_medida, tipo_cod_barras, codigo_barras) ' +
+               ' values '+
+               ' (:cd_produto, :un_medida, :tipo_cod_barras, :codigo_barras)';
+var
+  qry: TFDQuery;
+begin
+  //inherited;
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  qry.Connection.StartTransaction;
+
+  try
+    try
+      qry.SQL.Add(SQL_INSERT);
+      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('un_medida').AsString := Fun_medida;
+      qry.ParamByName('tipo_cod_barras').AsInteger := Ftipo_cod_barras.ToInteger;
+      qry.ParamByName('codigo_barras').AsString := Fcodigo_barras;
+      qry.ExecSQL;
+
+      qry.Connection.Commit;
+
+    except
+    on E:exception do
+      begin
+        qry.Connection.Rollback;
+        raise Exception.Create('Erro ao gravar os códigos de barras do produto ' + E.Message);
+      end;
+    end;
+  finally
+    qry.Free;
+  end;
+end;
+
+function TProdutoCodigoBarras.Pesquisar(CdProduto: Integer): Boolean;
+begin
+ Result := False;
+end;
+
+function TProdutoCodigoBarras.Pesquisar(CdProduto: Integer; CodBarras: String): Boolean;
+const
+  sql = 'select '+
+        '   cd_produto '+
+        'from '+
+        '   produto_cod_barras '+
+        'where '+
+        '   cd_produto = :cd_produto and '+
+        '   codigo_barras = :codigo_barras';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(sql);
+
+    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.ParamByName('codigo_barras').AsString := CodBarras;
+    qry.Open(sql);
+
+    Result := not qry.IsEmpty;
+  finally
+    qry.Free;
+  end;
+end;
+
+procedure TProdutoCodigoBarras.Setcodigo_barras(const Value: String);
+begin
+  Fcodigo_barras := Value;
+end;
+
+procedure TProdutoCodigoBarras.Settipo_cod_barras(const Value: String);
+begin
+  Ftipo_cod_barras := Value;
 end;
 
 end.

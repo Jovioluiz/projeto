@@ -199,6 +199,12 @@
         </DCCReference>
         <DCCReference Include="Outros\uclPadrao.pas"/>
         <DCCReference Include="Cadastros\Persistencia\uclProduto.pas"/>
+        <DCCReference Include="Cadastros\Persistencia\uclProdutoTributacao.pas"/>
+        <DCCReference Include="Cadastros\dProdutoCodBarras.pas">
+            <Form>dmProdutoCodBarras</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -47,7 +47,9 @@ uses
   uclCtaFormaPagamento in 'Cadastros\Persistencia\uclCtaFormaPagamento.pas',
   fConexao in 'Conexao\fConexao.pas' {frmConexao},
   uclPadrao in 'Outros\uclPadrao.pas',
-  uclProduto in 'Cadastros\Persistencia\uclProduto.pas';
+  uclProduto in 'Cadastros\Persistencia\uclProduto.pas',
+  uclProdutoTributacao in 'Cadastros\Persistencia\uclProdutoTributacao.pas',
+  dProdutoCodBarras in 'Cadastros\dProdutoCodBarras.pas' {dmProdutoCodBarras: TDataModule};
 
 {$R *.res}
 

@@ -9,7 +9,8 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client,
   FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids,
-  Datasnap.DBClient, Vcl.Buttons, Vcl.DBCtrls, Jpeg;
+  Datasnap.DBClient, Vcl.Buttons, Vcl.DBCtrls, Jpeg, dProdutoCodBarras,
+  uclProduto;
 
 type
   TfrmCadProduto = class(TForm)
@@ -54,11 +55,6 @@ type
     edtUnCodBarras: TEdit;
     Label14: TLabel;
     Label15: TLabel;
-    dsBarras: TDataSource;
-    cdsBarras: TClientDataSet;
-    cdsBarrasun_medida: TStringField;
-    cdsBarrascodigo_barras: TStringField;
-    cdsBarrastipo_cod_barras: TStringField;
     procedure btnPRODUTOCANCELARClick(Sender: TObject);
     procedure edtPRODUTOCD_PRODUTOExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -77,23 +73,25 @@ type
     procedure edtPRODUTOCD_PRODUTOKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
   private
+    FRegra: TProdutoCodigoBarras;
     { Private declarations }
     procedure limpaCampos;
-    procedure salvar;
+    procedure Salvar;
     procedure excluir;
     procedure validaCampos;
     procedure listarCodBarras;
     procedure desabilitaCampos;
     procedure validaCamposCodBarra;
     procedure SalvarCodBarras;
-    procedure salvaFoto;
-    function pesquisarCodBarras(CdProduto: Integer; CodBarras: String): Boolean;
+    procedure SalvarFoto;
+    procedure SalvarTributacao;
     function carregaImagem(Aimagem: TImage; ABlobField: TBlobField): Boolean;
   public
     { Public declarations }
 
-
     var NomeImg : string;
+
+    property Regra: TProdutoCodigoBarras read FRegra;
   end;
 
 var
@@ -105,15 +103,15 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, uUtil, uLogin, uConsulta, uclProduto;
+uses uDataModule, uUtil, uLogin, uConsulta, uclProdutoTributacao;
 
 procedure TfrmCadProduto.btnAddCodBarrasClick(Sender: TObject);
 begin
   validaCamposCodBarra;
 
-  dsBarras.DataSet.Active := True;
+  Regra.Dados.dsBarras.DataSet.Active := True;
 
-  cdsBarras.AppendRecord([edtUnCodBarras.Text, cbTipoCodBarras.ItemIndex, edtCodigoBarras.Text]);
+  Regra.Dados.cdsBarras.AppendRecord([edtUnCodBarras.Text, cbTipoCodBarras.ItemIndex, edtCodigoBarras.Text]);
 
   cbTipoCodBarras.ItemIndex := -1;
   edtUnCodBarras.Clear;
@@ -173,31 +171,15 @@ begin
    begin
      if MessageDlg('Deseja excluir o código de barras?', mtConfirmation,[mbYes,mbNo], 0) = mrYes then
      begin
-        try
-          dm.query.Close;
-          dm.query.SQL.Clear;
-          dm.query.SQL.Text := 'delete '+
-                               '  from '+
-                               'produto_cod_barras '+
-                               '  where '+
-                               'cd_produto = :cd_produto and '+
-                               'codigo_barras = :codigo_barras and ' +
-                               'un_medida = :un_medida';
-          dm.query.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-          dm.query.ParamByName('codigo_barras').AsString := cdsBarras.FieldByName('codigo_barras').AsString;;
-          dm.query.ParamByName('un_medida').AsString := cdsBarras.FieldByName('un_medida').AsString;
-          dm.query.ExecSQL;
-          edtPRODUTOCD_PRODUTO.SetFocus;
-        except
-        on E : exception do
-          begin
-            ShowMessage('Erro ' + E.Message);
-            Exit;
-          end;
-        end;
+      FRegra.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+      FRegra.codigo_barras := FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString;
+      FRegra.un_medida := FRegra.Dados.cdsBarras.FieldByName('un_medida').AsString;
+      FRegra.Excluir;
+      FRegra.Dados.cdsBarras.Delete;
+
+      edtPRODUTOCD_PRODUTO.SetFocus;
      end;
    end;
-
    listarCodBarras;
 end;
 
@@ -463,11 +445,13 @@ procedure TfrmCadProduto.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
   frmCadProduto := nil;
+  FRegra.Free;
 end;
 
 procedure TfrmCadProduto.FormCreate(Sender: TObject);
 begin
   TabSheetCadastroProduto.Show;
+  FRegra := TProdutoCodigoBarras.Create;
 end;
 
 procedure TfrmCadProduto.FormKeyDown(Sender: TObject; var Key: Word;
@@ -476,7 +460,7 @@ begin
   if key = VK_F3 then //F3
     limpaCampos
   else if key = VK_F2 then  //F2
-    salvar
+    Salvar
   else if key = VK_F4 then    //F4
     excluir
   else if key = VK_ESCAPE then //ESC
@@ -558,7 +542,7 @@ begin
   imagem.Picture := nil;
   TabSheetCadastroProduto.Show;//se estiver em outra aba, sempre volta para a primeira aba
 
-  cdsBarras.EmptyDataSet;
+  FRegra.Dados.cdsBarras.EmptyDataSet;
 end;
 
 procedure TfrmCadProduto.listarCodBarras;
@@ -591,7 +575,7 @@ begin
     qry.First;
     while not qry.Eof do
     begin
-      cdsBarras.AppendRecord([qry.FieldByName('un_medida').AsString,
+      FRegra.Dados.cdsBarras.AppendRecord([qry.FieldByName('un_medida').AsString,
                               qry.FieldByName('tipo_cod_barras').AsString,
                               qry.FieldByName('codigo_barras').AsString]);
       qry.Next;
@@ -602,38 +586,7 @@ begin
   end;
 end;
 
-function TfrmCadProduto.pesquisarCodBarras(CdProduto: Integer; CodBarras: String): Boolean;
-const
-  sql = 'select '+
-        '   cd_produto, '+
-        '   un_medida, '+
-        '   tipo_cod_barras, '+
-        '   codigo_barras '+
-        'from '+
-        '   produto_cod_barras '+
-        'where '+
-        '   cd_produto = :cd_produto and '+
-        '   codigo_barras = :codigo_barras';
-var
-  qry: TFDQuery;
-begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.conexaoBanco;
-
-  try
-    qry.SQL.Add(sql);
-
-    qry.ParamByName('cd_produto').AsInteger := CdProduto;
-    qry.ParamByName('codigo_barras').AsString := CodBarras;
-    qry.Open(sql);
-
-    Result := qry.IsEmpty;
-  finally
-    qry.Free;
-  end;
-end;
-
-procedure TfrmCadProduto.salvaFoto;
+procedure TfrmCadProduto.SalvarFoto;
 const
   sql = 'update produto set imagem = :imagem where cd_produto = :cd_produto';
 var
@@ -642,197 +595,88 @@ var
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
+  qry.Connection.StartTransaction;
 
   try
-    if dlgImagem.FileName <> '' then
-    begin
-      Imagem := TFileStream.Create(dlgImagem.FileName, fmOpenRead or fmShareDenyWrite);
-      qry.SQL.Add(sql);
-      qry.ParamByName('imagem').LoadFromStream(Imagem, ftBlob);
-      qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-      qry.ExecSQL;
+    try
+      if dlgImagem.FileName <> '' then
+      begin
+        Imagem := TFileStream.Create(dlgImagem.FileName, fmOpenRead or fmShareDenyWrite);
+        qry.SQL.Add(sql);
+        qry.ParamByName('imagem').LoadFromStream(Imagem, ftBlob);
+        qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+        qry.ExecSQL;
+
+        qry.Connection.Commit;
+      end;
+    except
+    on E:Exception do
+      begin
+        qry.Connection.Rollback;
+        raise Exception.Create('Erro ao gravar a foto do produto ' + E.Message);
+      end;
     end;
   finally
     qry.Free;
   end;
 end;
 
-procedure TfrmCadProduto.salvar;
-const
-  sql_tributacao = 'select * from produto_tributacao pt '+
-                   'left join grupo_tributacao_icms gti on '+
-                   '    pt.cd_tributacao_icms = gti.cd_tributacao '+
-                   'left join grupo_tributacao_ipi gtipi on '+
-                   '    pt.cd_tributacao_ipi = gtipi.cd_tributacao '+
-                   'left join grupo_tributacao_pis_cofins gtpc on '+
-                   '    pt.cd_tributacao_pis_cofins = gtpc.cd_tributacao '+
-                   'where pt.cd_produto = :cd_produto';
-
-  sql_produto = 'select         '+
-                '    *          '+
-                'from           '+
-                '    produto p  '+
-                'where          '+
-                '    p.cd_produto = :cd_produto';
-
-  sql_update = 'update                               '+
-               '  produto                            '+
-               'set                                  '+
-               '  fl_ativo = :fl_ativo,              '+
-               '  desc_produto = :desc_produto,      '+
-               '  un_medida = :un_medida,            '+
-               '  fator_conversao = :fator_conversao,'+
-               '  peso_liquido = :peso_liquido,      '+
-               '  peso_bruto = :peso_bruto,          '+
-               '  observacao = :observacao           '+
-               'where                                '+
-               '  cd_produto = :cd_produto';
-
-  sql_update_trib = 'update                                                  '+
-                    '   produto_tributacao                                   '+
-                    'set                                                     '+
-                    '   cd_produto = :cd_produto,                            '+
-                    '   cd_tributacao_icms = :cd_tributacao_icms,            '+
-                    '   cd_tributacao_ipi = :cd_tributacao_ipi,              '+
-                    '   cd_tributacao_pis_cofins = :cd_tributacao_pis_cofins '+
-                    'where                                   '+
-                    '   cd_produto = :cd_produto';
-
-  sql_insert_prod = 'insert into               '+
-                            'produto (cd_produto, '+
-                            'fl_ativo,            '+
-                            'desc_produto,        '+
-                            'un_medida,           '+
-                            'fator_conversao,     '+
-                            'peso_liquido,        '+
-                            'peso_bruto,          '+
-                            'observacao)          '+
-                    ' values (:cd_produto,         '+
-                            ':fl_ativo,           '+
-                            ':desc_produto,       '+
-                            ':un_medida,          '+
-                            ':fator_conversao,    '+
-                            ':peso_liquido,       '+
-                            ':peso_bruto,         '+
-                            ':observacao)         ';
-
-  sql_insert_trib = 'insert into                      '+
-                            'produto_tributacao(cd_produto, '+
-                            'cd_tributacao_icms,            '+
-                            'cd_tributacao_ipi,             '+
-                            'cd_tributacao_pis_cofins)      '+
-                    'values (:cd_produto,                   '+
-                            ':cd_tributacao_icms,           '+
-                            ':cd_tributacao_ipi,            '+
-                            ':cd_tributacao_pis_cofins)';
+procedure TfrmCadProduto.SalvarTributacao;
 var
-  qryProd, qryTrib, qry: TFDQuery;
+  persistencia: TProdutoTributacao;
+begin
+  persistencia := TProdutoTributacao.Create;
+
+  try
+    persistencia.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+    persistencia.cd_tributacao_icms := StrToInt(edtProdutoGrupoTributacaoICMS.Text);
+    persistencia.cd_tributacao_ipi := StrToInt(edtProdutoGrupoTributacaoIPI.Text);
+    persistencia.cd_tributacao_pis_cofins := StrToInt(edtProdutoGrupoTributacaoPISCOFINS.Text);
+
+    if not persistencia.Pesquisar(StrToInt(edtPRODUTOCD_PRODUTO.Text)) then
+      persistencia.Inserir
+    else
+      persistencia.Atualizar;
+
+  finally
+    persistencia.Free;
+  end;
+end;
+
+procedure TfrmCadProduto.Salvar;
+var
+  persistencia: TProduto;
 begin
   validaCampos;
-  dm.conexaoBanco.StartTransaction;
-  qryProd := TFDQuery.Create(Self);
-  qryTrib := TFDQuery.Create(Self);
-  qry := TFDQuery.Create(Self);
+
+  persistencia := TProduto.Create;
+
   try
-    try
-      qryProd.Connection := dm.conexaoBanco;
-      qryTrib.Connection := dm.conexaoBanco;
-      qry.Connection := dm.conexaoBanco;
-      qryTrib.Connection.StartTransaction;
-      qry.Connection.StartTransaction;
-      qryProd.Connection.StartTransaction;
+    persistencia.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+    persistencia.fl_ativo := ckPRODUTOATIVO.Checked;
+    persistencia.desc_produto := edtPRODUTODESCRICAO.Text;
+    persistencia.un_medida := edtPRODUTOUN_MEDIDA.Text;
+    persistencia.fator_conversao := StrToInt(edtPRODUTOFATOR_CONVERSAO.Text);
+    persistencia.peso_liquido := StrToFloat(edtPRODUTOPESO_LIQUIDO.Text);
+    persistencia.peso_bruto := StrToFloat(edtPRODUTOPESO_BRUTO.Text);
+    persistencia.observacao := memoObservacao.Text;
 
-      //verifica se já esta cadastrado
-      qryProd.Close;
-      qryProd.SQL.Clear;
-      qryProd.SQL.Add(sql_produto);
-      qryProd.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-      qryProd.Open(sql_produto);
+    if not persistencia.Pesquisar(StrToInt(edtPRODUTOCD_PRODUTO.Text)) then
+      persistencia.Inserir
+    else
+      persistencia.Atualizar;
 
-      qryTrib.Close;
-      qryTrib.SQL.Clear;
-      qryTrib.SQL.Add(sql_tributacao);
-      qryTrib.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-      qryTrib.Open(sql_tributacao);
-
-      if not qryProd.IsEmpty then
-      begin
-        qry.Close;
-        qry.SQL.Clear;
-        qry.SQL.Add(sql_update);
-        qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-        qry.ParamByName('fl_ativo').AsBoolean := ckPRODUTOATIVO.Checked;
-        qry.ParamByName('desc_produto').AsString := edtPRODUTODESCRICAO.Text;
-        qry.ParamByName('un_medida').AsString := edtPRODUTOUN_MEDIDA.Text;
-        qry.ParamByName('fator_conversao').AsCurrency := StrToCurr(edtPRODUTOFATOR_CONVERSAO.Text);
-        qry.ParamByName('peso_liquido').AsCurrency := StrToCurr(edtPRODUTOPESO_LIQUIDO.Text);
-        qry.ParamByName('peso_bruto').AsCurrency := StrToCurr(edtPRODUTOPESO_BRUTO.Text);
-        qry.ParamByName('observacao').AsString := memoObservacao.Text;
-
-        qryTrib.Close;
-        qryTrib.SQL.Clear;
-        qryTrib.SQL.Add(sql_update_trib);
-        qryTrib.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-        qryTrib.ParamByName('cd_tributacao_icms').AsInteger := StrToInt(edtProdutoGrupoTributacaoICMS.Text);
-        qryTrib.ParamByName('cd_tributacao_ipi').AsInteger := StrToInt(edtProdutoGrupoTributacaoIPI.Text);
-        qryTrib.ParamByName('cd_tributacao_pis_cofins').AsInteger := StrToInt(edtProdutoGrupoTributacaoPISCOFINS.Text);
-      end
-      else
-      begin
-        qry.Close;
-        qry.SQL.Clear;
-        qry.SQL.Add(sql_insert_prod);
-        qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-        qry.ParamByName('fl_ativo').AsBoolean := ckPRODUTOATIVO.Checked;
-        qry.ParamByName('desc_produto').AsString := edtPRODUTODESCRICAO.Text;
-        qry.ParamByName('un_medida').AsString := edtPRODUTOUN_MEDIDA.Text;
-        qry.ParamByName('fator_conversao').AsCurrency := StrToCurr(edtPRODUTOFATOR_CONVERSAO.Text);
-        qry.ParamByName('peso_liquido').AsCurrency := StrToCurr(edtPRODUTOPESO_LIQUIDO.Text);
-        qry.ParamByName('peso_bruto').AsCurrency := StrToCurr(edtPRODUTOPESO_BRUTO.Text);
-        qry.ParamByName('observacao').AsString := memoObservacao.Text;
-
-        qryTrib.Close;
-        qryTrib.SQL.Clear;
-        qryTrib.SQL.Add(sql_insert_trib);
-        qryTrib.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-        qryTrib.ParamByName('cd_tributacao_icms').AsInteger := StrToInt(edtProdutoGrupoTributacaoICMS.Text);
-        qryTrib.ParamByName('cd_tributacao_ipi').AsInteger := StrToInt(edtProdutoGrupoTributacaoIPI.Text);
-        qryTrib.ParamByName('cd_tributacao_pis_cofins').AsInteger := StrToInt(edtProdutoGrupoTributacaoPISCOFINS.Text);
-      end;
-
-      qry.ExecSQL;
-      qryTrib.ExecSQL;
-      dm.conexaoBanco.Commit;
-      SalvarCodBarras;
-      salvaFoto;
-      ShowMessage('Produto Alterado com Sucesso');
-    except
-      on E:exception do
-      begin
-        dm.conexaoBanco.Rollback;
-        ShowMessage('Erro ao gravar os dados do produto '+ E.Message);
-        Exit;
-      end;
-    end;
-  finally
+    SalvarTributacao;
+    SalvarCodBarras;
+    SalvarFoto;
     limpaCampos;
-    FreeAndNil(qry);
-    FreeAndNil(qryTrib);
-    FreeAndNil(qryProd);
+
+  finally
+    persistencia.Free;
   end;
 end;
 
 procedure TfrmCadProduto.SalvarCodBarras;
-const
-  sql_insert = 'insert into produto_cod_barras(cd_produto, un_medida, tipo_cod_barras, codigo_barras) values '+
-               ' (:cd_produto, :un_medida, :tipo_cod_barras, :codigo_barras)';
-
-  sql_update = 'update produto_cod_barras set '+
-               '  cd_produto = :cd_produto, '+
-               '  un_medida = :un_medida, '+
-               '  tipo_cod_barras = :tipo_cod_barras, '+
-               '  codigo_barras = :codigo_barras '+
-               'where cd_produto = :cd_produto';
 var
   qry: TFDQuery;
 begin
@@ -842,38 +686,22 @@ begin
 
   try
     try
-      cdsBarras.First;
+      FRegra.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+      FRegra.tipo_cod_barras := FRegra.Dados.cdsBarras.FieldByName('tipo_cod_barras').AsString;
+      FRegra.codigo_barras := FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString;
+      FRegra.un_medida := FRegra.Dados.cdsBarras.FieldByName('un_medida').AsString;
 
-      while not cdsBarras.Eof do
+      FRegra.Dados.cdsBarras.First;
+
+      FRegra.Dados.cdsBarras.Loop(
+      procedure
       begin
-        if not pesquisarCodBarras(StrToInt(edtPRODUTOCD_PRODUTO.Text),
-                                  cdsBarras.FieldByName('codigo_barras').AsString) then
-        begin
-          qry.SQL.Add(sql_update);
-
-          qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-          qry.ParamByName('un_medida').AsString := cdsBarras.FieldByName('un_medida').AsString;
-          if cdsBarras.FieldByName('tipo_cod_barras').AsString = 'Interno' then
-            qry.ParamByName('tipo_cod_barras').AsInteger := 0
-          else if cdsBarras.FieldByName('tipo_cod_barras').AsString = 'GTIN' then
-            qry.ParamByName('tipo_cod_barras').AsInteger := 1
-          else
-            qry.ParamByName('tipo_cod_barras').AsInteger := 2;
-          qry.ParamByName('codigo_barras').AsString := cdsBarras.FieldByName('codigo_barras').AsString;
-          qry.ExecSQL;
-        end
+        if not FRegra.Pesquisar(StrToInt(edtPRODUTOCD_PRODUTO.Text),
+                                FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString) then
+          FRegra.Inserir
         else
-        begin
-          qry.SQL.Add(sql_insert);
-
-          qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-          qry.ParamByName('un_medida').AsString := cdsBarras.FieldByName('un_medida').AsString;
-          qry.ParamByName('tipo_cod_barras').AsInteger := cdsBarras.FieldByName('tipo_cod_barras').AsInteger;
-          qry.ParamByName('codigo_barras').AsString := cdsBarras.FieldByName('codigo_barras').AsString;
-          qry.ExecSQL;
-        end;
-        cdsBarras.Next;
-      end;
+          FRegra.Atualizar;
+      end);
       qry.Connection.Commit;
     except
     on E:exception do
@@ -908,7 +736,7 @@ begin
       or (cbTipoCodBarras.ItemIndex = -1) then
     raise Exception.Create('Campos não podem ser vazios');
 
-  if cdsBarras.Locate('un_medida', VarArrayOf([edtUnCodBarras.Text]), []) then
+  if FRegra.Dados.cdsBarras.Locate('un_medida', VarArrayOf([edtUnCodBarras.Text]), []) then
     raise Exception.Create('O produto já possui código de barras cadastrado para a unidade de medida informada');
 
 end;

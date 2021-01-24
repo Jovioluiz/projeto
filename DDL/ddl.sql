@@ -1242,3 +1242,4 @@ alter table pedido_venda_item disable trigger atualiza_estoque_pedido;
 alter table pedido_venda_item disable trigger verifica_estoque_pedido_venda_item;
 
 ALTER TABLE public.endereco_cliente ALTER COLUMN num TYPE varchar USING num::varchar;
+ALTER TABLE public.produto_cod_barras ADD CONSTRAINT produto_cod_barras_un UNIQUE (cd_produto,un_medida,codigo_barras);

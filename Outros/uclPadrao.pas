@@ -5,7 +5,7 @@ interface
 uses
   uDataModule;
 
-type TPadrao = class
+type TPadrao = class abstract
   private
 
   public
