@@ -27,8 +27,12 @@ type
     btnAdicionarProduto: TButton;
     sqlTabelaPreco: TFDQuery;
     sqlTabelaPrecoProduto: TFDQuery;
-    DataSource1: TDataSource;
-    ClientDataSet1: TClientDataSet;
+    dsProdutos: TDataSource;
+    cdsProdutos: TClientDataSet;
+    cdsProdutoscd_produto: TIntegerField;
+    cdsProdutosnm_produto: TStringField;
+    cdsProdutosvalor: TCurrencyField;
+    cdsProdutosun_medida: TStringField;
     procedure btnAdicionarProdutoClick(Sender: TObject);
     procedure edtCodTabelaExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -41,8 +45,8 @@ type
   private
     { Private declarations }
     procedure limpaCampos;
-    procedure salvar;
-    procedure excluir;
+    procedure Salvar;
+    procedure Excluir;
   public
     { Public declarations }
 
@@ -58,7 +62,7 @@ implementation
 
 {$R *.dfm}
 
-uses uLogin;
+uses uLogin, uclTabelaPreco;
 
 procedure TfrmcadTabelaPreco.btnAdicionarProdutoClick(Sender: TObject);
 begin
@@ -67,7 +71,7 @@ begin
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, 6);
 
-  if temPermissao = True then
+  if temPermissao then
   begin
     frmCadTabelaPrecoProduto := TfrmCadTabelaPrecoProduto.Create(Self);
     frmCadTabelaPrecoProduto.Show;
@@ -93,7 +97,7 @@ begin
 
       except
         on E : exception do
-          ShowMessage('Erro ao Excluir o produto ' + IntToStr(ClientDataSet1.FieldByName('Produto').AsInteger) +
+          ShowMessage('Erro ao Excluir o produto ' + IntToStr(cdsProdutos.FieldByName('Produto').AsInteger) +
                     ' da tabela de preço' + E.Message);
       end;
     end;
@@ -101,84 +105,82 @@ begin
 end;
 
 procedure TfrmcadTabelaPreco.edtCodTabelaExit(Sender: TObject);
+const
+  SQL = 'select                           '+
+        '   p.cd_produto,                 '+
+        '   p.desc_produto,               '+
+        '   valor,                        '+
+        '   p.un_medida                   '+
+        'from                             '+
+        '   produto p                     '+
+        'join tabela_preco_produto tpp on '+
+        '   p.cd_produto = tpp.cd_produto '+
+        'where                            '+
+        '   tpp.cd_tabela = :cd_tabela';
+var
+  tabela: TTabelaPreco;
+  qry: TFDQuery;
 begin
   if edtCodTabela.Text = EmptyStr then
   begin
-   btnAdicionarProduto.Enabled := false;
-   Exit;
+    btnAdicionarProduto.Enabled := False;
+    Exit;
   end;
 
-  sqlTabelaPreco.Close;
-  sqlTabelaPreco.SQL.Text := 'select                '+
-                                  'cd_tabela,       '+
-                                  'nm_tabela,       '+
-                                  'fl_ativo,        '+
-                                  'dt_inicio,       '+
-                                  'dt_fim           '+
-                              'from                 '+
-                                  'tabela_preco     '+
-                              'where                '+
-                                  'cd_tabela = :cd_tabela';
+  tabela := TTabelaPreco.Create;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
 
-  sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-  sqlTabelaPreco.Open();
+  try
+    tabela.Buscar(StrToInt(edtCodTabela.Text));
 
-  edtFl_ativo.Checked := sqlTabelaPreco.FieldByName('fl_ativo').AsBoolean;
-  edtNomeTabela.Text := sqlTabelaPreco.FieldByName('nm_tabela').AsString;
-  edtDtInicial.Text := DateToStr(sqlTabelaPreco.FieldByName('dt_inicio').AsDateTime);
-  edtDtFinal.Text := DateToStr(sqlTabelaPreco.FieldByName('dt_fim').AsDateTime);
-  btnAdicionarProduto.Enabled := true;
+    edtNomeTabela.Text := tabela.nm_tabela;
+    edtFl_ativo.Checked := tabela.fl_ativo;
+    edtDtInicial.Text := DateToStr(tabela.dt_inicio);
+    edtDtFinal.Text := DateToStr(tabela.dt_fim);
 
-  sqlTabelaPrecoProduto.Close;
-  sqlTabelaPrecoProduto.SQL.Text := 'select                         '+
-                                      'p.cd_produto,                '+
-                                      'p.desc_produto,              '+
-                                      'valor,                       '+
-                                      'p.un_medida                  '+
-                                  'from                             '+
-                                      'produto p                    '+
-                                  'join tabela_preco_produto tpp on '+
-                                      'p.cd_produto = tpp.cd_produto '+
-                                  'where                            '+
-                                      'tpp.cd_tabela = :cd_tabela';
-  sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-  sqlTabelaPrecoProduto.Open();
+  finally
+    tabela.Free;
+  end;
 
-  DBGridProduto.DataSource := DataSource1;
-  DBGridProduto.Columns[0].Title.Caption := 'Produto';
-  DBGridProduto.Columns[0].FieldName := 'cd_produto';
-  DBGridProduto.Columns[1].Title.Caption := 'Nome Produto';
-  DBGridProduto.Columns[1].FieldName := 'desc_produto';
-  DBGridProduto.Columns[2].Title.Caption := 'Valor';
-  DBGridProduto.Columns[2].FieldName := 'valor';
-  DBGridProduto.Columns[3].Title.Caption := 'UN Medida';
-  DBGridProduto.Columns[3].FieldName := 'un_medida';
+  btnAdicionarProduto.Enabled := True;
 
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
+    qry.Open();
 
+    qry.Loop(
+    procedure
+    begin
+      cdsProdutos.Append;
+      cdsProdutos.FieldByName('cd_produto').AsInteger := qry.FieldByName('cd_produto').AsInteger;
+      cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
+      cdsProdutos.FieldByName('valor').AsCurrency := qry.FieldByName('valor').AsCurrency;
+      cdsProdutos.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
+      cdsProdutos.Post;
+    end);
+
+  finally
+    qry.Free;
+  end;
 end;
 
-procedure TfrmcadTabelaPreco.excluir;
+procedure TfrmcadTabelaPreco.Excluir;
+var
+  tabelaPreco: TTabelaPreco;
 begin
-  if (Application.MessageBox('Deseja Excluir a Tabela de Preço?', 'Atenção', MB_YESNO) = IDYES) then
-  begin
-    try
-      sqlTabelaPreco.Close;
-      sqlTabelaPreco.SQL.Text := 'delete                  '+
-                                 '   from                 '+
-                                 'tabela_preco            '+
-                                 '   where                '+
-                                 'cd_tabela = :cd_tabela';
-      sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-      sqlTabelaPreco.ExecSQL;
-      limpaCampos;
+  if (Application.MessageBox('Deseja Excluir a Tabela de Preço?', 'Atenção', MB_YESNO) <> IDYES) then
+    Exit;
 
-    except
-      on E:exception do
-      begin
-        ShowMessage('Erro ao excluir a tabela '+ E.Message);
-        Exit;
-      end;
-    end;
+  tabelaPreco := TTabelaPreco.Create;
+
+  try
+    tabelaPreco.cd_tabela := StrToInt(edtCodTabela.Text);
+    tabelaPreco.Excluir;
+    limpaCampos;
+  finally
+    tabelaPreco.Free;
   end;
 end;
 
@@ -235,9 +237,9 @@ begin
   if key = VK_F3 then //F3
     limpaCampos
   else if key = VK_F2 then  //F2
-    salvar
+    Salvar
   else if key = VK_F4 then    //F4
-    excluir
+    Excluir
   else if key = VK_ESCAPE then //ESC
   if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
     Close;
@@ -263,106 +265,28 @@ begin
   edtCodTabela.SetFocus;
 end;
 
-procedure TfrmcadTabelaPreco.salvar;
+procedure TfrmcadTabelaPreco.Salvar;
+var
+  tabelaPreco: TTabelaPreco;
 begin
-  sqlTabelaPreco.Close;
-  //verifica se possui tabela com o mesmo código
-  sqlTabelaPreco.SQL.Text := 'select '+
-                                  'cd_tabela '+
-                              'from '+
-                                  'tabela_preco '+
-                              'where '+
-                                    'cd_tabela = :cd_tabela';
-  sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-  sqlTabelaPreco.Open();
+  tabelaPreco := TTabelaPreco.Create;
 
-  if not sqlTabelaPreco.IsEmpty then //update
-  begin
-    sqlTabelaPreco.Close;
-    dm.conexaoBanco.StartTransaction;
-    sqlTabelaPreco.SQL.Text := 'update                          '+
-                                    'tabela_preco               '+
-                              'set                              '+
-                                    'nm_tabela = :nm_tabela,    '+
-                                    'fl_ativo = :fl_ativo,      '+
-                                    'dt_inicio = :dt_inicio,    '+
-                                    'dt_fim = :dt_fim           '+
-                              'where cd_tabela = :cd_tabela';
+  tabelaPreco.cd_tabela := StrToInt(edtCodTabela.Text);
+  tabelaPreco.nm_tabela := edtNomeTabela.Text;
+  tabelaPreco.fl_ativo := edtFl_ativo.Checked;
+  tabelaPreco.dt_inicio := StrToDate(edtDtInicial.Text);
+  tabelaPreco.dt_fim := StrToDate(edtDtFinal.Text);
 
-    sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-    sqlTabelaPreco.ParamByName('nm_tabela').AsString := edtNomeTabela.Text;
-    sqlTabelaPreco.ParamByName('fl_ativo').AsBoolean := edtFl_ativo.Checked;
-    sqlTabelaPreco.ParamByName('dt_inicio').AsDate := StrToDate(edtDtInicial.Text);
-    sqlTabelaPreco.ParamByName('dt_fim').AsDate := StrToDate(edtDtFinal.Text);
+  try
+    if not tabelaPreco.Pesquisar(StrToInt(edtCodTabela.Text)) then
+      tabelaPreco.Inserir
+    else
+      tabelaPreco.Atualizar;
 
-    try
-      sqlTabelaPreco.ExecSQL;
-      dm.conexaoBanco.Commit;
-      ShowMessage('Dados Alterados com Sucesso');
-      sqlTabelaPreco.Close;
-      edtCodTabela.SetFocus;
-      edtCodTabela.Text := '';
-      edtNomeTabela.Text := '';
-      edtFl_ativo.Checked := false;
-      edtDtInicial.Text := '';
-      edtDtFinal.Text := '';
-
-    except
-      on E:exception do
-      begin
-        dm.conexaoBanco.Rollback;
-        ShowMessage('Erro ao gravar os dados'+ E.Message);
-        Exit;
-      end;
-    end;
+    limpaCampos;
+  finally
+    tabelaPreco.Free;
   end
-  else
-  begin
-    sqlTabelaPreco.Close;
-    dm.conexaoBanco.StartTransaction;
-    sqlTabelaPreco.SQL.Text := 'insert                        '+
-                                    'into                     '+
-                                    'tabela_preco (cd_tabela, '+
-                                    'nm_tabela,               '+
-                                    'fl_ativo,                '+
-                                    'dt_inicio,               '+
-                                    'dt_fim)                  '+
-                                'values (:cd_tabela,          '+
-                                    ':nm_tabela,              '+
-                                    ':fl_ativo,               '+
-                                    ':dt_inicio,              '+
-                                    ':dt_fim)';
-
-    sqlTabelaPreco.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-    sqlTabelaPreco.ParamByName('nm_tabela').AsString := edtNomeTabela.Text;
-    sqlTabelaPreco.ParamByName('fl_ativo').AsBoolean := edtFl_ativo.Checked;
-    sqlTabelaPreco.ParamByName('dt_inicio').AsDate := StrToDate(edtDtInicial.Text);
-    sqlTabelaPreco.ParamByName('dt_fim').AsDate := StrToDate(edtDtFinal.Text);
-
-    try
-      sqlTabelaPreco.ExecSQL;
-      dm.conexaoBanco.Commit;
-      ShowMessage('Tabela de Preço cadastrada com Sucesso!');
-      sqlTabelaPreco.Close;
-      edtCodTabela.SetFocus;
-      btnAdicionarProduto.Enabled := false;
-      edtFl_ativo.Checked := false;
-      edtCodTabela.Text := '';
-      edtNomeTabela.Text := '';
-      edtDtInicial.Text := '';
-      edtDtFinal.Text := '';
-
-    except
-      on E : exception do
-        begin
-          dm.conexaoBanco.Rollback;
-          ShowMessage('Erro ao gravar os dados '+ E.Message);
-          Exit;
-        end;
-    end;
-  end;
-  dm.conexaoBanco.Close;
-  DBGridProduto.DataSource := nil;
 end;
 
 end.

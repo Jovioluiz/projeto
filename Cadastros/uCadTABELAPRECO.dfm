@@ -105,7 +105,7 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
       Top = 240
       Width = 512
       Height = 289
-      DataSource = DataSource1
+      DataSource = dsProdutos
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 5
       TitleFont.Charset = DEFAULT_CHARSET
@@ -114,35 +114,6 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
       OnKeyDown = DBGridProdutoKeyDown
-      Columns = <
-        item
-          Expanded = False
-          FieldName = 'Produto'
-          ReadOnly = True
-          Width = 76
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Nome Produto'
-          ReadOnly = True
-          Width = 222
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'Valor'
-          ReadOnly = True
-          Width = 98
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'UN Medida'
-          ReadOnly = True
-          Width = 78
-          Visible = True
-        end>
     end
     object btnAdicionarProduto: TButton
       Left = 8
@@ -164,15 +135,42 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
     Left = 456
     Top = 392
   end
-  object DataSource1: TDataSource
-    DataSet = sqlTabelaPrecoProduto
+  object dsProdutos: TDataSource
+    DataSet = cdsProdutos
     Left = 456
     Top = 328
   end
-  object ClientDataSet1: TClientDataSet
+  object cdsProdutos: TClientDataSet
+    PersistDataPacket.Data = {
+      8C0000009619E0BD0100000018000000040000000000030000008C000A63645F
+      70726F6475746F04000100000000000A6E6D5F70726F6475746F010049000000
+      01000557494454480200020014000576616C6F72080004000000010007535542
+      545950450200490006004D6F6E65790009756E5F6D6564696461010049000000
+      01000557494454480200020014000000}
+    Active = True
     Aggregates = <>
     Params = <>
     Left = 456
     Top = 448
+    object cdsProdutoscd_produto: TIntegerField
+      DisplayLabel = 'C'#243'd Produto'
+      DisplayWidth = 15
+      FieldName = 'cd_produto'
+    end
+    object cdsProdutosnm_produto: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      DisplayWidth = 24
+      FieldName = 'nm_produto'
+    end
+    object cdsProdutosvalor: TCurrencyField
+      DisplayLabel = 'Valor'
+      DisplayWidth = 13
+      FieldName = 'valor'
+    end
+    object cdsProdutosun_medida: TStringField
+      DisplayLabel = 'UN Medida'
+      DisplayWidth = 24
+      FieldName = 'un_medida'
+    end
   end
 end

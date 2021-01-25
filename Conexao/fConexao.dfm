@@ -4,8 +4,8 @@ object frmConexao: TfrmConexao
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = 'Conex'#227'o'
-  ClientHeight = 243
-  ClientWidth = 291
+  ClientHeight = 342
+  ClientWidth = 272
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -34,7 +34,7 @@ object frmConexao: TfrmConexao
   end
   object Label2: TLabel
     Left = 47
-    Top = 133
+    Top = 137
     Width = 43
     Height = 16
     Caption = 'Usu'#225'rio'
@@ -47,7 +47,7 @@ object frmConexao: TfrmConexao
   end
   object Label3: TLabel
     Left = 54
-    Top = 168
+    Top = 178
     Width = 36
     Height = 16
     Caption = 'Senha'
@@ -60,7 +60,7 @@ object frmConexao: TfrmConexao
   end
   object Label4: TLabel
     Left = 60
-    Top = 95
+    Top = 99
     Width = 30
     Height = 16
     Caption = 'Porta'
@@ -85,30 +85,30 @@ object frmConexao: TfrmConexao
     ParentFont = False
   end
   object edtServidor: TEdit
-    Left = 96
+    Left = 95
     Top = 12
-    Width = 121
+    Width = 146
     Height = 21
     TabOrder = 0
   end
   object edtBanco: TEdit
-    Left = 96
+    Left = 95
     Top = 54
-    Width = 121
+    Width = 146
     Height = 21
     TabOrder = 1
   end
   object edtPorta: TEdit
     Left = 96
     Top = 94
-    Width = 121
+    Width = 145
     Height = 21
     TabOrder = 2
   end
   object edtUsuario: TEdit
     Left = 96
-    Top = 128
-    Width = 121
+    Top = 132
+    Width = 146
     Height = 21
     TabOrder = 3
   end
@@ -132,11 +132,20 @@ object frmConexao: TfrmConexao
   end
   object edtSenha: TMaskEdit
     Left = 96
-    Top = 167
-    Width = 121
+    Top = 173
+    Width = 146
     Height = 21
     PasswordChar = '*'
     TabOrder = 6
     Text = ''
+  end
+  object memo: TMemo
+    Left = 54
+    Top = 241
+    Width = 187
+    Height = 89
+    Lines.Strings = (
+      '')
+    TabOrder = 7
   end
 end

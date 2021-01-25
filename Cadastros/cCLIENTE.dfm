@@ -170,7 +170,7 @@ object frmCadCliente: TfrmCadCliente
         Width = 73
         Height = 21
         CharCase = ecUpperCase
-        TabOrder = 6
+        TabOrder = 5
       end
       object edtCep: TEdit
         Left = 114
@@ -188,13 +188,6 @@ object frmCadCliente: TfrmCadCliente
         Height = 21
         CharCase = ecUpperCase
         TabOrder = 1
-      end
-      object cbbEstado: TComboBox
-        Left = 480
-        Top = 96
-        Width = 73
-        Height = 21
-        TabOrder = 5
       end
     end
     object edtCLIENTETP_PESSOA: TRadioGroup

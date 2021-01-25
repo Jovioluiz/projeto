@@ -33,9 +33,9 @@ type
     procedure edtCodTabelaExit(Sender: TObject);
   private
     { Private declarations }
-    procedure limpaCampos;
-    procedure salvar;
-    procedure excluir;
+    procedure LimpaCampos;
+    procedure Salvar;
+    procedure Excluir;
   public
     { Public declarations }
   end;
@@ -45,7 +45,7 @@ var
   implementation
 
 uses
-  uDataModule;
+  uDataModule, uclTabelaPrecoProduto;
 
 {$R *.dfm}
 
@@ -105,7 +105,7 @@ begin
   edtNomeTabela.Text := sqlTabelaPrecoProduto.FieldByName('nm_tabela').AsString;
 end;
 
-procedure TfrmCadTabelaPrecoProduto.excluir;
+procedure TfrmCadTabelaPrecoProduto.Excluir;
 begin
   if (Application.MessageBox('Deseja Excluir o produto da Tabela de Preço?', 'Atenção', MB_YESNO) = IDYES) then
   begin
@@ -120,7 +120,7 @@ begin
       sql.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
       sql.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
       sql.ExecSQL;
-      limpaCampos;
+      LimpaCampos;
 
     except
       on E:exception do
@@ -144,11 +144,11 @@ procedure TfrmCadTabelaPrecoProduto.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if key = VK_F3 then //F3
-    limpaCampos
+    LimpaCampos
   else if key = VK_F2 then  //F2
-    salvar
+    Salvar
   else if key = VK_F4 then    //F4
-    excluir
+    Excluir
   else if key = VK_ESCAPE then //ESC
   if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
     Close;
@@ -164,7 +164,7 @@ begin
   end;
 end;
 
-procedure TfrmCadTabelaPrecoProduto.limpaCampos;
+procedure TfrmCadTabelaPrecoProduto.LimpaCampos;
 begin
   edtCodProduto.Clear;
   edtValor.Clear;
@@ -174,80 +174,22 @@ begin
   edtCodTabela.SetFocus;
 end;
 
-procedure TfrmCadTabelaPrecoProduto.salvar;
+procedure TfrmCadTabelaPrecoProduto.Salvar;
+var
+  produto: TTabelaPrecoProduto;
 begin
-  sqlTabelaPrecoProduto.Close;
-  sqlTabelaPrecoProduto.SQL.Text := 'select                                     '+
-                                    ' tpp.cd_produto                            '+
-                                    'from tabela_preco tp                       '+
-                                    ' join tabela_preco_produto tpp on          '+
-                                    'tp.cd_tabela = tpp.cd_tabela               '+
-                                    ' where (tp.cd_tabela = :cd_tabela) and     '+
-                                    '(tpp.cd_produto = :cd_produto)';
-  sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-  sqlTabelaPrecoProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
-  sqlTabelaPrecoProduto.Open();
+  produto := TTabelaPrecoProduto.Create;
 
-  if not sqlTabelaPrecoProduto.IsEmpty then
-  begin
-    try
-      sql.Close;
-      sql.SQL.Text := 'update '+
-                      '   tabela_preco_produto '+
-                      'set '+
-                      '   cd_tabela = :cd_tabela, '+
-                      '   cd_produto = :cd_produto, '+
-                      '   valor = :valor, '+
-                      '   un_medida = :un_medida  '+
-                      'where '+
-                      '   (cd_tabela = :cd_tabela) and '+
-                      '   (cd_produto = :cd_produto)';
-      sql.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-      sql.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
-      sql.ParamByName('valor').AsCurrency := StrToCurr(edtValor.Text);
-      sql.ParamByName('un_medida').AsString := edtUNMedida.Text;
+  try
+    if not produto.Pesquisar(StrToInt(edtCodTabela.Text), StrToInt(edtCodProduto.Text)) then
+      produto.Inserir
+    else
+      produto.Atualizar;
 
-      sql.ExecSQL;
-      limpaCampos;
-    except
-      on E:exception do
-      begin
-        ShowMessage('Erro ao gravar os dados '+ E.Message);
-        Exit;
-      end;
-    end;
-  end
-  else
-  begin
-    try
-      sqlTabelaPrecoProduto.Close;
-      sqlTabelaPrecoProduto.SQL.Text := 'insert '+
-                                            'into '+
-                                            'tabela_preco_produto(cd_tabela, '+
-                                            'cd_produto, '+
-                                            'valor, '+
-                                            'un_medida)'+
-                                        'values (:cd_tabela, '+
-                                            ':cd_produto, '+
-                                            ':valor, '+
-                                            ':un_medida)';
-      sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-      sqlTabelaPrecoProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
-      sqlTabelaPrecoProduto.ParamByName('valor').AsCurrency := StrToCurr(edtValor.Text);
-      sqlTabelaPrecoProduto.ParamByName('un_medida').AsString := edtUNMedida.Text;
+    LimpaCampos;
 
-      sqlTabelaPrecoProduto.ExecSQL;
-      ShowMessage('Dados Gravados com Sucesso');
-      limpaCampos;
-
-    except
-      on E:exception do
-      begin
-        dm.conexaoBanco.Rollback;
-        ShowMessage('Erro ao gravar os dados '+ E.Message);
-        Exit;
-      end;
-    end;
+  finally
+    produto.Free;
   end;
 end;
 

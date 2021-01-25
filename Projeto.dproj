@@ -205,6 +205,8 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="Cadastros\Persistencia\uclTabelaPreco.pas"/>
+        <DCCReference Include="Cadastros\Persistencia\uclTabelaPrecoProduto.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

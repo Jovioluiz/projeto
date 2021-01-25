@@ -45,7 +45,6 @@ type
     Label5: TLabel;
     edtCep: TEdit;
     edtCLIENTEFONE: TMaskEdit;
-    cbbEstado: TComboBox;
     procedure pFormarCamposPessoa;
     procedure edtCLIENTETP_PESSOAClick(Sender: TObject);
     procedure edtCLIENTEcd_clienteExit(Sender: TObject);
@@ -60,10 +59,10 @@ type
 
   public
     { Public declarations }
-    procedure salvar;
-    procedure excluir;
-    procedure desabilitaCampos;
-    procedure limpaCampos;
+    procedure Salvar;
+    procedure Excluir;
+    procedure DesabilitaCampos;
+    procedure LimpaCampos;
   end;
 
 var
@@ -107,7 +106,7 @@ begin
   end;
 end;
 
-procedure TfrmCadCliente.salvar;
+procedure TfrmCadCliente.Salvar;
 var
   cliente : TValidaDados;
   persistencia: TCliente;
@@ -144,13 +143,13 @@ begin
     begin
       persistencia.Inserir;
       endereco.Inserir;
-      limpaCampos;
+      LimpaCampos;
     end
     else
     begin
       persistencia.Atualizar;
       endereco.Atualizar;
-      limpaCampos;
+      LimpaCampos;
     end;
   finally
     persistencia.Free;
@@ -158,7 +157,7 @@ begin
   end;
 end;
 
-procedure TfrmCadCliente.desabilitaCampos;
+procedure TfrmCadCliente.DesabilitaCampos;
 begin
   edtCLIENTENM_CLIENTE.Enabled := False;
   edtCLIENTEENDERECO_BAIRRO.Enabled := False;
@@ -236,17 +235,16 @@ end;
 
 procedure TfrmCadCliente.edtCLIENTEcd_clienteExit(Sender: TObject);
 var
- temPermissaEdicao: Boolean;
- cliente: TValidaDados;
- persistencia: TCliente;
- enderecoPersistencia: TClienteEndereco;
+  temPermissaEdicao: Boolean;
+  cliente: TValidaDados;
+  persistencia: TCliente;
+  enderecoPersistencia: TClienteEndereco;
 begin
   temCep := False;
   cliente := TValidaDados.Create;
   temPermissaEdicao := cliente.validaEdicaoAcao(IdUsuario, 1);
   persistencia := TCliente.Create;
   enderecoPersistencia := TClienteEndereco.Create;
-
   try
     if edtCLIENTEcd_cliente.Text = '' then
     begin
@@ -303,7 +301,7 @@ begin
     if temPermissaEdicao then
       Exit
     else
-      desabilitaCampos;
+      DesabilitaCampos;
 
   finally
     persistencia.Free;
@@ -334,7 +332,7 @@ begin
 end;
 
 
-procedure TfrmCadCliente.excluir;
+procedure TfrmCadCliente.Excluir;
 var
   persistencia: TCliente;
 begin
@@ -347,7 +345,7 @@ begin
       begin
         persistencia.cd_cliente := StrToInt(edtCLIENTEcd_cliente.Text);
         persistencia.Excluir;
-        limpaCampos;
+        LimpaCampos;
       end;
     end;
   finally
@@ -371,11 +369,11 @@ procedure TfrmCadCliente.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   inherited;
   if key = VK_F3 then //F3
-    limpaCampos
+    LimpaCampos
   else if key = VK_F2 then  //F2
-    salvar
+    Salvar
   else if key = VK_F4 then    //F4
-    excluir
+    Excluir
   else if key = VK_ESCAPE then //ESC
     if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
       Close;
@@ -391,7 +389,7 @@ begin
   end;
 end;
 
-procedure TfrmCadCliente.limpaCampos;
+procedure TfrmCadCliente.LimpaCampos;
 begin
   if camposDesabilitados then
   begin
@@ -430,57 +428,10 @@ begin
   edtCLIENTEFL_FORNECEDOR.Checked := false;
   edtCLIENTERG.Clear;
   edtCLIENTEDATANASCIMENTO.Clear;
-//  if edtCLIENTEcd_cliente.Enabled then
-//    edtCLIENTEcd_cliente.SetFocus;
+  edtCLIENTEcd_cliente.SetFocus;
   edtCLIENTETP_PESSOA.ItemIndex := -1;
   edtCep.Clear;
   edtEstado.Clear;
 end;
-
-{procedure TfrmCadCliente.listaEstados;
-var
-  lista: TList<string>;
-  i: Integer;
-begin
-  lista := TList<string>.Create;
-
-  try
-    lista.Add('AC');
-    lista.Add('AL');
-    lista.Add('AM');
-    lista.Add('AP');
-    lista.Add('BA');
-    lista.Add('CE');
-    lista.Add('DF');
-    lista.Add('ES');
-    lista.Add('GO');
-    lista.Add('MA');
-    lista.Add('MG');
-    lista.Add('MS');
-    lista.Add('MT');
-    lista.Add('PA');
-    lista.Add('PB');
-    lista.Add('PE');
-    lista.Add('PI');
-    lista.Add('PR');
-    lista.Add('RJ');
-    lista.Add('RN');
-    lista.Add('RO');
-    lista.Add('RR');
-    lista.Add('RS');
-    lista.Add('SC');
-    lista.Add('SE');
-    lista.Add('SP');
-    lista.Add('TO');
-
-    for i := 0 to lista.Count - 1 do
-    begin
-      cbbEstado.Items.Add(lista[i]);
-    end;
-
-  finally
-    lista.Free;
-  end;
-end;                                 }
 
 end.

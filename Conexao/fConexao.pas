@@ -20,6 +20,7 @@ type
     btnTestar: TButton;
     btnSalvar: TButton;
     edtSenha: TMaskEdit;
+    memo: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure btnTestarClick(Sender: TObject);
@@ -52,6 +53,7 @@ procedure TfrmConexao.btnTestarClick(Sender: TObject);
 var
   msg: string;
 begin
+  memo.Clear;
   try
     dm.conexaoBanco.Params.Values['Server'] := edtServidor.Text;
     dm.conexaoBanco.Params.Database := edtBanco.Text;
@@ -59,13 +61,14 @@ begin
     dm.conexaoBanco.Params.Password := EdtSenha.Text;
     dm.conexaoBanco.Params.Values['Port'] := edtPorta.Text;
 
-    dm.conexaoBanco.Connected := true;
-    ShowMessage('Conexão OK');
+    dm.conexaoBanco.Connected := True;
+    if dm.conexaoBanco.Connected then
+      memo.Lines.Add('Conexão OK');
   except
     on e:Exception do
     begin
       msg := 'Erro ao conectar no banco de dados ' + edtBanco.Text;
-      raise Exception.Create(msg + e.Message);
+      memo.Lines.Add(msg);
     end;
   end;
 end;
@@ -102,8 +105,8 @@ begin
   arquivoIni.WriteString('configuracoes', 'porta', edtPorta.Text);
   arquivoIni.WriteString('configuracoes', 'usuario', edtUsuario.Text);
   arquivoIni.WriteString('configuracoes', 'senha', edtSenha.Text);
-
-  ShowMessage('Salvo!');
+  memo.Clear;
+  memo.Lines.Add('Salvo!');
 end;
 
 end.

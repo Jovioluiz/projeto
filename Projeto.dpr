@@ -49,7 +49,9 @@ uses
   uclPadrao in 'Outros\uclPadrao.pas',
   uclProduto in 'Cadastros\Persistencia\uclProduto.pas',
   uclProdutoTributacao in 'Cadastros\Persistencia\uclProdutoTributacao.pas',
-  dProdutoCodBarras in 'Cadastros\dProdutoCodBarras.pas' {dmProdutoCodBarras: TDataModule};
+  dProdutoCodBarras in 'Cadastros\dProdutoCodBarras.pas' {dmProdutoCodBarras: TDataModule},
+  uclTabelaPreco in 'Cadastros\Persistencia\uclTabelaPreco.pas',
+  uclTabelaPrecoProduto in 'Cadastros\Persistencia\uclTabelaPrecoProduto.pas';
 
 {$R *.res}
 
