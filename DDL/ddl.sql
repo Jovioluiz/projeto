@@ -1243,3 +1243,44 @@ alter table pedido_venda_item disable trigger verifica_estoque_pedido_venda_item
 
 ALTER TABLE public.endereco_cliente ALTER COLUMN num TYPE varchar USING num::varchar;
 ALTER TABLE public.produto_cod_barras ADD CONSTRAINT produto_cod_barras_un UNIQUE (cd_produto,un_medida,codigo_barras);
+
+
+ALTER TABLE public.nfi DROP CONSTRAINT "nota_produto_ item_fk";
+ALTER TABLE public.pedido_venda_item DROP CONSTRAINT fk_pedido_venda_item_produto;
+ALTER TABLE public.tabela_preco_produto DROP CONSTRAINT fk_tabela_preco_produto_produto;
+ALTER TABLE public.produto_tributacao DROP CONSTRAINT produto_tributacao_fk;
+ALTER TABLE public.produto_cod_barras DROP CONSTRAINT fk_produto_cod_barras_produto;
+ALTER TABLE public.wms_endereco_produto DROP CONSTRAINT fk_wms_endereco_produto;
+ALTER TABLE public.wms_mvto_estoque DROP CONSTRAINT fk_wms_mvto_estoque_produto;
+ALTER TABLE public.wms_estoque DROP CONSTRAINT fk_wms_estoque_produto;
+ALTER TABLE public.produto DROP CONSTRAINT pk_produto;
+ALTER TABLE public.produto ALTER COLUMN cd_produto TYPE varchar(60) USING cd_produto::varchar;
+
+alter table produto add column id_item int4;
+ALTER TABLE public.produto ALTER COLUMN id_item SET NOT NULL;
+alter table produto add constraint pk_produto primary key (id_item);
+
+ALTER TABLE public.nfi RENAME COLUMN cd_produto TO id_item;
+alter table nfi add constraint fk_nfi_produto foreign key (id_item) references produto(id_item);
+
+
+ALTER TABLE public.pedido_venda_item RENAME COLUMN cd_produto TO id_item;
+alter table pedido_venda_item add constraint fk_pedido_venda_item_produto foreign key (id_item) references produto(id_item);
+
+ALTER TABLE public.tabela_preco_produto RENAME COLUMN cd_produto TO id_item;
+alter table tabela_preco_produto add constraint fk_tabela_preco_produto_produto foreign key (id_item) references produto(id_item);
+
+ALTER TABLE public.produto_tributacao RENAME COLUMN cd_produto TO id_item;
+alter table produto_tributacao add constraint fk_produto_tributacao_produto foreign key (id_item) references produto(id_item);
+
+ALTER TABLE public.produto_cod_barras RENAME COLUMN cd_produto TO id_item;
+alter table produto_cod_barras add constraint fk_produto_cod_barras_produto foreign key (id_item) references produto(id_item);
+
+ALTER TABLE public.wms_endereco_produto RENAME COLUMN cd_produto TO id_item;
+alter table wms_endereco_produto add constraint fk_wms_endereco_produto_produto foreign key (id_item) references produto(id_item);
+
+ALTER TABLE public.wms_mvto_estoque RENAME COLUMN cd_produto TO id_item;
+alter table wms_mvto_estoque add constraint fk_wms_mvto_estoque_produto foreign key (id_item) references produto(id_item);
+
+ALTER TABLE public.wms_estoque RENAME COLUMN cd_produto TO id_item;
+alter table wms_estoque add constraint fk_wms_estoque_produto foreign key (id_item) references produto(id_item);

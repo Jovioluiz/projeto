@@ -61,6 +61,7 @@ object frmCadTabelaPrecoProduto: TfrmCadTabelaPrecoProduto
       Height = 21
       TabOrder = 1
       OnChange = edtCodProdutoChange
+      OnExit = edtCodProdutoExit
     end
     object edtValor: TEdit
       Left = 110
@@ -92,7 +93,6 @@ object frmCadTabelaPrecoProduto: TfrmCadTabelaPrecoProduto
       Height = 21
       TabOrder = 0
       OnChange = edtCodTabelaChange
-      OnExit = edtCodTabelaExit
     end
     object edtNomeTabela: TEdit
       Left = 214

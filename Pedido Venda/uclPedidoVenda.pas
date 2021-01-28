@@ -13,20 +13,22 @@ uses
 type TPedidoVenda = class
 
   private
+
   public
-    function ValidaQtdadeItem(CodProduto: Integer; QtdPedido: Double): Boolean;
+    function ValidaQtdadeItem(IdItem: Int64; QtdPedido: Double): Boolean;
     function CalculaValorTotalItem(valorUnitario, qtdadeItem: Double): Double;
     function ValidaFormaPgto(CdFormaPgto: Integer): Boolean;
     function ValidaCliente(CdCliente: Integer): Boolean;
     function ValidaCondPgto(CdCond, CdForma: Integer): Boolean;
-    function BuscaProduto(CodProduto: Integer): TList<String>; overload;
-    function BuscaProduto(CodBarras: String): TList<String>; overload;
-    function ValidaProduto(CodProduto: Integer): Boolean;
+    function BuscaProduto(CodProduto: String): TList<String>;
+    function BuscaProdutoCodBarras(CodBarras: String): TList<String>;
+    function ValidaProduto(CodProduto: String): Boolean;
     function BuscaTabelaPreco(CodTabela, CodProduto: Integer): TList<string>;
-    function ValidaTabelaPreco(CodTabela, CodProduto: Integer): Boolean;
+    function ValidaTabelaPreco(CodTabela: Integer; CodProduto: String): Boolean;
     function BuscaFormaPgto(CodForma: Integer): TList<string>;
     function BuscaCondicaoPgto(CodCond, CodForma: Integer): TList<string>;
     function isCodBarrasProduto(Cod: String): Boolean;
+    function GetIdItem(CdItem: string): Int64;
 end;
 
 implementation
@@ -148,33 +150,33 @@ begin
   end;
 end;
 
-function TPedidoVenda.ValidaProduto(CodProduto: Integer): Boolean;
+function TPedidoVenda.ValidaProduto(CodProduto: String): Boolean;
 const
   SQL_COD = 'select '+
-            'p.cd_produto                  '+
-        'from                               '+
-            'produto p                      '+
-        'join tabela_preco_produto tpp on   '+
-            'p.cd_produto = tpp.cd_produto  '+
-        'join tabela_preco tp on            '+
-            'tpp.cd_tabela = tp.cd_tabela   '+
-        'where (p.cd_produto = :cd_produto) '+
-        'and (p.fl_ativo = true)';
+            '   p.cd_produto                  '+
+            'from                             '+
+            '   produto p                     '+
+            'join tabela_preco_produto tpp on '+
+            '   p.id_item = tpp.id_item       '+
+            'join tabela_preco tp on          '+
+            '   tpp.cd_tabela = tp.cd_tabela  '+
+            'where (p.cd_produto = :cd_produto) '+
+            '   and (p.fl_ativo = True)';
 
   SQL_BARRAS =
-   'select ' +
+        'select ' +
         '    p.cd_produto ' +
         'from ' +
         '    produto p ' +
         'join tabela_preco_produto tpp on ' +
-        '    p.cd_produto = tpp.cd_produto ' +
+        '    p.id_item = tpp.id_item ' +
         'join tabela_preco tp on ' +
         '    tpp.cd_tabela = tp.cd_tabela ' +
         'join produto_cod_barras pcb on ' +
-        '    pcb.cd_produto = p.cd_produto ' +
+        '    pcb.id_item = p.id_item ' +
         'where ' +
         '    (pcb.codigo_barras = :codigo_barras) ' +
-        '    and (p.fl_ativo = true) ' +
+        '    and (p.fl_ativo = True) ' +
         'limit 1 ';
 var
   qry: TFDQuery;
@@ -184,7 +186,7 @@ begin
 
   try
     qry.SQL.Add(SQL_COD);
-    qry.ParamByName('cd_produto').AsInteger := CodProduto;
+    qry.ParamByName('cd_produto').AsString := CodProduto;
     qry.Open(SQL_COD);
 
     if not qry.IsEmpty then
@@ -194,7 +196,7 @@ begin
     qry.Close;
     qry.SQL.Clear;
     qry.SQL.Add(SQL_BARRAS);
-    qry.ParamByName('codigo_barras').AsString := IntToStr(CodProduto);
+    qry.ParamByName('codigo_barras').AsString := CodProduto;
     qry.Open(SQL_BARRAS);
 
     if not qry.IsEmpty then
@@ -207,15 +209,15 @@ end;
 
 function TPedidoVenda.BuscaCondicaoPgto(CodCond, CodForma: Integer): TList<string>;
 const
-  sql = 'select                                         '+
-                 '    ccp.cd_cond_pag,                           '+
-                 '    ccp.nm_cond_pag                            '+
-                 'from cta_cond_pagamento ccp                    '+
-                 '    join cta_forma_pagamento cfp on            '+
-                 'ccp.cd_cta_forma_pagamento = cfp.cd_forma_pag  '+
-                 '    where (ccp.cd_cond_pag = :cd_cond_pag) and '+
-                 '(cfp.cd_forma_pag = :cd_forma_pag) and         '+
-                 '(ccp.fl_ativo = true)';
+  sql = 'select                                        '+
+       '    ccp.cd_cond_pag,                           '+
+       '    ccp.nm_cond_pag                            '+
+       'from cta_cond_pagamento ccp                    '+
+       '    join cta_forma_pagamento cfp on            '+
+       'ccp.cd_cta_forma_pagamento = cfp.cd_forma_pag  '+
+       '    where (ccp.cd_cond_pag = :cd_cond_pag) and '+
+       '(cfp.cd_forma_pag = :cd_forma_pag) and         '+
+       '    (ccp.fl_ativo = true)';
 var
   qry: TFDQuery;
   lista: TList<string>;
@@ -273,7 +275,7 @@ begin
   end;
 end;
 
-function TPedidoVenda.BuscaProduto(CodBarras: String): TList<String>;
+function TPedidoVenda.BuscaProdutoCodBarras(CodBarras: String): TList<String>;
 const
   sql = 'select ' +
         '    p.cd_produto, ' +
@@ -285,14 +287,14 @@ const
         'from ' +
         '    produto p ' +
         'join tabela_preco_produto tpp on ' +
-        '    p.cd_produto = tpp.cd_produto ' +
+        '    p.id_item = tpp.id_item ' +
         'join tabela_preco tp on ' +
         '    tpp.cd_tabela = tp.cd_tabela ' +
         'join produto_cod_barras pcb on ' +
-        '    pcb.cd_produto = p.cd_produto ' +
+        '    pcb.id_item = p.id_item ' +
         'where ' +
         '    (pcb.codigo_barras = :codigo_barras) ' +
-        '    and (p.fl_ativo = true) ' +
+        '    and (p.fl_ativo = True) ' +
         'limit 1 ';
 var
   qry: TFDQuery;
@@ -325,23 +327,23 @@ begin
 
 end;
 
-function TPedidoVenda.BuscaProduto(CodProduto: Integer): TList<String>;
+function TPedidoVenda.BuscaProduto(CodProduto: String): TList<String>;
 const
   sql = 'select '+
             'p.cd_produto,                  '+
             'p.desc_produto,                '+
             'tpp.un_medida,                 '+
-            'tpp.cd_tabela,                 '+
+            'cast(tp.cd_tabela as varchar), '+
             'tp.nm_tabela,                  '+
             'tpp.valor                      '+
         'from                               '+
             'produto p                      '+
         'join tabela_preco_produto tpp on   '+
-            'p.cd_produto = tpp.cd_produto  '+
+            'p.id_item = tpp.id_item        '+
         'join tabela_preco tp on            '+
             'tpp.cd_tabela = tp.cd_tabela   '+
-        'where (p.cd_produto = :cd_produto) '+
-        'and (p.fl_ativo = true)';
+        'where (p.cd_produto = :cd_produto::text) '+
+        'and (p.fl_ativo = True)';
 var
   qry: TFDQuery;
   lista: TList<string>;
@@ -354,7 +356,7 @@ begin
 
   try
     qry.SQL.Add(sql);
-    qry.ParamByName('cd_produto').AsInteger := CodProduto;
+    qry.ParamByName('cd_produto').AsString := CodProduto;
     qry.Open(sql);
 
     desc_produto := qry.FieldByName('desc_produto').AsString;
@@ -378,18 +380,18 @@ end;
 
 function TPedidoVenda.BuscaTabelaPreco(CodTabela, CodProduto: Integer): TList<string>;
 const
-  sql = 'select                             '+
-             'tp.cd_tabela,                 '+
-             'tp.nm_tabela,                 '+
-             'tpp.valor                     '+
-        'from                               '+
-            'tabela_preco tp                '+
-        'join tabela_preco_produto tpp on   '+
-            'tp.cd_tabela = tpp.cd_tabela   '+
-        'join produto p on                  '+
-            'tpp.cd_produto = p.cd_produto  '+
-        'where (tp.cd_tabela = :cd_tabela)  '+
-        'and (p.cd_produto = :cd_produto)';
+  sql = 'select                           '+
+        '   tp.cd_tabela,                 '+
+        '   tp.nm_tabela,                 '+
+        '   tpp.valor                     '+
+        'from                             '+
+        '   tabela_preco tp               '+
+        'join tabela_preco_produto tpp on '+
+        '   tp.cd_tabela = tpp.cd_tabela  '+
+        'join produto p on                '+
+        '   tpp.id_item = p.id_item '+
+        'where (tp.cd_tabela = :cd_tabela)'+
+        '   and (p.cd_produto = :cd_produto)';
 var
   qry: TFDQuery;
   lista: TList<string>;
@@ -418,6 +420,26 @@ begin
   Result := valorUnitario * qtdadeItem;
 end;
 
+function TPedidoVenda.GetIdItem(CdItem: string): Int64;
+const
+  SQL = 'select id_item from produto where cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_produto').AsString := CdItem;
+    qry.Open();
+
+    Result := qry.FieldByName('id_item').AsLargeInt;
+
+  finally
+    qry.Free;
+  end;
+end;
 
 function TPedidoVenda.isCodBarrasProduto(Cod: String): Boolean;
 const
@@ -447,20 +469,20 @@ begin
   end;
 end;
 
-function TPedidoVenda.ValidaQtdadeItem(CodProduto: Integer; QtdPedido: Double): Boolean;
+function TPedidoVenda.ValidaQtdadeItem(IdItem: Int64; QtdPedido: Double): Boolean;
 const
   qry = 'select               '+
         '  qt_estoque         '+
         'from                 '+
         '  wms_estoque        '+
         'where                '+
-        '  cd_produto = :cd_produto';
+        '  id_item = :id_item';
 begin
   Result := True;
   dm.query.Close;
   dm.query.SQL.Clear;
   dm.query.SQL.Add(qry);
-  dm.query.ParamByName('cd_produto').AsInteger := CodProduto;
+  dm.query.ParamByName('id_item').AsLargeInt := IdItem;
   dm.query.Open(qry);
 
   if dm.query.IsEmpty then
@@ -474,7 +496,7 @@ begin
   end;
 end;
 
-function TPedidoVenda.ValidaTabelaPreco(CodTabela, CodProduto: Integer): Boolean;
+function TPedidoVenda.ValidaTabelaPreco(CodTabela: Integer; CodProduto: String): Boolean;
 const
   sql = 'select                             '+
              'tp.cd_tabela,                 '+
@@ -485,9 +507,9 @@ const
         'join tabela_preco_produto tpp on   '+
             'tp.cd_tabela = tpp.cd_tabela   '+
         'join produto p on                  '+
-            'tpp.cd_produto = p.cd_produto  '+
+            'tpp.id_item = p.id_item  '+
         'where (tp.cd_tabela = :cd_tabela)  '+
-        'and (p.cd_produto = :cd_produto)';
+        'and (p.cd_produto = :cd_produto::text)';
 var
   qry: TFDQuery;
 begin
@@ -497,7 +519,7 @@ begin
   try
     qry.SQL.Add(sql);
     qry.ParamByName('cd_tabela').AsInteger := CodTabela;
-    qry.ParamByName('cd_produto').AsInteger := CodProduto;
+    qry.ParamByName('cd_produto').AsString := CodProduto;
     qry.Open(sql);
 
     Result := qry.IsEmpty;

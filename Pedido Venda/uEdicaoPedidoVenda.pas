@@ -275,13 +275,13 @@ begin
                     'from                               '+
                         'produto p                      '+
                     'join tabela_preco_produto tpp on   '+
-                        'p.cd_produto = tpp.cd_produto  '+
+                        'p.id_item = tpp.id_item  '+
                     'join tabela_preco tp on            '+
                         'tpp.cd_tabela = tp.cd_tabela   '+
-                    'where (p.cd_produto = :cd_produto) '+
-                    'and (p.fl_ativo = true)';
+                    'where (p.cd_produto = :cd_produto::text) '+
+                    'and (p.fl_ativo = True)';
 
-  query.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+  query.ParamByName('cd_produto').AsString := edtCdProduto.Text;
   query.Open();
   edtNomeProduto.Text := query.FieldByName('desc_produto').AsString;
   edtUnMedida.Text := query.FieldByName('un_medida').AsString;
@@ -310,12 +310,12 @@ begin
                     'join tabela_preco_produto tpp on   '+
                         'tp.cd_tabela = tpp.cd_tabela   '+
                     'join produto p on                  '+
-                        'tpp.cd_produto = p.cd_produto  '+
+                        'tpp.id_item = p.id_item  '+
                     'where (tp.cd_tabela = :cd_tabela)  '+
                     'and (p.cd_produto = :cd_produto)';
 
   query.ParamByName('cd_tabela').AsInteger := StrToInt(edtTabelaPreco.Text);
-  query.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+  query.ParamByName('cd_produto').AsString := edtCdProduto.Text;
   query.Open();
   edtDescTabPreco.Text:= query.FieldByName('nm_tabela').AsString;
   edtVlUnitario.Text := CurrToStr(query.FieldByName('valor').AsCurrency);
@@ -391,12 +391,12 @@ begin
                     'join tabela_preco_produto tpp on   '+
                         'tp.cd_tabela = tpp.cd_tabela   '+
                     'join produto p on                  '+
-                        'tpp.cd_produto = p.cd_produto  '+
+                        'tpp.id_item = p.id_item  '+
                     'where (tp.cd_tabela = :cd_tabela)  '+
-                    'and (p.cd_produto = :cd_produto)';
+                    'and (p.cd_produto = :cd_produto::text)';
 
   query.ParamByName('cd_tabela').AsInteger := StrToInt(edtTabelaPreco.Text);
-  query.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+  query.ParamByName('cd_produto').AsString := edtCdProduto.Text;
   query.Open();
   edtDescTabPreco.Text:= query.FieldByName('nm_tabela').AsString;
   edtVlUnitario.Text := CurrToStr(query.FieldByName('valor').AsCurrency);
@@ -410,7 +410,7 @@ begin
   tabela := TPedidoVenda.Create;
 
   try
-    if tabela.ValidaTabelaPreco(StrToInt(edtTabelaPreco.Text), StrToInt(edtCdProduto.Text)) then
+    if tabela.ValidaTabelaPreco(StrToInt(edtTabelaPreco.Text), edtCdProduto.Text) then
     begin
       if (Application.MessageBox('Tabela de Preço não encontrada', 'Atenção', MB_OK) = idOK) then
       begin
@@ -588,7 +588,7 @@ const
              'join endereco_cliente e on                        '+
                 'c.cd_cliente = e.cd_cliente                    '+
             'join produto p on                                  '+
-             '   pvi.cd_produto = p.cd_produto                  '+
+             '   pvi.id_item = p.id_item                        '+
             'where                                              '+
              '   pv.nr_pedido = :nr_pedido';
 
@@ -639,7 +639,7 @@ begin
     while not qry.Eof do
     begin
       cdsItens.Append;
-      cdsItens.FieldByName('cd_produto').AsInteger := qry.FieldByName('cd_produto').AsInteger;
+      cdsItens.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
       cdsItens.FieldByName('descricao').AsString := qry.FieldByName('desc_produto').AsString;
       cdsItens.FieldByName('qtd_venda').AsFloat := qry.FieldByName('qtd_venda').AsFloat;
       cdsItens.FieldByName('cd_tabela_preco').AsInteger := qry.FieldByName('cd_tabela_preco').AsInteger;
@@ -703,7 +703,7 @@ end;
 procedure TfrmEdicaoPedidoVenda.btnAdicionarItemClick(Sender: TObject);
 const
   sql = 'select '+
-        '    pt.cd_produto, '+
+        '    pt.id_item, '+
         '    pt.cd_tributacao_icms,'+
         '    gti.aliquota_icms,'+
         '    pt.cd_tributacao_ipi,'+
@@ -719,7 +719,7 @@ const
         'join grupo_tributacao_pis_cofins gtpc on '+
         '    pt.cd_tributacao_pis_cofins = gtpc.cd_tributacao '+
         'where '+
-        '    pt.cd_produto = :cd_produto';
+        '    pt.id_item = :id_item';
 var
   vlTotalItens : Currency;
   aliqIcms, aliqIpi, aliqPisCofins : Double;
@@ -730,7 +730,7 @@ begin
 
   try
     qry.SQL.Add(sql);
-    qry.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+    qry.ParamByName('id_item').AsLargeInt := StrToInt(edtCdProduto.Text);
     qry.Open(sql);
 
     aliqIcms := qry.FieldByName('aliquota_icms').AsCurrency;
@@ -742,7 +742,7 @@ begin
     begin
       try
         cdsItens.Edit;//entra em modo de edição
-        cdsItens.FieldByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+        cdsItens.FieldByName('cd_produto').AsString := edtCdProduto.Text;
         cdsItens.FieldByName('qtd_venda').AsInteger := StrToInt(edtQtdade.Text);
         cdsItens.FieldByName('un_medida').AsString := edtUnMedida.Text;
         cdsItens.FieldByName('vl_unitario').AsCurrency := StrToCurr(edtVlUnitario.Text);
@@ -792,7 +792,7 @@ begin
     else
     begin
       cdsItens.Append;
-      cdsItens.FieldByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+      cdsItens.FieldByName('cd_produto').AsString := edtCdProduto.Text;
       cdsItens.FieldByName('descricao').AsString := edtNomeProduto.Text;
       cdsItens.FieldByName('qtd_venda').AsInteger := StrToInt(edtQtdade.Text);
       cdsItens.FieldByName('cd_tabela_preco').AsInteger := StrToInt(edtTabelaPreco.Text);

@@ -30,12 +30,13 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure edtCodTabelaExit(Sender: TObject);
+    procedure edtCodProdutoExit(Sender: TObject);
   private
-    { Private declarations }
+    FIdItem: Int64;
     procedure LimpaCampos;
     procedure Salvar;
     procedure Excluir;
+    function GetIdItem(CdItem: string): Int64;
   public
     { Public declarations }
   end;
@@ -50,84 +51,106 @@ uses
 {$R *.dfm}
 
 procedure TfrmCadTabelaPrecoProduto.edtCodProdutoChange(Sender: TObject);
+const
+  SQL = 'select            '+
+        '   desc_produto,  '+
+        '   un_medida      '+
+        'from              '+
+        '   produto        '+
+        'where             '+
+        '   id_item = :id_item';
+var
+  qry: TFDQuery;
 begin
-  if edtCodProduto.Text = '' then
-  begin
-    edtNomeProduto.Text := '';
-    Exit;
-  end
-  else
-  begin
-    sqlTabelaPrecoProduto.Close;
-    sqlTabelaPrecoProduto.SQL.Text := 'select               '+
-                                            'desc_produto,  '+
-                                            'un_medida      '+
-                                      'from                 '+
-                                            'produto        '+
-                                      'where                '+
-                                            'cd_produto = :cd_produto';
-    sqlTabelaPrecoProduto.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
-    sqlTabelaPrecoProduto.Open();
-    edtNomeProduto.Text := sqlTabelaPrecoProduto.FieldByName('desc_produto').AsString;
-    edtUNMedida.Text := sqlTabelaPrecoProduto.FieldByName('un_medida').AsString;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    if edtCodProduto.Text = '' then
+    begin
+      edtNomeProduto.Text := '';
+      Exit;
+    end
+    else
+    begin
+      qry.SQL.Add(SQL);
+      qry.ParamByName('id_item').AsInteger := GetIdItem(edtCodProduto.Text);
+      qry.Open();
+      edtNomeProduto.Text := qry.FieldByName('desc_produto').AsString;
+      edtUNMedida.Text := qry.FieldByName('un_medida').AsString;
+    end;
+  finally
+    qry.Free;
   end;
 end;
 
-procedure TfrmCadTabelaPrecoProduto.edtCodTabelaChange(Sender: TObject);
+function TfrmCadTabelaPrecoProduto.GetIdItem(CdItem: string): Int64;
+const
+  SQL = 'select id_item from produto where cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
 begin
-  //retorna a tabela de preço
-  sqlTabelaPrecoProduto.Close;
-  sqlTabelaPrecoProduto.SQL.Text := 'select '+
-                                        'cd_tabela, '+
-                                        'nm_tabela '+
-                                    'from '+
-                                        'tabela_preco '+
-                                    'where '+
-                                        'cd_tabela = :cd_tabela';
-  sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-  sqlTabelaPrecoProduto.Open();
-  edtNomeTabela.Text := sqlTabelaPrecoProduto.FieldByName('nm_tabela').AsString;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_produto').AsString := CdItem;
+    qry.Open();
+
+    Result := qry.FieldByName('id_item').AsLargeInt;
+
+  finally
+    qry.Free;
+  end;
 end;
 
-procedure TfrmCadTabelaPrecoProduto.edtCodTabelaExit(Sender: TObject);
+procedure TfrmCadTabelaPrecoProduto.edtCodProdutoExit(Sender: TObject);
 begin
-  //retorna a tabela de preço
-  sqlTabelaPrecoProduto.Close;
-  sqlTabelaPrecoProduto.SQL.Text := 'select '+
-                                        'cd_tabela, '+
-                                        'nm_tabela '+
-                                    'from '+
-                                        'tabela_preco '+
-                                    'where '+
-                                        'cd_tabela = :cd_tabela';
-  sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-  sqlTabelaPrecoProduto.Open();
-  edtNomeTabela.Text := sqlTabelaPrecoProduto.FieldByName('nm_tabela').AsString;
+  FIdItem := GetIdItem(edtCodProduto.Text);
+end;
+
+procedure TfrmCadTabelaPrecoProduto.edtCodTabelaChange(Sender: TObject);
+const
+  SQL = 'select '+
+        '   nm_tabela '+
+        'from '+
+        '   tabela_preco '+
+        'where '+
+        '   cd_tabela = :cd_tabela';
+var
+  qry: TFDQuery;
+begin
+  if edtCodTabela.Text = EmptyStr then
+    Exit;
+
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
+    qry.Open();
+    edtNomeTabela.Text := qry.FieldByName('nm_tabela').AsString;
+  finally
+    qry.Free;
+  end;
 end;
 
 procedure TfrmCadTabelaPrecoProduto.Excluir;
+var
+  produto: TTabelaPrecoProduto;
 begin
   if (Application.MessageBox('Deseja Excluir o produto da Tabela de Preço?', 'Atenção', MB_YESNO) = IDYES) then
   begin
-    try
-      sql.Close;
-      sql.SQL.Text := 'delete                         '+
-                      '   from                        '+
-                      'tabela_preco_produto           '+
-                      '   where                       '+
-                      '(cd_produto = :cd_produto) and '+
-                      '(cd_tabela = :cd_tabela)';
-      sql.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-      sql.ParamByName('cd_produto').AsInteger := StrToInt(edtCodProduto.Text);
-      sql.ExecSQL;
-      LimpaCampos;
+    produto := TTabelaPrecoProduto.Create;
 
-    except
-      on E:exception do
-      begin
-        ShowMessage('Erro ao excluir a tabela '+ E.Message);
-        Exit;
-      end;
+    try
+      produto.cd_tabela := StrToInt(edtCodTabela.Text);
+      produto.id_item := FIdItem;
+      produto.Excluir;
+    finally
+      produto.Free;
     end;
   end;
 end;
@@ -171,6 +194,7 @@ begin
   edtUNMedida.Clear;
   edtNomeProduto.Clear;
   edtNomeTabela.Clear;
+  edtCodTabela.Clear;
   edtCodTabela.SetFocus;
 end;
 
@@ -181,7 +205,12 @@ begin
   produto := TTabelaPrecoProduto.Create;
 
   try
-    if not produto.Pesquisar(StrToInt(edtCodTabela.Text), StrToInt(edtCodProduto.Text)) then
+    produto.cd_tabela := StrToInt(edtCodTabela.Text);
+    produto.id_item := FIdItem;
+    produto.valor := StrToCurr(edtValor.Text);
+    produto.un_medida := edtUNMedida.Text;
+
+    if not produto.Pesquisar(StrToInt(edtCodTabela.Text), FIdItem) then
       produto.Inserir
     else
       produto.Atualizar;

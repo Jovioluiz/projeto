@@ -142,19 +142,40 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
   end
   object cdsProdutos: TClientDataSet
     PersistDataPacket.Data = {
-      8C0000009619E0BD0100000018000000040000000000030000008C000A63645F
-      70726F6475746F04000100000000000A6E6D5F70726F6475746F010049000000
-      01000557494454480200020014000576616C6F72080004000000010007535542
-      545950450200490006004D6F6E65790009756E5F6D6564696461010049000000
-      01000557494454480200020014000000}
+      980000009619E0BD01000000180000000400000000000300000098000A63645F
+      70726F6475746F01004900000001000557494454480200020014000A6E6D5F70
+      726F6475746F01004900000001000557494454480200020014000576616C6F72
+      080004000000010007535542545950450200490006004D6F6E65790009756E5F
+      6D656469646101004900000001000557494454480200020014000000}
     Active = True
     Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'cd_produto'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'nm_produto'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'un_medida'
+        DataType = ftString
+        Size = 20
+      end>
+    IndexDefs = <>
     Params = <>
+    StoreDefs = True
     Left = 456
     Top = 448
-    object cdsProdutoscd_produto: TIntegerField
+    object cdsProdutoscd_produto: TStringField
       DisplayLabel = 'C'#243'd Produto'
-      DisplayWidth = 15
       FieldName = 'cd_produto'
     end
     object cdsProdutosnm_produto: TStringField

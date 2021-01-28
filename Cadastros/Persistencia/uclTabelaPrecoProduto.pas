@@ -3,15 +3,15 @@ unit uclTabelaPrecoProduto;
 interface
 
 uses
-  uclPadrao;
+  uclPadrao, Data.DB;
 
 type TTabelaPrecoProduto = class(TPadrao)
   private
     Fvalor: Currency;
-    Fcd_produto: Integer;
+    Fid_item: int64;
     Fun_medida: string;
     Fcd_tabela: Integer;
-    procedure Setcd_produto(const Value: Integer);
+    procedure Setid_item(const Value: Int64);
     procedure Setcd_tabela(const Value: Integer);
     procedure Setun_medida(const Value: string);
     procedure Setvalor(const Value: Currency);
@@ -20,10 +20,10 @@ type TTabelaPrecoProduto = class(TPadrao)
     procedure Atualizar; override;
     procedure Inserir; override;
     procedure Excluir; override;
-    function Pesquisar(CdTabela, CdProduto: Integer): Boolean;
+    function Pesquisar(CdTabela: Integer; IdItem: Int64): Boolean;
 
     property cd_tabela: Integer read Fcd_tabela write Setcd_tabela;
-    property cd_produto: Integer read Fcd_produto write Setcd_produto;
+    property id_item: Int64 read Fid_item write Setid_item;
     property valor: Currency read Fvalor write Setvalor;
     property un_medida: string read Fun_medida write Setun_medida;
 
@@ -32,7 +32,7 @@ end;
 implementation
 
 uses
-  FireDAC.Comp.Client, uDataModule, System.SysUtils;
+  FireDAC.Comp.Client, uDataModule, System.SysUtils, FireDAC.Stan.Param;
 
 { TTabelaPrecoProduto }
 
@@ -42,12 +42,12 @@ const
         '   tabela_preco_produto '+
         'set '+
         '   cd_tabela = :cd_tabela, '+
-        '   cd_produto = :cd_produto, '+
+        '   id_item = :id_item, '+
         '   valor = :valor, '+
         '   un_medida = :un_medida  '+
         'where '+
         '   (cd_tabela = :cd_tabela) and '+
-        '   (cd_produto = :cd_produto)';
+        '   (id_item = :id_item)';
 var
   qry: TFDquery;
 begin
@@ -58,8 +58,9 @@ begin
 
   try
     try
+      qry.SQL.Add(SQL);
       qry.ParamByName('cd_tabela').AsInteger := Fcd_tabela;
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
       qry.ParamByName('valor').AsCurrency := Fvalor;
       qry.ParamByName('un_medida').AsString := Fun_medida;
       qry.ExecSQL;
@@ -78,9 +79,39 @@ begin
 end;
 
 procedure TTabelaPrecoProduto.Excluir;
+const
+  SQL = 'delete                   '+
+        '   from                  '+
+        'tabela_preco_produto     '+
+        '   where                 '+
+        '(id_item = :id_item) and '+
+        '(cd_tabela = :cd_tabela)';
+var
+  qry: TFDQuery;
 begin
   inherited;
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  qry.Connection.StartTransaction;
 
+  try
+    try
+      qry.SQL.Add(SQL);
+      qry.ParamByName('cd_tabela').AsInteger := Fcd_tabela;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
+      qry.ExecSQL;
+      qry.Connection.Commit;
+    except
+      on E : exception do
+      begin
+        qry.Connection.Rollback;
+        raise Exception.Create('Erro ao excluir o produto ' + E.Message);
+      end;
+    end;
+  finally
+    qry.Connection.Rollback;
+    qry.Free;
+  end;
 end;
 
 procedure TTabelaPrecoProduto.Inserir;
@@ -88,11 +119,11 @@ const
   SQL = 'insert '+
         '   into '+
         'tabela_preco_produto(cd_tabela, '+
-        '   cd_produto, '+
+        '   id_item, '+
         '   valor, '+
         '   un_medida)'+
         'values (:cd_tabela, '+
-        '   :cd_produto, '+
+        '   :id_item, '+
         '   :valor, '+
         '   :un_medida)';
 var
@@ -105,8 +136,9 @@ begin
 
   try
     try
+      qry.SQL.Add(SQL);
       qry.ParamByName('cd_tabela').AsInteger := Fcd_tabela;
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
       qry.ParamByName('valor').AsCurrency := Fvalor;
       qry.ParamByName('un_medida').AsString := Fun_medida;
       qry.ExecSQL;
@@ -124,15 +156,15 @@ begin
   end;
 end;
 
-function TTabelaPrecoProduto.Pesquisar(CdTabela, CdProduto: Integer): Boolean;
+function TTabelaPrecoProduto.Pesquisar(CdTabela: Integer; IdItem: Int64): Boolean;
 const
   SQL = 'select                                     '+
-        ' tpp.cd_produto                            '+
+        ' tpp.id_item                               '+
         'from tabela_preco tp                       '+
         ' join tabela_preco_produto tpp on          '+
         'tp.cd_tabela = tpp.cd_tabela               '+
         ' where (tp.cd_tabela = :cd_tabela) and     '+
-        '(tpp.cd_produto = :cd_produto)';
+        '(tpp.id_item = :id_item)';
 var
   qry: TFDquery;
 begin
@@ -143,7 +175,7 @@ begin
   try
     qry.SQL.Add(SQL);
     qry.ParamByName('cd_tabela').AsInteger := CdTabela;
-    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.ParamByName('id_item').AsInteger := IdItem;
     qry.Open();
 
     Result := not qry.IsEmpty;
@@ -153,9 +185,9 @@ begin
   end;
 end;
 
-procedure TTabelaPrecoProduto.Setcd_produto(const Value: Integer);
+procedure TTabelaPrecoProduto.Setid_item(const Value: Int64);
 begin
-  Fcd_produto := Value;
+  fId_item := Value;
 end;
 
 procedure TTabelaPrecoProduto.Setcd_tabela(const Value: Integer);

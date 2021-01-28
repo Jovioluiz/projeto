@@ -7,11 +7,11 @@ uses
 
 type TProdutoTributacao = class(TPadrao)
   private
-    Fcd_produto: Integer;
+    Fid_item: Int64;
     Fcd_tributacao_pis_cofins: Integer;
     Fcd_tributacao_ipi: Integer;
     Fcd_tributacao_icms: Integer;
-    procedure Setcd_produto(const Value: Integer);
+    procedure Setid_item(const Value: Int64);
     procedure Setcd_tributacao_icms(const Value: Integer);
     procedure Setcd_tributacao_ipi(const Value: Integer);
     procedure Setcd_tributacao_pis_cofins(const Value: Integer);
@@ -20,9 +20,9 @@ type TProdutoTributacao = class(TPadrao)
     procedure Atualizar; override;
     procedure Inserir; override;
     procedure Excluir; override;
-    function Pesquisar(CdProduto: Integer): Boolean;
+    function Pesquisar(IdItem: Int64): Boolean;
 
-    property cd_produto: Integer read Fcd_produto write Setcd_produto;
+    property id_item: Int64 read Fid_item write Setid_item;
     property cd_tributacao_icms: Integer read Fcd_tributacao_icms write Setcd_tributacao_icms;
     property cd_tributacao_ipi: Integer read Fcd_tributacao_ipi write Setcd_tributacao_ipi;
     property cd_tributacao_pis_cofins: Integer read Fcd_tributacao_pis_cofins write Setcd_tributacao_pis_cofins;
@@ -40,12 +40,11 @@ const
   SQL = 'update                                                  '+
         '   produto_tributacao                                   '+
         'set                                                     '+
-        '   cd_produto = :cd_produto,                            '+
         '   cd_tributacao_icms = :cd_tributacao_icms,            '+
         '   cd_tributacao_ipi = :cd_tributacao_ipi,              '+
         '   cd_tributacao_pis_cofins = :cd_tributacao_pis_cofins '+
         'where                                   '+
-        '   cd_produto = :cd_produto';
+        '   id_item = :id_item';
 var
   qry: TFDQuery;
 begin
@@ -57,7 +56,7 @@ begin
   try
     try
       qry.SQL.Add(SQL);
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
       qry.ParamByName('cd_tributacao_icms').AsInteger := Fcd_tributacao_icms;
       qry.ParamByName('cd_tributacao_ipi').AsInteger := Fcd_tributacao_ipi;
       qry.ParamByName('cd_tributacao_pis_cofins').AsInteger := Fcd_tributacao_pis_cofins;
@@ -86,12 +85,12 @@ end;
 
 procedure TProdutoTributacao.Inserir;
 const
-  SQL = 'insert into                      '+
-                'produto_tributacao(cd_produto, '+
+  SQL = 'insert into                            '+
+                'produto_tributacao(id_item,    '+
                 'cd_tributacao_icms,            '+
                 'cd_tributacao_ipi,             '+
                 'cd_tributacao_pis_cofins)      '+
-        'values (:cd_produto,                   '+
+        'values (:id_item,                      '+
                 ':cd_tributacao_icms,           '+
                 ':cd_tributacao_ipi,            '+
                 ':cd_tributacao_pis_cofins)';
@@ -106,7 +105,7 @@ begin
   try
     try
       qry.SQL.Add(SQL);
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
       qry.ParamByName('cd_tributacao_icms').AsInteger := Fcd_tributacao_icms;
       qry.ParamByName('cd_tributacao_ipi').AsInteger := Fcd_tributacao_ipi;
       qry.ParamByName('cd_tributacao_pis_cofins').AsInteger := Fcd_tributacao_pis_cofins;
@@ -127,16 +126,16 @@ begin
   end;
 end;
 
-function TProdutoTributacao.Pesquisar(CdProduto: Integer): Boolean;
+function TProdutoTributacao.Pesquisar(IdItem: Int64): Boolean;
 const
-  SQL = 'select cd_produto from produto_tributacao pt '+
+  SQL = 'select id_item from produto_tributacao pt '+
                    'left join grupo_tributacao_icms gti on '+
                    '    pt.cd_tributacao_icms = gti.cd_tributacao '+
                    'left join grupo_tributacao_ipi gtipi on '+
                    '    pt.cd_tributacao_ipi = gtipi.cd_tributacao '+
                    'left join grupo_tributacao_pis_cofins gtpc on '+
                    '    pt.cd_tributacao_pis_cofins = gtpc.cd_tributacao '+
-                   'where pt.cd_produto = :cd_produto';
+                   'where pt.id_item = :id_item';
 var
   qry: TFDquery;
 begin
@@ -145,7 +144,7 @@ begin
 
   try
     qry.SQL.Add(SQL);
-    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.ParamByName('id_item').AsInteger := IdItem;
     qry.Open();
 
     Result := not qry.IsEmpty;
@@ -155,9 +154,9 @@ begin
   end;
 end;
 
-procedure TProdutoTributacao.Setcd_produto(const Value: Integer);
+procedure TProdutoTributacao.Setid_item(const Value: Int64);
 begin
-  Fcd_produto := Value;
+  Fid_item := Value;
 end;
 
 procedure TProdutoTributacao.Setcd_tributacao_icms(const Value: Integer);

@@ -198,7 +198,7 @@ const
              'left join endereco_cliente e on                   '+
                 'c.cd_cliente = e.cd_cliente                    '+
             'left join produto p on                             '+
-             '   pvi.cd_produto = p.cd_produto                  '+
+             '   pvi.id_item = p.id_item                        '+
             'where                                              '+
              '   pv.nr_pedido = :nr_pedido';
 var

@@ -29,10 +29,10 @@ type
     sqlTabelaPrecoProduto: TFDQuery;
     dsProdutos: TDataSource;
     cdsProdutos: TClientDataSet;
-    cdsProdutoscd_produto: TIntegerField;
     cdsProdutosnm_produto: TStringField;
     cdsProdutosvalor: TCurrencyField;
     cdsProdutosun_medida: TStringField;
+    cdsProdutoscd_produto: TStringField;
     procedure btnAdicionarProdutoClick(Sender: TObject);
     procedure edtCodTabelaExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -47,6 +47,7 @@ type
     procedure limpaCampos;
     procedure Salvar;
     procedure Excluir;
+    function GetIdItem(CdItem: string): Int64;
   public
     { Public declarations }
 
@@ -62,7 +63,7 @@ implementation
 
 {$R *.dfm}
 
-uses uLogin, uclTabelaPreco;
+uses uLogin, uclTabelaPreco, uclTabelaPrecoProduto;
 
 procedure TfrmcadTabelaPreco.btnAdicionarProdutoClick(Sender: TObject);
 begin
@@ -78,29 +79,46 @@ begin
   end;
 end;
 
-procedure TfrmcadTabelaPreco.DBGridProdutoKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+function TfrmcadTabelaPreco.GetIdItem(CdItem: string): Int64;
+const
+  SQL = 'select id_item from produto where cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_produto').AsString := CdItem;
+    qry.Open();
+
+    Result := qry.FieldByName('id_item').AsLargeInt;
+
+  finally
+    qry.Free;
+  end;
+end;
+
+procedure TfrmcadTabelaPreco.DBGridProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+var
+  produto: TTabelaPrecoProduto;
 begin
   if KEY = VK_DELETE then
   begin
     if (Application.MessageBox('Deseja Excluir o produto da Tabela?', 'Atenção', MB_YESNO) = IDYES) then
     begin
-      try
-        sqlTabelaPreco.Close;
-        sqlTabelaPreco.SQL.Text := 'delete                '+
-                                   '   from               '+
-                                   'tabela_preco_produto  '+
-                                   '   where              '+
-                                   'cd_produto = :cd_produto';
-        sqlTabelaPreco.ParamByName('cd_produto').AsInteger := StrToInt(DBGridProduto.Columns[0].Field.Text);
-        sqlTabelaPreco.ExecSQL;
+      produto := TTabelaPrecoProduto.Create;
 
-      except
-        on E : exception do
-          ShowMessage('Erro ao Excluir o produto ' + IntToStr(cdsProdutos.FieldByName('Produto').AsInteger) +
-                    ' da tabela de preço' + E.Message);
+      try
+        produto.cd_tabela := StrToInt(edtCodTabela.Text);
+        produto.id_item := GetIdItem(cdsProdutos.FieldByName('cd_produto').AsString);
+        produto.Excluir;
+      finally
+        produto.Free;
       end;
     end;
+    cdsProdutos.Delete;
   end;
 end;
 
@@ -114,7 +132,7 @@ const
         'from                             '+
         '   produto p                     '+
         'join tabela_preco_produto tpp on '+
-        '   p.cd_produto = tpp.cd_produto '+
+        '   p.id_item = tpp.id_item       '+
         'where                            '+
         '   tpp.cd_tabela = :cd_tabela';
 var
@@ -154,7 +172,7 @@ begin
     procedure
     begin
       cdsProdutos.Append;
-      cdsProdutos.FieldByName('cd_produto').AsInteger := qry.FieldByName('cd_produto').AsInteger;
+      cdsProdutos.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
       cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
       cdsProdutos.FieldByName('valor').AsCurrency := qry.FieldByName('valor').AsCurrency;
       cdsProdutos.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
@@ -261,7 +279,7 @@ begin
   edtNomeTabela.Clear;
   edtDtInicial.Clear;
   edtDtFinal.Clear;
-  DBGridProduto.DataSource := nil;
+  cdsProdutos.EmptyDataSet;
   edtCodTabela.SetFocus;
 end;
 

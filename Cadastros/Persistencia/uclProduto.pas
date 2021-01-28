@@ -10,14 +10,15 @@ type TProduto = class(TPadrao)
   private
     Fobservacao: string;
     Fpeso_liquido: Double;
-    Fcd_produto: Integer;
+    Fcd_produto: String;
     Ffl_ativo: Boolean;
     Fun_medida: string;
     Fdesc_produto: string;
     Fimagem: Byte;
     Fpeso_bruto: Double;
     Ffator_conversao: Integer;
-    procedure Setcd_produto(const Value: Integer);
+    Fid_item: Int64;
+    procedure Setcd_produto(const Value: String);
     procedure Setdesc_produto(const Value: string);
     procedure Setfator_conversao(const Value: Integer);
     procedure Setfl_ativo(const Value: Boolean);
@@ -26,14 +27,17 @@ type TProduto = class(TPadrao)
     procedure Setpeso_bruto(const Value: Double);
     procedure Setpeso_liquido(const Value: Double);
     procedure Setun_medida(const Value: string);
+    procedure Setid_item(const Value: Int64);
+
 
   public
     procedure Atualizar; override;
     procedure Inserir; override;
     procedure Excluir; override;
-    function Pesquisar(CdProduto: Integer): Boolean;
+    function Pesquisar(IdItem: Int64): Boolean;
+    function GeraIdItem: Int64;
 
-    property cd_produto: Integer read Fcd_produto write Setcd_produto;
+    property cd_produto: String read Fcd_produto write Setcd_produto;
     property fl_ativo: Boolean read Ffl_ativo write Setfl_ativo;
     property desc_produto: string read Fdesc_produto write Setdesc_produto;
     property un_medida: string read Fun_medida write Setun_medida;
@@ -42,6 +46,7 @@ type TProduto = class(TPadrao)
     property peso_bruto: Double read Fpeso_bruto write Setpeso_bruto;
     property observacao: string read Fobservacao write Setobservacao;
     property imagem: Byte read Fimagem write Setimagem;
+    property id_item: Int64 read Fid_item write Setid_item;
 end;
 
 type TProdutoCodigoBarras = class(TProduto)
@@ -57,7 +62,7 @@ type TProdutoCodigoBarras = class(TProduto)
     procedure Inserir; override;
     procedure Excluir; override;
     function Pesquisar(CdProduto: Integer): Boolean; overload;
-    function Pesquisar(CdProduto: Integer; CodBarras: String): Boolean;overload;
+    function Pesquisar(IdItem: Int64; CodBarras: String): Boolean;overload;
     constructor Create;
     destructor Destroy; override;
 
@@ -86,7 +91,7 @@ const
          '  peso_bruto = :peso_bruto,          '+
          '  observacao = :observacao           '+
          'where                                '+
-         '  cd_produto = :cd_produto';
+         '  id_item = :id_item';
 var
   qry: TFDQuery;
 begin
@@ -105,7 +110,7 @@ begin
       qry.ParamByName('peso_liquido').AsCurrency := Fpeso_liquido;
       qry.ParamByName('peso_bruto').AsCurrency := Fpeso_bruto;
       qry.ParamByName('observacao').AsString := Fobservacao;
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
 
       qry.ExecSQL;
       qry.Connection.Commit;
@@ -128,7 +133,7 @@ const
         '  from                    '+
         'produto                   '+
         '  where                   '+
-        'cd_produto = :cd_produto';
+        'id_item = :id_item';
 var
   qry: TFDQuery;
 begin
@@ -140,18 +145,37 @@ begin
 
   try
     try
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
       qry.ExecSQL;
       qry.Connection.Commit;
     except
     on E:exception do
       begin
         qry.Connection.Rollback;
-        raise Exception.Create('Erro ao excluir os dados do produto ' + Fcd_produto.ToString + E.Message);
+        raise Exception.Create('Erro ao excluir os dados do produto ' + Fcd_produto + E.Message);
       end;
     end;
   finally
     qry.Connection.Rollback;
+    qry.Free;
+  end;
+end;
+
+function TProduto.GeraIdItem: Int64;
+const
+  SQL = 'select *from func_id_item()';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.Open(SQL);
+
+    Result := qry.FieldByName('func_id_item').AsLargeInt;
+  finally
     qry.Free;
   end;
 end;
@@ -166,7 +190,8 @@ const
                 'fator_conversao,     '+
                 'peso_liquido,        '+
                 'peso_bruto,          '+
-                'observacao)          '+
+                'observacao,          '+
+                'id_item)          '+
         ' values (:cd_produto,         '+
                 ':fl_ativo,           '+
                 ':desc_produto,       '+
@@ -174,7 +199,8 @@ const
                 ':fator_conversao,    '+
                 ':peso_liquido,       '+
                 ':peso_bruto,         '+
-                ':observacao)         ';
+                ':observacao,         '+
+                ':id_item)';
 var
   qry: TFDQuery;
 begin
@@ -186,7 +212,7 @@ begin
   try
     try
       qry.SQL.Add(SQL);
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('cd_produto').AsString := Fcd_produto;
       qry.ParamByName('fl_ativo').AsBoolean := Ffl_ativo;
       qry.ParamByName('desc_produto').AsString := Fdesc_produto;
       qry.ParamByName('un_medida').AsString := Fun_medida;
@@ -194,6 +220,7 @@ begin
       qry.ParamByName('peso_liquido').AsCurrency := Fpeso_liquido;
       qry.ParamByName('peso_bruto').AsCurrency := Fpeso_bruto;
       qry.ParamByName('observacao').AsString := Fobservacao;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
 
       qry.ExecSQL;
       qry.Connection.Commit;
@@ -210,14 +237,14 @@ begin
   end;
 end;
 
-function TProduto.Pesquisar(CdProduto: Integer): Boolean;
+function TProduto.Pesquisar(IdItem: Int64): Boolean;
 const
   SQL = 'select         '+
-        '   cd_produto  '+
+        '   id_item     '+
         'from           '+
         '   produto     '+
         'where          '+
-        '   cd_produto = :cd_produto';
+        '   id_item = :id_item';
 var
   qry: TFDquery;
 begin
@@ -226,7 +253,7 @@ begin
 
   try
     qry.SQL.Add(SQL);
-    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.ParamByName('id_item').AsLargeInt := IdItem;
     qry.Open();
 
     Result := not qry.IsEmpty;
@@ -236,7 +263,7 @@ begin
   end;
 end;
 
-procedure TProduto.Setcd_produto(const Value: Integer);
+procedure TProduto.Setcd_produto(const Value: String);
 begin
   Fcd_produto := Value;
 end;
@@ -254,6 +281,11 @@ end;
 procedure TProduto.Setfl_ativo(const Value: Boolean);
 begin
   Ffl_ativo := Value;
+end;
+
+procedure TProduto.Setid_item(const Value: Int64);
+begin
+  Fid_item := Value;
 end;
 
 procedure TProduto.Setimagem(const Value: Byte);
@@ -286,11 +318,10 @@ end;
 procedure TProdutoCodigoBarras.Atualizar;
 const
   SQL_UPDATE = 'update produto_cod_barras set '+
-               '  cd_produto = :cd_produto, '+
                '  un_medida = :un_medida, '+
                '  tipo_cod_barras = :tipo_cod_barras, '+
                '  codigo_barras = :codigo_barras '+
-               'where cd_produto = :cd_produto';
+               'where id_item = :id_item';
 var
   qry: TFDQuery;
 begin
@@ -303,7 +334,7 @@ begin
     try
       qry.SQL.Add(sql_update);
 
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
       qry.ParamByName('un_medida').AsString := Dados.cdsBarras.FieldByName('un_medida').AsString;
       if Dados.cdsBarras.FieldByName('tipo_cod_barras').AsString = 'Interno' then
         qry.ParamByName('tipo_cod_barras').AsInteger := 0
@@ -356,7 +387,7 @@ begin
   try
     try
       qry.SQL.Add(SQL);
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('cd_produto').AsString := Fcd_produto;
       qry.ParamByName('codigo_barras').AsString := Fcodigo_barras;
       qry.ParamByName('un_medida').AsString := Fun_medida;
       qry.ExecSQL;
@@ -376,9 +407,9 @@ end;
 
 procedure TProdutoCodigoBarras.Inserir;
 const
-  SQL_INSERT = 'insert into produto_cod_barras(cd_produto, un_medida, tipo_cod_barras, codigo_barras) ' +
+  SQL_INSERT = 'insert into produto_cod_barras(id_item, un_medida, tipo_cod_barras, codigo_barras) ' +
                ' values '+
-               ' (:cd_produto, :un_medida, :tipo_cod_barras, :codigo_barras)';
+               ' (:id_item, :un_medida, :tipo_cod_barras, :codigo_barras)';
 var
   qry: TFDQuery;
 begin
@@ -390,7 +421,7 @@ begin
   try
     try
       qry.SQL.Add(SQL_INSERT);
-      qry.ParamByName('cd_produto').AsInteger := Fcd_produto;
+      qry.ParamByName('id_item').AsLargeInt := Fid_item;
       qry.ParamByName('un_medida').AsString := Fun_medida;
       qry.ParamByName('tipo_cod_barras').AsInteger := Ftipo_cod_barras.ToInteger;
       qry.ParamByName('codigo_barras').AsString := Fcodigo_barras;
@@ -415,14 +446,14 @@ begin
  Result := False;
 end;
 
-function TProdutoCodigoBarras.Pesquisar(CdProduto: Integer; CodBarras: String): Boolean;
+function TProdutoCodigoBarras.Pesquisar(IdItem: Int64; CodBarras: String): Boolean;
 const
   sql = 'select '+
         '   cd_produto '+
         'from '+
         '   produto_cod_barras '+
         'where '+
-        '   cd_produto = :cd_produto and '+
+        '   id_item = :id_item and '+
         '   codigo_barras = :codigo_barras';
 var
   qry: TFDQuery;
@@ -433,7 +464,7 @@ begin
   try
     qry.SQL.Add(sql);
 
-    qry.ParamByName('cd_produto').AsInteger := CdProduto;
+    qry.ParamByName('id_item').AsInteger := IdItem;
     qry.ParamByName('codigo_barras').AsString := CodBarras;
     qry.Open(sql);
 

@@ -74,6 +74,7 @@ type
       Shift: TShiftState);
   private
     FRegra: TProdutoCodigoBarras;
+    FIdItem: Int64;
     { Private declarations }
     procedure limpaCampos;
     procedure Salvar;
@@ -86,6 +87,7 @@ type
     procedure SalvarFoto;
     procedure SalvarTributacao;
     function carregaImagem(Aimagem: TImage; ABlobField: TBlobField): Boolean;
+    function GetIdItem(CdItem: string): Int64;
   public
     { Public declarations }
 
@@ -171,7 +173,7 @@ begin
    begin
      if MessageDlg('Deseja excluir o código de barras?', mtConfirmation,[mbYes,mbNo], 0) = mrYes then
      begin
-      FRegra.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+      FRegra.cd_produto := edtPRODUTOCD_PRODUTO.Text;
       FRegra.codigo_barras := FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString;
       FRegra.un_medida := FRegra.Dados.cdsBarras.FieldByName('un_medida').AsString;
       FRegra.Excluir;
@@ -212,7 +214,6 @@ end;
 procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
 const
   sql = 'select                                             '+
-        '    p.cd_produto,                                  '+
         '    fl_ativo,                                      '+
         '    desc_produto,                                  '+
         '    un_medida,                                     '+
@@ -230,7 +231,7 @@ const
         'from                                               '+
         '    produto p                                      '+
         'left join produto_tributacao pt on                 '+
-        '    p.cd_produto = pt.cd_produto                   '+
+        '    p.id_item = pt.id_item                         '+
         'left join grupo_tributacao_icms gti on             '+
         '    pt.cd_tributacao_icms = gti.cd_tributacao      '+
         'left join grupo_tributacao_ipi gtipi on            '+
@@ -240,73 +241,78 @@ const
         'where                                              '+
         '    p.cd_produto = :cd_produto';
 var
-  temPermissaoEdicao : Boolean;
-  produto : TValidaDados;
+  temPermissaoEdicao: Boolean;
+  produto: TValidaDados;
   qry: TFDQuery;
 begin
   produto := TValidaDados.Create;
-  temPermissaoEdicao := produto.validaEdicaoAcao(idUsuario, 2);
 
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.conexaoBanco;
-  qry.Close;
-  qry.SQL.Clear;
+  try
+    temPermissaoEdicao := produto.validaEdicaoAcao(idUsuario, 2);
+    FIdItem := GetIdItem(edtPRODUTOCD_PRODUTO.Text);
+    qry := TFDQuery.Create(Self);
+    qry.Connection := dm.conexaoBanco;
+    qry.Close;
+    qry.SQL.Clear;
 
-  if edtPRODUTOCD_PRODUTO.isEmpty then
-  begin
-    raise Exception.Create('Código não pode ser vazio');
-    edtPRODUTOCD_PRODUTO.SetFocus;
-    Abort;
+    if edtPRODUTOCD_PRODUTO.isEmpty then
+    begin
+      raise Exception.Create('Código não pode ser vazio');
+      edtPRODUTOCD_PRODUTO.SetFocus;
+      Abort;
+    end;
+
+    qry.SQL.Add(sql);
+    qry.ParamByName('cd_produto').AsString := edtPRODUTOCD_PRODUTO.Text;
+    qry.Open(sql);
+
+    if (not temPermissaoEdicao) and (qry.IsEmpty) then
+    begin
+      MessageDlg('Usuário não possui Permissão para realizar Cadastro', mtInformation, [mbOK], 0);
+      edtPRODUTOCD_PRODUTO.SetFocus;
+      Exit;
+    end;
+
+    ckPRODUTOATIVO.Checked := qry.FieldByName('fl_ativo').AsBoolean;
+    edtPRODUTODESCRICAO.Text := qry.FieldByName('desc_produto').AsString;
+    edtPRODUTOUN_MEDIDA.Text := qry.FieldByName('un_medida').AsString;
+    edtPRODUTOFATOR_CONVERSAO.Text := CurrToStr(qry.FieldByName('fator_conversao').AsCurrency);
+    edtPRODUTOPESO_LIQUIDO.Text := CurrToStr(qry.FieldByName('peso_liquido').AsCurrency);
+    edtPRODUTOPESO_BRUTO.Text := CurrToStr(qry.FieldByName('peso_bruto').AsCurrency);
+    memoObservacao.Text := qry.FieldByName('observacao').AsString;
+
+    if qry.FieldByName('cd_tributacao_icms').Value = null then
+      edtProdutoGrupoTributacaoICMS.Text := ''
+    else
+      edtProdutoGrupoTributacaoICMS.Text := qry.FieldByName('cd_tributacao_icms').Value;
+    edtProdutoNomeGrupoTributacaoICMS.Text := qry.FieldByName('nm_tributacao_icms').AsString;
+
+    if qry.FieldByName('cd_tributacao_ipi').Value = null then
+      edtProdutoGrupoTributacaoIPI.Text := ''
+    else
+      edtProdutoGrupoTributacaoIPI.Text := qry.FieldByName('cd_tributacao_ipi').Value;
+    edtProdutoNomeGrupoTributacaoIPI.Text := qry.FieldByName('nm_tributacao_ipi').AsString;
+
+    if qry.FieldByName('cd_tributacao_pis_cofins').Value = null then
+      edtProdutoGrupoTributacaoPISCOFINS.Text := ''
+    else
+      edtProdutoGrupoTributacaoPISCOFINS.Text := qry.FieldByName('cd_tributacao_pis_cofins').Value;
+    edtProdutoNomeGrupoTributacaoPISCOFINS.Text := qry.FieldByName('nm_tributacao_pis_cofins').AsString;
+
+    if qry.FieldByName('imagem').AsBytes = null then
+      imagem.Picture := nil
+    else
+      carregaImagem(imagem, TBlobField(qry.FieldByName('imagem')));
+
+    listarCodBarras;
+
+    if temPermissaoEdicao then
+      Exit
+    else
+      desabilitaCampos;
+  finally
+    produto.Free;
   end;
-
-  qry.SQL.Add(sql);
-  qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
-  qry.Open(sql);
-
-  if (not temPermissaoEdicao) and (qry.IsEmpty) then
-  begin
-    MessageDlg('Usuário não possui Permissão para realizar Cadastro', mtInformation, [mbOK], 0);
-    edtPRODUTOCD_PRODUTO.SetFocus;
-    Exit;
-  end;
-
-  ckPRODUTOATIVO.Checked := qry.FieldByName('fl_ativo').AsBoolean;
-  edtPRODUTODESCRICAO.Text := qry.FieldByName('desc_produto').AsString;
-  edtPRODUTOUN_MEDIDA.Text := qry.FieldByName('un_medida').AsString;
-  edtPRODUTOFATOR_CONVERSAO.Text := CurrToStr(qry.FieldByName('fator_conversao').AsCurrency);
-  edtPRODUTOPESO_LIQUIDO.Text := CurrToStr(qry.FieldByName('peso_liquido').AsCurrency);
-  edtPRODUTOPESO_BRUTO.Text := CurrToStr(qry.FieldByName('peso_bruto').AsCurrency);
-  memoObservacao.Text := qry.FieldByName('observacao').AsString;
-
-  if qry.FieldByName('cd_tributacao_icms').Value = null then
-    edtProdutoGrupoTributacaoICMS.Text := ''
-  else
-    edtProdutoGrupoTributacaoICMS.Text := qry.FieldByName('cd_tributacao_icms').Value;
-  edtProdutoNomeGrupoTributacaoICMS.Text := qry.FieldByName('nm_tributacao_icms').AsString;
-
-  if qry.FieldByName('cd_tributacao_ipi').Value = null then
-    edtProdutoGrupoTributacaoIPI.Text := ''
-  else
-    edtProdutoGrupoTributacaoIPI.Text := qry.FieldByName('cd_tributacao_ipi').Value;
-  edtProdutoNomeGrupoTributacaoIPI.Text := qry.FieldByName('nm_tributacao_ipi').AsString;
-
-  if qry.FieldByName('cd_tributacao_pis_cofins').Value = null then
-    edtProdutoGrupoTributacaoPISCOFINS.Text := ''
-  else
-    edtProdutoGrupoTributacaoPISCOFINS.Text := qry.FieldByName('cd_tributacao_pis_cofins').Value;
-  edtProdutoNomeGrupoTributacaoPISCOFINS.Text := qry.FieldByName('nm_tributacao_pis_cofins').AsString;
-
-  if qry.FieldByName('imagem').AsBytes = null then
-    imagem.Picture := nil
-  else
-    carregaImagem(imagem, TBlobField(qry.FieldByName('imagem')));
-
-  listarCodBarras;
-
-  if temPermissaoEdicao then
-    Exit
-  else
-    desabilitaCampos;
 end;
 
 procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOKeyDown(Sender: TObject;
@@ -430,7 +436,7 @@ begin
     begin
       if (Application.MessageBox('Deseja Excluir o Produto?','Atenção', MB_YESNO) = IDYES) then
       begin
-        persistencia.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+        persistencia.id_item := FIdItem;
         persistencia.Excluir;
         limpaCampos;
       end;
@@ -439,7 +445,6 @@ begin
     persistencia.Free;
   end;
 end;
-
 
 procedure TfrmCadProduto.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -475,6 +480,27 @@ begin
   begin
     Key := #0;
     Perform(WM_NEXTDLGCTL,0,0)
+  end;
+end;
+
+function TfrmCadProduto.GetIdItem(CdItem: string): Int64;
+const
+  SQL = 'select id_item from produto where cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_produto').AsString := CdItem;
+    qry.Open();
+
+    Result := qry.FieldByName('id_item').AsLargeInt;
+
+  finally
+    qry.Free;
   end;
 end;
 
@@ -558,7 +584,7 @@ const
         'from '+
         '	  produto_cod_barras '+
         'where '+
-        '	  cd_produto = :cd_produto ';
+        '	  id_item = :id_item ';
 var
   qry: TFDQuery;
 begin
@@ -569,17 +595,16 @@ begin
     qry.Close;
     qry.SQL.Clear;
     qry.SQL.Add(sql);
-    qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+    qry.ParamByName('id_item').AsLargeInt := FIdItem;
     qry.Open(sql);
 
-    qry.First;
-    while not qry.Eof do
+    qry.Loop(
+    procedure
     begin
       FRegra.Dados.cdsBarras.AppendRecord([qry.FieldByName('un_medida').AsString,
-                              qry.FieldByName('tipo_cod_barras').AsString,
-                              qry.FieldByName('codigo_barras').AsString]);
-      qry.Next;
-    end;
+                                           qry.FieldByName('tipo_cod_barras').AsString,
+                                           qry.FieldByName('codigo_barras').AsString]);
+    end);
 
   finally
     qry.Free;
@@ -604,7 +629,7 @@ begin
         Imagem := TFileStream.Create(dlgImagem.FileName, fmOpenRead or fmShareDenyWrite);
         qry.SQL.Add(sql);
         qry.ParamByName('imagem').LoadFromStream(Imagem, ftBlob);
-        qry.ParamByName('cd_produto').AsInteger := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+        qry.ParamByName('cd_produto').AsString := edtPRODUTOCD_PRODUTO.Text;
         qry.ExecSQL;
 
         qry.Connection.Commit;
@@ -628,12 +653,12 @@ begin
   persistencia := TProdutoTributacao.Create;
 
   try
-    persistencia.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+    persistencia.id_item := FIdItem;
     persistencia.cd_tributacao_icms := StrToInt(edtProdutoGrupoTributacaoICMS.Text);
     persistencia.cd_tributacao_ipi := StrToInt(edtProdutoGrupoTributacaoIPI.Text);
     persistencia.cd_tributacao_pis_cofins := StrToInt(edtProdutoGrupoTributacaoPISCOFINS.Text);
 
-    if not persistencia.Pesquisar(StrToInt(edtPRODUTOCD_PRODUTO.Text)) then
+    if not persistencia.Pesquisar(FIdItem) then
       persistencia.Inserir
     else
       persistencia.Atualizar;
@@ -652,7 +677,7 @@ begin
   persistencia := TProduto.Create;
 
   try
-    persistencia.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+    persistencia.cd_produto := edtPRODUTOCD_PRODUTO.Text;
     persistencia.fl_ativo := ckPRODUTOATIVO.Checked;
     persistencia.desc_produto := edtPRODUTODESCRICAO.Text;
     persistencia.un_medida := edtPRODUTOUN_MEDIDA.Text;
@@ -661,10 +686,17 @@ begin
     persistencia.peso_bruto := StrToFloat(edtPRODUTOPESO_BRUTO.Text);
     persistencia.observacao := memoObservacao.Text;
 
-    if not persistencia.Pesquisar(StrToInt(edtPRODUTOCD_PRODUTO.Text)) then
-      persistencia.Inserir
+    if not persistencia.Pesquisar(FIdItem) then
+    begin
+      FIdItem := persistencia.GeraIdItem;
+      persistencia.id_item := FIdItem;
+      persistencia.Inserir;
+    end
     else
+    begin
+      persistencia.id_item := FIdItem;
       persistencia.Atualizar;
+    end;
 
     SalvarTributacao;
     SalvarCodBarras;
@@ -686,7 +718,7 @@ begin
 
   try
     try
-      FRegra.cd_produto := StrToInt(edtPRODUTOCD_PRODUTO.Text);
+      FRegra.id_item := FIdItem;
       FRegra.tipo_cod_barras := FRegra.Dados.cdsBarras.FieldByName('tipo_cod_barras').AsString;
       FRegra.codigo_barras := FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString;
       FRegra.un_medida := FRegra.Dados.cdsBarras.FieldByName('un_medida').AsString;
@@ -696,8 +728,7 @@ begin
       FRegra.Dados.cdsBarras.Loop(
       procedure
       begin
-        if not FRegra.Pesquisar(StrToInt(edtPRODUTOCD_PRODUTO.Text),
-                                FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString) then
+        if not FRegra.Pesquisar(FIdItem, FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString) then
           FRegra.Inserir
         else
           FRegra.Atualizar;

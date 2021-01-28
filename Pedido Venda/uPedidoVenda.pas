@@ -62,7 +62,6 @@ type
     edtFl_orcamento: TCheckBox;
     edtDataEmissao: TMaskEdit;
     Label19: TLabel;
-    intgrfldPedidoVendacd_produto: TIntegerField;
     cdsPedidoVendadescricao: TStringField;
     cdsPedidoVendaqtd_venda: TFloatField;
     intgrfldPedidoVendacd_tabela_preco: TIntegerField;
@@ -81,6 +80,8 @@ type
     cdsPedidoVendapis_cofins_valor: TCurrencyField;
     intgrfldPedidoVendaseq: TIntegerField;
     document: TXMLDocument;
+    cdsPedidoVendaid_item: TLargeintField;
+    cdsPedidoVendacd_produto: TStringField;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtCdClienteChange(Sender: TObject);
     procedure edtCdClienteExit(Sender: TObject);
@@ -183,7 +184,7 @@ const
               'from ' +
                   'wms_estoque ' +
               'where ' +
-                  'cd_produto = :cd_produto';
+                  'id_item = :id_item';
 var
   qry: TFDQuery;
   qtdade, qttotal: Double;
@@ -201,7 +202,7 @@ begin
       begin
         qry.SQL.Clear;
         qry.SQL.Add(sql_select);
-        qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+        qry.ParamByName('id_item').AsLargeInt := cdsPedidoVenda.FieldByName('id_item').AsLargeInt;
         qry.Open(sql_select);
         id := qry.FieldByName('id_wms_endereco_produto').AsInteger;
         qtdade := qry.FieldByName('qt_estoque').AsFloat;//quantidade no banco
@@ -235,7 +236,7 @@ procedure TfrmPedidoVenda.btnAdicionarClick(Sender: TObject);
 //adiciona os produtos no grid
 const
   sql = 'select '+
-        '    pt.cd_produto, '+
+        '    pt.id_item, '+
         '    pt.cd_tributacao_icms,'+
         '    gti.aliquota_icms,'+
         '    pt.cd_tributacao_ipi,'+
@@ -251,21 +252,23 @@ const
         'join grupo_tributacao_pis_cofins gtpc on '+
         '    pt.cd_tributacao_pis_cofins = gtpc.cd_tributacao '+
         'where '+
-        '    pt.cd_produto = :cd_produto';
+        '    pt.id_item = :id_item';
  var
-  vl_total_itens : Currency;
-  aliq_icms, aliq_ipi, aliq_pis_cofins : Double;
+  vl_total_itens: Currency;
+  aliq_icms, aliq_ipi, aliq_pis_cofins: Double;
   lancado: Boolean;
   qry: TFDQuery;
   lancaProduto: TfrmConfiguracoes;
+  idItem: TPedidoVenda;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
   lancaProduto := TfrmConfiguracoes.Create(Self);
+  idItem := TPedidoVenda.Create;
   try
     qry.Close;
     qry.SQL.Add(sql);
-    qry.ParamByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+    qry.ParamByName('id_item').AsLargeInt := idItem.GetIdItem(edtCdProduto.Text);
     qry.Open(sql);
 
     if ProdutoJaLancado(StrToInt(edtCdProduto.Text))
@@ -278,62 +281,21 @@ begin
 
     if edicaoItem then
     begin
-      try
-        cdsPedidoVenda.Edit;//entra em modo de edição
-        cdsPedidoVenda.FieldByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
-        cdsPedidoVenda.FieldByName('qtd_venda').AsInteger := StrToInt(edtQtdade.Text);
-        cdsPedidoVenda.FieldByName('un_medida').AsString := edtUnMedida.Text;
-        cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency := StrToCurr(edtVlUnitario.Text);
-        cdsPedidoVenda.FieldByName('vl_desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
-        cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency := StrToCurr(edtVlTotal.Text);
-        if aliq_icms = 0 then
-        begin
-          cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := 0;
-          cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := 0;
-          cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := 0;
-        end
-        else
-        begin
-          cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-          cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := aliq_icms;
-          cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
-        end;
-        if aliq_ipi = 0 then
-        begin
-          cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := 0;
-          cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := 0;
-          cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := 0;
-        end
-        else
-        begin
-          cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-          cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := aliq_ipi;
-          cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
-        end;
-        if aliq_pis_cofins = 0 then
-        begin
-          cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := 0;
-          cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := 0;
-          cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := 0;
-        end
-        else
-        begin
-          cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-          cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := aliq_pis_cofins;
-          cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
-        end;
-        cdsPedidoVenda.Post;
-        SalvaItens(edicaoItem);
-      finally
-        edicaoItem := False;
-      end;
+      cdsPedidoVenda.Edit;//entra em modo de edição
+      cdsPedidoVenda.FieldByName('cd_produto').AsString := edtCdProduto.Text;
+      cdsPedidoVenda.FieldByName('qtd_venda').AsInteger := StrToInt(edtQtdade.Text);
+      cdsPedidoVenda.FieldByName('un_medida').AsString := edtUnMedida.Text;
+      cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency := StrToCurr(edtVlUnitario.Text);
+      cdsPedidoVenda.FieldByName('vl_desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
+      cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency := StrToCurr(edtVlTotal.Text);
+      edicaoItem := False;
     end
     else
     begin
       RetornaSequencia;
       cdsPedidoVenda.Append;
       cdsPedidoVenda.FieldByName('seq').AsInteger := seqItem;
-      cdsPedidoVenda.FieldByName('cd_produto').AsInteger := StrToInt(edtCdProduto.Text);
+      cdsPedidoVenda.FieldByName('cd_produto').AsString := edtCdProduto.Text;
       cdsPedidoVenda.FieldByName('descricao').AsString := edtDescProduto.Text;
       cdsPedidoVenda.FieldByName('qtd_venda').AsInteger := StrToInt(edtQtdade.Text);
       cdsPedidoVenda.FieldByName('cd_tabela_preco').AsInteger := StrToInt(edtCdtabelaPreco.Text);
@@ -341,45 +303,47 @@ begin
       cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency := StrToCurr(edtVlUnitario.Text);
       cdsPedidoVenda.FieldByName('vl_desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
       cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency := StrToCurr(edtVlTotal.Text);
-      if aliq_icms = 0 then
-      begin
-        cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := 0;
-        cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := 0;
-        cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := 0;
-      end
-      else
-      begin
-        cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-        cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := aliq_icms;
-        cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
-      end;
-      if aliq_ipi = 0 then
-      begin
-        cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := 0;
-        cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := 0;
-        cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := 0;
-      end
-      else
-      begin
-        cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-        cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := aliq_ipi;
-        cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
-      end;
-      if aliq_pis_cofins = 0 then
-      begin
-        cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := 0;
-        cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := 0;
-        cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := 0;
-      end
-      else
-      begin
-        cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-        cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := aliq_pis_cofins;
-        cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
-      end;
-      cdsPedidoVenda.Post;
-      SalvaItens(edicaoItem);
     end;
+
+    if aliq_icms = 0 then
+    begin
+      cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := 0;
+      cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := 0;
+      cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := 0;
+    end
+    else
+    begin
+      cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
+      cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := aliq_icms;
+      cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
+    end;
+    if aliq_ipi = 0 then
+    begin
+      cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := 0;
+      cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := 0;
+      cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := 0;
+    end
+    else
+    begin
+      cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
+      cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := aliq_ipi;
+      cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
+    end;
+    if aliq_pis_cofins = 0 then
+    begin
+      cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := 0;
+      cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := 0;
+      cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := 0;
+    end
+    else
+    begin
+      cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
+      cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := aliq_pis_cofins;
+      cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
+    end;
+    cdsPedidoVenda.FieldByName('id_item').AsLargeInt := qry.FieldByName('id_item').AsLargeInt;
+    cdsPedidoVenda.Post;
+    SalvaItens(edicaoItem);
 
     //soma os valores totais dos itens e preenche o valor total do pedido
     vl_total_itens := 0;
@@ -547,7 +511,7 @@ end;
 procedure TfrmPedidoVenda.dbGridProdutosKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 const
-  SQL_DELETE = 'delete from pedido_venda_item where cd_produto = :cd_produto';
+  SQL_DELETE = 'delete from pedido_venda_item where id_item = :id_item';
 var
   qry: TFDQuery;
 begin
@@ -562,7 +526,7 @@ begin
       begin
         try
           qry.SQL.Add(SQL_DELETE);
-          qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+          qry.ParamByName('id_item').AsLargeInt := cdsPedidoVenda.FieldByName('id_item').AsLargeInt;
           qry.ExecSQL;
           qry.Connection.Commit;
           cdsPedidoVenda.Delete;
@@ -840,7 +804,7 @@ begin
 
   try
     if edtCdProduto.Text <> '' then
-      resposta := produto.ValidaProduto(StrToInt(edtCdProduto.Text));
+      resposta := produto.ValidaProduto(edtCdProduto.Text);
 
     if (Trim(edtCdProduto.Text) = '') and (cdsPedidoVenda.RecordCount > 0) then
     begin
@@ -871,10 +835,10 @@ begin
     end
     else
     begin
-      lista := produto.BuscaProduto(StrToInt(edtCdProduto.Text));
+      lista := produto.BuscaProduto(edtCdProduto.Text);
       edtDescProduto.Text := lista.Items[0];
       edtUnMedida.Text := lista.Items[1];
-      edtCdtabelaPreco.Text := lista.Items[2];
+      edtCdtabelaPreco.Text := lista.Items[2];   //erro aqui
       edtDescTabelaPreco.Text := lista.Items[3];
       edtVlUnitario.Text := lista.Items[4];
     end;
@@ -921,7 +885,7 @@ begin
   if not edtCdtabelaPreco.isEmpty then
   begin
     tabela := TPedidoVenda.Create;
-    resposta := tabela.ValidaTabelaPreco(StrToInt(edtCdtabelaPreco.Text), StrToInt(edtCdProduto.Text));
+    resposta := tabela.ValidaTabelaPreco(StrToInt(edtCdtabelaPreco.Text), edtCdProduto.Text);
 
     try
       if resposta then
@@ -1146,13 +1110,13 @@ const
   SQL_INSERT =  'insert into ' +
                 'wms_mvto_estoque(id_geral, '+
                 'id_endereco_produto, '+
-                'cd_produto, ' +
+                'id_item, ' +
                 'qt_estoque, ' +
                 'un_estoque, ' +
                 'fl_entrada_saida) values '+
                 '(:id_geral, ' +
                 ':id_endereco_produto, '+
-                ':cd_produto, ' +
+                ':id_item, ' +
                 ':qt_estoque, ' +
                 ':un_estoque, ' +
                 ':fl_entrada_saida)';
@@ -1162,14 +1126,14 @@ const
                'from        ' +
                '   wms_endereco_produto w    ' +
                'where                        ' +
-               '   cd_produto = :cd_produto  ' +
+               '   id_item = :id_item  ' +
                '   and ordem = (             ' +
                '   select                    ' +
                '       min(ordem)            ' +
                '   from                      ' +
                '       wms_endereco_produto wep ' +
                '   where                        ' +
-               '       cd_produto = :cd_produto)';
+               '       id_item = :id_item)';
 var
   qry, qrySelect: TFDQuery;
   IdGeral: TGerador;
@@ -1187,14 +1151,14 @@ begin
         begin
           qrySelect.SQL.Clear;
           qrySelect.SQL.Add(SQL_SELECT);
-          qrySelect.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+          qrySelect.ParamByName('id_item').AsLargeInt := cdsPedidoVenda.FieldByName('id_item').AsLargeInt;
           qrySelect.Open(SQL_SELECT);
 
           qry.SQL.Clear;
           qry.SQL.Add(SQL_INSERT);
           qry.ParamByName('id_geral').AsFloat := IdGeral.GeraIdGeral;
           qry.ParamByName('id_endereco_produto').AsInteger := qrySelect.FieldByName('id_geral').AsInteger;
-          qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+          qry.ParamByName('id_item').AsLargeInt := cdsPedidoVenda.FieldByName('id_item').AsLargeInt;
           qry.ParamByName('qt_estoque').AsFloat := cdsPedidoVenda.FieldByName('qtd_venda').AsFloat;
           qry.ParamByName('un_estoque').AsString := cdsPedidoVenda.FieldByName('un_medida').AsString;
           qry.ParamByName('fl_entrada_saida').AsString := 'S';
@@ -1207,7 +1171,7 @@ begin
       on e:Exception do
       begin
         qry.Connection.Rollback;
-        ShowMessage('Erro ao gravar os dados do movimento do produto ' + IntToStr(cdsPedidoVenda.FieldByName('cd_produto').AsInteger) + E.Message);
+        ShowMessage('Erro ao gravar os dados do movimento do produto ' + cdsPedidoVenda.FieldByName('cd_produto').AsString + E.Message);
         Exit;
       end;
     end;
@@ -1413,21 +1377,21 @@ procedure TfrmPedidoVenda.SalvaItens(EhEdicao: Boolean);
 const
   SQL_INSERT = 'insert '+
                '    into '+
-               'pedido_venda_item (id_geral, id_pedido_venda, cd_produto, vl_unitario, vl_total_item, qtd_venda, ' +
+               'pedido_venda_item (id_geral, id_pedido_venda, id_item, vl_unitario, vl_total_item, qtd_venda, ' +
                'vl_desconto, cd_tabela_preco, icms_vl_base, icms_pc_aliq, icms_valor, ipi_vl_base, ipi_pc_aliq, ' +
                'ipi_valor, pis_cofins_vl_base, pis_cofins_pc_aliq, pis_cofins_valor, un_medida, seq_item) ' +
-               'values (:id_geral, :id_pedido_venda, :cd_produto, :vl_unitario, :vl_total_item, ' +
+               'values (:id_geral, :id_pedido_venda, :id_item, :vl_unitario, :vl_total_item, ' +
                ':qtd_venda, :vl_desconto, :cd_tabela_preco, :icms_vl_base, :icms_pc_aliq, :icms_valor, ' +
                ':ipi_vl_base, :ipi_pc_aliq, :ipi_valor, :pis_cofins_vl_base, :pis_cofins_pc_aliq, ' +
                ':pis_cofins_valor, :un_medida, :seq_item)';
 
   SQL_UPDATE = 'update    ' +
-               'pedido_venda_item set cd_produto = :cd_produto, vl_unitario = :vl_unitario,   ' +
+               'pedido_venda_item set id_item = :id_item, vl_unitario = :vl_unitario,   ' +
                'vl_total_item = :vl_total_item, qtd_venda = :qtd_venda, vl_desconto = :vl_desconto, cd_tabela_preco = :cd_tabela_preco, icms_vl_base = :icms_vl_base,  ' +
                'icms_pc_aliq = :icms_pc_aliq, icms_valor = :icms_valor, ipi_vl_base = :ipi_vl_base, ipi_pc_aliq = :ipi_pc_aliq, ipi_valor = :ipi_valor,              ' +
                'pis_cofins_vl_base = :pis_cofins_vl_base, pis_cofins_pc_aliq = :pis_cofins_pc_aliq, pis_cofins_valor = :pis_cofins_valor, un_medida = :un_medida, ' +
                'seq_item = :seq_item '+
-               'where cd_produto = :cd_produto and ' +
+               'where id_item = :id_item and ' +
                'id_pedido_venda = :id_pedido_venda';
 var
   qry: TFDQuery;
@@ -1448,7 +1412,7 @@ begin
         qry.SQL.Add(SQL_INSERT);
         qry.ParamByName('id_geral').AsInteger := idGeral.GeraIdGeral;
         qry.ParamByName('id_pedido_venda').AsInteger := FIdGeral;
-        qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+        qry.ParamByName('id_item').AsLargeInt := cdsPedidoVenda.FieldByName('id_item').AsLargeInt;
         qry.ParamByName('vl_unitario').AsCurrency := cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency;
         qry.ParamByName('vl_total_item').AsCurrency := cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency;
         qry.ParamByName('qtd_venda').AsInteger := cdsPedidoVenda.FieldByName('qtd_venda').AsInteger;
@@ -1474,7 +1438,7 @@ begin
         qry.SQL.Clear;
         qry.SQL.Add(SQL_UPDATE);
 //        qry.ParamByName('id_geral').AsInteger := FIdGeral;
-        qry.ParamByName('cd_produto').AsInteger := cdsPedidoVenda.FieldByName('cd_produto').AsInteger;
+        qry.ParamByName('id_item').AsLargeInt := cdsPedidoVenda.FieldByName('id_item').AsLargeInt;
         qry.ParamByName('id_pedido_venda').AsInteger := FIdGeral;
         qry.ParamByName('vl_unitario').AsCurrency := cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency;
         qry.ParamByName('vl_total_item').AsCurrency := cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency;

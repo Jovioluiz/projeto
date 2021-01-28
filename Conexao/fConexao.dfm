@@ -20,7 +20,7 @@ object frmConexao: TfrmConexao
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 42
+    Left = 4
     Top = 17
     Width = 48
     Height = 16
@@ -33,7 +33,7 @@ object frmConexao: TfrmConexao
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 47
+    Left = 9
     Top = 137
     Width = 43
     Height = 16
@@ -46,7 +46,7 @@ object frmConexao: TfrmConexao
     ParentFont = False
   end
   object Label3: TLabel
-    Left = 54
+    Left = 16
     Top = 178
     Width = 36
     Height = 16
@@ -59,7 +59,7 @@ object frmConexao: TfrmConexao
     ParentFont = False
   end
   object Label4: TLabel
-    Left = 60
+    Left = 22
     Top = 99
     Width = 30
     Height = 16
@@ -72,7 +72,7 @@ object frmConexao: TfrmConexao
     ParentFont = False
   end
   object Label5: TLabel
-    Left = 56
+    Left = 18
     Top = 59
     Width = 34
     Height = 16
@@ -85,35 +85,35 @@ object frmConexao: TfrmConexao
     ParentFont = False
   end
   object edtServidor: TEdit
-    Left = 95
+    Left = 56
     Top = 12
-    Width = 146
+    Width = 185
     Height = 21
     TabOrder = 0
   end
   object edtBanco: TEdit
-    Left = 95
+    Left = 56
     Top = 54
-    Width = 146
+    Width = 185
     Height = 21
     TabOrder = 1
   end
   object edtPorta: TEdit
-    Left = 96
+    Left = 57
     Top = 94
-    Width = 145
+    Width = 184
     Height = 21
     TabOrder = 2
   end
   object edtUsuario: TEdit
-    Left = 96
+    Left = 57
     Top = 132
-    Width = 146
+    Width = 184
     Height = 21
     TabOrder = 3
   end
   object btnTestar: TButton
-    Left = 54
+    Left = 57
     Top = 210
     Width = 75
     Height = 25
@@ -122,7 +122,7 @@ object frmConexao: TfrmConexao
     OnClick = btnTestarClick
   end
   object btnSalvar: TButton
-    Left = 142
+    Left = 166
     Top = 210
     Width = 75
     Height = 25
@@ -131,18 +131,18 @@ object frmConexao: TfrmConexao
     OnClick = btnSalvarClick
   end
   object edtSenha: TMaskEdit
-    Left = 96
+    Left = 57
     Top = 173
-    Width = 146
+    Width = 184
     Height = 21
     PasswordChar = '*'
     TabOrder = 6
     Text = ''
   end
   object memo: TMemo
-    Left = 54
+    Left = 56
     Top = 241
-    Width = 187
+    Width = 185
     Height = 89
     Lines.Strings = (
       '')
