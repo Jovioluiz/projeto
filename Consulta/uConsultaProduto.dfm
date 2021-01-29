@@ -180,11 +180,12 @@ object frmConsultaProdutos: TfrmConsultaProdutos
   end
   object cdsConsultaProduto: TClientDataSet
     PersistDataPacket.Data = {
-      980000009619E0BD01000000180000000500000000000300000098000A63645F
+      A80000009619E0BD010000001800000006000000000003000000A8000A63645F
       70726F6475746F04000100000000000C646573635F70726F6475746F01004900
       0000010005574944544802000200140009756E5F6D6564696461010049000000
       01000557494454480200020014000F6661746F725F636F6E76657273616F0400
-      0100000000000B7174645F6573746F71756508000400000000000000}
+      0100000000000B7174645F6573746F71756508000400000000000769645F6974
+      656D08000100000000000000}
     Active = True
     Aggregates = <>
     FieldDefs = <
@@ -209,6 +210,10 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       item
         Name = 'qtd_estoque'
         DataType = ftFloat
+      end
+      item
+        Name = 'id_item'
+        DataType = ftLargeint
       end>
     IndexDefs = <>
     Params = <>
@@ -239,6 +244,10 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       DisplayLabel = 'Qtdade Estoque'
       DisplayWidth = 14
       FieldName = 'qtd_estoque'
+    end
+    object cdsConsultaProdutoid_item: TLargeintField
+      FieldName = 'id_item'
+      Visible = False
     end
   end
   object dsUltimaEntradas: TDataSource

@@ -11,7 +11,7 @@ type TValidacoesEntrada = class
 
   public
     function BuscaClienteFornecedor(CodCliente: Integer): Boolean;
-
+    function GetIdItem(CdItem: string): Int64;
 
 end;
 
@@ -40,6 +40,27 @@ begin
     qry.Open(sql);
 
     Result := qry.IsEmpty;
+  finally
+    qry.Free;
+  end;
+end;
+
+function TValidacoesEntrada.GetIdItem(CdItem: string): Int64;
+const
+  SQL = 'select id_item from produto where cd_produto = :cd_produto';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_produto').AsString := CdItem;
+    qry.Open();
+
+    Result := qry.FieldByName('id_item').AsLargeInt;
+
   finally
     qry.Free;
   end;

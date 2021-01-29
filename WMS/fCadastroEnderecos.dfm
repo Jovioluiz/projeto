@@ -14,6 +14,8 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
@@ -29,7 +31,7 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
       Top = 1
       Width = 703
       Height = 458
-      ActivePage = tbsProdutoEndereco
+      ActivePage = tbsEndereco
       Align = alClient
       TabOrder = 0
       object tbsEndereco: TTabSheet

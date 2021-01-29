@@ -196,9 +196,8 @@ begin
 
   try
     try
-      cdsPedidoVenda.DisableControls;
-      cdsPedidoVenda.First;
-      while not cdsPedidoVenda.Eof do
+      cdsPedidoVenda.Loop(
+      procedure
       begin
         qry.SQL.Clear;
         qry.SQL.Add(sql_select);
@@ -213,10 +212,9 @@ begin
         qry.SQL.Add(sql_update);
         qry.ParamByName('id').AsInteger := id;
         qry.ParamByName('qt_estoque').AsFloat := qttotal;
-
         qry.ExecSQL;
-        cdsPedidoVenda.Next;
-      end;
+      end
+      );
       qry.Connection.Commit;
     except
     on E : exception do
@@ -788,7 +786,8 @@ begin
       SalvaCabecalho;
 
   finally
-    qry.Free
+    qry.Free;
+    geraNrPedido.Free;
   end;
 end;
 

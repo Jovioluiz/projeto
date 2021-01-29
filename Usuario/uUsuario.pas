@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, uConexao;
 
 type
   TfrmUsuario = class(TForm)
@@ -29,10 +29,10 @@ type
 
   public
     { Public declarations }
-    procedure limpaCampos;
-    procedure validaCampos;
-    procedure salvar;
-    procedure excluir;
+    procedure LimpaCampos;
+    procedure ValidaCampos;
+    procedure Salvar;
+    procedure Excluir;
 
   end;
 
@@ -68,7 +68,7 @@ begin
     try
       if edtIdUsuario.Text = EmptyStr then
       begin
-        validaCampos;
+        ValidaCampos;
         Exit;
       end;
 
@@ -94,7 +94,7 @@ begin
   end;
 end;
 
-procedure TfrmUsuario.excluir;
+procedure TfrmUsuario.Excluir;
 begin
   if (Application.MessageBox('Deseja Excluir o Usuário?','Atenção', MB_YESNO) = IDYES) then
   begin
@@ -111,7 +111,7 @@ begin
       sql.ExecSQL;
       ShowMessage('Usuário excluído com sucesso!');
       //dm.FDConnection1.Commit;
-      limpaCampos;
+      LimpaCampos;
       //sql.Free;
     except
       on E:exception do
@@ -130,11 +130,11 @@ procedure TfrmUsuario.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   inherited;
   if key = VK_F3 then //F3
-    limpaCampos
+    LimpaCampos
   else if key = VK_F2 then  //F2
-    salvar
+    Salvar
   else if key = VK_F4 then    //F4
-    excluir
+    Excluir
   else if key = VK_ESCAPE then //ESC
   begin
     if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
@@ -151,7 +151,7 @@ begin
   end;
 end;
 
-procedure TfrmUsuario.limpaCampos;
+procedure TfrmUsuario.LimpaCampos;
 begin
   edtIdUsuario.Clear;
   edtNomeUsuario.Clear;
@@ -159,90 +159,96 @@ begin
   //edtIdUsuario.SetFocus;
 end;
 
-procedure TfrmUsuario.salvar;
+procedure TfrmUsuario.Salvar;
+const
+  SQL_UPDATE =  'update '+
+                '   login_usuario set '+
+                '   id_usuario = :id_usuario, '+
+                '   login = :login, '+
+                '   senha = :senha ' +
+                'where '+
+                '   id_usuario = :id_usuario';
+
+  SQL_SELECT =  'select             '+
+                    '*              '+
+                'from               '+
+                    'login_usuario  '+
+                'where              '+
+                    'id_usuario = :id_usuario';
+
+  SQL_INSERT ='insert '+
+                'into '+
+              'login_usuario (id_usuario, '+
+                'login,                   '+
+                'senha) '+
+              'values '+
+                '(:id_usuario, '+
+                ':login, '+
+                ':senha)';
 var
   cripto: TValidaDados;
+  qry, qrySelect: TFDQuery;
+  conexao: TConexao;
 begin
+  cripto := TValidaDados.Create;
+  conexao := TConexao.Create;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := conexao.getConexao;
+  qrySelect := TFDQuery.Create(Self);
+  qrySelect.Connection := conexao.getConexao;
+
   try
-    cripto := TValidaDados.Create;
-    //dm.transacao.StartTransaction;
-    validaCampos;
+    ValidaCampos;
 
-    query.Close;
-    query.SQL.Clear;
-    query.SQL.Text := 'select             '+
-                          '*              '+
-                      'from               '+
-                          'login_usuario  '+
-                      'where              '+
-                          'id_usuario = :id_usuario';
-    query.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
+    qrySelect.SQL.Add(SQL_SELECT);
+    qrySelect.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
 
-    query.Open();
+    qrySelect.Open;
 
-    if not query.IsEmpty then
+    if not qrySelect.IsEmpty then
     begin
       try
-        sql.Close;
-        sql.SQL.Text := 'update '+
-                          'login_usuario set '+
-                          'id_usuario = :id_usuario, '+
-                          'login = :login, '+
-                          'senha = :senha ' +
-                        'where '+
-                          'id_usuario = :id_usuario';
-
-          sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
-          sql.ParamByName('login').AsString := edtNomeUsuario.Text;
-          sql.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text);
-
-          sql.ExecSQL;
-          //dm.transacao.Commit;
-          ShowMessage('Salvo');
+        qry.SQL.Add(SQL_UPDATE);
+        qry.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
+        qry.ParamByName('login').AsString := edtNomeUsuario.Text;
+        qry.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text);
+        qry.ExecSQL;
       except
         on E:exception do
-          begin
-            //dm.transacao.Rollback;
-            ShowMessage('Erro '+ E.Message);
-          end;
+        begin
+          qry.Connection.Rollback;
+          ShowMessage('Erro ' + E.Message);
         end;
+      end;
     end
     else
     begin
       try
-        sql.Close;
-        sql.SQL.Text := 'insert '+
-                          'into '+
-                        'login_usuario (id_usuario, '+
-                          'login,                     '+
-                          'senha) '+
-                        'values '+
-                          '(:id_usuario, '+
-                          ':login, '+
-                          ':senha)';
-
-          sql.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
-          sql.ParamByName('login').AsString := edtNomeUsuario.Text;
-          sql.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text);
-
-          sql.ExecSQL;
-          //dm.transacao.Commit;
-          ShowMessage('Salvo');
+        qry.SQL.Add(SQL_INSERT);
+        qry.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
+        qry.ParamByName('login').AsString := edtNomeUsuario.Text;
+        qry.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text);
+        qry.ExecSQL;
       except
         on E:exception do
-          begin
-            //dm.transacao.Rollback;
-            ShowMessage('Erro '+ E.Message);
-          end;
+        begin
+          qry.Connection.Rollback;
+          ShowMessage('Erro ' + E.Message);
         end;
       end;
+    end;
+
+    qry.Connection.Commit;
   finally
-    limpaCampos;
+    qry.Connection.Rollback;
+    LimpaCampos;
     FreeAndNil(cripto);
+    qry.Free;
+    qrySelect.Free;
   end;
 end;
 
-procedure TfrmUsuario.validaCampos;
+procedure TfrmUsuario.ValidaCampos;
 var
   usuario : TValidaDados;
 begin

@@ -542,7 +542,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
   end
   object cdsEntrada: TClientDataSet
     PersistDataPacket.Data = {
-      F90200009619E0BD010000001800000015000000000003000000F9020C736571
+      090300009619E0BD01000000180000001600000000000300000009030C736571
       5F6974656D5F6E666904000100000000000A63645F70726F6475746F04000100
       000000000964657363726963616F010049000000010005574944544802000200
       140009756E5F6D65646964610100490000000100055749445448020002001400
@@ -565,10 +565,104 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       6F6E6579000B6973735F766C5F62617365080004000000010007535542545950
       450200490006004D6F6E6579000B6973735F70635F616C697108000400000001
       0007535542545950450200490006004D6F6E657900096973735F76616C6F7208
-      0004000000010007535542545950450200490006004D6F6E6579000000}
+      0004000000010007535542545950450200490006004D6F6E6579000769645F69
+      74656D08000100000000000000}
     Active = True
     Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'seq_item_nfi'
+        DataType = ftInteger
+      end
+      item
+        Name = 'cd_produto'
+        DataType = ftInteger
+      end
+      item
+        Name = 'descricao'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'un_medida'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'qtd_estoque'
+        DataType = ftFloat
+      end
+      item
+        Name = 'fator_conversao'
+        DataType = ftFloat
+      end
+      item
+        Name = 'qtd_total'
+        DataType = ftFloat
+      end
+      item
+        Name = 'vl_unitario'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'vl_total'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'icms_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'icms_pc_aliq'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'icms_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'ipi_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'ipi_pc_aliq'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'ipi_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'pis_cofins_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'pis_cofins_pc_aliq'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'pis_cofins_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'iss_vl_base'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'iss_pc_aliq'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'iss_valor'
+        DataType = ftCurrency
+      end
+      item
+        Name = 'id_item'
+        DataType = ftLargeint
+      end>
+    IndexDefs = <>
     Params = <>
+    StoreDefs = True
     Left = 264
     Top = 472
     object cdsEntradaseq_item_nfi: TIntegerField
@@ -677,6 +771,10 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       DisplayLabel = 'Vl ISS'
       DisplayWidth = 10
       FieldName = 'iss_valor'
+      Visible = False
+    end
+    object cdsEntradaid_item: TLargeintField
+      FieldName = 'id_item'
       Visible = False
     end
   end

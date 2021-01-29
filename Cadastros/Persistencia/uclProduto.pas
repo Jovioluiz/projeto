@@ -409,7 +409,7 @@ procedure TProdutoCodigoBarras.Inserir;
 const
   SQL_INSERT = 'insert into produto_cod_barras(id_item, un_medida, tipo_cod_barras, codigo_barras) ' +
                ' values '+
-               ' (:id_item, :un_medida, :tipo_cod_barras, :codigo_barras)';
+               '(:id_item, :un_medida, :tipo_cod_barras, :codigo_barras)';
 var
   qry: TFDQuery;
 begin
@@ -449,7 +449,7 @@ end;
 function TProdutoCodigoBarras.Pesquisar(IdItem: Int64; CodBarras: String): Boolean;
 const
   sql = 'select '+
-        '   cd_produto '+
+        '   id_item '+
         'from '+
         '   produto_cod_barras '+
         'where '+

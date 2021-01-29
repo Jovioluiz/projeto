@@ -51,7 +51,9 @@ uses
   uclProdutoTributacao in 'Cadastros\Persistencia\uclProdutoTributacao.pas',
   dProdutoCodBarras in 'Cadastros\dProdutoCodBarras.pas' {dmProdutoCodBarras: TDataModule},
   uclTabelaPreco in 'Cadastros\Persistencia\uclTabelaPreco.pas',
-  uclTabelaPrecoProduto in 'Cadastros\Persistencia\uclTabelaPrecoProduto.pas';
+  uclTabelaPrecoProduto in 'Cadastros\Persistencia\uclTabelaPrecoProduto.pas',
+  uConexao in 'Conexao\uConexao.pas',
+  uEnderecoWMS in 'WMS\uEnderecoWMS.pas';
 
 {$R *.res}
 
