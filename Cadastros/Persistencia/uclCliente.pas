@@ -113,7 +113,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -134,16 +134,16 @@ begin
       qry.ParamByName('fl_fornecedor').AsBoolean := Ffl_fornecedor;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
       on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -214,14 +214,14 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
     try
       qry.ParamByName('cd_cliente').AsInteger := Fcd_cliente;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
@@ -230,7 +230,7 @@ begin
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -287,7 +287,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -308,16 +308,16 @@ begin
       qry.ParamByName('fl_fornecedor').AsBoolean := Ffl_fornecedor;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -425,7 +425,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -439,16 +439,16 @@ begin
       qry.ParamByName('cep').AsString := Fcep;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -520,7 +520,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -534,7 +534,7 @@ begin
       qry.ParamByName('cep').AsString := Fcep;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
@@ -543,7 +543,7 @@ begin
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;

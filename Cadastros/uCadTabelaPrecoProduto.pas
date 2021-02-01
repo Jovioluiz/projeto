@@ -160,7 +160,6 @@ procedure TfrmCadTabelaPrecoProduto.FormClose(Sender: TObject;
 begin
   inherited;
   frmCadTabelaPrecoProduto := nil;
-  //aberto := False;                      arrumar
 end;
 
 procedure TfrmCadTabelaPrecoProduto.FormKeyDown(Sender: TObject; var Key: Word;

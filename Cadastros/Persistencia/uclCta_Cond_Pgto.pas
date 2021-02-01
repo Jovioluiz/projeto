@@ -63,7 +63,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -76,16 +76,16 @@ begin
       qry.ParamByName('cd_cond_pag').AsInteger := Fcd_cond_pgto;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
       on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados da condição' + Fcd_cond_pgto.ToString + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -103,7 +103,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -114,12 +114,12 @@ begin
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao excluir os dados da condição ' + Fcd_cond_pgto.ToString + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -146,7 +146,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -159,15 +159,16 @@ begin
       qry.ParamByName('fl_ativo').AsBoolean := Ffl_ativo;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados da condição de pagamento ' + Fcd_cond_pgto.ToString + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;

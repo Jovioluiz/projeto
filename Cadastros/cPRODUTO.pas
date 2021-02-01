@@ -76,9 +76,9 @@ type
     FRegra: TProdutoCodigoBarras;
     FIdItem: Int64;
     { Private declarations }
-    procedure limpaCampos;
+    procedure LimpaCampos;
     procedure Salvar;
-    procedure excluir;
+    procedure Excluir;
     procedure validaCampos;
     procedure listarCodBarras;
     procedure desabilitaCampos;
@@ -241,20 +241,19 @@ const
         'where                                              '+
         '    p.cd_produto = :cd_produto';
 var
-  temPermissaoEdicao: Boolean;
   produto: TValidaDados;
   qry: TFDQuery;
 begin
   produto := TValidaDados.Create;
 
   try
-    temPermissaoEdicao := produto.validaEdicaoAcao(idUsuario, 2);
     FIdItem := GetIdItem(edtPRODUTOCD_PRODUTO.Text);
     qry := TFDQuery.Create(Self);
     qry.Connection := dm.conexaoBanco;
     qry.Close;
     qry.SQL.Clear;
 
+    //implementar para gerar o id_item do produto caso esteja cadastrando um novo produto
     if edtPRODUTOCD_PRODUTO.isEmpty then
     begin
       raise Exception.Create('Código não pode ser vazio');
@@ -266,7 +265,7 @@ begin
     qry.ParamByName('cd_produto').AsString := edtPRODUTOCD_PRODUTO.Text;
     qry.Open(sql);
 
-    if (not temPermissaoEdicao) and (qry.IsEmpty) then
+    if (not produto.validaEdicaoAcao(idUsuario, 2)) and (qry.IsEmpty) then
     begin
       MessageDlg('Usuário não possui Permissão para realizar Cadastro', mtInformation, [mbOK], 0);
       edtPRODUTOCD_PRODUTO.SetFocus;
@@ -306,7 +305,7 @@ begin
 
     listarCodBarras;
 
-    if temPermissaoEdicao then
+    if produto.validaEdicaoAcao(idUsuario, 2) then
       Exit
     else
       desabilitaCampos;
@@ -425,7 +424,7 @@ begin
 end;
 
 
-procedure TfrmCadProduto.excluir;
+procedure TfrmCadProduto.Excluir;
 var
   persistencia: TProduto;
 begin
@@ -438,7 +437,7 @@ begin
       begin
         persistencia.id_item := FIdItem;
         persistencia.Excluir;
-        limpaCampos;
+        LimpaCampos;
       end;
     end;
   finally
@@ -463,11 +462,11 @@ procedure TfrmCadProduto.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if key = VK_F3 then //F3
-    limpaCampos
+    LimpaCampos
   else if key = VK_F2 then  //F2
     Salvar
   else if key = VK_F4 then    //F4
-    excluir
+    Excluir
   else if key = VK_ESCAPE then //ESC
     if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
       Close;
@@ -521,7 +520,7 @@ begin
   end;
 end;
 
-procedure TfrmCadProduto.limpaCampos;
+procedure TfrmCadProduto.LimpaCampos;
 begin
   if camposDesabilitados then
   begin
@@ -620,7 +619,7 @@ var
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -632,16 +631,17 @@ begin
         qry.ParamByName('cd_produto').AsString := edtPRODUTOCD_PRODUTO.Text;
         qry.ExecSQL;
 
-        qry.Connection.Commit;
+        dm.conexaoBanco.Commit;
       end;
     except
     on E:Exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar a foto do produto ' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -701,7 +701,7 @@ begin
     SalvarTributacao;
     SalvarCodBarras;
     SalvarFoto;
-    limpaCampos;
+    LimpaCampos;
 
   finally
     persistencia.Free;
@@ -709,40 +709,30 @@ begin
 end;
 
 procedure TfrmCadProduto.SalvarCodBarras;
-var
-  qry: TFDQuery;
 begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
-
   try
-    try
-      FRegra.id_item := FIdItem;
-      FRegra.tipo_cod_barras := FRegra.Dados.cdsBarras.FieldByName('tipo_cod_barras').AsString;
-      FRegra.codigo_barras := FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString;
-      FRegra.un_medida := FRegra.Dados.cdsBarras.FieldByName('un_medida').AsString;
+    FRegra.id_item := FIdItem;
+    FRegra.tipo_cod_barras := FRegra.Dados.cdsBarras.FieldByName('tipo_cod_barras').AsString;
+    FRegra.codigo_barras := FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString;
+    FRegra.un_medida := FRegra.Dados.cdsBarras.FieldByName('un_medida').AsString;
 
-      FRegra.Dados.cdsBarras.First;
+    FRegra.Dados.cdsBarras.First;
 
-      FRegra.Dados.cdsBarras.Loop(
-      procedure
-      begin
-        if not FRegra.Pesquisar(FIdItem, FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString) then
-          FRegra.Inserir
-        else
-          FRegra.Atualizar;
-      end);
-      qry.Connection.Commit;
-    except
-    on E:exception do
-      begin
-        qry.Connection.Rollback;
-        raise Exception.Create('Erro ao gravar os dados do código de barras do produto ' + E.Message);
-      end;
+    FRegra.Dados.cdsBarras.Loop(
+    procedure
+    begin
+      if not FRegra.Pesquisar(FIdItem, FRegra.Dados.cdsBarras.FieldByName('codigo_barras').AsString) then
+        FRegra.Inserir
+      else
+        FRegra.Atualizar;
+    end);
+    dm.conexaoBanco.Commit;
+  except
+  on E:exception do
+    begin
+      dm.conexaoBanco.Rollback;
+      raise Exception.Create('Erro ao gravar os dados do código de barras do produto ' + E.Message);
     end;
-  finally
-    qry.Free;
   end;
 end;
 

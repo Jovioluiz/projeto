@@ -54,7 +54,7 @@ begin
   inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -64,16 +64,17 @@ begin
       qry.ParamByName('valor').AsCurrency := Fvalor;
       qry.ParamByName('un_medida').AsString := Fun_medida;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
 
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao atualizar o produto ' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -92,7 +93,7 @@ begin
   inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -100,16 +101,16 @@ begin
       qry.ParamByName('cd_tabela').AsInteger := Fcd_tabela;
       qry.ParamByName('id_item').AsLargeInt := Fid_item;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao excluir o produto ' + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -132,7 +133,7 @@ begin
   inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -142,16 +143,17 @@ begin
       qry.ParamByName('valor').AsCurrency := Fvalor;
       qry.ParamByName('un_medida').AsString := Fun_medida;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
 
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao adicionar o produto na tabela de preço ' + Fcd_tabela.ToString + ' ' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;

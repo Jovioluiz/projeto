@@ -16,7 +16,6 @@ object frmcadTabelaPreco: TfrmcadTabelaPreco
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
-  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96

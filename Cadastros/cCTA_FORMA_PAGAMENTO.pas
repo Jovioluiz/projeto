@@ -26,9 +26,9 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
-    procedure limpaCampos;
-    procedure salvar;
-    procedure excluir;
+    procedure LimpaCampos;
+    procedure Salvar;
+    procedure Excluir;
     procedure validaCampos;
 
   public
@@ -93,7 +93,7 @@ begin
   end;
 end;
 
-procedure TfrmCadFormaPagamento.excluir;
+procedure TfrmCadFormaPagamento.Excluir;
 var
   persistencia: TCtaFormaPagamento;
 begin
@@ -106,7 +106,7 @@ begin
       begin
         persistencia.cd_forma_pgto := StrToInt(edtCTA_FORMA_PGTOCODIGO.Text);
         persistencia.Excluir;
-        limpaCampos;
+        LimpaCampos;
       end;
     end;
   finally
@@ -125,11 +125,11 @@ procedure TfrmCadFormaPagamento.FormKeyDown(Sender: TObject; var Key: Word; Shif
 begin
   inherited;
   if key = VK_F3 then //F3
-    limpaCampos
+    LimpaCampos
   else if key = VK_F2 then //F2
-    salvar
+    Salvar
   else if key = VK_F4 then //F4
-    excluir
+    Excluir
   else if key = VK_ESCAPE then //ESC
   if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
     Close;
@@ -145,7 +145,7 @@ begin
   end;
 end;
 
-procedure TfrmCadFormaPagamento.limpaCampos;
+procedure TfrmCadFormaPagamento.LimpaCampos;
 begin
   edtCTA_FORMA_PGTOCODIGO.Clear;
   edtCTA_FORMA_PGTODESCRICAO.Clear;
@@ -154,7 +154,7 @@ begin
   edtCTA_FORMA_PGTOCODIGO.SetFocus;
 end;
 
-procedure TfrmCadFormaPagamento.salvar;
+procedure TfrmCadFormaPagamento.Salvar;
 var
   persistencia: TCtaFormaPagamento;
 begin
@@ -171,12 +171,12 @@ begin
     if not persistencia.Pesquisar(StrToInt(edtCTA_FORMA_PGTOCODIGO.Text)) then
     begin
       persistencia.Inserir;
-      limpaCampos;
+      LimpaCampos;
     end
     else
     begin
       persistencia.Atualizar;
-      limpaCampos;
+      LimpaCampos;
     end;
   finally
     persistencia.Free;

@@ -98,7 +98,7 @@ begin
   //inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -113,16 +113,16 @@ begin
       qry.ParamByName('id_item').AsLargeInt := Fid_item;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados do produto ' + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -140,23 +140,23 @@ begin
   inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
     try
       qry.ParamByName('id_item').AsLargeInt := Fid_item;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao excluir os dados do produto ' + Fcd_produto + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -207,7 +207,7 @@ begin
   //inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -223,16 +223,16 @@ begin
       qry.ParamByName('id_item').AsLargeInt := Fid_item;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados do produto ' + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -328,7 +328,7 @@ begin
   inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -344,15 +344,16 @@ begin
         qry.ParamByName('tipo_cod_barras').AsInteger := 2;
       qry.ParamByName('codigo_barras').AsString := Dados.cdsBarras.FieldByName('codigo_barras').AsString;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os códigos de barras do produto ' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -382,7 +383,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -391,16 +392,16 @@ begin
       qry.ParamByName('codigo_barras').AsString := Fcodigo_barras;
       qry.ParamByName('un_medida').AsString := Fun_medida;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os códigos de barras do produto ' + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -416,7 +417,7 @@ begin
   //inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -427,16 +428,17 @@ begin
       qry.ParamByName('codigo_barras').AsString := Fcodigo_barras;
       qry.ExecSQL;
 
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
 
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os códigos de barras do produto ' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;

@@ -23,7 +23,7 @@ type TPedidoVenda = class
     function BuscaProduto(CodProduto: String): TList<String>;
     function BuscaProdutoCodBarras(CodBarras: String): TList<String>;
     function ValidaProduto(CodProduto: String): Boolean;
-    function BuscaTabelaPreco(CodTabela, CodProduto: Integer): TList<string>;
+    function BuscaTabelaPreco(CodTabela: Integer; CodProduto: String): TList<string>;
     function ValidaTabelaPreco(CodTabela: Integer; CodProduto: String): Boolean;
     function BuscaFormaPgto(CodForma: Integer): TList<string>;
     function BuscaCondicaoPgto(CodCond, CodForma: Integer): TList<string>;
@@ -378,7 +378,7 @@ begin
   end;
 end;
 
-function TPedidoVenda.BuscaTabelaPreco(CodTabela, CodProduto: Integer): TList<string>;
+function TPedidoVenda.BuscaTabelaPreco(CodTabela: Integer; CodProduto: String): TList<string>;
 const
   sql = 'select                           '+
         '   tp.cd_tabela,                 '+
@@ -403,7 +403,7 @@ begin
   try
     qry.SQL.Add(sql);
     qry.ParamByName('cd_tabela').AsInteger := CodTabela;
-    qry.ParamByName('cd_produto').AsInteger := CodProduto;
+    qry.ParamByName('cd_produto').AsString := CodProduto;
     qry.Open(sql);
 
     lista.Add(qry.FieldByName('nm_tabela').AsString);

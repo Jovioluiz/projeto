@@ -51,7 +51,7 @@ begin
   //inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -62,17 +62,17 @@ begin
       qry.ParamByName('cd_tributacao_pis_cofins').AsInteger := Fcd_tributacao_pis_cofins;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
 
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados da tributação do produto ' + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -100,7 +100,7 @@ begin
   //inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -111,17 +111,17 @@ begin
       qry.ParamByName('cd_tributacao_pis_cofins').AsInteger := Fcd_tributacao_pis_cofins;
 
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
 
     except
     on E:exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados da tributação do produto ' + E.Message);
       end;
     end;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;

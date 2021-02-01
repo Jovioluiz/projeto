@@ -408,7 +408,7 @@ var
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   dm.cdsControleAcesso.DisableControls;
   dm.cdsControleAcesso.First;
 
@@ -431,17 +431,18 @@ begin
         dm.cdsControleAcesso.Next;
       end;
 
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
 
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         ShowMessage('Erro ao gravar os dados ' + E.Message);
         Exit;
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     dm.cdsControleAcesso.EnableControls;
     qry.Free;
     limpaCampos;

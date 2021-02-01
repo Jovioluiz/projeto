@@ -84,8 +84,8 @@ end;
 
 procedure TfrmImportaDados.btnGravarClick(Sender: TObject);
 const
-  SQL = 'insert into produto (cd_produto, fl_ativo, desc_produto, un_medida, fator_conversao, peso_liquido, peso_bruto)' +
-        'values (:cd_produto, :fl_ativo, :desc_produto, :un_medida, :fator_conversao, :peso_liquido, :peso_bruto)';
+  SQL = 'insert into produto (cd_produto, fl_ativo, desc_produto, un_medida, fator_conversao, peso_liquido, peso_bruto, id_item)' +
+        'values (:cd_produto, :fl_ativo, :desc_produto, :un_medida, :fator_conversao, :peso_liquido, :peso_bruto, :id_item)';
 var
   qry: TFDquery;
   stringListFile: TStringList;
@@ -126,13 +126,14 @@ begin
         // TStringList recebe o conteúdo da linha atual
         strinListLinha.CommaText := stringListFile[cont];
 
-        qry.ParamByName('cd_produto').AsIntegers[cont] := StrToInt(strinListLinha[0]);
+        qry.ParamByName('cd_produto').AsStrings[cont] := strinListLinha[0];
         qry.ParamByName('fl_ativo').AsBooleans[cont] := True;
         qry.ParamByName('desc_produto').AsStrings[cont] := strinListLinha[1];
         qry.ParamByName('un_medida').AsStrings[cont] := strinListLinha[2];
         qry.ParamByName('fator_conversao').AsIntegers[cont] := StrToInt(strinListLinha[3]);
         qry.ParamByName('peso_liquido').AsFloats[cont] := StrToFloat(strinListLinha[4]);
         qry.ParamByName('peso_bruto').AsFloats[cont] := StrToFloat(strinListLinha[5]);
+//        qry.ParamByName('id_item').AsLargeInts[cont] := ;
       end;
 
       // Executa as inserções em lote
@@ -248,6 +249,7 @@ begin
   temp := TStringList.Create;
   linhas.LoadFromFile(arquivo);
   gaugeProdutos.MaxValue := Pred(linhas.Count);
+  cdsProdutos.DisableControls;
   try
     for i := 0 to Pred(linhas.Count) do
     begin
@@ -266,6 +268,7 @@ begin
       cdsProdutos.Post;
     end;
   finally
+    cdsProdutos.EnableControls;
     gaugeProdutos.Visible := False;
   end;
 end;

@@ -214,7 +214,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     object edtDescProduto: TEdit
       Left = 117
       Top = 201
-      Width = 427
+      Width = 444
       Height = 21
       Enabled = False
       TabOrder = 16
@@ -393,7 +393,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   object edtDescTabelaPreco: TEdit
     Left = 120
     Top = 249
-    Width = 427
+    Width = 443
     Height = 21
     Enabled = False
     TabOrder = 6
@@ -524,6 +524,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object cdsPedidoVendacd_produto: TStringField
       DisplayLabel = 'C'#243'd. Produto'
+      DisplayWidth = 20
       FieldName = 'cd_produto'
     end
     object cdsPedidoVendadescricao: TStringField
@@ -533,7 +534,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object cdsPedidoVendaqtd_venda: TFloatField
       DisplayLabel = 'Qtdade'
-      DisplayWidth = 5
+      DisplayWidth = 7
       FieldName = 'qtd_venda'
     end
     object intgrfldPedidoVendacd_tabela_preco: TIntegerField
@@ -617,7 +618,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     Top = 408
   end
   object document: TXMLDocument
-    Left = 536
-    Top = 536
+    Left = 544
+    Top = 520
   end
 end

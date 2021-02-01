@@ -90,7 +90,7 @@ begin
   qrySeq := TFDQuery.Create(Self);
   qrySeq.Connection := dm.conexaoBanco;
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   criptoSenha := TValidaDados.Create();
 
   try
@@ -129,6 +129,7 @@ begin
         end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
     qrySeq.Free;
     FreeAndNil(criptoSenha);

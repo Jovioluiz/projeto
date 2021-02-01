@@ -24,7 +24,6 @@ type
     Label5: TLabel;
     edtCTACONDPGTONR_PARCELAS: TEdit;
     edtCTACONDPGTOVL_MINIMO: TEdit;
-    sqlInsertCondPgto: TFDQuery;
     edtCTACONDPGTOFL_ATIVO: TCheckBox;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtCTACONDPGTOCD_CTA_FORMA_PGTOChange(Sender: TObject);

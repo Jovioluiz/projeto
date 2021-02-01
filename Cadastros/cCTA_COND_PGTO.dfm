@@ -117,9 +117,4 @@ object frmCadCondPgto: TfrmCadCondPgto
       TabOrder = 1
     end
   end
-  object sqlInsertCondPgto: TFDQuery
-    Connection = dm.conexaoBanco
-    Left = 416
-    Top = 200
-  end
 end

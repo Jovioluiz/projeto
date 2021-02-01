@@ -56,7 +56,7 @@ begin
   inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -67,15 +67,16 @@ begin
       qry.ParamByName('dt_fim').AsDateTime := Fdt_fim;
       qry.ParamByName('cd_tabela').AsInteger := Fcd_tabela;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados da tabela de preço ' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -129,23 +130,24 @@ begin
   inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
       qry.SQL.Add(SQL);
       qry.ParamByName('cd_tabela').AsInteger := Fcd_tabela;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
 
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao excluir a tabela de preço ' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -170,7 +172,7 @@ begin
   inherited;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -181,15 +183,16 @@ begin
       qry.ParamByName('dt_inicio').AsDateTime := Fdt_inicio;
       qry.ParamByName('dt_fim').AsDateTime := Fdt_fim;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         raise Exception.Create('Erro ao gravar os dados da tabela de preço ' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;

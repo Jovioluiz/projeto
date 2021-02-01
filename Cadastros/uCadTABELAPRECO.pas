@@ -41,9 +41,9 @@ type
       Shift: TShiftState);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormActivate(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
+    FAdicionar: Boolean;
     procedure limpaCampos;
     procedure Salvar;
     procedure Excluir;
@@ -67,7 +67,7 @@ uses uLogin, uclTabelaPreco, uclTabelaPrecoProduto;
 
 procedure TfrmcadTabelaPreco.btnAdicionarProdutoClick(Sender: TObject);
 begin
-  //aberto := True;arrumar
+  FAdicionar := True;
   temPermissao := False;
   cliente := TValidaDados.Create;
   temPermissao := cliente.validaAcessoAcao(idUsuario, 6);
@@ -205,48 +205,56 @@ end;
 procedure TfrmcadTabelaPreco.FormActivate(Sender: TObject);
 {quando fechar o formulario (uCadTabelaPrecoProduto) de adicionar o produto na tabela de preço,
 sempre vai executar o sql abaixo, para atualizar os valores dos produtos no grid}
+const
+  SQL = 'select                           '+
+        '   p.cd_produto,                 '+
+        '   p.desc_produto,               '+
+        '   valor,                        '+
+        '   p.un_medida                   '+
+        'from                             '+
+        '   produto p                     '+
+        'join tabela_preco_produto tpp on '+
+        '   p.id_item = tpp.id_item       '+
+        'where                            '+
+        '   tpp.cd_tabela = :cd_tabela';
+var
+  qry: TFDQuery;
 begin
   inherited;
-  //arrumar
-//  if aberto = False then
-//  begin
-//    sqlTabelaPrecoProduto.Close;
-//    sqlTabelaPrecoProduto.SQL.Text := 'select                         '+
-//                                        'p.cd_produto,                '+
-//                                        'p.desc_produto,              '+
-//                                        'valor,                       '+
-//                                        'p.un_medida                  '+
-//                                    'from                             '+
-//                                        'produto p                    '+
-//                                    'join tabela_preco_produto tpp on '+
-//                                        'p.cd_produto = tpp.cd_produto '+
-//                                    'where                            '+
-//                                        'tpp.cd_tabela = :cd_tabela';
-//    sqlTabelaPrecoProduto.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
-//    sqlTabelaPrecoProduto.Open();
-//
-//    DBGridProduto.DataSource := DataSource1;
-//    DBGridProduto.Columns[0].Title.Caption := 'Produto';
-//    DBGridProduto.Columns[0].FieldName := 'cd_produto';
-//    DBGridProduto.Columns[1].Title.Caption := 'Nome Produto';
-//    DBGridProduto.Columns[1].FieldName := 'desc_produto';
-//    DBGridProduto.Columns[2].Title.Caption := 'Valor';
-//    DBGridProduto.Columns[2].FieldName := 'valor';
-//    DBGridProduto.Columns[3].Title.Caption := 'UN Medida';
-//    DBGridProduto.Columns[3].FieldName := 'un_medida';
-//  end;
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    if edtCodTabela.Text <> '' then
+    begin
+      qry.SQL.Add(SQL);
+      qry.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
+      qry.Open();
+
+      cdsProdutos.EmptyDataSet;
+
+      qry.Loop(
+      procedure
+      begin
+        cdsProdutos.Append;
+        cdsProdutos.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
+        cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
+        cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
+        cdsProdutos.FieldByName('valor').AsCurrency := qry.FieldByName('valor').AsCurrency;
+        cdsProdutos.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
+        cdsProdutos.Post;
+      end
+      );
+    end;
+  finally
+    qry.Free;
+  end;
 end;
 
 procedure TfrmcadTabelaPreco.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   frmcadTabelaPreco := nil;
-end;
-
-procedure TfrmcadTabelaPreco.FormCreate(Sender: TObject);
-begin
-  inherited;
-  //aberto := True;
 end;
 
 procedure TfrmcadTabelaPreco.FormKeyDown(Sender: TObject; var Key: Word;

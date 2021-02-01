@@ -359,8 +359,9 @@ end;
 
 
 procedure TfrmLancamentoNotaEntrada.edtNroNotaExit(Sender: TObject);
-Var nrNota, fornecedor : Integer;
-    serie : String;
+var
+  nrNota, fornecedor: Integer;
+  serie: String;
 //valida se já possui cadastrada uma nota com o mesmo número, mesmo fornecedor e série
 begin
   if edtNroNota.Text = EmptyStr then
@@ -462,7 +463,7 @@ end;
 
 procedure TfrmLancamentoNotaEntrada.edtQuantidadeExit(Sender: TObject);
 begin
- calculaQuantidadeTotalItem;
+  calculaQuantidadeTotalItem;
 end;
 
 procedure TfrmLancamentoNotaEntrada.edtSerieExit(Sender: TObject);
@@ -477,7 +478,6 @@ begin
     if (Application.MessageBox('Série não encontrado','Atenção', MB_OK) = idOK) then
       edtSerie.SetFocus;
   end;
-
 end;
 
 //valida se foi informado valor de serviço ou produto ou os dois
@@ -495,7 +495,6 @@ begin
   end
   else
     valorTotalNota;
-
 end;
 
 procedure TfrmLancamentoNotaEntrada.edtVlServicoExit(Sender: TObject);
@@ -627,7 +626,7 @@ begin
   qrySelect := TFDQuery.Create(Self);
   qrySelect.Connection := dm.conexaoBanco;
   IdGeral := TGerador.Create;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -654,14 +653,14 @@ begin
     except
       on e:Exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         ShowMessage('Erro ' + E.Message);
       end;
     end;
 
-    qry.Connection.Commit;
+    dm.conexaoBanco.Commit;
   finally
-    qry.Connection.Rollback;
+    dm.conexaoBanco.Rollback;
     qry.Free;
     qrySelect.Free;
     FreeAndNil(IdGeral);
@@ -695,6 +694,7 @@ var
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
+  dm.conexaoBanco.StartTransaction;
   idGeral := TGerador.Create;
   try
     try
@@ -708,18 +708,19 @@ begin
       qry.ParamByName('fl_entrada_saida').AsString := 'E';
       qry.ParamByName('dt_pgto').AsDateTime := Now;
       qry.ExecSQL;
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
       on E : exception do
       begin
         msg := 'Erro ao gravar o financeiro da nota fiscal '
                + edtNroNota.Text + E.Message;
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         ShowMessage(msg);
         Exit;
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
     idGeral.Free;
   end;
@@ -747,7 +748,7 @@ var
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -772,16 +773,17 @@ begin
       end
       );
 
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         ShowMessage('Erro ao gravar os dados do produto ' + cdsEntrada.FieldByName('cd_produto').AsString + E.Message);
         Exit;
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
     cdsEntrada.EnableControls;
   end;
@@ -969,10 +971,9 @@ var
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
   qryItens := TFDQuery.Create(Self);
   qryItens.Connection := dm.conexaoBanco;
-  qryItens.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
   geraIdGeral := TGerador.Create;
   try
     try
@@ -1060,8 +1061,7 @@ begin
       end
       );
 
-      qry.Connection.Commit;
-      qryItens.Connection.Commit;
+      dm.conexaoBanco.Commit;
       //insere na wms_mvto e atualiza a quantidade em estoque
       InsereWmsMvto;
       AtualizaEstoque;
@@ -1072,13 +1072,13 @@ begin
     except
       on E : exception do
       begin
-        qry.Connection.Rollback;
-        qryItens.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
         ShowMessage('Erro ao gravar os dados da nota ' + edtNroNota.Text + E.Message);
         Exit;
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
     FreeAndNil(geraIdGeral);
   end;
