@@ -71,7 +71,7 @@ var
 implementation
 
 uses
-  FireDAC.Comp.Client, uDataModule;
+  FireDAC.Comp.Client, uDataModule, uclProduto;
 
 {$R *.dfm}
 
@@ -92,10 +92,12 @@ var
   strinListLinha: TStringList;
   cont: Integer;
   caminho: string;
+  produto: TProduto;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
+  produto := TProduto.Create;
 
   // TStringList que carrega todo o conteúdo do arquivo
   stringListFile := TStringList.Create;
@@ -133,26 +135,28 @@ begin
         qry.ParamByName('fator_conversao').AsIntegers[cont] := StrToInt(strinListLinha[3]);
         qry.ParamByName('peso_liquido').AsFloats[cont] := StrToFloat(strinListLinha[4]);
         qry.ParamByName('peso_bruto').AsFloats[cont] := StrToFloat(strinListLinha[5]);
-//        qry.ParamByName('id_item').AsLargeInts[cont] := ;
+        qry.ParamByName('id_item').AsLargeInts[cont] := produto.GeraIdItem;
       end;
 
       // Executa as inserções em lote
       qry.Execute(stringListFile.Count, 0);
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
       ShowMessage('Dados gravados com Sucesso');
     except
       on e:Exception do
       begin
         raise Exception.Create('Erro ao gravar os Dados ' + #13 + e.Message);
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
       end;
     end;
 
   finally
+    dm.conexaoBanco.Rollback;
     gaugeProdutos.Visible := False;
     stringListFile.Free;
     strinListLinha.Free;
     qry.Free;
+    produto.Free;
   end;
 end;
 
@@ -169,7 +173,7 @@ var
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
-  qry.Connection.StartTransaction;
+  dm.conexaoBanco.StartTransaction;
 
   // TStringList que carrega todo o conteúdo do arquivo
   stringListFile := TStringList.Create;
@@ -214,17 +218,18 @@ begin
 
       // Executa as inserções em lote
       qry.Execute(stringListFile.Count, 0);
-      qry.Connection.Commit;
+      dm.conexaoBanco.Commit;
       ShowMessage('Dados gravados com Sucesso');
     except
       on e:Exception do
       begin
         raise Exception.Create('Erro ao gravar os Dados ' + #13 + e.Message);
-        qry.Connection.Rollback;
+        dm.conexaoBanco.Rollback;
       end;
     end;
 
   finally
+    dm.conexaoBanco.Rollback;
     gaugeClientes.Visible := False;
     stringListFile.Free;
     strinListLinha.Free;

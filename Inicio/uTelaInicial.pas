@@ -152,7 +152,7 @@ begin
     if temPermissao then
     begin
       frmCadastroEnderecos := TfrmCadastroEnderecos.Create(Self);
-      frmCadastroEnderecos.ShowModal;
+      frmCadastroEnderecos.Show;
     end;
   finally
     FreeAndNil(acesso);
@@ -169,7 +169,7 @@ begin
     if temPermissao then
     begin
       frmCadCliente := TfrmCadCliente.Create(Self);
-      frmCadCliente.ShowModal;
+      frmCadCliente.Show;
     end;
   finally
     FreeAndNil(acesso);
@@ -186,7 +186,7 @@ begin
     if temPermissao then
     begin
       frmCadCondPgto := TfrmCadCondPgto.Create(Self);
-      frmCadCondPgto.ShowModal;
+      frmCadCondPgto.Show;
     end;
   finally
     FreeAndNil(acesso);
@@ -203,7 +203,7 @@ begin
     if temPermissao then
     begin
       frmConfiguracoes := TfrmConfiguracoes.Create(Self);
-      frmConfiguracoes.ShowModal;
+      frmConfiguracoes.Show;
     end;
   finally
     FreeAndNil(acesso);
@@ -220,7 +220,7 @@ begin
     if temPermissao then
     begin
       frmControleAcesso := TfrmControleAcesso.Create(Self);
-      frmControleAcesso.ShowModal;
+      frmControleAcesso.Show;
     end;
   finally
     FreeAndNil(acesso);
@@ -243,7 +243,7 @@ begin
     if temPermissao then
     begin
       frmCadFormaPagamento := TfrmCadFormaPagamento.Create(Self);
-      frmCadFormaPagamento.ShowModal;
+      frmCadFormaPagamento.Show;
     end;
   finally
     FreeAndNil(acesso);
@@ -291,7 +291,7 @@ end;
 procedure TfrmPrincipal.ImportarProdutos1Click(Sender: TObject);
 begin
   frmImportaDados := TfrmImportaDados.Create(Self);
-  frmImportaDados.ShowModal;
+  frmImportaDados.Show;
 end;
 
 procedure TfrmPrincipal.NotaEntrada1Click(Sender: TObject);
@@ -338,7 +338,7 @@ begin
     if temPermissao then
     begin
       frmCadProduto := TfrmCadProduto.Create(Self);
-      frmCadProduto.ShowModal;
+      frmCadProduto.Show;
     end;
   finally
     FreeAndNil(acesso);
@@ -380,7 +380,7 @@ begin
     if temPermissao then
     begin
       frmcadTabelaPreco := TfrmcadTabelaPreco.Create(Self);
-      frmcadTabelaPreco.ShowModal;
+      frmcadTabelaPreco.Show;
     end;
   finally
     FreeAndNil(acesso);
@@ -405,7 +405,7 @@ begin
     if temPermissao then
     begin
       frmUsuario := TfrmUsuario.Create(Self);
-      frmUsuario.ShowModal;
+      frmUsuario.Show;
     end;
   finally
     FreeAndNil(acesso);

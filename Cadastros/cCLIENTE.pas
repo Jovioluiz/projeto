@@ -245,6 +245,7 @@ begin
   temPermissaEdicao := cliente.validaEdicaoAcao(IdUsuario, 1);
   persistencia := TCliente.Create;
   enderecoPersistencia := TClienteEndereco.Create;
+
   try
     if edtCLIENTEcd_cliente.Text = '' then
     begin

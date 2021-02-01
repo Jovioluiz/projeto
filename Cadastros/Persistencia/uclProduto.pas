@@ -34,7 +34,8 @@ type TProduto = class(TPadrao)
     procedure Atualizar; override;
     procedure Inserir; override;
     procedure Excluir; override;
-    function Pesquisar(IdItem: Int64): Boolean;
+    function Pesquisar(IdItem: Int64): Boolean; overload;
+    function Pesquisar(CdItem: string): Boolean; overload;
     function GeraIdItem: Int64;
 
     property cd_produto: String read Fcd_produto write Setcd_produto;
@@ -163,7 +164,7 @@ end;
 
 function TProduto.GeraIdItem: Int64;
 const
-  SQL = 'select *from func_id_item()';
+  SQL = 'select * from func_id_item()';
 var
   qry: TFDQuery;
 begin
@@ -233,6 +234,32 @@ begin
     end;
   finally
     dm.conexaoBanco.Rollback;
+    qry.Free;
+  end;
+end;
+
+function TProduto.Pesquisar(CdItem: string): Boolean;
+const
+  SQL = 'select         '+
+        '   cd_produto  '+
+        'from           '+
+        '   produto     '+
+        'where          '+
+        '   cd_produto = :cd_produto';
+var
+  qry: TFDquery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('cd_produto').AsString := CdItem;
+    qry.Open();
+
+    Result := not qry.IsEmpty;
+
+  finally
     qry.Free;
   end;
 end;
