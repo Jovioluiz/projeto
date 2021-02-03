@@ -3,7 +3,7 @@ object frmImportaDados: TfrmImportaDados
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Importar Dados'
-  ClientHeight = 486
+  ClientHeight = 504
   ClientWidth = 635
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,25 +13,30 @@ object frmImportaDados: TfrmImportaDados
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object pnlFundo: TPanel
     Left = 0
     Top = 0
     Width = 635
-    Height = 486
+    Height = 504
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 486
     object PageControl1: TPageControl
       Left = 1
       Top = 1
       Width = 633
-      Height = 484
-      ActivePage = tbProdutos
+      Height = 502
+      ActivePage = tbClientes
       Align = alClient
       TabOrder = 0
+      ExplicitHeight = 484
       object tbProdutos: TTabSheet
         Caption = 'Produtos'
+        ExplicitHeight = 456
         object Label1: TLabel
           Left = 3
           Top = 19
@@ -39,13 +44,13 @@ object frmImportaDados: TfrmImportaDados
           Height = 13
           Caption = 'Arquivo:'
         end
-        object SpeedButton1: TSpeedButton
+        object btnBuscarArquivoProduto: TSpeedButton
           Left = 346
           Top = 15
           Width = 26
           Height = 22
           Caption = '...'
-          OnClick = SpeedButton1Click
+          OnClick = btnBuscarArquivoProdutoClick
         end
         object edtArquivo: TEdit
           Left = 50
@@ -55,8 +60,8 @@ object frmImportaDados: TfrmImportaDados
           TabOrder = 0
         end
         object btnVisualizarProdutos: TButton
-          Left = 3
-          Top = 70
+          Left = 378
+          Top = 14
           Width = 98
           Height = 25
           Caption = 'Visualizar'
@@ -64,8 +69,8 @@ object frmImportaDados: TfrmImportaDados
           OnClick = btnVisualizarProdutosClick
         end
         object btnGravar: TButton
-          Left = 378
-          Top = 14
+          Left = 513
+          Top = 96
           Width = 98
           Height = 25
           Caption = 'Gravar Produto'
@@ -74,11 +79,12 @@ object frmImportaDados: TfrmImportaDados
         end
         object Panel1: TPanel
           Left = 0
-          Top = 109
+          Top = 127
           Width = 625
           Height = 347
           Align = alBottom
           TabOrder = 3
+          ExplicitTop = 109
           object gaugeProdutos: TGauge
             Left = 50
             Top = 32
@@ -106,6 +112,7 @@ object frmImportaDados: TfrmImportaDados
       object tbClientes: TTabSheet
         Caption = 'Clientes'
         ImageIndex = 1
+        ExplicitHeight = 456
         object Label2: TLabel
           Left = 3
           Top = 19
@@ -137,16 +144,16 @@ object frmImportaDados: TfrmImportaDados
           TabOrder = 0
         end
         object btnVisualizarCliente: TButton
-          Left = 3
-          Top = 70
+          Left = 378
+          Top = 14
           Width = 98
           Height = 25
           Caption = 'Visualizar'
           TabOrder = 1
         end
         object btnGravarCliente: TButton
-          Left = 378
-          Top = 14
+          Left = 516
+          Top = 96
           Width = 98
           Height = 25
           Caption = 'Gravar Cliente'
@@ -155,7 +162,7 @@ object frmImportaDados: TfrmImportaDados
         end
         object dbGridClientes: TDBGrid
           Left = 0
-          Top = 168
+          Top = 186
           Width = 625
           Height = 288
           Align = alBottom
@@ -177,7 +184,7 @@ object frmImportaDados: TfrmImportaDados
   object dsClientes: TDataSource
     DataSet = cdsCliente
     Left = 288
-    Top = 264
+    Top = 280
   end
   object cdsCliente: TClientDataSet
     PersistDataPacket.Data = {
@@ -289,8 +296,8 @@ object frmImportaDados: TfrmImportaDados
   end
   object dsProdutos: TDataSource
     DataSet = cdsProdutos
-    Left = 61
-    Top = 225
+    Left = 53
+    Top = 281
   end
   object cdsProdutos: TClientDataSet
     PersistDataPacket.Data = {
@@ -336,8 +343,8 @@ object frmImportaDados: TfrmImportaDados
     IndexDefs = <>
     Params = <>
     StoreDefs = True
-    Left = 133
-    Top = 225
+    Left = 125
+    Top = 281
     object cdsProdutosseq: TIntegerField
       FieldName = 'seq'
     end

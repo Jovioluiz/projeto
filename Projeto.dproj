@@ -209,6 +209,12 @@
         <DCCReference Include="Cadastros\Persistencia\uclTabelaPrecoProduto.pas"/>
         <DCCReference Include="Conexao\uConexao.pas"/>
         <DCCReference Include="WMS\uEnderecoWMS.pas"/>
+        <DCCReference Include="Login\uValidacoesLogin.pas"/>
+        <DCCReference Include="Arquivos\dImportaDados.pas">
+            <Form>dmImportaDados</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

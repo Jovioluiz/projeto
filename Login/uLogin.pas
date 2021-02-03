@@ -78,9 +78,6 @@ begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
   try
-    qry.Close;
-    qry.SQL.Clear;
-
     qry.SQL.Add(SQL_LOGIN);
     qry.ParamByName('login').AsString := edtUsuario.Text;
     qry.Prepare;

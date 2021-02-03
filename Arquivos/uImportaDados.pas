@@ -6,14 +6,15 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask,
   Vcl.Buttons, Vcl.ExtDlgs, Vcl.ComCtrls,
-  Vcl.Samples.Gauges, Data.DB, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids;
+  Vcl.Samples.Gauges, Data.DB, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids,
+  dImportaDados;
 
 type
   TfrmImportaDados = class(TForm)
     btnGravar: TButton;
     Label1: TLabel;
     edtArquivo: TEdit;
-    SpeedButton1: TSpeedButton;
+    btnBuscarArquivoProduto: TSpeedButton;
     dlArquivo: TOpenTextFileDialog;
     btnVisualizarProdutos: TButton;
     Panel1: TPanel;
@@ -52,13 +53,15 @@ type
     gaugeClientes: TGauge;
     gaugeProdutos: TGauge;
     procedure btnGravarClick(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure btnBuscarArquivoProdutoClick(Sender: TObject);
     procedure btnVisualizarProdutosClick(Sender: TObject);
     procedure btnGravarClienteClick(Sender: TObject);
     procedure btnBuscaArquivoClienteClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
-    procedure ParseDelimited(const sl: TStrings; const value,
-      delimiter: string);
+    FDados: TdmImportaDados;
+    procedure ParseDelimited(const sl: TStrings; const value, delimiter: string);
 
     { Private declarations }
   public
@@ -77,7 +80,7 @@ uses
 
 procedure TfrmImportaDados.btnBuscaArquivoClienteClick(Sender: TObject);
 begin
-  dlArquivo.Filter := ('*.csv*.CSV');
+  dlArquivo.Filter := '*.csv|*.csv';
   if dlArquivo.Execute then
     edtArquivoCliente.Text := dlArquivo.FileName;
 end;
@@ -278,9 +281,19 @@ begin
   end;
 end;
 
-procedure TfrmImportaDados.SpeedButton1Click(Sender: TObject);
+procedure TfrmImportaDados.FormCreate(Sender: TObject);
 begin
-  dlArquivo.Filter := ('*.csv*.CSV');
+  FDados := TdmImportaDados.Create(Self);
+end;
+
+procedure TfrmImportaDados.FormDestroy(Sender: TObject);
+begin
+  FDados.Free;
+end;
+
+procedure TfrmImportaDados.btnBuscarArquivoProdutoClick(Sender: TObject);
+begin
+  dlArquivo.Filter := '*.csv|*.csv';
   if dlArquivo.Execute then
     edtArquivo.Text := dlArquivo.FileName;
 end;

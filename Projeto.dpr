@@ -53,7 +53,9 @@ uses
   uclTabelaPreco in 'Cadastros\Persistencia\uclTabelaPreco.pas',
   uclTabelaPrecoProduto in 'Cadastros\Persistencia\uclTabelaPrecoProduto.pas',
   uConexao in 'Conexao\uConexao.pas',
-  uEnderecoWMS in 'WMS\uEnderecoWMS.pas';
+  uEnderecoWMS in 'WMS\uEnderecoWMS.pas',
+  uValidacoesLogin in 'Login\uValidacoesLogin.pas',
+  dImportaDados in 'Arquivos\dImportaDados.pas' {dmImportaDados: TDataModule};
 
 {$R *.res}
 
