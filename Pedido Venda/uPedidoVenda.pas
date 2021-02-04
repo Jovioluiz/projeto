@@ -933,10 +933,8 @@ end;
 procedure TfrmPedidoVenda.edtQtdadeExit(Sender: TObject);
 var
   qtdadeEstoque: TPedidoVenda;
-  possuiEstoque: Boolean;
 begin
   qtdadeEstoque := TPedidoVenda.Create;
-  possuiEstoque := qtdadeEstoque.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
 
   try
     if edtQtdade.Text = '0' then
@@ -945,7 +943,7 @@ begin
       edtQtdade.SetFocus;
     end;
 
-    if not possuiEstoque then
+    if not qtdadeEstoque.ValidaQtdadeItem(edtCdProduto.Text, StrToFloat(edtQtdade.Text)) then
     begin
       edtQtdade.SetFocus;
       Exit;
@@ -988,44 +986,43 @@ end;
 //recalcula o valor total se informado um valor de desconto no total do pedido
 procedure TfrmPedidoVenda.edtVlDescTotalPedidoExit(Sender: TObject);
 var
-  vl_desconto, vl_total_pedido, valor_total : Currency;
+  valorDesconto, vlTotalPedido, valorTotalItens: Currency;
 begin
   if not edtVlDescTotalPedido.isEmpty then
   begin
     if (edtVlDescTotalPedido.Text = '0') or (edtVlDescTotalPedido.Text = '0,00') then
     begin
       edtVlDescTotalPedido.Text := CurrToStr(0);
-      valor_total := 0;
+      valorTotalItens := 0;
 
       //soma os valores totais dos itens
       cdsPedidoVenda.Loop(
         procedure
         begin
-          valor_total := (valor_total + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
+          valorTotalItens := (valorTotalItens + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
         end
       );
 
-      edtVlTotalPedido.Text := CurrToStr(valor_total);
+      edtVlTotalPedido.Text := CurrToStr(valorTotalItens);
     end
     else
     begin
-      vl_total_pedido := 0;
+      vlTotalPedido := 0;
 
-      vl_desconto := StrToCurr(FormatCurr('#,##0.00', StrToCurr(edtVlDescTotalPedido.Text)));
+      valorDesconto := StrToCurr(FormatCurr('#,##0.00', StrToCurr(edtVlDescTotalPedido.Text)));
 
       cdsPedidoVenda.Loop(
         procedure
         begin
-          vl_total_pedido := (vl_total_pedido + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
+          vlTotalPedido := (vlTotalPedido + cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
         end
       );
 
-      edtVlTotalPedido.Text := CurrToStr(vl_total_pedido - vl_desconto);
+      edtVlTotalPedido.Text := CurrToStr(vlTotalPedido - valorDesconto);
     end;
   end;
 end;
 
-//seta a data atual na data de emissão
 procedure TfrmPedidoVenda.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
@@ -1049,6 +1046,7 @@ end;
 
 procedure TfrmPedidoVenda.FormCreate(Sender: TObject);
 begin
+//seta a data atual na data de emissão
   edtDataEmissao.Text := DateToStr(Date());
   seqItem := 1;
 end;

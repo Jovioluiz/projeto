@@ -351,7 +351,7 @@ var
   resposta : Boolean;
 begin
   ValidaQtdade := TPedidoVenda.Create;
-  resposta := ValidaQtdade.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
+  resposta := ValidaQtdade.ValidaQtdadeItem(edtCdProduto.Text, StrToFloat(edtQtdade.Text));
 
   try
     if edtQtdade.Text = '0' then

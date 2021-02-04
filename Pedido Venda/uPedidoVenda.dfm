@@ -301,6 +301,7 @@ object frmPedidoVenda: TfrmPedidoVenda
       Width = 61
       Height = 21
       TabOrder = 11
+      Text = '0.00'
       OnExit = edtVlDescTotalPedidoExit
     end
     object edtVlAcrescimoTotalPedido: TEdit

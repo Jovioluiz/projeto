@@ -15,7 +15,7 @@ type TPedidoVenda = class
   private
 
   public
-    function ValidaQtdadeItem(IdItem: Int64; QtdPedido: Double): Boolean;
+    function ValidaQtdadeItem(CdItem: String; QtdPedido: Double): Boolean;
     function CalculaValorTotalItem(valorUnitario, qtdadeItem: Double): Double;
     function ValidaFormaPgto(CdFormaPgto: Integer): Boolean;
     function ValidaCliente(CdCliente: Integer): Boolean;
@@ -469,30 +469,38 @@ begin
   end;
 end;
 
-function TPedidoVenda.ValidaQtdadeItem(IdItem: Int64; QtdPedido: Double): Boolean;
+function TPedidoVenda.ValidaQtdadeItem(CdItem: String; QtdPedido: Double): Boolean;
 const
-  qry = 'select               '+
+  SQL = 'select               '+
         '  qt_estoque         '+
         'from                 '+
         '  wms_estoque        '+
         'where                '+
         '  id_item = :id_item';
+var
+  qry: TFDQuery;
 begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
   Result := True;
-  dm.query.Close;
-  dm.query.SQL.Clear;
-  dm.query.SQL.Add(qry);
-  dm.query.ParamByName('id_item').AsLargeInt := IdItem;
-  dm.query.Open(qry);
 
-  if dm.query.IsEmpty then
-    Exit;
+  try
+    qry.SQL.Add(SQL);
+    qry.ParamByName('id_item').AsLargeInt := GetIdItem(CdItem);
+    qry.Open();
 
-  if QtdPedido > dm.query.FieldByName('qt_estoque').AsFloat then
-  begin
-    ShowMessage('Quantidade informada maior que a disponível.'
-    + #13 + 'Quantidade disponível: ' + FloatToStr(dm.query.FieldByName('qt_estoque').AsFloat));
-    Result := False;
+    if qry.IsEmpty then
+      Exit;
+
+    if QtdPedido > qry.FieldByName('qt_estoque').AsFloat then
+    begin
+      ShowMessage('Quantidade informada maior que a disponível.'
+      + #13 + 'Quantidade disponível: ' + FloatToStr(qry.FieldByName('qt_estoque').AsFloat));
+      Result := False;
+    end;
+
+  finally
+    qry.Free;
   end;
 end;
 
