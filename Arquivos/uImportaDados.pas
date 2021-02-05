@@ -19,12 +19,6 @@ type
     btnVisualizarProdutos: TButton;
     Panel1: TPanel;
     dbGridProdutos: TDBGrid;
-    dsClientes: TDataSource;
-    cdsCliente: TClientDataSet;
-    cdsClientecd_produto: TIntegerField;
-    cdsClientedesc_produto: TStringField;
-    cdsClienteun_medida: TStringField;
-    cdsClienteseq: TIntegerField;
     pnlFundo: TPanel;
     PageControl1: TPageControl;
     tbProdutos: TTabSheet;
@@ -35,21 +29,6 @@ type
     btnVisualizarCliente: TButton;
     btnGravarCliente: TButton;
     dbGridClientes: TDBGrid;
-    cdsClientecpf_cnpj: TStringField;
-    cdsClienterg_ie: TStringField;
-    cdsClientedt_nasc_fundacao: TDateTimeField;
-    dsProdutos: TDataSource;
-    cdsProdutos: TClientDataSet;
-    cdsClientetelefone: TStringField;
-    cdsClientecelular: TStringField;
-    cdsClienteemail: TStringField;
-    cdsProdutoscd_produto: TIntegerField;
-    cdsProdutosdesc_produto: TStringField;
-    cdsProdutosun_medida: TStringField;
-    cdsProdutosfator_conversao: TIntegerField;
-    cdsProdutospeso_liquido: TFloatField;
-    cdsProdutospeso_bruto: TFloatField;
-    cdsProdutosseq: TIntegerField;
     gaugeClientes: TGauge;
     gaugeProdutos: TGauge;
     procedure btnGravarClick(Sender: TObject);
@@ -284,6 +263,7 @@ end;
 procedure TfrmImportaDados.FormCreate(Sender: TObject);
 begin
   FDados := TdmImportaDados.Create(Self);
+  dbGridProdutos.DataSource := FDados.dsProdutos;
 end;
 
 procedure TfrmImportaDados.FormDestroy(Sender: TObject);
