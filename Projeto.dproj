@@ -182,9 +182,6 @@
         <DCCReference Include="Cadastros\uCadastrarSenha.pas">
             <Form>frmCadastraSenha</Form>
         </DCCReference>
-        <DCCReference Include="Arquivos\uImportaDados.pas">
-            <Form>frmImportaDados</Form>
-        </DCCReference>
         <DCCReference Include="Inicio\uSplash.pas">
             <Form>frmSplash</Form>
         </DCCReference>
@@ -215,6 +212,13 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="Terceiros\EditStyle.pas"/>
+        <DCCReference Include="Terceiros\EditNumber.pas"/>
+        <DCCReference Include="Arquivos\fImportaDados.pas">
+            <Form>frmImportaDados</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Arquivos\uImportacaoDados.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

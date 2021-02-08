@@ -43,7 +43,6 @@ type
     Configuraes1: TMenuItem;
     Usurios1: TMenuItem;
     ControleAcesso1: TMenuItem;
-    query: TFDQuery;
     GravarVendas1: TMenuItem;
     Estoque1: TMenuItem;
     CadastroEndereo1: TMenuItem;
@@ -113,7 +112,7 @@ implementation
 {$R *.dfm}
 
 uses uUsuario, uControleAcesso, uDataModule, uGravaArquivo, fCadastroEnderecos,
-  uImportaDados, uSplash;
+  uSplash, fImportaDados;
 
 
 procedure TfrmPrincipal.ApplicationEvents1Minimize(Sender: TObject);
@@ -230,7 +229,7 @@ end;
 procedure TfrmPrincipal.este1Click(Sender: TObject);
 begin
   frmlista := Tfrmlista.Create(Self);
-  frmlista.ShowModal;
+  frmlista.Show;
 end;
 
 procedure TfrmPrincipal.FormaPagamento1Click(Sender: TObject);
@@ -266,9 +265,13 @@ end;
 //mostra o usuário logado
 procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
-  //StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frmLogin.edtUsuario.Text);
-  frmsplash := TfrmSplash.Create(Self);
-  frmSplash.ShowModal;
+  try
+    //StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frmLogin.edtUsuario.Text);
+    frmsplash := TfrmSplash.Create(Self);
+    frmSplash.ShowModal;
+  finally
+    frmSplash.Free;
+  end;
 end;
 
 procedure TfrmPrincipal.FormKeyDown(Sender: TObject; var Key: Word;
@@ -365,9 +368,7 @@ end;
 procedure TfrmPrincipal.Sair1Click(Sender: TObject);
 begin
   if (Application.MessageBox('Deseja realmente sair do Sistema?','Atenção', MB_YESNO) = IDYES) then
-  begin
     Close;
-  end;
 end;
 
 procedure TfrmPrincipal.TabeladePreo1Click(Sender: TObject);

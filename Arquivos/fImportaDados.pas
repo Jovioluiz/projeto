@@ -1,4 +1,4 @@
-unit uImportaDados;
+unit fImportaDados;
 
 interface
 
@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask,
   Vcl.Buttons, Vcl.ExtDlgs, Vcl.ComCtrls,
   Vcl.Samples.Gauges, Data.DB, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids,
-  dImportaDados;
+  dImportaDados, uImportacaoDados;
 
 type
   TfrmImportaDados = class(TForm)
@@ -31,20 +31,22 @@ type
     dbGridClientes: TDBGrid;
     gaugeClientes: TGauge;
     gaugeProdutos: TGauge;
-    procedure btnGravarClick(Sender: TObject);
     procedure btnBuscarArquivoProdutoClick(Sender: TObject);
     procedure btnVisualizarProdutosClick(Sender: TObject);
     procedure btnGravarClienteClick(Sender: TObject);
     procedure btnBuscaArquivoClienteClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btnGravarClick(Sender: TObject);
   private
-    FDados: TdmImportaDados;
+    FRegras: TImportacaoDados;
+
     procedure ParseDelimited(const sl: TStrings; const value, delimiter: string);
 
     { Private declarations }
   public
     { Public declarations }
+    property Regra: TImportacaoDados read FRegras;
   end;
 
 var
@@ -65,80 +67,16 @@ begin
 end;
 
 procedure TfrmImportaDados.btnGravarClick(Sender: TObject);
-const
-  SQL = 'insert into produto (cd_produto, fl_ativo, desc_produto, un_medida, fator_conversao, peso_liquido, peso_bruto, id_item)' +
-        'values (:cd_produto, :fl_ativo, :desc_produto, :un_medida, :fator_conversao, :peso_liquido, :peso_bruto, :id_item)';
 var
-  qry: TFDquery;
-  stringListFile: TStringList;
-  strinListLinha: TStringList;
-  cont: Integer;
-  caminho: string;
-  produto: TProduto;
+  importacao: TImportacaoDados;
 begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
-  produto := TProduto.Create;
-
-  // TStringList que carrega todo o conteúdo do arquivo
-  stringListFile := TStringList.Create;
-
-  // TStringList que carrega o conteúdo da linha
-  strinListLinha := TStringList.Create;
-  caminho := edtArquivo.Text;
-
-  if not caminho.EndsWith('.csv') then
-    raise Exception.Create('Formato de Arquivo Incorreto. Verifique');
+  importacao := TImportacaoDados.Create;
 
   try
-    try
-      qry.SQL.Add(SQL);
-      stringListFile.LoadFromFile(caminho);
-
-      // Configura o tamanho do array de inserções
-      qry.Params.ArraySize := stringListFile.Count;
-
-      gaugeProdutos.MaxValue := stringListFile.Count;
-
-      for cont := 0 to Pred(stringListFile.Count) do
-      begin
-        gaugeProdutos.Visible := True;
-        gaugeProdutos.Progress := gaugeProdutos.Progress + 1;
-        strinListLinha.StrictDelimiter := True;
-
-        // TStringList recebe o conteúdo da linha atual
-        strinListLinha.CommaText := stringListFile[cont];
-
-        qry.ParamByName('cd_produto').AsStrings[cont] := strinListLinha[0];
-        qry.ParamByName('fl_ativo').AsBooleans[cont] := True;
-        qry.ParamByName('desc_produto').AsStrings[cont] := strinListLinha[1];
-        qry.ParamByName('un_medida').AsStrings[cont] := strinListLinha[2];
-        qry.ParamByName('fator_conversao').AsIntegers[cont] := StrToInt(strinListLinha[3]);
-        qry.ParamByName('peso_liquido').AsFloats[cont] := StrToFloat(strinListLinha[4]);
-        qry.ParamByName('peso_bruto').AsFloats[cont] := StrToFloat(strinListLinha[5]);
-        qry.ParamByName('id_item').AsLargeInts[cont] := produto.GeraIdItem;
-      end;
-
-      // Executa as inserções em lote
-      qry.Execute(stringListFile.Count, 0);
-      dm.conexaoBanco.Commit;
-      ShowMessage('Dados gravados com Sucesso');
-    except
-      on e:Exception do
-      begin
-        raise Exception.Create('Erro ao gravar os Dados ' + #13 + e.Message);
-        dm.conexaoBanco.Rollback;
-      end;
-    end;
-
+    if edtArquivo.Text <> '' then
+      importacao.SalvarProduto(dlArquivo.FileName);
   finally
-    dm.conexaoBanco.Rollback;
-    gaugeProdutos.Visible := False;
-    stringListFile.Free;
-    strinListLinha.Free;
-    qry.Free;
-    produto.Free;
+    importacao.Free;
   end;
 end;
 
@@ -236,7 +174,7 @@ begin
   temp := TStringList.Create;
   linhas.LoadFromFile(arquivo);
   gaugeProdutos.MaxValue := Pred(linhas.Count);
-  cdsProdutos.DisableControls;
+  FRegras.Dados.cdsProdutos.DisableControls;
   try
     for i := 0 to Pred(linhas.Count) do
     begin
@@ -244,31 +182,31 @@ begin
       gaugeProdutos.Visible := True;
       gaugeProdutos.Progress := gaugeProdutos.Progress + 1;
 
-      cdsProdutos.Append;
-      cdsProdutos.FieldByName('seq').AsInteger := i + 1;
-      cdsProdutos.FieldByName('cd_produto').AsInteger := StrToInt(temp[0]);
-      cdsProdutos.FieldByName('desc_produto').AsString := temp[1];
-      cdsProdutos.FieldByName('un_medida').AsString := temp[2];
-      cdsProdutos.FieldByName('fator_conversao').AsInteger := StrToInt(temp[3]);
-      cdsProdutos.FieldByName('peso_liquido').AsFloat := StrToFloat(temp[4]);
-      cdsProdutos.FieldByName('peso_bruto').AsFloat := StrToFloat(temp[5]);
-      cdsProdutos.Post;
+      FRegras.Dados.cdsProdutos.Append;
+      FRegras.Dados.cdsProdutos.FieldByName('seq').AsInteger := i + 1;
+      FRegras.Dados.cdsProdutos.FieldByName('cd_produto').AsInteger := StrToInt(temp[0]);
+      FRegras.Dados.cdsProdutos.FieldByName('desc_produto').AsString := temp[1];
+      FRegras.Dados.cdsProdutos.FieldByName('un_medida').AsString := temp[2];
+      FRegras.Dados.cdsProdutos.FieldByName('fator_conversao').AsInteger := StrToInt(temp[3]);
+      FRegras.Dados.cdsProdutos.FieldByName('peso_liquido').AsFloat := StrToFloat(temp[4]);
+      FRegras.Dados.cdsProdutos.FieldByName('peso_bruto').AsFloat := StrToFloat(temp[5]);
+      FRegras.Dados.cdsProdutos.Post;
     end;
   finally
-    cdsProdutos.EnableControls;
+    FRegras.Dados.cdsProdutos.EnableControls;
     gaugeProdutos.Visible := False;
   end;
 end;
 
 procedure TfrmImportaDados.FormCreate(Sender: TObject);
 begin
-  FDados := TdmImportaDados.Create(Self);
-  dbGridProdutos.DataSource := FDados.dsProdutos;
+  FRegras := TImportacaoDados.Create;
+  dbGridProdutos.DataSource := FRegras.Dados.dsProdutos;
 end;
 
 procedure TfrmImportaDados.FormDestroy(Sender: TObject);
 begin
-  FDados.Free;
+  FRegras.Free;
 end;
 
 procedure TfrmImportaDados.btnBuscarArquivoProdutoClick(Sender: TObject);

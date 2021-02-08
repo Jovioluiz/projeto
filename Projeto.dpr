@@ -39,7 +39,6 @@ uses
   uGerador in 'uGerador.pas' {$R *.res},
   fCadastroEnderecos in 'WMS\fCadastroEnderecos.pas' {frmCadastroEnderecos},
   uCadastrarSenha in 'Cadastros\uCadastrarSenha.pas' {frmCadastraSenha},
-  uImportaDados in 'Arquivos\uImportaDados.pas' {frmImportaDados},
   uSplash in 'Inicio\uSplash.pas' {frmSplash},
   uLista in 'Outros\uLista.pas' {frmLista},
   uclCliente in 'Cadastros\Persistencia\uclCliente.pas',
@@ -55,7 +54,11 @@ uses
   uConexao in 'Conexao\uConexao.pas',
   uEnderecoWMS in 'WMS\uEnderecoWMS.pas',
   uValidacoesLogin in 'Login\uValidacoesLogin.pas',
-  dImportaDados in 'Arquivos\dImportaDados.pas' {dmImportaDados: TDataModule};
+  dImportaDados in 'Arquivos\dImportaDados.pas' {dmImportaDados: TDataModule},
+  EditStyle in 'Terceiros\EditStyle.pas',
+  EditNumber in 'Terceiros\EditNumber.pas',
+  fImportaDados in 'Arquivos\fImportaDados.pas' {frmImportaDados},
+  uImportacaoDados in 'Arquivos\uImportacaoDados.pas';
 
 {$R *.res}
 

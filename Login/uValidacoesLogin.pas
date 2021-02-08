@@ -1,6 +1,10 @@
 unit uValidacoesLogin;
 
 interface
+
+  uses
+    FireDAC.Stan.Param;
+
 type
   DadosEntrada = Record
       Nomeusuario: string;

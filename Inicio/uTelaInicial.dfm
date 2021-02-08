@@ -11718,11 +11718,6 @@ object frmPrincipal: TfrmPrincipal
     Left = 312
     Top = 600
   end
-  object query: TFDQuery
-    Connection = dm.conexaoBanco
-    Left = 880
-    Top = 40
-  end
   object TrayIcon1: TTrayIcon
     Visible = True
     OnDblClick = TrayIcon1DblClick
