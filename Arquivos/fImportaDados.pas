@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask,
   Vcl.Buttons, Vcl.ExtDlgs, Vcl.ComCtrls,
   Vcl.Samples.Gauges, Data.DB, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids,
-  dImportaDados, uImportacaoDados;
+  dImportaDados, uImportacaoDados, EditStyle;
 
 type
   TfrmImportaDados = class(TForm)
@@ -38,10 +38,11 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
+    procedure btnVisualizarClienteClick(Sender: TObject);
+    procedure tbProdutosHide(Sender: TObject);
+    procedure tbClientesHide(Sender: TObject);
   private
     FRegras: TImportacaoDados;
-
-    procedure ParseDelimited(const sl: TStrings; const value, delimiter: string);
 
     { Private declarations }
   public
@@ -64,6 +65,8 @@ begin
   dlArquivo.Filter := '*.csv|*.csv';
   if dlArquivo.Execute then
     edtArquivoCliente.Text := dlArquivo.FileName;
+
+  btnGravarCliente.Enabled := True;
 end;
 
 procedure TfrmImportaDados.btnGravarClick(Sender: TObject);
@@ -81,120 +84,54 @@ begin
 end;
 
 procedure TfrmImportaDados.btnGravarClienteClick(Sender: TObject);
-const
-  SQL = 'insert into cliente (cd_cliente, nome, tp_pessoa, fl_ativo, telefone, celular, email, cpf_cnpj, rg_ie, dt_nasc_fundacao)' +
-        'values (:cd_cliente, :nome, :tp_pessoa, :fl_ativo, :telefone, :celular, :email, :cpf_cnpj, :rg_ie, :dt_nasc_fundacao)';
-var
-  qry: TFDquery;
-  stringListFile: TStringList;
-  strinListLinha: TStringList;
-  cont: Integer;
-  caminho: string;
+ var
+  importacao: TImportacaoDados;
 begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
-
-  // TStringList que carrega todo o conteúdo do arquivo
-  stringListFile := TStringList.Create;
-
-  // TStringList que carrega o conteúdo da linha
-  strinListLinha := TStringList.Create;
-  caminho := edtArquivoCliente.Text;
-
-  if not caminho.EndsWith('.csv') then
-    raise Exception.Create('Formato de Arquivo Incorreto. Verifique');
+  importacao := TImportacaoDados.Create;
 
   try
-    try
-      qry.SQL.Add(SQL);
-      stringListFile.LoadFromFile(caminho);
-
-      // Configura o tamanho do array de inserções
-      qry.Params.ArraySize := stringListFile.Count;
-
-      gaugeClientes.MaxValue := stringListFile.Count;
-
-      for cont := 0 to Pred(stringListFile.Count) do
-      begin
-        gaugeClientes.Visible := True;
-        gaugeClientes.Progress := gaugeClientes.Progress + 1;
-        strinListLinha.StrictDelimiter := True;
-
-        // TStringList recebe o conteúdo da linha atual
-        strinListLinha.CommaText := stringListFile[cont];
-
-        qry.ParamByName('cd_cliente').AsIntegers[cont] := StrToInt(strinListLinha[0]);
-        qry.ParamByName('nome').AsStrings[cont] := strinListLinha[1];
-        qry.ParamByName('tp_pessoa').AsStrings[cont] := strinListLinha[2];
-        qry.ParamByName('fl_ativo').AsBooleans[cont] := True;
-        qry.ParamByName('telefone').AsStrings[cont] := strinListLinha[3];
-        qry.ParamByName('celular').AsStrings[cont] := strinListLinha[4];
-        qry.ParamByName('email').AsStrings[cont] := strinListLinha[5];
-        qry.ParamByName('cpf_cnpj').AsStrings[cont] := strinListLinha[6];
-        qry.ParamByName('rg_ie').AsStrings[cont] := strinListLinha[7];
-        qry.ParamByName('dt_nasc_fundacao').AsDateTimes[cont] := StrToDateTime(strinListLinha[8]);
-      end;
-
-      // Executa as inserções em lote
-      qry.Execute(stringListFile.Count, 0);
-      dm.conexaoBanco.Commit;
-      ShowMessage('Dados gravados com Sucesso');
-    except
-      on e:Exception do
-      begin
-        raise Exception.Create('Erro ao gravar os Dados ' + #13 + e.Message);
-        dm.conexaoBanco.Rollback;
-      end;
-    end;
-
+    if edtArquivoCliente.Text <> '' then
+      importacao.SalvarCliente(dlArquivo.FileName);
   finally
-    dm.conexaoBanco.Rollback;
-    gaugeClientes.Visible := False;
-    stringListFile.Free;
-    strinListLinha.Free;
-    qry.Free;
+    importacao.Free;
+  end;
+end;
+
+procedure TfrmImportaDados.btnVisualizarClienteClick(Sender: TObject);
+var
+  importa: TImportacaoDados;
+begin
+  importa := TImportacaoDados.Create;
+
+  try
+    if edtArquivoCliente.Text = '' then
+    begin
+      ShowMessage('Informe um arquivo');
+      Exit;
+    end
+    else
+      importa.ListaClientes(dlArquivo.FileName);
+  finally
+    importa.Free;
   end;
 end;
 
 procedure TfrmImportaDados.btnVisualizarProdutosClick(Sender: TObject);
 var
-  arquivo: string;
-  linhas, temp: TStringList;
-  i: integer;
+  importa: TImportacaoDados;
 begin
-  if edtArquivo.Text = '' then
-  begin
-    ShowMessage('Informe um arquivo');
-    Exit;
-  end;
+  importa := TImportacaoDados.Create;
 
-  arquivo := edtArquivo.Text;
-  linhas := TStringList.Create;
-  temp := TStringList.Create;
-  linhas.LoadFromFile(arquivo);
-  gaugeProdutos.MaxValue := Pred(linhas.Count);
-  FRegras.Dados.cdsProdutos.DisableControls;
   try
-    for i := 0 to Pred(linhas.Count) do
+    if edtArquivo.Text = '' then
     begin
-      ParseDelimited(temp, linhas[i], ',');
-      gaugeProdutos.Visible := True;
-      gaugeProdutos.Progress := gaugeProdutos.Progress + 1;
-
-      FRegras.Dados.cdsProdutos.Append;
-      FRegras.Dados.cdsProdutos.FieldByName('seq').AsInteger := i + 1;
-      FRegras.Dados.cdsProdutos.FieldByName('cd_produto').AsInteger := StrToInt(temp[0]);
-      FRegras.Dados.cdsProdutos.FieldByName('desc_produto').AsString := temp[1];
-      FRegras.Dados.cdsProdutos.FieldByName('un_medida').AsString := temp[2];
-      FRegras.Dados.cdsProdutos.FieldByName('fator_conversao').AsInteger := StrToInt(temp[3]);
-      FRegras.Dados.cdsProdutos.FieldByName('peso_liquido').AsFloat := StrToFloat(temp[4]);
-      FRegras.Dados.cdsProdutos.FieldByName('peso_bruto').AsFloat := StrToFloat(temp[5]);
-      FRegras.Dados.cdsProdutos.Post;
-    end;
+      ShowMessage('Informe um arquivo');
+      Exit;
+    end
+    else
+      importa.ListaProdutos(dlArquivo.FileName);
   finally
-    FRegras.Dados.cdsProdutos.EnableControls;
-    gaugeProdutos.Visible := False;
+    importa.Free;
   end;
 end;
 
@@ -202,6 +139,10 @@ procedure TfrmImportaDados.FormCreate(Sender: TObject);
 begin
   FRegras := TImportacaoDados.Create;
   dbGridProdutos.DataSource := FRegras.Dados.dsProdutos;
+  dbGridClientes.DataSource := FRegras.Dados.dsClientes;
+  PageControl1.ActivePage := tbProdutos;
+  btnGravar.Enabled := False;
+  btnGravarCliente.Enabled := False;
 end;
 
 procedure TfrmImportaDados.FormDestroy(Sender: TObject);
@@ -209,36 +150,23 @@ begin
   FRegras.Free;
 end;
 
+procedure TfrmImportaDados.tbClientesHide(Sender: TObject);
+begin
+  edtArquivoCliente.Clear;
+end;
+
+procedure TfrmImportaDados.tbProdutosHide(Sender: TObject);
+begin
+  edtArquivo.Clear;
+end;
+
 procedure TfrmImportaDados.btnBuscarArquivoProdutoClick(Sender: TObject);
 begin
   dlArquivo.Filter := '*.csv|*.csv';
   if dlArquivo.Execute then
     edtArquivo.Text := dlArquivo.FileName;
-end;
 
-procedure TfrmImportaDados.ParseDelimited(const sl: TStrings;
-const value: string; const delimiter: string);
-var
-  dx : integer;
-  ns : string;
-  txt : string;
-  delta : integer;
-begin
-  delta := Length(delimiter) ;
-  txt := value + delimiter;
-  sl.BeginUpdate;
-  sl.Clear;
-  try
-    while Length(txt) > 0 do
-    begin
-      dx := Pos(delimiter, txt) ;
-      ns := Copy(txt,0,dx-1) ;
-      sl.Add(ns) ;
-      txt := Copy(txt,dx+delta,MaxInt);
-    end;
-  finally
-    sl.EndUpdate;
-  end;
+  btnGravar.Enabled := True;
 end;
 
 end.

@@ -34,6 +34,7 @@ object frmImportaDados: TfrmImportaDados
       TabOrder = 0
       object tbProdutos: TTabSheet
         Caption = 'Produtos'
+        OnHide = tbProdutosHide
         object Label1: TLabel
           Left = 3
           Top = 19
@@ -54,6 +55,7 @@ object frmImportaDados: TfrmImportaDados
           Top = 16
           Width = 290
           Height = 21
+          Enabled = False
           TabOrder = 0
         end
         object btnVisualizarProdutos: TButton
@@ -95,6 +97,7 @@ object frmImportaDados: TfrmImportaDados
             Width = 623
             Height = 290
             Align = alBottom
+            DataSource = dmImportaDados.dsProdutos
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWindowText
@@ -107,6 +110,7 @@ object frmImportaDados: TfrmImportaDados
       object tbClientes: TTabSheet
         Caption = 'Clientes'
         ImageIndex = 1
+        OnHide = tbClientesHide
         object Label2: TLabel
           Left = 3
           Top = 19
@@ -135,6 +139,7 @@ object frmImportaDados: TfrmImportaDados
           Top = 16
           Width = 290
           Height = 21
+          Enabled = False
           TabOrder = 0
         end
         object btnVisualizarCliente: TButton
@@ -144,6 +149,7 @@ object frmImportaDados: TfrmImportaDados
           Height = 25
           Caption = 'Visualizar'
           TabOrder = 1
+          OnClick = btnVisualizarClienteClick
         end
         object btnGravarCliente: TButton
           Left = 516
@@ -160,6 +166,7 @@ object frmImportaDados: TfrmImportaDados
           Width = 625
           Height = 288
           Align = alBottom
+          DataSource = dmImportaDados.dsClientes
           TabOrder = 3
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText

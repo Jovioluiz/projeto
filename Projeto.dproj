@@ -212,8 +212,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Terceiros\EditStyle.pas"/>
-        <DCCReference Include="Terceiros\EditNumber.pas"/>
         <DCCReference Include="Arquivos\fImportaDados.pas">
             <Form>frmImportaDados</Form>
             <FormType>dfm</FormType>

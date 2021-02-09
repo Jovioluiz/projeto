@@ -55,8 +55,6 @@ uses
   uEnderecoWMS in 'WMS\uEnderecoWMS.pas',
   uValidacoesLogin in 'Login\uValidacoesLogin.pas',
   dImportaDados in 'Arquivos\dImportaDados.pas' {dmImportaDados: TDataModule},
-  EditStyle in 'Terceiros\EditStyle.pas',
-  EditNumber in 'Terceiros\EditNumber.pas',
   fImportaDados in 'Arquivos\fImportaDados.pas' {frmImportaDados},
   uImportacaoDados in 'Arquivos\uImportacaoDados.pas';
 

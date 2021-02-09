@@ -60,6 +60,34 @@ object dmImportaDados: TdmImportaDados
     StoreDefs = True
     Left = 96
     Top = 24
+    object cdsProdutosseq: TIntegerField
+      DisplayLabel = 'Seq'
+      FieldName = 'seq'
+    end
+    object cdsProdutoscd_produto: TStringField
+      DisplayLabel = 'C'#243'd Produto'
+      FieldName = 'cd_produto'
+    end
+    object cdsProdutosdesc_produto: TStringField
+      DisplayLabel = 'Nome Produto'
+      FieldName = 'desc_produto'
+    end
+    object cdsProdutosun_medida: TStringField
+      DisplayLabel = 'UN Medida'
+      FieldName = 'un_medida'
+    end
+    object cdsProdutosfator_conversao: TIntegerField
+      DisplayLabel = 'Fator Convers'#227'o'
+      FieldName = 'fator_conversao'
+    end
+    object cdsProdutospeso_liquido: TFloatField
+      DisplayLabel = 'Peso Liquido'
+      FieldName = 'peso_liquido'
+    end
+    object cdsProdutospeso_bruto: TFloatField
+      DisplayLabel = 'Peso Bruto'
+      FieldName = 'peso_bruto'
+    end
   end
   object cdsClientes: TClientDataSet
     PersistDataPacket.Data = {
@@ -126,5 +154,45 @@ object dmImportaDados: TdmImportaDados
     StoreDefs = True
     Left = 96
     Top = 88
+    object cdsClientesseq: TIntegerField
+      DisplayLabel = 'Seq'
+      FieldName = 'seq'
+    end
+    object cdsClientescd_cliente: TIntegerField
+      DisplayLabel = 'C'#243'd Cliente'
+      FieldName = 'cd_cliente'
+    end
+    object cdsClientesnm_cliente: TStringField
+      DisplayLabel = 'Nome Cliente'
+      FieldName = 'nm_cliente'
+    end
+    object cdsClientestp_pessoa: TBooleanField
+      DisplayLabel = 'Tipo Pessoa'
+      FieldName = 'tp_pessoa'
+    end
+    object cdsClientescelular: TStringField
+      DisplayLabel = 'Celular'
+      FieldName = 'celular'
+    end
+    object cdsClientesemail: TStringField
+      DisplayLabel = 'Email'
+      FieldName = 'email'
+    end
+    object cdsClientestelefone: TStringField
+      DisplayLabel = 'Telefone'
+      FieldName = 'telefone'
+    end
+    object cdsClientescpf_cnpj: TStringField
+      DisplayLabel = 'CPF/CNPJ'
+      FieldName = 'cpf_cnpj'
+    end
+    object cdsClientesrg_ie: TStringField
+      DisplayLabel = 'RG/IE'
+      FieldName = 'rg_ie'
+    end
+    object cdsClientesdt_nasc_fundacao: TDateField
+      DisplayLabel = 'Data Nasc. Funda'#231#227'o'
+      FieldName = 'dt_nasc_fundacao'
+    end
   end
 end
