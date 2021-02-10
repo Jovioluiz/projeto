@@ -98,41 +98,25 @@ begin
 end;
 
 procedure TfrmImportaDados.btnVisualizarClienteClick(Sender: TObject);
-var
-  importa: TImportacaoDados;
 begin
-  importa := TImportacaoDados.Create;
-
-  try
-    if edtArquivoCliente.Text = '' then
-    begin
-      ShowMessage('Informe um arquivo');
-      Exit;
-    end
-    else
-      importa.ListaClientes(dlArquivo.FileName);
-  finally
-    importa.Free;
-  end;
+  if edtArquivoCliente.Text = '' then
+  begin
+    ShowMessage('Informe um arquivo');
+    Exit;
+  end
+  else
+    FRegras.ListaClientes(dlArquivo.FileName);
 end;
 
 procedure TfrmImportaDados.btnVisualizarProdutosClick(Sender: TObject);
-var
-  importa: TImportacaoDados;
 begin
-  importa := TImportacaoDados.Create;
-
-  try
-    if edtArquivo.Text = '' then
-    begin
-      ShowMessage('Informe um arquivo');
-      Exit;
-    end
-    else
-      importa.ListaProdutos(dlArquivo.FileName);
-  finally
-    importa.Free;
-  end;
+  if edtArquivo.Text = '' then
+  begin
+    ShowMessage('Informe um arquivo');
+    Exit;
+  end
+  else
+    FRegras.ListaProdutos(dlArquivo.FileName);
 end;
 
 procedure TfrmImportaDados.FormCreate(Sender: TObject);

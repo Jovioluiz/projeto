@@ -1,7 +1,8 @@
 object frmConsultaProdutos: TfrmConsultaProdutos
   Left = 0
   Top = 0
-  BorderStyle = bsDialog
+  BorderIcons = [biSystemMenu, biMinimize, biMaximize, biHelp]
+  BorderStyle = bsSingle
   Caption = 'Consulta de Produtos'
   ClientHeight = 746
   ClientWidth = 1198
@@ -28,6 +29,9 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     Height = 746
     Align = alClient
     TabOrder = 0
+    DesignSize = (
+      1198
+      746)
     object Label1: TLabel
       Left = 16
       Top = 581
@@ -46,6 +50,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Top = 58
       Width = 89
       Height = 26
+      Anchors = [akTop, akRight]
       Caption = 'Pesquisar'
       TabOrder = 1
       OnClick = btnPesquisarClick
@@ -81,9 +86,10 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     end
     object dbGridProduto: TDBGrid
       Left = 16
-      Top = 100
+      Top = 94
       Width = 721
-      Height = 475
+      Height = 503
+      Anchors = [akLeft, akTop, akRight]
       DataSource = dsConsultaProduto
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 4
@@ -135,6 +141,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Top = 58
       Width = 881
       Height = 26
+      Anchors = [akLeft, akTop, akRight]
       CharCase = ecUpperCase
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -147,8 +154,9 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     object dbGridUltimasEntradas: TDBGrid
       Left = 16
       Top = 603
-      Width = 721
-      Height = 120
+      Width = 1169
+      Height = 117
+      Anchors = [akLeft, akTop, akRight, akBottom]
       DataSource = dsUltimaEntradas
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 8
@@ -162,7 +170,8 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Left = 743
       Top = 100
       Width = 442
-      Height = 277
+      Height = 497
+      Anchors = [akTop, akRight]
       DataSource = dsPrecos
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 9

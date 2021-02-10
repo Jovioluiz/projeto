@@ -38,7 +38,7 @@ end;
 
 destructor TImportacaoDados.Destroy;
 begin
-  //FDados.Free;
+  FDados.Free;
 end;
 
 procedure TImportacaoDados.ListaClientes(Caminho: String);
@@ -49,13 +49,13 @@ begin
   linhas := TStringList.Create;
   temp := TStringList.Create;
   linhas.LoadFromFile(Caminho);
+  Dados.cdsClientes.EmptyDataSet;
   Dados.cdsClientes.DisableControls;
 
   try
     for i := 0 to Pred(linhas.Count) do
     begin
       ParseDelimited(temp, linhas[i], ',');
-      //não lista no grid
       Dados.cdsClientes.Append;
       Dados.cdsClientes.FieldByName('seq').AsInteger := i + 1;
       Dados.cdsClientes.FieldByName('cd_cliente').AsInteger := StrToInt(temp[0]);
@@ -82,13 +82,13 @@ begin
   linhas := TStringList.Create;
   temp := TStringList.Create;
   linhas.LoadFromFile(Caminho);
+  Dados.cdsProdutos.EmptyDataSet;
   Dados.cdsProdutos.DisableControls;
 
   try
     for i := 0 to Pred(linhas.Count) do
     begin
       ParseDelimited(temp, linhas[i], ',');
-      //não lista no grid
       Dados.cdsProdutos.Append;
       Dados.cdsProdutos.FieldByName('seq').AsInteger := i + 1;
       Dados.cdsProdutos.FieldByName('cd_produto').AsInteger := StrToInt(temp[0]);
