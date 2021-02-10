@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask,
   Vcl.Buttons, Vcl.ExtDlgs, Vcl.ComCtrls,
   Vcl.Samples.Gauges, Data.DB, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids,
-  dImportaDados, uImportacaoDados, EditStyle;
+  dImportaDados, uImportacaoDados;
 
 type
   TfrmImportaDados = class(TForm)
@@ -70,31 +70,15 @@ begin
 end;
 
 procedure TfrmImportaDados.btnGravarClick(Sender: TObject);
-var
-  importacao: TImportacaoDados;
 begin
-  importacao := TImportacaoDados.Create;
-
-  try
-    if edtArquivo.Text <> '' then
-      importacao.SalvarProduto(dlArquivo.FileName);
-  finally
-    importacao.Free;
-  end;
+  if edtArquivo.Text <> '' then
+    FRegras.SalvarProduto(dlArquivo.FileName);
 end;
 
 procedure TfrmImportaDados.btnGravarClienteClick(Sender: TObject);
- var
-  importacao: TImportacaoDados;
 begin
-  importacao := TImportacaoDados.Create;
-
-  try
-    if edtArquivoCliente.Text <> '' then
-      importacao.SalvarCliente(dlArquivo.FileName);
-  finally
-    importacao.Free;
-  end;
+  if edtArquivoCliente.Text <> '' then
+    FRegras.SalvarCliente(dlArquivo.FileName);
 end;
 
 procedure TfrmImportaDados.btnVisualizarClienteClick(Sender: TObject);

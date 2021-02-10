@@ -26,7 +26,8 @@ end;
 implementation
 
 uses
-  FireDAC.Comp.Client, uDataModule, uclProduto, System.SysUtils, Vcl.Dialogs;
+  FireDAC.Comp.Client, uDataModule, uclProduto, System.SysUtils, Vcl.Dialogs,
+  Vcl.Samples.Gauges;
 
 { TImportacaoDados }
 
@@ -134,11 +135,13 @@ var
   stringListFile: TStringList;
   strinListLinha: TStringList;
   cont: Integer;
+  gauge: TGauge;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
   dm.conexaoBanco.StartTransaction;
 
+  gauge := TGauge.Create(nil);
   // TStringList que carrega todo o conteúdo do arquivo
   stringListFile := TStringList.Create;
 
@@ -156,9 +159,14 @@ begin
       // Configura o tamanho do array de inserções
       qry.Params.ArraySize := stringListFile.Count;
 
+      gauge.MaxValue := stringListFile.Count;
+
       for cont := 0 to Pred(stringListFile.Count) do
       begin
         strinListLinha.StrictDelimiter := True;
+
+        gauge.Visible := True;
+        gauge.Progress := gauge.Progress + 1;
 
         // TStringList recebe o conteúdo da linha atual
         strinListLinha.CommaText := stringListFile[cont];
@@ -188,6 +196,7 @@ begin
     end;
 
   finally
+    gauge.Visible := False;
     dm.conexaoBanco.Rollback;
     stringListFile.Free;
     strinListLinha.Free;
