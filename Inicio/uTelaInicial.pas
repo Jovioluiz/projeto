@@ -111,7 +111,7 @@ implementation
 
 {$R *.dfm}
 
-uses uUsuario, uControleAcesso, uDataModule, uGravaArquivo, fCadastroEnderecos,
+uses uUsuario, fControleAcesso, uDataModule, uGravaArquivo, fCadastroEnderecos,
   uSplash, fImportaDados;
 
 

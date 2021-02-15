@@ -74,6 +74,7 @@ object frmControleAcesso: TfrmControleAcesso
     Width = 73
     Height = 21
     TabOrder = 0
+    OnChange = edtUsuarioChange
     OnExit = edtUsuarioExit
   end
   object edtNomeUsuario: TEdit
@@ -90,7 +91,6 @@ object frmControleAcesso: TfrmControleAcesso
     Top = 128
     Width = 472
     Height = 273
-    DataSource = dm.dsControleAcesso
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 5
     TitleFont.Charset = DEFAULT_CHARSET

@@ -28,7 +28,7 @@ uses
   uConsultaProduto in 'Consulta\uConsultaProduto.pas' {frmConsultaProdutos},
   uUsuario in 'Usuario\uUsuario.pas' {frmUsuario},
   UfrmRelVendaDiaria in 'Arquivos\UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
-  uControleAcesso in 'Acesso\uControleAcesso.pas' {frmControleAcesso},
+  fControleAcesso in 'Acesso\fControleAcesso.pas' {frmControleAcesso},
   uUtil in 'Validacao\uUtil.pas',
   dtmConsultaProduto in 'Consulta\dtmConsultaProduto.pas' {dmConsultaProduto: TDataModule},
   uclPedidoVenda in 'Pedido Venda\uclPedidoVenda.pas',
@@ -56,12 +56,15 @@ uses
   uValidacoesLogin in 'Login\uValidacoesLogin.pas',
   dImportaDados in 'Arquivos\dImportaDados.pas' {dmImportaDados: TDataModule},
   fImportaDados in 'Arquivos\fImportaDados.pas' {frmImportaDados},
-  uImportacaoDados in 'Arquivos\uImportacaoDados.pas';
+  uImportacaoDados in 'Arquivos\uImportacaoDados.pas',
+  uControleAcessoSistema in 'Acesso\uControleAcessoSistema.pas',
+  dControleAcesso in 'Acesso\dControleAcesso.pas' {dmControleAcesso: TDataModule};
 
 {$R *.res}
 
 begin
   Application.CreateForm(Tdm, dm);
+  Application.CreateForm(TdmControleAcesso, dmControleAcesso);
   frmLogin := TfrmLogin.Create(nil);
   if frmLogin.ShowModal = mrOK then
   begin

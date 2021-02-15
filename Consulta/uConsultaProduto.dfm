@@ -168,9 +168,9 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     end
     object dbgriPrecos: TDBGrid
       Left = 743
-      Top = 100
+      Top = 94
       Width = 442
-      Height = 497
+      Height = 503
       Anchors = [akTop, akRight]
       DataSource = dsPrecos
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
