@@ -24,7 +24,7 @@ end;
 implementation
 
 uses
-  FireDAC.Comp.Client, uDataModule, System.SysUtils, Vcl.Dialogs;
+  FireDAC.Comp.Client, uDataModule, System.SysUtils, Vcl.Dialogs, System.Math;
 
 { TControleAcessoSistema }
 
@@ -72,6 +72,7 @@ end;
 procedure TControleAcessoSistema.Listar(CdUsuario: Integer);
 const
     SQL =  'select '+
+           '  ua.cd_usuario, '+
            '  acs.cd_acao, '+
            '  acs.nm_acao, '+
            '  fl_permite_acesso, '+
@@ -101,6 +102,7 @@ begin
       begin
         FDados.cds.Append;
         FDados.cds.FieldByName('cd_acao').AsInteger := qry.FieldByName('cd_acao').AsInteger;
+        FDados.cds.FieldByName('cd_usuario').AsInteger := qry.FieldByName('cd_usuario').AsInteger;
         FDados.cds.FieldByName('nm_acao').AsString := qry.FieldByName('nm_acao').AsString;
         FDados.cds.FieldByName('fl_permite_acesso').AsBoolean := qry.FieldByName('fl_permite_acesso').AsBoolean;
         FDados.cds.FieldByName('fl_permite_edicao').AsBoolean := qry.FieldByName('fl_permite_edicao').AsBoolean;

@@ -98,6 +98,7 @@ object frmControleAcesso: TfrmControleAcesso
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+    OnDrawColumnCell = dbGridAcoesDrawColumnCell
     OnDblClick = dbGridAcoesDblClick
     OnKeyDown = dbGridAcoesKeyDown
   end

@@ -9,6 +9,11 @@ type
   TdmControleAcesso = class(TDataModule)
     ds: TDataSource;
     cds: TClientDataSet;
+    cdscd_acao: TIntegerField;
+    cdsnm_acao: TStringField;
+    cdsfl_permite_acesso: TBooleanField;
+    cdsfl_permite_edicao: TBooleanField;
+    cdscd_usuario: TIntegerField;
   private
     { Private declarations }
   public
