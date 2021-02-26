@@ -12,14 +12,16 @@ type
   TdmConsultaProduto = class(TDataModule)
     query: TFDQuery;
     dsUltimaEntrada: TDataSource;
-    cdsUltEntrada: TClientDataSet;
-    cdsUltEntradanota: TIntegerField;
-    cdsUltEntradafornecedor: TStringField;
-    cdsUltEntradadataLancamento: TDateField;
-    cdsUltEntradaquantidade: TFloatField;
-    cdsUltEntradavalor_unitario: TCurrencyField;
-    cdsUltEntradaun_medida: TStringField;
+    cdsUltimasEntradas: TClientDataSet;
+    cdsUltimasEntradasnota: TIntegerField;
+    cdsUltimasEntradasfornecedor: TStringField;
+    cdsUltimasEntradasdataLancamento: TDateField;
+    cdsUltimasEntradasquantidade: TFloatField;
+    cdsUltimasEntradasvalor_unitario: TCurrencyField;
+    cdsUltimasEntradasun_medida: TStringField;
     DataSetProvider1: TDataSetProvider;
+    dsConsultaProduto: TDataSource;
+    cdsConsultaProduto: TClientDataSet;
   private
     { Private declarations }
   public

@@ -400,7 +400,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     TabOrder = 6
   end
   object edtFl_orcamento: TCheckBox
-    Left = 280
+    Left = 239
     Top = 33
     Width = 73
     Height = 17

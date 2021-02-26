@@ -25,7 +25,7 @@ uses
   uDataModule in 'Conexao\uDataModule.pas' {dm: TDataModule},
   uEdicaoPedidoVenda in 'Pedido Venda\uEdicaoPedidoVenda.pas' {frmEdicaoPedidoVenda},
   uConfiguracoes in 'Configuracoes\uConfiguracoes.pas' {frmConfiguracoes},
-  uConsultaProduto in 'Consulta\uConsultaProduto.pas' {frmConsultaProdutos},
+  FConsultaProduto in 'Consulta\FConsultaProduto.pas' {frmConsultaProdutos},
   uUsuario in 'Usuario\uUsuario.pas' {frmUsuario},
   UfrmRelVendaDiaria in 'Arquivos\UfrmRelVendaDiaria.pas' {frmRelVendaDiaria},
   fControleAcesso in 'Acesso\fControleAcesso.pas' {frmControleAcesso},
@@ -58,7 +58,8 @@ uses
   fImportaDados in 'Arquivos\fImportaDados.pas' {frmImportaDados},
   uImportacaoDados in 'Arquivos\uImportacaoDados.pas',
   uControleAcessoSistema in 'Acesso\uControleAcessoSistema.pas',
-  dControleAcesso in 'Acesso\dControleAcesso.pas' {dmControleAcesso: TDataModule};
+  dControleAcesso in 'Acesso\dControleAcesso.pas' {dmControleAcesso: TDataModule},
+  uConsultaProdutos in 'Consulta\uConsultaProdutos.pas';
 
 {$R *.res}
 

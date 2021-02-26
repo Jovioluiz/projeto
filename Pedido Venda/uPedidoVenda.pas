@@ -113,7 +113,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure dbGridProdutosTitleClick(Column: TColumn);
   private
-    edicaoItem: Boolean;
+    FEdicaoItem: Boolean;
     FNumeroPedido: Integer;
     FFIdGeral: Int64;
     { Private declarations }
@@ -269,14 +269,14 @@ begin
     qry.Open(sql);
 
     if ProdutoJaLancado(StrToInt(edtCdProduto.Text))
-      and (lancaProduto.cbbLancaItemPedido.ItemIndex = 1) and (not edicaoItem) then
+      and (lancaProduto.cbbLancaItemPedido.ItemIndex = 1) and (not FEdicaoItem) then
       raise Exception.Create('O produto já está lançado');
 
     aliq_icms := qry.FieldByName('aliquota_icms').AsCurrency;
     aliq_ipi := qry.FieldByName('aliquota_ipi').AsCurrency;
     aliq_pis_cofins := qry.FieldByName('aliquota_pis_cofins').AsCurrency;
 
-    if edicaoItem then
+    if FEdicaoItem then
     begin
       cdsPedidoVenda.Edit;//entra em modo de edição
       cdsPedidoVenda.FieldByName('cd_produto').AsString := edtCdProduto.Text;
@@ -285,7 +285,7 @@ begin
       cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency := StrToCurr(edtVlUnitario.Text);
       cdsPedidoVenda.FieldByName('vl_desconto').AsCurrency := StrToCurr(edtVlDescontoItem.Text);
       cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency := StrToCurr(edtVlTotal.Text);
-      edicaoItem := False;
+      FEdicaoItem := False;
     end
     else
     begin
@@ -340,7 +340,7 @@ begin
     end;
     cdsPedidoVenda.FieldByName('id_item').AsLargeInt := qry.FieldByName('id_item').AsLargeInt;
     cdsPedidoVenda.Post;
-    SalvaItens(edicaoItem);
+    SalvaItens(FEdicaoItem);
 
     //soma os valores totais dos itens e preenche o valor total do pedido
     vl_total_itens := 0;
@@ -482,7 +482,7 @@ begin
   edtVlUnitario.Text := CurrToStr(cdsPedidoVenda.FieldByName('vl_unitario').AsCurrency);
   edtVlDescontoItem.Text := CurrToStr(cdsPedidoVenda.FieldByName('vl_desconto').AsCurrency);
   edtVlTotal.Text := CurrToStr(cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency);
-  edicaoItem := True;
+  FEdicaoItem := True;
 end;
 
 procedure TfrmPedidoVenda.dbGridProdutosDblClick(Sender: TObject);

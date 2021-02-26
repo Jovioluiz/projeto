@@ -147,7 +147,7 @@
         <DCCReference Include="Configuracoes\uConfiguracoes.pas">
             <Form>frmConfiguracoes</Form>
         </DCCReference>
-        <DCCReference Include="Consulta\uConsultaProduto.pas">
+        <DCCReference Include="Consulta\FConsultaProduto.pas">
             <Form>frmConsultaProdutos</Form>
         </DCCReference>
         <DCCReference Include="Usuario\uUsuario.pas">
@@ -223,6 +223,7 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="Consulta\uConsultaProdutos.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
