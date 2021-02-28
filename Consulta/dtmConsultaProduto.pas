@@ -10,7 +10,6 @@ uses
 
 type
   TdmConsultaProduto = class(TDataModule)
-    query: TFDQuery;
     dsUltimaEntrada: TDataSource;
     cdsUltimasEntradas: TClientDataSet;
     cdsUltimasEntradasnota: TIntegerField;
@@ -19,9 +18,25 @@ type
     cdsUltimasEntradasquantidade: TFloatField;
     cdsUltimasEntradasvalor_unitario: TCurrencyField;
     cdsUltimasEntradasun_medida: TStringField;
-    DataSetProvider1: TDataSetProvider;
     dsConsultaProduto: TDataSource;
     cdsConsultaProduto: TClientDataSet;
+    cdsConsultaProdutocd_produto: TStringField;
+    cdsConsultaProdutodesc_produto: TStringField;
+    cdsConsultaProdutoun_medida: TStringField;
+    cdsConsultaProdutofator_conversao: TIntegerField;
+    cdsConsultaProdutoqtd_estoque: TFloatField;
+    cdsConsultaProdutoid_item: TLargeintField;
+    dsPrecos: TDataSource;
+    cdsPrecos: TClientDataSet;
+    cdsPrecoscd_tabela: TIntegerField;
+    cdsPrecosnm_tabela: TStringField;
+    cdsPrecosvalor: TCurrencyField;
+    cdsPrecosun_medida: TStringField;
+    dsEstoque: TDataSource;
+    cdsEstoque: TClientDataSet;
+    cdsEstoquenm_endereco: TStringField;
+    cdsEstoqueordem: TIntegerField;
+    cdsEstoqueqt_estoque: TFloatField;
   private
     { Private declarations }
   public

@@ -170,7 +170,6 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Width = 442
       Height = 315
       Anchors = [akTop, akRight]
-      DataSource = dsPrecos
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 9
       TitleFont.Charset = DEFAULT_CHARSET
@@ -184,50 +183,13 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Top = 448
       Width = 1169
       Height = 127
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 10
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
-    end
-  end
-  object dsPrecos: TDataSource
-    DataSet = cdsPrecos
-    Left = 864
-    Top = 240
-  end
-  object cdsPrecos: TClientDataSet
-    PersistDataPacket.Data = {
-      8A0000009619E0BD0100000018000000040000000000030000008A000963645F
-      746162656C610400010000000000096E6D5F746162656C610100490000000100
-      0557494454480200020014000576616C6F720800040000000100075355425459
-      50450200490006004D6F6E65790009756E5F6D65646964610100490000000100
-      0557494454480200020014000000}
-    Active = True
-    Aggregates = <>
-    Params = <>
-    Left = 920
-    Top = 240
-    object intgrfldPrecoscd_tabela: TIntegerField
-      DisplayLabel = 'Tabela'
-      DisplayWidth = 7
-      FieldName = 'cd_tabela'
-    end
-    object cdsPrecosnm_tabela: TStringField
-      DisplayLabel = 'Desc. Tabela'
-      DisplayWidth = 35
-      FieldName = 'nm_tabela'
-    end
-    object cdsPrecosvalor: TCurrencyField
-      DisplayLabel = 'Valor'
-      DisplayWidth = 10
-      FieldName = 'valor'
-    end
-    object cdsPrecosun_medida: TStringField
-      DisplayLabel = 'Un. Medida'
-      DisplayWidth = 10
-      FieldName = 'un_medida'
     end
   end
 end

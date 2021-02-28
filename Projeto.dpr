@@ -65,7 +65,6 @@ uses
 
 begin
   Application.CreateForm(Tdm, dm);
-  Application.CreateForm(TdmControleAcesso, dmControleAcesso);
   frmLogin := TfrmLogin.Create(nil);
   if frmLogin.ShowModal = mrOK then
   begin

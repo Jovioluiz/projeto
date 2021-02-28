@@ -217,7 +217,6 @@ const
               '   login_usuario '+
               'where id_usuario = :id_usuario';
 var
-  acesso: TControleAcessoSistema;
   qry: TFDQuery;
 begin
   if edtUsuario.Text = '' then

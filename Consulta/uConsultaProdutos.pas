@@ -3,7 +3,7 @@ unit uConsultaProdutos;
 interface
 
 uses
-  dtmConsultaProduto, uUtil;
+  dtmConsultaProduto, uUtil, FireDAC.Stan.Param, Data.DB;
 
 type TConsultaProdutos = class
 
@@ -11,12 +11,12 @@ type TConsultaProdutos = class
     FDados: TdmConsultaProduto;
     procedure SetDados(const Value: TdmConsultaProduto);
 
-
-
   public
     constructor Create;
-    procedure CarregaUltimaEntrada;
+    procedure CarregaUltimaEntrada(IDitem: Int64);
     procedure CarregaProdutos(Descricao: string; bolCodigo, bolDescricao, bolAtivo, bolEstoque: Boolean);
+    procedure CarregaPrecos(IDItem: Int64);
+    procedure CarregaEstoques(IDItem: Int64);
     destructor Destroy; override;
 
     property Dados: TdmConsultaProduto read FDados write SetDados;
@@ -28,6 +28,102 @@ uses
   FireDAC.Comp.Client, uDataModule, System.SysUtils, Vcl.Dialogs;
 
 { TConsultaProdutos }
+
+procedure TConsultaProdutos.CarregaEstoques(IDItem: Int64);
+const
+  SQL = 'select ' +
+        '    wep.nm_endereco, ' +
+        '    wep.ordem, ' +
+        '    we.qt_estoque ' +
+        'from ' +
+        '    wms_endereco_produto wep ' +
+        'join wms_estoque we on ' +
+        '    we.id_wms_endereco_produto = wep.id_geral ' +
+        'where wep.id_item = :id_item ';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  FDados.cdsEstoque.EmptyDataSet;
+
+  try
+    qry.Close;
+    qry.SQL.Clear;
+    qry.SQL.Add(sql);
+    qry.ParamByName('id_item').AsLargeInt := IDItem;
+    qry.Open();
+
+    if qry.IsEmpty then
+      FDados.cdsEstoque.EmptyDataSet
+    else
+    begin
+      qry.Loop(
+      procedure
+      begin
+        FDados.cdsEstoque.Append;
+        FDados.cdsEstoque.FieldByName('nm_endereco').AsString := qry.FieldByName('nm_endereco').AsString;
+        FDados.cdsEstoque.FieldByName('ordem').AsInteger := qry.FieldByName('ordem').AsInteger;
+        FDados.cdsEstoque.FieldByName('qt_estoque').AsFloat := qry.FieldByName('qt_estoque').AsFloat;
+        FDados.cdsEstoque.Post;
+        qry.Next;
+      end
+      );
+    end;
+  finally
+    qry.Free;
+  end;
+end;
+
+procedure TConsultaProdutos.CarregaPrecos(IDItem: Int64);
+const
+  sql = 'select                            '+
+        '    tpp.cd_tabela,                '+
+        '    tp.nm_tabela,                 '+
+        '    tpp.valor,                    '+
+        '    tpp.un_medida                 '+
+        '    from tabela_preco_produto tpp '+
+        'join tabela_preco tp on           '+
+        '    tpp.cd_tabela = tp.cd_tabela  '+
+        'where tpp.id_item = :id_item';
+var
+  qry: TFDQuery;
+begin
+  FDados.cdsPrecos.EmptyDataSet;
+
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.Close;
+    qry.SQL.Clear;
+    qry.SQL.Add(sql);
+    qry.ParamByName('id_item').AsLargeInt := IDItem;
+    qry.Open();
+
+    if qry.IsEmpty then
+      FDados.cdsPrecos.EmptyDataSet
+    else
+    begin
+      qry.Loop(
+      procedure
+      begin
+        FDados.cdsPrecos.Append;
+        FDados.cdsPrecos.FieldByName('cd_tabela').AsInteger := qry.FieldByName('cd_tabela').AsInteger;
+        FDados.cdsPrecos.FieldByName('nm_tabela').AsString := qry.FieldByName('nm_tabela').AsString;
+        FDados.cdsPrecos.FieldByName('valor').AsCurrency := qry.FieldByName('valor').AsCurrency;
+        FDados.cdsPrecos.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
+        FDados.cdsPrecos.Post;
+        qry.Next;
+      end
+      );
+    end;
+
+  finally
+    qry.Free;
+  end;
+end;
 
 procedure TConsultaProdutos.CarregaProdutos(Descricao: string; bolCodigo, bolDescricao, bolAtivo, bolEstoque: Boolean);
 const
@@ -95,7 +191,7 @@ begin
   end;
 end;
 
-procedure TConsultaProdutos.CarregaUltimaEntrada;
+procedure TConsultaProdutos.CarregaUltimaEntrada(IDitem: Int64);
 const
   sql = 'select                                  '+
         '    nfc.dcto_numero,                    '+

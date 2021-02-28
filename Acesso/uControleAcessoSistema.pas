@@ -3,7 +3,7 @@ unit uControleAcessoSistema;
 interface
 
 uses
-  dControleAcesso, uUtil;
+  dControleAcesso, uUtil, FireDAC.Stan.Param, Data.DB;
 
 type TControleAcessoSistema = class
   private
