@@ -47,6 +47,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    procedure LimpaCampos;
     property Regra: TImportacaoDados read FRegras;
   end;
 
@@ -72,7 +73,8 @@ end;
 procedure TfrmImportaDados.btnGravarClick(Sender: TObject);
 begin
   if edtArquivo.Text <> '' then
-    FRegras.SalvarProduto(dlArquivo.FileName);
+    if FRegras.SalvarProduto(dlArquivo.FileName) then
+      LimpaCampos;
 end;
 
 procedure TfrmImportaDados.btnGravarClienteClick(Sender: TObject);
@@ -116,6 +118,12 @@ end;
 procedure TfrmImportaDados.FormDestroy(Sender: TObject);
 begin
   FRegras.Free;
+end;
+
+procedure TfrmImportaDados.LimpaCampos;
+begin
+  edtArquivo.Clear;
+  FRegras.Dados.cdsProdutos.EmptyDataSet;
 end;
 
 procedure TfrmImportaDados.tbClientesHide(Sender: TObject);

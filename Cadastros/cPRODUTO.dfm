@@ -21,15 +21,15 @@ object frmCadProduto: TfrmCadProduto
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 69
+    Left = 43
     Top = 16
     Width = 33
     Height = 13
     Caption = 'C'#243'digo'
   end
   object Label2: TLabel
-    Left = 34
-    Top = 56
+    Left = 8
+    Top = 43
     Width = 68
     Height = 13
     Caption = 'Nome Produto'
@@ -45,42 +45,42 @@ object frmCadProduto: TfrmCadProduto
       Caption = 'Produto'
       object Label3: TLabel
         Left = 3
-        Top = 40
+        Top = 17
         Width = 76
         Height = 13
         Caption = 'Unidade Medida'
       end
       object Label4: TLabel
         Left = 172
-        Top = 40
+        Top = 17
         Width = 81
         Height = 13
         Caption = 'Fator Convers'#227'o'
       end
       object Label5: TLabel
         Left = 358
-        Top = 40
+        Top = 17
         Width = 52
         Height = 13
         Caption = 'Peso Bruto'
       end
       object Label6: TLabel
         Left = 510
-        Top = 40
+        Top = 17
         Width = 59
         Height = 13
         Caption = 'Peso Liquido'
       end
       object Label7: TLabel
         Left = 3
-        Top = 80
+        Top = 48
         Width = 58
         Height = 13
         Caption = 'Observa'#231#227'o'
       end
       object Label8: TLabel
         Left = 3
-        Top = 232
+        Top = 174
         Width = 104
         Height = 14
         Caption = 'C'#243'digo de Barras'
@@ -93,7 +93,7 @@ object frmCadProduto: TfrmCadProduto
       end
       object Label9: TLabel
         Left = 3
-        Top = 264
+        Top = 206
         Width = 105
         Height = 13
         Caption = 'Tipo C'#243'digo de Barras'
@@ -114,21 +114,21 @@ object frmCadProduto: TfrmCadProduto
       end
       object Label14: TLabel
         Left = 129
-        Top = 264
+        Top = 206
         Width = 39
         Height = 13
         Caption = 'Unidade'
       end
       object Label15: TLabel
         Left = 200
-        Top = 264
+        Top = 206
         Width = 82
         Height = 13
         Caption = 'C'#243'digo de Barras'
       end
       object edtPRODUTOUN_MEDIDA: TEdit
         Left = 85
-        Top = 37
+        Top = 14
         Width = 65
         Height = 21
         CharCase = ecUpperCase
@@ -136,28 +136,28 @@ object frmCadProduto: TfrmCadProduto
       end
       object edtPRODUTOFATOR_CONVERSAO: TEdit
         Left = 272
-        Top = 37
+        Top = 14
         Width = 65
         Height = 21
         TabOrder = 1
       end
       object edtPRODUTOPESO_BRUTO: TEdit
         Left = 424
-        Top = 37
+        Top = 14
         Width = 65
         Height = 21
         TabOrder = 2
       end
       object edtPRODUTOPESO_LIQUIDO: TEdit
         Left = 584
-        Top = 37
+        Top = 14
         Width = 65
         Height = 21
         TabOrder = 3
       end
       object memoObservacao: TMemo
         Left = 3
-        Top = 99
+        Top = 67
         Width = 382
         Height = 54
         CharCase = ecUpperCase
@@ -165,9 +165,9 @@ object frmCadProduto: TfrmCadProduto
       end
       object DBGridCodigoBarras: TDBGrid
         Left = 3
-        Top = 331
+        Top = 272
         Width = 407
-        Height = 120
+        Height = 179
         DataSource = dmProdutoCodBarras.dsBarras
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
         TabOrder = 9
@@ -180,14 +180,14 @@ object frmCadProduto: TfrmCadProduto
       end
       object edtCodigoBarras: TEdit
         Left = 200
-        Top = 291
+        Top = 233
         Width = 165
         Height = 21
         TabOrder = 7
       end
       object btnAddCodBarras: TButton
-        Left = 371
-        Top = 289
+        Left = 376
+        Top = 233
         Width = 34
         Height = 25
         Caption = '+'
@@ -213,7 +213,7 @@ object frmCadProduto: TfrmCadProduto
       end
       object cbTipoCodBarras: TComboBox
         Left = 3
-        Top = 291
+        Top = 233
         Width = 105
         Height = 21
         TabOrder = 5
@@ -224,7 +224,7 @@ object frmCadProduto: TfrmCadProduto
       end
       object edtUnCodBarras: TEdit
         Left = 129
-        Top = 291
+        Top = 233
         Width = 65
         Height = 21
         CharCase = ecUpperCase
@@ -303,8 +303,8 @@ object frmCadProduto: TfrmCadProduto
     end
   end
   object edtPRODUTOCD_PRODUTO: TEdit
-    Left = 119
-    Top = 13
+    Left = 82
+    Top = 8
     Width = 66
     Height = 21
     Hint = 'C'#243'digo do Produto'
@@ -315,16 +315,16 @@ object frmCadProduto: TfrmCadProduto
     OnKeyDown = edtPRODUTOCD_PRODUTOKeyDown
   end
   object edtPRODUTODESCRICAO: TEdit
-    Left = 119
-    Top = 53
+    Left = 82
+    Top = 35
     Width = 586
     Height = 21
     CharCase = ecUpperCase
     TabOrder = 2
   end
   object ckPRODUTOATIVO: TCheckBox
-    Left = 224
-    Top = 15
+    Left = 176
+    Top = 8
     Width = 97
     Height = 17
     Hint = 'Define se o item est'#225' ativo'

@@ -3,21 +3,23 @@ unit uImportacaoDados;
 interface
 
 uses
-  System.Classes, dImportaDados;
+  System.Classes, dImportaDados, System.Generics.Collections;
 
 type TImportacaoDados = class
 
   private
     FDados: TdmImportaDados;
+    FListaProdutos: TList<String>;
     procedure ParseDelimited(const sl: TStrings; const value, delimiter: string);
 
   public
 
   constructor Create;
-  procedure SalvarProduto(Caminho: String);
+  function SalvarProduto(Caminho: String): Boolean;
   procedure ListaProdutos(Caminho: String);
   procedure SalvarCliente(Caminho: String);
   procedure ListaClientes(Caminho: String);
+  procedure CarregaProdutos;
   destructor Destroy; override;
 
   property Dados: TdmImportaDados read FDados;
@@ -27,19 +29,49 @@ implementation
 
 uses
   FireDAC.Comp.Client, uDataModule, uclProduto, System.SysUtils, Vcl.Dialogs,
-  Vcl.Samples.Gauges;
+  Vcl.Samples.Gauges, uUtil, Data.DB, FireDAC.Stan.Param;
 
 { TImportacaoDados }
+
+procedure TImportacaoDados.CarregaProdutos;
+const
+  SQL = 'select cd_produto from produto';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    qry.SQL.Add(SQL);
+    qry.Open();
+
+    if qry.IsEmpty then
+      Exit;
+
+    qry.Loop(
+    procedure
+    begin
+      FListaProdutos.Add(qry.FieldByName('cd_produto').AsString);
+    end
+    );
+
+  finally
+    qry.Free;
+  end;
+end;
 
 constructor TImportacaoDados.Create;
 begin
   inherited;
   FDados := TdmImportaDados.Create(nil);
+  FListaProdutos := TList<String>.Create;
 end;
 
 destructor TImportacaoDados.Destroy;
 begin
   FDados.Free;
+  FListaProdutos.Free;
 end;
 
 procedure TImportacaoDados.ListaClientes(Caminho: String);
@@ -56,7 +88,7 @@ begin
   try
     for i := 0 to Pred(linhas.Count) do
     begin
-      ParseDelimited(temp, linhas[i], ',');
+      ParseDelimited(temp, linhas[i], ';');
       Dados.cdsClientes.Append;
       Dados.cdsClientes.FieldByName('seq').AsInteger := i + 1;
       Dados.cdsClientes.FieldByName('cd_cliente').AsInteger := StrToInt(temp[0]);
@@ -78,20 +110,26 @@ end;
 procedure TImportacaoDados.ListaProdutos(Caminho: String);
 var
   linhas, temp: TStringList;
-  i: integer;
+  i, j: integer;
 begin
   linhas := TStringList.Create;
   temp := TStringList.Create;
   linhas.LoadFromFile(Caminho);
   Dados.cdsProdutos.EmptyDataSet;
   Dados.cdsProdutos.DisableControls;
-
+  j := 0;
   try
+
+    CarregaProdutos;
+
     for i := 0 to Pred(linhas.Count) do
     begin
-      ParseDelimited(temp, linhas[i], ',');
+      ParseDelimited(temp, linhas[i], ';');
+      //se o código do produto já está no banco, não mostra no grid
+      if FListaProdutos.Contains(temp[0]) then
+        Continue;
       Dados.cdsProdutos.Append;
-      Dados.cdsProdutos.FieldByName('seq').AsInteger := i + 1;
+      Dados.cdsProdutos.FieldByName('seq').AsInteger := j + 1;
       Dados.cdsProdutos.FieldByName('cd_produto').AsInteger := StrToInt(temp[0]);
       Dados.cdsProdutos.FieldByName('desc_produto').AsString := temp[1];
       Dados.cdsProdutos.FieldByName('un_medida').AsString := temp[2];
@@ -204,7 +242,7 @@ begin
   end;
 end;
 
-procedure TImportacaoDados.SalvarProduto(Caminho: String);
+function TImportacaoDados.SalvarProduto(Caminho: String): Boolean;
 const
   SQL_INSERT =  'insert ' +
                 ' into  ' +
@@ -227,52 +265,36 @@ const
                 '   :id_item)';
 var
   qry: TFDquery;
-  stringListFile: TStringList;
-  strinListLinha: TStringList;
-  cont: Integer;
   produto: TProduto;
 begin
+  Result := False;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
   dm.conexaoBanco.StartTransaction;
-
   produto := TProduto.Create;
-
-  // TStringList que carrega todo o conteúdo do arquivo
-  stringListFile := TStringList.Create;
-
-  // TStringList que carrega o conteúdo da linha
-  strinListLinha := TStringList.Create;
 
   try
     try
       qry.SQL.Add(SQL_INSERT);
-      stringListFile.LoadFromFile(Caminho);
 
-      // Configura o tamanho do array de inserções
-      qry.Params.ArraySize := stringListFile.Count;
-
-      for cont := 0 to Pred(stringListFile.Count) do
+      FDados.cdsProdutos.Loop(
+      procedure
       begin
-        strinListLinha.StrictDelimiter := True;
+        qry.ParamByName('cd_produto').AsString := FDados.cdsProdutos.FieldByName('cd_produto').AsString;
+        qry.ParamByName('fl_ativo').AsBoolean := True;
+        qry.ParamByName('desc_produto').AsString := FDados.cdsProdutos.FieldByName('desc_produto').AsString;
+        qry.ParamByName('un_medida').AsString := FDados.cdsProdutos.FieldByName('un_medida').AsString;
+        qry.ParamByName('fator_conversao').AsInteger := FDados.cdsProdutos.FieldByName('fator_conversao').AsInteger;
+        qry.ParamByName('peso_liquido').AsFloat := FDados.cdsProdutos.FieldByName('peso_liquido').AsFloat;
+        qry.ParamByName('peso_bruto').AsFloat := FDados.cdsProdutos.FieldByName('peso_bruto').AsFloat;
+        qry.ParamByName('id_item').AsLargeInt := produto.GeraIdItem;
+        qry.ExecSQL;
+      end
+      );
 
-        // TStringList recebe o conteúdo da linha atual
-        strinListLinha.CommaText := stringListFile[cont];
-
-        qry.ParamByName('cd_produto').AsStrings[cont] := strinListLinha[0];
-        qry.ParamByName('fl_ativo').AsBooleans[cont] := True;
-        qry.ParamByName('desc_produto').AsStrings[cont] := strinListLinha[1];
-        qry.ParamByName('un_medida').AsStrings[cont] := strinListLinha[2];
-        qry.ParamByName('fator_conversao').AsIntegers[cont] := StrToInt(strinListLinha[3]);
-        qry.ParamByName('peso_liquido').AsFloats[cont] := StrToFloat(strinListLinha[4]);
-        qry.ParamByName('peso_bruto').AsFloats[cont] := StrToFloat(strinListLinha[5]);
-        qry.ParamByName('id_item').AsLargeInts[cont] := produto.GeraIdItem;
-      end;
-
-      // Executa as inserções em lote
-      qry.Execute(stringListFile.Count, 0);
       dm.conexaoBanco.Commit;
       ShowMessage('Dados gravados com Sucesso');
+      Result := True;
     except
       on e:Exception do
       begin
@@ -283,8 +305,6 @@ begin
 
   finally
     dm.conexaoBanco.Rollback;
-    stringListFile.Free;
-    strinListLinha.Free;
     qry.Free;
     produto.Free;
   end;

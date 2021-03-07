@@ -29,7 +29,7 @@ object frmImportaDados: TfrmImportaDados
       Top = 1
       Width = 633
       Height = 502
-      ActivePage = tbProdutos
+      ActivePage = tbClientes
       Align = alClient
       TabOrder = 0
       object tbProdutos: TTabSheet
@@ -98,6 +98,7 @@ object frmImportaDados: TfrmImportaDados
             Height = 290
             Align = alBottom
             DataSource = dmImportaDados.dsProdutos
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWindowText
@@ -167,6 +168,7 @@ object frmImportaDados: TfrmImportaDados
           Height = 288
           Align = alBottom
           DataSource = dmImportaDados.dsClientes
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
           TabOrder = 3
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
