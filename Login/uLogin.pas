@@ -162,7 +162,12 @@ var
   versao: TVersao;
 begin
   versao := TVersao.Create;
-  lblVersao.Caption := versao.GetBuildInfo(Application.ExeName);
+
+  try
+    lblVersao.Caption := versao.GetBuildInfo(Application.ExeName);
+  finally
+    versao.Free;
+  end;
 end;
 
 procedure TfrmLogin.FormKeyPress(Sender: TObject; var Key: Char);

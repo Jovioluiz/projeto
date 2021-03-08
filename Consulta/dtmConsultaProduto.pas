@@ -24,7 +24,6 @@ type
     cdsConsultaProdutodesc_produto: TStringField;
     cdsConsultaProdutoun_medida: TStringField;
     cdsConsultaProdutofator_conversao: TIntegerField;
-    cdsConsultaProdutoqtd_estoque: TFloatField;
     cdsConsultaProdutoid_item: TLargeintField;
     dsPrecos: TDataSource;
     cdsPrecos: TClientDataSet;

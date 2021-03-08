@@ -54,12 +54,12 @@ object dmConsultaProduto: TdmConsultaProduto
   end
   object cdsConsultaProduto: TClientDataSet
     PersistDataPacket.Data = {
-      B40000009619E0BD010000001800000006000000000003000000B4000A63645F
+      A00000009619E0BD010000001800000005000000000003000000A0000A63645F
       70726F6475746F01004900000001000557494454480200020014000C64657363
       5F70726F6475746F010049000000010005574944544802000200640009756E5F
       6D656469646101004900000001000557494454480200020014000F6661746F72
-      5F636F6E76657273616F04000100000000000B7174645F6573746F7175650800
-      0400000000000769645F6974656D08000100000000000000}
+      5F636F6E76657273616F04000100000000000769645F6974656D080001000000
+      00000000}
     Active = True
     Aggregates = <>
     FieldDefs = <
@@ -81,10 +81,6 @@ object dmConsultaProduto: TdmConsultaProduto
       item
         Name = 'fator_conversao'
         DataType = ftInteger
-      end
-      item
-        Name = 'qtd_estoque'
-        DataType = ftFloat
       end
       item
         Name = 'id_item'
@@ -111,10 +107,6 @@ object dmConsultaProduto: TdmConsultaProduto
     object cdsConsultaProdutofator_conversao: TIntegerField
       DisplayLabel = 'Fator Convers'#227'o'
       FieldName = 'fator_conversao'
-    end
-    object cdsConsultaProdutoqtd_estoque: TFloatField
-      DisplayLabel = 'Qt Estoque'
-      FieldName = 'qtd_estoque'
     end
     object cdsConsultaProdutoid_item: TLargeintField
       FieldName = 'id_item'

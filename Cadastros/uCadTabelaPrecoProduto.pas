@@ -31,6 +31,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtCodProdutoExit(Sender: TObject);
+    procedure edtValorExit(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FIdItem: Int64;
     procedure LimpaCampos;
@@ -137,6 +139,11 @@ begin
   end;
 end;
 
+procedure TfrmCadTabelaPrecoProduto.edtValorExit(Sender: TObject);
+begin
+//
+end;
+
 procedure TfrmCadTabelaPrecoProduto.Excluir;
 var
   produto: TTabelaPrecoProduto;
@@ -184,6 +191,12 @@ begin
     Key := #0;
     Perform(WM_NEXTDLGCTL,0,0)
   end;
+end;
+
+procedure TfrmCadTabelaPrecoProduto.FormShow(Sender: TObject);
+begin
+  if edtCodProduto.Text <> '' then
+    FIdItem := GetIdItem(edtCodProduto.Text);
 end;
 
 procedure TfrmCadTabelaPrecoProduto.LimpaCampos;

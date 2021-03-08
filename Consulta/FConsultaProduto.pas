@@ -26,6 +26,7 @@ type
     Label1: TLabel;
     dbgriPrecos: TDBGrid;
     dbGridEstoque: TDBGrid;
+    Label2: TLabel;
     procedure btnPesquisarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);

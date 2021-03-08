@@ -67,7 +67,6 @@ begin
         FDados.cdsEstoque.FieldByName('ordem').AsInteger := qry.FieldByName('ordem').AsInteger;
         FDados.cdsEstoque.FieldByName('qt_estoque').AsFloat := qry.FieldByName('qt_estoque').AsFloat;
         FDados.cdsEstoque.Post;
-        qry.Next;
       end
       );
     end;
@@ -128,24 +127,24 @@ end;
 procedure TConsultaProdutos.CarregaProdutos(Descricao: string; bolCodigo, bolDescricao, bolAtivo, bolEstoque: Boolean);
 const
   sql_produto =  'select ' +
-                 '  p.cd_produto,  ' +
-                 '  p.id_item,     ' +
-                 '  p.desc_produto,' +
-                 '  p.un_medida,   ' +
-                 '  p.fator_conversao, ' +
-                 '  we.qt_estoque      ' +
-                 'from                 ' +
-                 '  produto p           ' +
-                 'left join wms_estoque we on  ' +
-                 '  we.id_item = p.id_item ';
+                 '  cd_produto,  ' +
+                 '  id_item,     ' +
+                 '  desc_produto,' +
+                 '  un_medida,   ' +
+                 '  fator_conversao  ' +
+                 'from               ' +
+                 '  produto          ';
 var
   qry: TFDQuery;
+  book: TBookmark;
 begin
   FDados.cdsConsultaProduto.EmptyDataSet;
 
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
   qry.SQL.Add(sql_produto);
+  book := FDados.cdsConsultaProduto.GetBookmark;
+  FDados.cdsConsultaProduto.DisableControls;
 
   try
     if Trim(Descricao) = '' then
@@ -157,19 +156,23 @@ begin
     if Descricao = '*' then
       qry.Open(sql_produto);
 
-    if bolCodigo then
-      qry.SQL.Add(' where p.cd_produto ilike ' + QuotedStr('%'+Descricao+'%'));
+    if Descricao <> '*' then
+    begin
+      if bolCodigo then
+        qry.SQL.Add(' where p.cd_produto ilike ' + QuotedStr('%'+Descricao+'%'));
 
-    if bolDescricao then
-      qry.SQL.Add(' or desc_produto ilike ' + QuotedStr('%'+Descricao+'%'));
+      if bolDescricao then
+        qry.SQL.Add(' or desc_produto ilike ' + QuotedStr('%'+Descricao+'%'));
 
-    if bolAtivo then
-      qry.SQL.Add(' and fl_ativo = true');
+      if bolAtivo then
+        qry.SQL.Add(' and fl_ativo = true');
 
-    if bolEstoque then
-      qry.SQL.Add(' and qt_estoque > 0');
+      if bolEstoque then
+        qry.SQL.Add(' and qt_estoque > 0');
 
-    qry.Open();
+      qry.Open();
+    end;
+
     FDados.dsConsultaProduto.DataSet.Active := True;
 
     qry.Loop(
@@ -180,13 +183,15 @@ begin
       FDados.cdsConsultaProduto.FieldByName('desc_produto').AsString := qry.FieldByName('desc_produto').AsString;
       FDados.cdsConsultaProduto.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
       FDados.cdsConsultaProduto.FieldByName('fator_conversao').AsInteger := qry.FieldByName('fator_conversao').AsInteger;
-      FDados.cdsConsultaProduto.FieldByName('qtd_estoque').AsFloat := qry.FieldByName('qt_estoque').AsFloat;
       FDados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt := qry.FieldByName('id_item').AsLargeInt;
       FDados.cdsConsultaProduto.Post;
     end
     );
 
   finally
+    FDados.cdsConsultaProduto.GotoBookmark(book);
+    FDados.cdsConsultaProduto.EnableControls;
+    FDados.cdsConsultaProduto.FreeBookmark(book);
     qry.Free;
   end;
 end;

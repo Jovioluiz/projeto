@@ -157,6 +157,7 @@ begin
       Procedimento;
       Self.Next;
     end;
+    Self.First;
   finally
     Self.EnableControls;
   end;

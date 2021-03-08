@@ -39,7 +39,7 @@ object frmLista: TfrmLista
   end
   object DBGrid1: TDBGrid
     Left = 32
-    Top = 152
+    Top = 143
     Width = 577
     Height = 201
     DataSource = ds
@@ -49,6 +49,23 @@ object frmLista: TfrmLista
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+  end
+  object Button1: TButton
+    Left = 136
+    Top = 112
+    Width = 75
+    Height = 25
+    Caption = 'Button1'
+    TabOrder = 4
+    OnClick = Button1Click
+  end
+  object edtCont: TEdit
+    Left = 32
+    Top = 347
+    Width = 49
+    Height = 21
+    TabOrder = 5
+    Text = '0'
   end
   object ds: TDataSource
     DataSet = cds

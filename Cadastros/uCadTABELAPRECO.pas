@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, System.UITypes, Datasnap.DBClient, uUtil,
-  uDataModule;
+  uDataModule, dTabelaPreco;
 
 type
   TfrmcadTabelaPreco = class(TForm)
@@ -25,14 +25,7 @@ type
     edtDtFinal: TMaskEdit;
     DBGridProduto: TDBGrid;
     btnAdicionarProduto: TButton;
-    sqlTabelaPreco: TFDQuery;
-    sqlTabelaPrecoProduto: TFDQuery;
-    dsProdutos: TDataSource;
-    cdsProdutos: TClientDataSet;
-    cdsProdutosnm_produto: TStringField;
-    cdsProdutosvalor: TCurrencyField;
-    cdsProdutosun_medida: TStringField;
-    cdsProdutoscd_produto: TStringField;
+    btnEditar: TButton;
     procedure btnAdicionarProdutoClick(Sender: TObject);
     procedure edtCodTabelaExit(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -41,15 +34,21 @@ type
       Shift: TShiftState);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormActivate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
   private
     { Private declarations }
     FAdicionar: Boolean;
+    FDados: TdmProdutos;
     procedure limpaCampos;
     procedure Salvar;
     procedure Excluir;
     function GetIdItem(CdItem: string): Int64;
+    procedure SetDados(const Value: TdmProdutos);
   public
     { Public declarations }
+
+    property Dados: TdmProdutos read FDados write SetDados;
 
   end;
 
@@ -75,6 +74,7 @@ begin
   if temPermissao then
   begin
     frmCadTabelaPrecoProduto := TfrmCadTabelaPrecoProduto.Create(Self);
+    frmCadTabelaPrecoProduto.edtCodTabela.Text := edtCodTabela.Text;
     frmCadTabelaPrecoProduto.Show;
   end;
 end;
@@ -100,6 +100,18 @@ begin
   end;
 end;
 
+procedure TfrmcadTabelaPreco.btnEditarClick(Sender: TObject);
+var
+  cadTabelaPrecoProduto: TfrmCadTabelaPrecoProduto;
+begin
+  cadTabelaPrecoProduto := TfrmCadTabelaPrecoProduto.Create(Self);
+  cadTabelaPrecoProduto.edtCodTabela.Text := edtCodTabela.Text;
+  cadTabelaPrecoProduto.edtCodProduto.Text := FDados.cdsProdutos.FieldByName('cd_produto').AsString;
+  cadTabelaPrecoProduto.edtUNMedida.Text := FDados.cdsProdutos.FieldByName('un_medida').AsString;
+  cadTabelaPrecoProduto.edtValor.Text := CurrToStr(FDados.cdsProdutos.FieldByName('valor').AsCurrency);
+  cadTabelaPrecoProduto.Show;
+end;
+
 procedure TfrmcadTabelaPreco.DBGridProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 var
   produto: TTabelaPrecoProduto;
@@ -112,13 +124,13 @@ begin
 
       try
         produto.cd_tabela := StrToInt(edtCodTabela.Text);
-        produto.id_item := GetIdItem(cdsProdutos.FieldByName('cd_produto').AsString);
+        produto.id_item := GetIdItem(FDados.cdsProdutos.FieldByName('cd_produto').AsString);
         produto.Excluir;
       finally
         produto.Free;
       end;
     end;
-    cdsProdutos.Delete;
+    FDados.cdsProdutos.Delete;
   end;
 end;
 
@@ -161,6 +173,7 @@ begin
     tabela.Free;
   end;
 
+  FDados.cdsProdutos.EmptyDataSet;
   btnAdicionarProduto.Enabled := True;
 
   try
@@ -171,12 +184,12 @@ begin
     qry.Loop(
     procedure
     begin
-      cdsProdutos.Append;
-      cdsProdutos.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
-      cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
-      cdsProdutos.FieldByName('valor').AsCurrency := qry.FieldByName('valor').AsCurrency;
-      cdsProdutos.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
-      cdsProdutos.Post;
+      FDados.cdsProdutos.Append;
+      FDados.cdsProdutos.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
+      FDados.cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
+      FDados.cdsProdutos.FieldByName('valor').AsCurrency := qry.FieldByName('valor').AsCurrency;
+      FDados.cdsProdutos.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
+      FDados.cdsProdutos.Post;
     end);
 
   finally
@@ -231,18 +244,18 @@ begin
       qry.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
       qry.Open();
 
-      cdsProdutos.EmptyDataSet;
+      FDados.cdsProdutos.EmptyDataSet;
 
       qry.Loop(
       procedure
       begin
-        cdsProdutos.Append;
-        cdsProdutos.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
-        cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
-        cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
-        cdsProdutos.FieldByName('valor').AsCurrency := qry.FieldByName('valor').AsCurrency;
-        cdsProdutos.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
-        cdsProdutos.Post;
+        FDados.cdsProdutos.Append;
+        FDados.cdsProdutos.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
+        FDados.cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
+        FDados.cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
+        FDados.cdsProdutos.FieldByName('valor').AsCurrency := qry.FieldByName('valor').AsCurrency;
+        FDados.cdsProdutos.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
+        FDados.cdsProdutos.Post;
       end
       );
     end;
@@ -255,6 +268,13 @@ procedure TfrmcadTabelaPreco.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   frmcadTabelaPreco := nil;
+  FDados.Free;
+end;
+
+procedure TfrmcadTabelaPreco.FormCreate(Sender: TObject);
+begin
+  FDados := TdmProdutos.Create(Self);
+  DBGridProduto.DataSource := FDados.dsProdutos;
 end;
 
 procedure TfrmcadTabelaPreco.FormKeyDown(Sender: TObject; var Key: Word;
@@ -287,7 +307,7 @@ begin
   edtNomeTabela.Clear;
   edtDtInicial.Clear;
   edtDtFinal.Clear;
-  cdsProdutos.EmptyDataSet;
+  FDados.cdsProdutos.EmptyDataSet;
   edtCodTabela.SetFocus;
 end;
 
@@ -313,6 +333,11 @@ begin
   finally
     tabelaPreco.Free;
   end
+end;
+
+procedure TfrmcadTabelaPreco.SetDados(const Value: TdmProdutos);
+begin
+  FDados := Value;
 end;
 
 end.

@@ -34,7 +34,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       746)
     object Label1: TLabel
       Left = 16
-      Top = 581
+      Top = 594
       Width = 96
       Height = 16
       Caption = #218'ltimas Entradas'
@@ -45,8 +45,23 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Font.Style = []
       ParentFont = False
     end
+    object Label2: TLabel
+      Left = 16
+      Top = 426
+      Width = 45
+      Height = 16
+      HelpType = htKeyword
+      HelpKeyword = 'spli'
+      Caption = 'Estoque'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
     object btnPesquisar: TButton
-      Left = 928
+      Left = 903
       Top = 58
       Width = 89
       Height = 26
@@ -87,10 +102,10 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     object dbGridProduto: TDBGrid
       Left = 16
       Top = 94
-      Width = 721
+      Width = 713
       Height = 315
       Anchors = [akLeft, akTop, akRight]
-      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 4
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -152,9 +167,9 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     end
     object dbGridUltimasEntradas: TDBGrid
       Left = 16
-      Top = 603
+      Top = 616
       Width = 1169
-      Height = 117
+      Height = 104
       Anchors = [akLeft, akTop, akRight, akBottom]
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 8

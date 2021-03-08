@@ -17,6 +17,7 @@ object frmCadTabelaPrecoProduto: TfrmCadTabelaPrecoProduto
   OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -69,6 +70,7 @@ object frmCadTabelaPrecoProduto: TfrmCadTabelaPrecoProduto
       Width = 83
       Height = 21
       TabOrder = 2
+      OnExit = edtValorExit
     end
     object edtUNMedida: TEdit
       Left = 110
