@@ -72,6 +72,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure edtPRODUTOCD_PRODUTOKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure edtPRODUTOCD_PRODUTOEnter(Sender: TObject);
   private
     FRegra: TProdutoCodigoBarras;
     FIdItem: Int64;
@@ -211,6 +212,12 @@ begin
   camposDesabilitados := True;
 end;
 
+procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOEnter(Sender: TObject);
+begin
+  if edtPRODUTOCD_PRODUTO.Text <> '' then
+    edtPRODUTOCD_PRODUTOExit(nil);
+end;
+
 procedure TfrmCadProduto.edtPRODUTOCD_PRODUTOExit(Sender: TObject);
 const
   sql = 'select                                             '+
@@ -256,9 +263,8 @@ begin
     //implementar para gerar o id_item do produto caso esteja cadastrando um novo produto
     if edtPRODUTOCD_PRODUTO.isEmpty then
     begin
-      raise Exception.Create('Código não pode ser vazio');
       edtPRODUTOCD_PRODUTO.SetFocus;
-      Abort;
+      raise Exception.Create('Código não pode ser vazio');
     end;
 
     qry.SQL.Add(sql);

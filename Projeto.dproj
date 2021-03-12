@@ -231,10 +231,6 @@
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="Consulta\uConsultaProdutos.pas"/>
-        <DCCReference Include="dTabelaPreco.pas">
-            <Form>dmProdutos</Form>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

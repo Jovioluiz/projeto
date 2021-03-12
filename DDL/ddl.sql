@@ -105,6 +105,30 @@ END;
 $function$
 ;
 
+CREATE OR REPLACE FUNCTION public.func_id_item()
+ RETURNS bigint
+ LANGUAGE plpgsql
+AS $function$
+            DECLARE
+              id_item BIGINT;
+            BEGIN
+                /*Gera o id_item */
+                SELECT NEXTVAL(PG_CLASS.OID)
+                INTO id_item
+                FROM PG_CLASS
+                WHERE RELNAME = 'seq_id_item';
+            RETURN id_item;
+            END
+            $function$
+;
+
+CREATE SEQUENCE public.seq_id_item
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    START 1
+    CACHE 1
+    NO CYCLE;
 ------------------------------------------------------------------------------------------------------------------------------------------
 
 -- DROP TABLE public.login_usuario;
@@ -1284,3 +1308,5 @@ alter table wms_mvto_estoque add constraint fk_wms_mvto_estoque_produto foreign 
 
 ALTER TABLE public.wms_estoque RENAME COLUMN cd_produto TO id_item;
 alter table wms_estoque add constraint fk_wms_estoque_produto foreign key (id_item) references produto(id_item);
+
+

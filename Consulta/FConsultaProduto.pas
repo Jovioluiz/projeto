@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
   Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls,
-  Datasnap.Provider, uConsultaProdutos;
+  Datasnap.Provider, uConsultaProdutos, Vcl.Menus;
 
 type
   TfrmConsultaProdutos = class(TForm)
@@ -26,13 +26,15 @@ type
     Label1: TLabel;
     dbgriPrecos: TDBGrid;
     dbGridEstoque: TDBGrid;
-    Label2: TLabel;
+    popProduto: TPopupMenu;
+    VisualizarProduto1: TMenuItem;
     procedure btnPesquisarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure dbGridProdutoCellClick(Column: TColumn);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure VisualizarProduto1Click(Sender: TObject);
   private
     FConsulta: TConsultaProdutos;
   public
@@ -46,7 +48,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, dtmConsultaProduto;
+uses uDataModule, dtmConsultaProduto, cPRODUTO;
 
 
 
@@ -102,6 +104,23 @@ begin
   begin
     Key := #0;
     Perform(WM_NEXTDLGCTL,0,0)
+  end;
+end;
+
+procedure TfrmConsultaProdutos.VisualizarProduto1Click(Sender: TObject);
+var
+  cadProduto: TfrmCadProduto;
+begin
+  if FConsulta.Dados.cdsConsultaProduto.RecordCount = 0 then
+    Exit;
+
+  cadProduto := TfrmCadProduto.Create(nil);
+
+  try
+    cadProduto.edtPRODUTOCD_PRODUTO.Text := FConsulta.Dados.cdsConsultaProduto.FieldByName('cd_produto').AsString;
+    cadProduto.ShowModal;
+  finally
+    cadProduto.Free;
   end;
 end;
 

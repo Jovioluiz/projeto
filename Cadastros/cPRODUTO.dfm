@@ -311,6 +311,7 @@ object frmCadProduto: TfrmCadProduto
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
+    OnEnter = edtPRODUTOCD_PRODUTOEnter
     OnExit = edtPRODUTOCD_PRODUTOExit
     OnKeyDown = edtPRODUTOCD_PRODUTOKeyDown
   end

@@ -106,6 +106,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Height = 315
       Anchors = [akLeft, akTop, akRight]
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      PopupMenu = popProduto
       TabOrder = 4
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -205,6 +206,14 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+    end
+  end
+  object popProduto: TPopupMenu
+    Left = 608
+    Top = 16
+    object VisualizarProduto1: TMenuItem
+      Caption = 'Visualizar Produto'
+      OnClick = VisualizarProduto1Click
     end
   end
 end

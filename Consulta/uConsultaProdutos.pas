@@ -159,7 +159,7 @@ begin
     if Descricao <> '*' then
     begin
       if bolCodigo then
-        qry.SQL.Add(' where p.cd_produto ilike ' + QuotedStr('%'+Descricao+'%'));
+        qry.SQL.Add(' where cd_produto ilike ' + QuotedStr('%'+Descricao+'%'));
 
       if bolDescricao then
         qry.SQL.Add(' or desc_produto ilike ' + QuotedStr('%'+Descricao+'%'));

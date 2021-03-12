@@ -4,7 +4,7 @@
 program Projeto;
 
 uses
-  fastmm4,
+  //fastmm4,
   Vcl.Forms,
   SysUtils,
   Controls,
@@ -60,8 +60,8 @@ uses
   uImportacaoDados in 'Arquivos\uImportacaoDados.pas',
   uControleAcessoSistema in 'Acesso\uControleAcessoSistema.pas',
   dControleAcesso in 'Acesso\dControleAcesso.pas' {dmControleAcesso: TDataModule},
-  uConsultaProdutos in 'Consulta\uConsultaProdutos.pas',
-  dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule};
+  uConsultaProdutos in 'Consulta\uConsultaProdutos.pas';
+  //dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule};
 
 {$R *.res}
 
