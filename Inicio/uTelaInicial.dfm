@@ -11713,6 +11713,13 @@ object frmPrincipal: TfrmPrincipal
         OnClick = Sair1Click
       end
     end
+    object Outros1: TMenuItem
+      Caption = 'Outros'
+      object hreads1: TMenuItem
+        Caption = 'Threads'
+        OnClick = hreads1Click
+      end
+    end
   end
   object Timer1: TTimer
     Left = 312

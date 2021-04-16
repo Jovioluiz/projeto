@@ -7,7 +7,9 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask,
   Vcl.Buttons, Vcl.ExtDlgs, Vcl.ComCtrls,
   Vcl.Samples.Gauges, Data.DB, Datasnap.DBClient, Vcl.Grids, Vcl.DBGrids,
-  dImportaDados, uImportacaoDados;
+  dImportaDados, uImportacaoDados, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 type
   TfrmImportaDados = class(TForm)
@@ -57,7 +59,7 @@ var
 implementation
 
 uses
-  FireDAC.Comp.Client, uDataModule, uclProduto;
+ uDataModule, uclProduto;
 
 {$R *.dfm}
 

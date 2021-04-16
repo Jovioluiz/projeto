@@ -86,8 +86,7 @@ begin
     Result := True
   else
   begin
-    ShowMessage('Usuário não possui permissão de acesso! Verifique!');
-    Abort;
+    raise Exception.Create('Usuário não possui permissão de acesso! Verifique!');
   end;
 end;
 

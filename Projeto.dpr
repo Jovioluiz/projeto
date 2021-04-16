@@ -4,7 +4,6 @@
 program Projeto;
 
 uses
-  //fastmm4,
   Vcl.Forms,
   SysUtils,
   Controls,
@@ -60,8 +59,11 @@ uses
   uImportacaoDados in 'Arquivos\uImportacaoDados.pas',
   uControleAcessoSistema in 'Acesso\uControleAcessoSistema.pas',
   dControleAcesso in 'Acesso\dControleAcesso.pas' {dmControleAcesso: TDataModule},
-  uConsultaProdutos in 'Consulta\uConsultaProdutos.pas';
-  //dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule};
+  uConsultaProdutos in 'Consulta\uConsultaProdutos.pas',
+  uThread in 'Outros\uThread.pas',
+  fGridsThread in 'Outros\fGridsThread.pas' {fThreads};
+
+//dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule};
 
 {$R *.res}
 
@@ -72,6 +74,7 @@ begin
   begin
     FreeAndNil(frmLogin);
     Application.Initialize;
+    ReportMemoryLeaksOnShutdown := True;
     Application.MainFormOnTaskbar := True;
     Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
     Application.CreateForm(TfrmPrincipal, frmPrincipal);

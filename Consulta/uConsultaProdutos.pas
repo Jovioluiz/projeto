@@ -97,9 +97,9 @@ begin
   try
     qry.Close;
     qry.SQL.Clear;
-    qry.SQL.Add(sql);
-    qry.ParamByName('id_item').AsLargeInt := IDItem;
-    qry.Open();
+//    qry.SQL.Add(sql);
+//    qry.ParamByName('id_item').AsLargeInt := IDItem;
+    qry.Open(sql, [IDItem]);
 
     if qry.IsEmpty then
       FDados.cdsPrecos.EmptyDataSet
@@ -235,9 +235,9 @@ begin
   try
     qry.Close;
     qry.SQL.Clear;
-    qry.SQL.Add(sql);
-    qry.ParamByName('id_item').AsLargeInt := FDados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt;
-    qry.Open();
+//    qry.SQL.Add(sql);
+//    qry.ParamByName('id_item').AsLargeInt := FDados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt;
+    qry.Open(sql, [FDados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt]);
 
     if qry.IsEmpty then
       FDados.cdsUltimasEntradas.EmptyDataSet

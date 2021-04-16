@@ -51,6 +51,8 @@ type
     este1: TMenuItem;
     TrayIcon1: TTrayIcon;
     ApplicationEvents1: TApplicationEvents;
+    Outros1: TMenuItem;
+    hreads1: TMenuItem;
     procedure Cliente1Click(Sender: TObject);
     procedure Produto1Click(Sender: TObject);
     procedure FormaPagamento1Click(Sender: TObject);
@@ -76,6 +78,7 @@ type
     procedure este1Click(Sender: TObject);
     procedure ApplicationEvents1Minimize(Sender: TObject);
     procedure TrayIcon1DblClick(Sender: TObject);
+    procedure hreads1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -112,7 +115,7 @@ implementation
 {$R *.dfm}
 
 uses uUsuario, fControleAcesso, uDataModule, uGravaArquivo, fCadastroEnderecos,
-  uSplash, fImportaDados;
+  uSplash, fImportaDados, fGridsThread;
 
 
 procedure TfrmPrincipal.ApplicationEvents1Minimize(Sender: TObject);
@@ -251,8 +254,8 @@ end;
 
 procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  frmPrincipal := nil;
   TrayIcon1.Visible := False;
+  frmPrincipal.Free;
 end;
 
 procedure TfrmPrincipal.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -290,6 +293,12 @@ begin
   frmGravaArquivo.ShowModal
 end;
 
+
+procedure TfrmPrincipal.hreads1Click(Sender: TObject);
+begin
+  fThreads := TfThreads.Create(Self);
+  fThreads.ShowModal;
+end;
 
 procedure TfrmPrincipal.ImportarProdutos1Click(Sender: TObject);
 begin
