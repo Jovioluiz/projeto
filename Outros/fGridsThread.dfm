@@ -2,8 +2,8 @@ object fThreads: TfThreads
   Left = 0
   Top = 0
   Caption = 'Form das Threads'
-  ClientHeight = 603
-  ClientWidth = 979
+  ClientHeight = 584
+  ClientWidth = 897
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

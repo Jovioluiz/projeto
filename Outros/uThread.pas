@@ -3,58 +3,87 @@ unit uThread;
 interface
 
 uses
-  System.Classes;
+  System.Classes, Datasnap.DBClient, FireDAC.Comp.Client, Data.DB;
 
-type ThreadTeste = class(TThread)
-
+type
+  TThreadTeste = class(TThread)
   private
-    FArquivo: string;
-
-  public
-    constructor Create(arq: string);
+    FArquivo: TStringList;
+    FQuery: TFDQuery;
+  protected
     procedure Execute; override;
 
+  public
 
-end;
-
+    procedure GravaArquivo;
+    constructor Create(const Query: TFDQuery);
+  end;
 
 implementation
 
 uses
-  uImportacaoDados;
+  Vcl.Dialogs, System.SysUtils;
 
-{ ThreadTeste }
+{ TThread }
 
-constructor ThreadTeste.Create(arq: string);
+constructor TThreadTeste.Create(const Query: TFDQuery);
 begin
+  FQuery := Query;
   inherited Create(False);
-  Self.FArquivo := arq;
 end;
 
-procedure ThreadTeste.Execute;
-var
-  importa: TImportacaoDados;
-  linhas: TStringList;
+procedure TThreadTeste.Execute;
 begin
-  inherited;
-  importa := TImportacaoDados.Create;
-  linhas := TStringList.Create;
+  NameThreadForDebugging('uThread');
+  GravaArquivo;
+end;
 
-  linhas.LoadFromFile(Self.FArquivo);
+procedure TThreadTeste.GravaArquivo;
+begin
+
+  FArquivo := TStringList.Create;
 
   try
-    for var i := 0 to Pred(linhas.Count) do
+
+    FArquivo.Add('Pedido|Cliente|Valor Total|Acrescimo|Desconto Pedido|Data Emissão|Cód. Produto|Qtdade Venda|Un. Medida|Valor Unitário|Desconto '+
+                              '|Valor Total Item|ICMS Base|ICMS Aliq|ICMS Valor|IPI Base|IPI Aliq|IPI Valor|PIS/Cofins Base|PIS/Cofins Aliq|PIS/Cofins Valor');
+
+    FQuery.First;
+
+    if not FQuery.IsEmpty then
     begin
-      if Self.Terminated then
-        Break;
+      while not FQuery.Eof do
+      begin
+        FArquivo.Add(FQuery.FieldByName('nr_pedido').AsString +
+                    '|' + FQuery.FieldByName('nome').AsString +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('vl_total').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('vl_acrescimo').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('vl_desconto_pedido').AsCurrency) +
+                    '|'+ FormatDateTime('dd/MM/yyyy', FQuery.FieldByName('dt_emissao').AsDateTime) +
+                    '|'+ FQuery.FieldByName('cd_produto').AsString +
+                    '|'+ FQuery.FieldByName('desc_produto').AsString +
+                    '|'+ FormatFloat('#,##0.00', FQuery.FieldByName('qtd_venda').AsFloat) +
+                    '|'+ FQuery.FieldByName('un_medida').AsString +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('vl_unitario').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('vl_desconto').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('vl_total_item').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('icms_vl_base').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('icms_pc_aliq').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('icms_valor').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('ipi_vl_base').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('ipi_pc_aliq').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('ipi_valor').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('pis_cofins_vl_base').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('pis_cofins_pc_aliq').AsCurrency) +
+                    '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('pis_cofins_valor').AsCurrency));
+        FQuery.Next;
+      end;
 
-      importa.ListaProdutos(Self.FArquivo);
-
+      FArquivo.SaveToFile(GetCurrentDir + '\rel\' + FormatDateTime('dd-MM-yyyy', Now) + '_' + 'rel.text');
     end;
-
   finally
-    importa.Free;
-  end;
+    FArquivo.Free;
+  end
 end;
 
 end.

@@ -2,8 +2,8 @@ object frmGravaArquivo: TfrmGravaArquivo
   Left = 0
   Top = 0
   Caption = 'Gravar Arquivo'
-  ClientHeight = 299
-  ClientWidth = 635
+  ClientHeight = 63
+  ClientWidth = 569
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,24 +15,9 @@ object frmGravaArquivo: TfrmGravaArquivo
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
-    Left = 8
-    Top = 53
-    Width = 37
-    Height = 13
-    Caption = 'Arquivo'
-  end
-  object SpeedButton1: TSpeedButton
-    Left = 375
-    Top = 50
-    Width = 26
-    Height = 23
-    Caption = '...'
-    OnClick = SpeedButton1Click
-  end
   object btnPedidoVenda: TButton
-    Left = 415
-    Top = 48
+    Left = 335
+    Top = 8
     Width = 73
     Height = 25
     Caption = 'Gravar'
@@ -57,15 +42,8 @@ object frmGravaArquivo: TfrmGravaArquivo
     Time = 0.881014872684318100
     TabOrder = 1
   end
-  object edtArquivo: TEdit
-    Left = 51
-    Top = 50
-    Width = 318
-    Height = 21
-    TabOrder = 3
-  end
   object opArquivo: TOpenTextFileDialog
-    Left = 576
-    Top = 16
+    Left = 456
+    Top = 8
   end
 end

@@ -31,9 +31,9 @@ type
     procedure PreencheDataSets;
   private
     FThread: TThread;
-    FCDs1: TFDQuery;
-    FCDs2: TFDQuery;
-    FCDs3: TFDQuery;
+    FCDs1,
+    FCDs2,
+    FCDs3,
     FCDs4: TFDQuery;
     { Private declarations }
   public
@@ -52,29 +52,34 @@ uses
 
 procedure TfThreads.btnListarClick(Sender: TObject);
 begin
-  CarregaProdutos;
-  CarregaPedidoVenda;
-  CarregaPedidoVendaItem;
-  CarregaProdutosCodBarras;
-
+//  CarregaProdutos;
+//  CarregaPedidoVenda;
+//  CarregaPedidoVendaItem;
+//  CarregaProdutosCodBarras;
   FThread.CreateAnonymousThread(
   procedure
   begin
-      FThread.Synchronize(FThread.CurrentThread,
+      FThread.Synchronize(nil,
                       procedure
                       begin
-                        PreencheDataSets;
+                        CarregaProdutos;
+                        CarregaPedidoVenda;
+                        CarregaPedidoVendaItem;
+                        CarregaProdutosCodBarras;
                       end);
   end
   ).Start;
 
 
 
-//
+
 //  FThread.CreateAnonymousThread(
 //  procedure
 //  begin
-//    PreencheDataSets;
+//                            CarregaProdutos;
+//                        CarregaPedidoVenda;
+//                        CarregaPedidoVendaItem;
+//                        CarregaProdutosCodBarras;;
 //  end).Start;
 
 end;
@@ -93,17 +98,17 @@ begin
     cds3.EmptyDataSet;
     qry.Open(SQL);
 
-    FCDs3 := qry;
-//    qry.Loop(
-//    procedure
-//    begin
-//      cds3.Append;
-//      cds3.FieldByName('id_geral').AsLargeInt := qry.FieldByName('id_geral').AsLargeInt;
-//      cds3.FieldByName('nr_pedido').AsInteger := qry.FieldByName('nr_pedido').AsInteger;
-//      cds3.FieldByName('vl_total').AsCurrency := qry.FieldByName('vl_total').AsCurrency;
-//      cds3.Post;
-//    end
-//    );
+//    FCDs3 := qry;
+    qry.Loop(
+    procedure
+    begin
+      cds3.Append;
+      cds3.FieldByName('id_geral').AsLargeInt := qry.FieldByName('id_geral').AsLargeInt;
+      cds3.FieldByName('nr_pedido').AsInteger := qry.FieldByName('nr_pedido').AsInteger;
+      cds3.FieldByName('vl_total').AsCurrency := qry.FieldByName('vl_total').AsCurrency;
+      cds3.Post;
+    end
+    );
 
   finally
     cds3.EnableControls;
@@ -125,21 +130,21 @@ begin
     cds4.EmptyDataSet;
     qry.Open(SQL);
 
-    FCDs4 := qry;
+//    FCDs4 := qry;
 
-//    qry.Loop(
-//    procedure
-//    begin
-//      cds4.Append;
-//      cds4.FieldByName('id_geral').AsLargeInt := qry.FieldByName('id_geral').AsLargeInt;
-//      cds4.FieldByName('id_pedido_venda').AsLargeInt := qry.FieldByName('id_pedido_venda').AsLargeInt;
-//      cds4.FieldByName('id_item').AsInteger := qry.FieldByName('id_item').AsInteger;
-//      cds4.FieldByName('qt_venda').AsFloat := qry.FieldByName('qtd_venda').AsFloat;
-//      cds4.FieldByName('vl_unitario').AsCurrency := qry.FieldByName('vl_unitario').AsCurrency;
-//      cds4.FieldByName('vl_total').AsCurrency := qry.FieldByName('vl_total_item').AsCurrency;
-//      cds4.Post;
-//    end
-//    );
+    qry.Loop(
+    procedure
+    begin
+      cds4.Append;
+      cds4.FieldByName('id_geral').AsLargeInt := qry.FieldByName('id_geral').AsLargeInt;
+      cds4.FieldByName('id_pedido_venda').AsLargeInt := qry.FieldByName('id_pedido_venda').AsLargeInt;
+      cds4.FieldByName('id_item').AsInteger := qry.FieldByName('id_item').AsInteger;
+      cds4.FieldByName('qt_venda').AsFloat := qry.FieldByName('qtd_venda').AsFloat;
+      cds4.FieldByName('vl_unitario').AsCurrency := qry.FieldByName('vl_unitario').AsCurrency;
+      cds4.FieldByName('vl_total').AsCurrency := qry.FieldByName('vl_total_item').AsCurrency;
+      cds4.Post;
+    end
+    );
 
   finally
     cds4.EnableControls;
@@ -161,16 +166,16 @@ begin
     cds1.EmptyDataSet;
     qry.Open(SQL);
 
-    FCDs1 := qry;
-//    qry.Loop(
-//    procedure
-//    begin
-//      cds1.Append;
-//      cds1.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
-//      cds1.FieldByName('desc_produto').AsString := qry.FieldByName('desc_produto').AsString;
-//      cds1.Post;
-//    end
-//    );
+//    FCDs1 := qry;
+    qry.Loop(
+    procedure
+    begin
+      cds1.Append;
+      cds1.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
+      cds1.FieldByName('desc_produto').AsString := qry.FieldByName('desc_produto').AsString;
+      cds1.Post;
+    end
+    );
 
   finally
     cds1.EnableControls;
@@ -192,19 +197,19 @@ begin
     cds2.EmptyDataSet;
     qry.Open(SQL);
 
-    FCDs2 := qry;
+//    FCDs2 := qry;
 
-//    qry.Loop(
-//    procedure
-//    begin
-//      cds2.Append;
-//      cds2.FieldByName('id_item').AsInteger := qry.FieldByName('id_item').AsInteger;
-//      cds2.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
-//      cds2.FieldByName('tipo_cod_barras').AsInteger := qry.FieldByName('tipo_cod_barras').AsInteger;
-//      cds2.FieldByName('codigo_barras').AsString := qry.FieldByName('codigo_barras').AsString;
-//      cds2.Post;
-//    end
-//    );
+    qry.Loop(
+    procedure
+    begin
+      cds2.Append;
+      cds2.FieldByName('id_item').AsInteger := qry.FieldByName('id_item').AsInteger;
+      cds2.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
+      cds2.FieldByName('tipo_cod_barras').AsInteger := qry.FieldByName('tipo_cod_barras').AsInteger;
+      cds2.FieldByName('codigo_barras').AsString := qry.FieldByName('codigo_barras').AsString;
+      cds2.Post;
+    end
+    );
 
   finally
     cds2.EnableControls;
