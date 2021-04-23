@@ -231,10 +231,12 @@
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="Consulta\uConsultaProdutos.pas"/>
-        <DCCReference Include="Outros\uThread.pas"/>
+        <DCCReference Include="Outros\uThread.pas">
+            <Form>/dTabelaPreco in &apos;dTabelaPreco.pas&apos; {dmProdutos</Form>
+            <DesignClass>TDataModule};</DesignClass>
+        </DCCReference>
         <DCCReference Include="Outros\fGridsThread.pas">
             <Form>fThreads</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

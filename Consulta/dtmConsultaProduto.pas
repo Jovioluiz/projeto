@@ -48,7 +48,7 @@ var
 implementation
 
 uses
-  uDataModule;
+  uDataModule, Vcl.Dialogs;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 

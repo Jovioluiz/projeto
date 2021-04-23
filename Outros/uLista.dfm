@@ -2,7 +2,7 @@ object frmLista: TfrmLista
   Left = 0
   Top = 0
   Caption = 'frmLista'
-  ClientHeight = 376
+  ClientHeight = 636
   ClientWidth = 635
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -66,6 +66,22 @@ object frmLista: TfrmLista
     Height = 21
     TabOrder = 5
     Text = '0'
+  end
+  object Button2: TButton
+    Left = 32
+    Top = 392
+    Width = 75
+    Height = 25
+    Caption = 'Button2'
+    TabOrder = 6
+    OnClick = Button2Click
+  end
+  object Memo1: TMemo
+    Left = 32
+    Top = 423
+    Width = 577
+    Height = 205
+    TabOrder = 7
   end
   object ds: TDataSource
     DataSet = cds

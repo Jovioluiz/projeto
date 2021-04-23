@@ -1,7 +1,7 @@
 object dmConsultaProduto: TdmConsultaProduto
   OldCreateOrder = False
-  Height = 225
-  Width = 388
+  Height = 156
+  Width = 359
   object dsUltimaEntrada: TDataSource
     DataSet = cdsUltimasEntradas
     Left = 40

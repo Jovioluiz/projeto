@@ -61,7 +61,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       ParentFont = False
     end
     object btnPesquisar: TButton
-      Left = 903
+      Left = 1096
       Top = 58
       Width = 89
       Height = 26
@@ -154,7 +154,7 @@ object frmConsultaProdutos: TfrmConsultaProdutos
     object edtPesquisa: TEdit
       Left = 16
       Top = 58
-      Width = 881
+      Width = 1074
       Height = 26
       Anchors = [akLeft, akTop, akRight]
       CharCase = ecUpperCase

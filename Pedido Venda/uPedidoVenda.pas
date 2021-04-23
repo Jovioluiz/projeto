@@ -338,7 +338,7 @@ begin
       cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := aliq_pis_cofins;
       cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
     end;
-    cdsPedidoVenda.FieldByName('id_item').AsLargeInt := qry.FieldByName('id_item').AsLargeInt;
+    cdsPedidoVenda.FieldByName('id_item').AsLargeInt := idItem.GetIdItem(edtCdProduto.Text);
     cdsPedidoVenda.Post;
     SalvaItens(FEdicaoItem);
 
@@ -943,11 +943,12 @@ begin
       edtQtdade.SetFocus;
     end;
 
-    if not qtdadeEstoque.ValidaQtdadeItem(edtCdProduto.Text, StrToFloat(edtQtdade.Text)) then
-    begin
-      edtQtdade.SetFocus;
-      Exit;
-    end;
+    if edtQtdade.Text <> '' then
+      if not qtdadeEstoque.ValidaQtdadeItem(edtCdProduto.Text, StrToFloat(edtQtdade.Text)) then
+      begin
+        edtQtdade.SetFocus;
+        Exit;
+      end;
   finally
     FreeAndNil(qtdadeEstoque);
   end;

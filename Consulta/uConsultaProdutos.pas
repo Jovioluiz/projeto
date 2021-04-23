@@ -49,11 +49,7 @@ begin
   FDados.cdsEstoque.EmptyDataSet;
 
   try
-    qry.Close;
-    qry.SQL.Clear;
-    qry.SQL.Add(sql);
-    qry.ParamByName('id_item').AsLargeInt := IDItem;
-    qry.Open();
+    qry.Open(SQL, [IDItem]);
 
     if qry.IsEmpty then
       FDados.cdsEstoque.EmptyDataSet
@@ -95,10 +91,6 @@ begin
   qry.Connection := dm.conexaoBanco;
 
   try
-    qry.Close;
-    qry.SQL.Clear;
-//    qry.SQL.Add(sql);
-//    qry.ParamByName('id_item').AsLargeInt := IDItem;
     qry.Open(sql, [IDItem]);
 
     if qry.IsEmpty then
@@ -143,7 +135,7 @@ begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
   qry.SQL.Add(sql_produto);
-  book := FDados.cdsConsultaProduto.GetBookmark;
+
   FDados.cdsConsultaProduto.DisableControls;
 
   try
@@ -170,14 +162,16 @@ begin
       if bolEstoque then
         qry.SQL.Add(' and qt_estoque > 0');
 
+      qry.SQL.Add(' order by cd_produto');
+
       qry.Open();
     end;
-
-    FDados.dsConsultaProduto.DataSet.Active := True;
 
     qry.Loop(
     procedure
     begin
+      if (FDados.cdsConsultaProduto.Active) and (FDados.cdsConsultaProduto.RecordCount = 1) then
+        book := FDados.cdsConsultaProduto.GetBookmark;
       FDados.cdsConsultaProduto.Append;
       FDados.cdsConsultaProduto.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
       FDados.cdsConsultaProduto.FieldByName('desc_produto').AsString := qry.FieldByName('desc_produto').AsString;
@@ -185,11 +179,11 @@ begin
       FDados.cdsConsultaProduto.FieldByName('fator_conversao').AsInteger := qry.FieldByName('fator_conversao').AsInteger;
       FDados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt := qry.FieldByName('id_item').AsLargeInt;
       FDados.cdsConsultaProduto.Post;
-    end
-    );
+    end);
 
   finally
-    FDados.cdsConsultaProduto.GotoBookmark(book);
+    if FDados.cdsConsultaProduto.BookmarkValid(book) then
+      FDados.cdsConsultaProduto.GotoBookmark(book);
     FDados.cdsConsultaProduto.EnableControls;
     FDados.cdsConsultaProduto.FreeBookmark(book);
     qry.Free;
@@ -233,10 +227,6 @@ begin
   qry.Connection := dm.conexaoBanco;
 
   try
-    qry.Close;
-    qry.SQL.Clear;
-//    qry.SQL.Add(sql);
-//    qry.ParamByName('id_item').AsLargeInt := FDados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt;
     qry.Open(sql, [FDados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt]);
 
     if qry.IsEmpty then

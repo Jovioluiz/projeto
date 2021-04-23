@@ -37,6 +37,7 @@ type
     procedure VisualizarProduto1Click(Sender: TObject);
   private
     FConsulta: TConsultaProdutos;
+    FThread: TThread;
   public
     { Public declarations }
   end;
@@ -59,17 +60,24 @@ end;
 
 procedure TfrmConsultaProdutos.dbGridProdutoCellClick(Column: TColumn);
 begin
-  //dados da última compra do item
+
   if FConsulta.Dados.cdsConsultaProduto.RecordCount > 0 then
   begin
-    FConsulta.CarregaUltimaEntrada(FConsulta.Dados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt);
-    FConsulta.CarregaPrecos(FConsulta.Dados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt);
-    FConsulta.CarregaEstoques(FConsulta.Dados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt);
+    FThread.CreateAnonymousThread(
+    procedure
+    begin
+      FThread.Synchronize(FThread.CurrentThread,
+                          procedure
+                          begin
+                            FConsulta.CarregaUltimaEntrada(FConsulta.Dados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt);
+                            FConsulta.CarregaPrecos(FConsulta.Dados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt);
+                            FConsulta.CarregaEstoques(FConsulta.Dados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt);
+                          end);
+    end).Start;
   end;
 end;
 
-procedure TfrmConsultaProdutos.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TfrmConsultaProdutos.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
   frmConsultaProdutos := nil;

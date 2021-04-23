@@ -24,8 +24,11 @@ type
     cdscpf_cnpj: TStringField;
     Button1: TButton;
     edtCont: TEdit;
+    Button2: TButton;
+    Memo1: TMemo;
     procedure btnAddClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -145,6 +148,49 @@ begin
   finally
     qry.Free;
     dicio.Free;
+  end;
+end;
+
+procedure TfrmLista.Button2Click(Sender: TObject);
+const
+  sql = 'select id_geral, id_pedido_venda, un_medida from pedido_venda_item order by id_geral';
+var
+  dicionario: TObjectDictionary<Int64, TDictionary<Int64, String>>;
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  dicionario := TObjectDictionary<Int64, TDictionary<Int64, String>>.Create;
+
+  try
+    qry.Open(sql);
+
+    qry.Loop(
+    procedure
+    begin
+      if not dicionario.ContainsKey(qry.FieldByName('id_geral').AsLargeInt) then
+        dicionario.Add(qry.FieldByName('id_geral').AsLargeInt, TDictionary<Int64, String>.Create);
+
+      if not dicionario[qry.FieldByName('id_geral').AsLargeInt].ContainsKey(qry.FieldByName('id_pedido_venda').AsLargeInt) then
+        dicionario[qry.FieldByName('id_geral').AsLargeInt].Add(qry.FieldByName('id_pedido_venda').AsLargeInt, qry.FieldByName('un_medida').AsString);
+
+    end
+    );
+
+    for var i in dicionario.Keys do
+    begin
+      Memo1.Lines.Add('ID_GERAL: ' + i.ToString);
+      for var j in dicionario[i].Keys do
+      begin
+//        Memo1.Lines.Add('ID_GERAL: ' + i.ToString + ' - ' + 'ID_PEDIDO_VENDA: ' + j.ToString);
+        Memo1.Lines.Add('ID_PEDIDO_VENDA: ' + j.ToString + ' - ' + dicionario.Items[i].Items[j]);
+      end;
+
+    end;
+  finally
+    qry.Free;
+    dicionario.Free;
   end;
 end;
 

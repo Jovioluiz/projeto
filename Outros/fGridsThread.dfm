@@ -1,9 +1,10 @@
 object fThreads: TfThreads
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'Form das Threads'
-  ClientHeight = 584
-  ClientWidth = 897
+  ClientHeight = 594
+  ClientWidth = 907
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,6 +12,7 @@ object fThreads: TfThreads
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
