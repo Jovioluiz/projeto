@@ -20,7 +20,7 @@ type TPedidoVenda = class
     function ValidaFormaPgto(CdFormaPgto: Integer): Boolean;
     function ValidaCliente(CdCliente: Integer): Boolean;
     function ValidaCondPgto(CdCond, CdForma: Integer): Boolean;
-    function BuscaProduto(CodProduto: String): TList<String>;
+    function BuscaProduto(CodProduto: String): TFDQuery;
     function BuscaProdutoCodBarras(CodBarras: String): TList<String>;
     function ValidaProduto(CodProduto: String): Boolean;
     function BuscaTabelaPreco(CodTabela: Integer; CodProduto: String): TList<string>;
@@ -327,13 +327,13 @@ begin
 
 end;
 
-function TPedidoVenda.BuscaProduto(CodProduto: String): TList<String>;
+function TPedidoVenda.BuscaProduto(CodProduto: String): TFDQuery;
 const
   sql = 'select '+
             'p.cd_produto,                  '+
             'p.desc_produto,                '+
             'tpp.un_medida,                 '+
-            'cast(tp.cd_tabela as varchar), '+
+            'tp.cd_tabela,                  '+
             'tp.nm_tabela,                  '+
             'tpp.valor                      '+
         'from                               '+
@@ -344,38 +344,12 @@ const
             'tpp.cd_tabela = tp.cd_tabela   '+
         'where (p.cd_produto = :cd_produto::text) '+
         'and (p.fl_ativo = True)';
-var
-  qry: TFDQuery;
-  lista: TList<string>;
-  desc_produto,
-  un_medida, cd_tabela, nm_tabela, valor: string;
 begin
-  qry := TFDQuery.Create(nil);
-  qry.Connection := dm.conexaoBanco;
-  lista := TList<string>.Create;
+  Result := TFDQuery.Create(nil);
+  Result.Connection := dm.conexaoBanco;
 
-  try
-    qry.SQL.Add(sql);
-    qry.ParamByName('cd_produto').AsString := CodProduto;
-    qry.Open(sql);
-
-    desc_produto := qry.FieldByName('desc_produto').AsString;
-    un_medida := qry.FieldByName('un_medida').AsString;
-    cd_tabela := qry.FieldByName('cd_tabela').AsString;
-    nm_tabela := qry.FieldByName('nm_tabela').AsString;
-    valor := qry.FieldByName('valor').AsString;
-
-    //retorna em uma lista
-    lista.Add(desc_produto);
-    lista.Add(un_medida);
-    lista.Add(cd_tabela);
-    lista.Add(nm_tabela);
-    lista.Add(valor);
-
-    Result := lista;
-  finally
-    qry.Free;
-  end;
+  Result.SQL.Add(sql);
+  Result.Open(sql, [CodProduto]);
 end;
 
 function TPedidoVenda.BuscaTabelaPreco(CodTabela: Integer; CodProduto: String): TList<string>;
@@ -455,15 +429,13 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  Result := False;
 
   try
     qry.SQL.Add(SQL);
     qry.ParamByName('codigo_barras').AsString := Cod;
     qry.Open();
 
-    if not qry.IsEmpty then
-      Result := True;
+    Result := not qry.IsEmpty;
   finally
     qry.Free;
   end;
@@ -490,12 +462,12 @@ begin
     qry.Open();
 
     if qry.IsEmpty then
-      Exit;
+      Exit(False);
 
     if QtdPedido > qry.FieldByName('qt_estoque').AsFloat then
     begin
       ShowMessage('Quantidade informada maior que a disponível.'
-      + #13 + 'Quantidade disponível: ' + FloatToStr(qry.FieldByName('qt_estoque').AsFloat));
+                  + #13 + 'Quantidade disponível: ' + FloatToStr(qry.FieldByName('qt_estoque').AsFloat));
       Result := False;
     end;
 

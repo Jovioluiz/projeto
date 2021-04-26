@@ -798,11 +798,11 @@ procedure TfrmPedidoVenda.edtCdProdutoExit(Sender: TObject);
 var
   produto: TPedidoVenda;
   resposta: Boolean;
-  lista: TList<String>;
+  lista: TFDQuery;
 begin
   produto := TPedidoVenda.Create;
   resposta := False;
-  lista := TList<string>.Create;
+//  lista := TList<string>.Create;
 
   try
     if (Trim(edtCdProduto.Text) = '') and (cdsPedidoVenda.RecordCount > 0) then
@@ -828,21 +828,21 @@ begin
     if produto.isCodBarrasProduto(edtCdProduto.Text) then
     begin
       lista := produto.BuscaProduto(edtCdProduto.Text);
-      edtCdProduto.Text := lista.Items[0];
-      edtDescProduto.Text := lista.Items[1];
-      edtUnMedida.Text := lista.Items[2];
-      edtCdtabelaPreco.Text := lista.Items[3];
-      edtDescTabelaPreco.Text := lista.Items[4];
-      edtVlUnitario.Text := lista.Items[5];
+      edtCdProduto.Text := lista.FieldByName('cd_produto').AsString;
+      edtDescProduto.Text := lista.FieldByName('desc_produto').AsString;
+      edtUnMedida.Text := lista.FieldByName('un_medida').AsString;
+      edtCdtabelaPreco.Text := IntToStr(lista.FieldByName('cd_tabela').AsInteger);
+      edtDescTabelaPreco.Text := lista.FieldByName('nm_tabela').AsString;
+      edtVlUnitario.Text := CurrToStr(lista.FieldByName('valor').AsCurrency);
     end
     else
     begin
       lista := produto.BuscaProduto(edtCdProduto.Text);
-      edtDescProduto.Text := lista.Items[0];
-      edtUnMedida.Text := lista.Items[1];
-      edtCdtabelaPreco.Text := lista.Items[2];   //erro aqui
-      edtDescTabelaPreco.Text := lista.Items[3];
-      edtVlUnitario.Text := lista.Items[4];
+      edtDescProduto.Text := lista.FieldByName('desc_produto').AsString;
+      edtUnMedida.Text := lista.FieldByName('un_medida').AsString;
+      edtCdtabelaPreco.Text := IntToStr(lista.FieldByName('cd_tabela').AsInteger);
+      edtDescTabelaPreco.Text := lista.FieldByName('nm_tabela').AsString;
+      edtVlUnitario.Text := CurrToStr(lista.FieldByName('valor').AsCurrency);
     end;
 
   finally
@@ -1356,8 +1356,7 @@ begin
     on E : exception do
       begin
         dm.conexaoBanco.Rollback;
-        ShowMessage('Erro ao gravar o cabeçalho do pedido ' + edtNrPedido.Text + E.Message);
-        Exit;
+        raise Exception.Create('Erro ao gravar o cabeçalho do pedido ' + edtNrPedido.Text + E.Message);
       end;
     end;
   finally
@@ -1459,8 +1458,7 @@ begin
     on E : exception do
       begin
         dm.conexaoBanco.Rollback;
-        ShowMessage('Erro ao gravar os itens do pedido ' + E.Message);
-        Exit;
+        raise Exception.Create('Erro ao gravar os itens do pedido' + E.Message);
       end;
     end;
   finally

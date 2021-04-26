@@ -150,6 +150,7 @@ const
 var
   tabela: TTabelaPreco;
   qry: TFDQuery;
+  book: TBookmark;
 begin
   if edtCodTabela.Text = EmptyStr then
   begin
@@ -181,9 +182,14 @@ begin
     qry.ParamByName('cd_tabela').AsInteger := StrToInt(edtCodTabela.Text);
     qry.Open();
 
+    FDados.cdsProdutos.DisableControls;
+
     qry.Loop(
     procedure
     begin
+      if FDados.cdsProdutos.RecordCount = 1 then
+        book := FDados.cdsProdutos.GetBookmark;
+
       FDados.cdsProdutos.Append;
       FDados.cdsProdutos.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
       FDados.cdsProdutos.FieldByName('nm_produto').AsString := qry.FieldByName('desc_produto').AsString;
@@ -193,6 +199,11 @@ begin
     end);
 
   finally
+    if FDados.cdsProdutos.BookmarkValid(book) then
+      FDados.cdsProdutos.GotoBookmark(book);
+
+    FDados.cdsProdutos.EnableControls;
+    FDados.cdsProdutos.FreeBookmark(book);
     qry.Free;
   end;
 end;

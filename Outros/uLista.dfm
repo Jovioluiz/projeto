@@ -2,8 +2,8 @@ object frmLista: TfrmLista
   Left = 0
   Top = 0
   Caption = 'frmLista'
-  ClientHeight = 636
-  ClientWidth = 635
+  ClientHeight = 679
+  ClientWidth = 1219
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,6 +12,7 @@ object frmLista: TfrmLista
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Edit1: TEdit
@@ -68,20 +69,67 @@ object frmLista: TfrmLista
     Text = '0'
   end
   object Button2: TButton
-    Left = 32
-    Top = 392
+    Left = 632
+    Top = 112
     Width = 75
     Height = 25
-    Caption = 'Button2'
+    Caption = 'Listar'
     TabOrder = 6
     OnClick = Button2Click
   end
   object Memo1: TMemo
-    Left = 32
-    Top = 423
+    Left = 632
+    Top = 143
     Width = 577
-    Height = 205
+    Height = 201
     TabOrder = 7
+  end
+  object DBGrid2: TDBGrid
+    Left = 32
+    Top = 424
+    Width = 577
+    Height = 225
+    TabOrder = 8
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+  end
+  object Button3: TButton
+    Left = 32
+    Top = 393
+    Width = 75
+    Height = 25
+    Caption = 'Listar'
+    TabOrder = 9
+    OnClick = Button3Click
+  end
+  object edtBuscar: TEdit
+    Left = 113
+    Top = 393
+    Width = 121
+    Height = 25
+    TabOrder = 10
+    OnChange = edtBuscarChange
+  end
+  object Memo2: TMemo
+    Left = 632
+    Top = 424
+    Width = 577
+    Height = 217
+    Lines.Strings = (
+      '')
+    TabOrder = 11
+  end
+  object Button4: TButton
+    Left = 632
+    Top = 393
+    Width = 75
+    Height = 25
+    Caption = 'Listar'
+    TabOrder = 12
+    OnClick = Button4Click
   end
   object ds: TDataSource
     DataSet = cds
@@ -130,5 +178,38 @@ object frmLista: TfrmLista
       DisplayWidth = 12
       FieldName = 'cpf_cnpj'
     end
+  end
+  object dsPedido: TDataSource
+    DataSet = cdsPedido
+    Left = 272
+    Top = 472
+  end
+  object cdsPedido: TClientDataSet
+    PersistDataPacket.Data = {
+      5F0000009619E0BD0100000018000000030000000000030000005F000F69645F
+      70656469646F5F76656E646108000100000000000869645F676572616C080001
+      00000000000763645F6974656D01004900000001000557494454480200020014
+      000000}
+    Active = True
+    Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'id_pedido_venda'
+        DataType = ftLargeint
+      end
+      item
+        Name = 'id_geral'
+        DataType = ftLargeint
+      end
+      item
+        Name = 'cd_item'
+        DataType = ftString
+        Size = 20
+      end>
+    IndexDefs = <>
+    Params = <>
+    StoreDefs = True
+    Left = 328
+    Top = 472
   end
 end

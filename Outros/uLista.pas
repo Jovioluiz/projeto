@@ -26,9 +26,20 @@ type
     edtCont: TEdit;
     Button2: TButton;
     Memo1: TMemo;
+    DBGrid2: TDBGrid;
+    dsPedido: TDataSource;
+    cdsPedido: TClientDataSet;
+    Button3: TButton;
+    edtBuscar: TEdit;
+    Memo2: TMemo;
+    Button4: TButton;
     procedure btnAddClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure edtBuscarChange(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -112,6 +123,20 @@ begin
 
 end;
 
+procedure TfrmLista.edtBuscarChange(Sender: TObject);
+begin
+  cdsPedido.DisableControls;
+
+  try
+    cdsPedido.Filtered := False;
+    cdsPedido.Filter := 'id_pedido_venda = ' + edtBuscar.Text;
+    cdsPedido.Filtered := True;
+
+  finally
+    cdsPedido.EnableControls;
+  end;
+end;
+
 procedure TfrmLista.Button1Click(Sender: TObject);
 const
   SQL = 'select * from cliente';
@@ -192,6 +217,111 @@ begin
     qry.Free;
     dicionario.Free;
   end;
+end;
+
+procedure TfrmLista.Button3Click(Sender: TObject);
+const
+  sql = 'select ' +
+        '    id_geral, ' +
+        '    id_pedido_venda, ' +
+        '    p.cd_produto  ' +
+        'from ' +
+        '    pedido_venda_item pvi  ' +
+        '    join produto p on p.id_item = pvi.id_item  ' +
+        'order by ' +
+        '    id_geral ';
+var
+  dicionario: TObjectDictionary<Int64, TDictionary<Int64, String>>;
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  dicionario := TObjectDictionary<Int64, TDictionary<Int64, String>>.Create;
+
+  try
+    qry.Open(sql);
+
+    qry.Loop(
+      procedure
+      begin
+
+        if not dicionario.ContainsKey(qry.FieldByName('id_pedido_venda').AsLargeInt) then
+          dicionario.Add(qry.FieldByName('id_pedido_venda').AsLargeInt, TDictionary<Int64, String>.Create);
+
+        if not dicionario[qry.FieldByName('id_pedido_venda').AsLargeInt].ContainsKey(qry.FieldByName('id_geral').AsLargeInt) then
+          dicionario[qry.FieldByName('id_pedido_venda').AsLargeInt].Add(qry.FieldByName('id_geral').AsLargeInt, qry.FieldByName('cd_produto').AsString);
+
+//        if not dicionario[qry.FieldByName('id_pedido_venda').AsLargeInt][qry.FieldByName('id_geral').AsLargeInt].Contains(qry.FieldByName('cd_produto').AsString) then
+          dicionario[qry.FieldByName('id_pedido_venda').AsLargeInt].Add(qry.FieldByName('id_geral').AsLargeInt, qry.FieldByName('cd_produto').AsString);
+
+
+      end);
+
+      //não está listando todos
+      for var i in dicionario.Keys do
+      begin
+        cdsPedido.Append;
+        cdsPedido.FieldByName('id_pedido_venda').AsLargeInt := i;
+
+        for var j in dicionario[i].Keys do
+        begin
+          cdsPedido.FieldByName('id_geral').AsLargeInt := j;
+          cdsPedido.FieldByName('cd_item').AsString := dicionario.Items[i].Items[j];
+        end;
+
+        cdsPedido.Post;
+      end;
+
+
+  finally
+    qry.Free;
+    dicionario.Free;
+  end;
+end;
+
+procedure TfrmLista.Button4Click(Sender: TObject);
+const
+  sql = 'select id_geral, id_item from pedido_venda_item';
+var
+  dicionario: TDictionary<Int64, Integer>;
+  qry: TFDQuery;
+  j: Integer;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  dicionario := TDictionary<Int64, Integer>.Create;
+  j := 0;
+
+  try
+    Memo2.Lines.Clear;
+
+    qry.Open(sql);
+
+    qry.Loop(
+    procedure
+    begin
+      if not dicionario.ContainsKey(qry.FieldByName('id_geral').AsLargeInt) then
+        dicionario.Add(qry.FieldByName('id_geral').AsLargeInt, qry.FieldByName('id_item').AsInteger);
+    end
+    );
+
+    for var i in dicionario.Keys do
+    begin
+      Inc(j);
+      Memo2.Lines.Add(j.ToString + '-' + i.ToString + ' - ' + dicionario.Items[i].ToString)
+    end;
+
+  finally
+    qry.Free;
+    dicionario.Free;
+  end;
+end;
+
+procedure TfrmLista.FormCreate(Sender: TObject);
+begin
+  DBGrid2.DataSource := dsPedido;
 end;
 
 end.

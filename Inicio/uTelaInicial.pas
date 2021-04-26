@@ -268,13 +268,13 @@ end;
 //mostra o usuário logado
 procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
-  try
-    //StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frmLogin.edtUsuario.Text);
-    frmsplash := TfrmSplash.Create(Self);
-    frmSplash.ShowModal;
-  finally
-    frmSplash.Free;
-  end;
+//  try
+//    //StatusBar1.Panels.Items[0].Text := Concat('Usuário Logado: ', frmLogin.edtUsuario.Text);
+//    frmsplash := TfrmSplash.Create(Self);
+//    frmSplash.ShowModal;
+//  finally
+//    frmSplash.Free;
+//  end;
 end;
 
 procedure TfrmPrincipal.FormKeyDown(Sender: TObject; var Key: Word;
