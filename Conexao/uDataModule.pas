@@ -15,25 +15,8 @@ type
     conexaoBanco: TFDConnection;
     driver: TFDPhysPgDriverLink;
     FDGUIxWaitCursor1: TFDGUIxWaitCursor;
-    sqlCliente: TFDQuery;
-    transacao: TFDTransaction;
-    queryControleAcesso: TFDQuery;
-    tbControleAcesso: TFDTable;
     dsControleAcesso: TDataSource;
     query: TFDQuery;
-    queryControleAcessocd_acao: TIntegerField;
-    queryControleAcessonm_acao: TWideStringField;
-    queryControleAcessonm_formulario: TWideStringField;
-    queryControleAcessodt_atz: TSQLTimeStampField;
-    queryControleAcessocd_usuario: TIntegerField;
-    queryControleAcessocd_acao_1: TIntegerField;
-    queryControleAcessofl_permite_acesso: TBooleanField;
-    queryControleAcessodt_atz_1: TSQLTimeStampField;
-    tbCodBarraProduto: TFDTable;
-    queryCodBarraProduto: TFDQuery;
-    dsCodBarraProduto: TDataSource;
-    queryControleAcessofl_permite_edicao: TBooleanField;
-    sqlPedidoVenda: TFDQuery;
     cdsControleAcesso: TClientDataSet;
     cdsControleAcessocd_usuario: TIntegerField;
     cdsControleAcessocd_acao: TIntegerField;
@@ -41,6 +24,7 @@ type
     cdsControleAcessofl_permite_acesso: TBooleanField;
     cdsControleAcessofl_permite_edicao: TBooleanField;
     procedure DataModuleCreate(Sender: TObject);
+    procedure DataModuleDestroy(Sender: TObject);
   private
     { Private declarations }
   public
@@ -85,5 +69,20 @@ begin
     conexaoIni.Free;
   end;
 end;
+
+procedure Tdm.DataModuleDestroy(Sender: TObject);
+begin
+
+  query.Free;
+  FDGUIxWaitCursor1.Free;
+  if Assigned(cdsControleAcesso) then
+    cdsControleAcesso.Free;
+  dsControleAcesso.Free;
+
+  conexaoBanco.Free;
+
+  inherited;
+end;
+
 
 end.

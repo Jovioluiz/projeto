@@ -76,7 +76,6 @@ begin
     Application.Initialize;
     ReportMemoryLeaksOnShutdown := True;
     Application.MainFormOnTaskbar := True;
-    Application.CreateForm(TdmConsultaProduto, dmConsultaProduto);
     Application.CreateForm(TfrmPrincipal, frmPrincipal);
     Application.Run;
   end;

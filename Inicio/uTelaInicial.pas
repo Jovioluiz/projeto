@@ -131,9 +131,9 @@ procedure TfrmPrincipal.Cadastro2Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadastraTributacaoItem);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadastraTributacaoItem);
     if temPermissao then
     begin
       frmCadastraTributacaoItem := TfrmCadastraTributacaoItem.Create(Self);
@@ -141,6 +141,7 @@ begin
     end;
   finally
     FreeAndNil(acesso);
+    frmCadastraTributacaoItem.Free;
   end;
 end;
 
@@ -148,9 +149,9 @@ procedure TfrmPrincipal.CadastroEndereo1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadastroEndereco);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadastroEndereco);
     if temPermissao then
     begin
       frmCadastroEnderecos := TfrmCadastroEnderecos.Create(Self);
@@ -165,9 +166,9 @@ procedure TfrmPrincipal.Cliente1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadCliente);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadCliente);
     if temPermissao then
     begin
       frmCadCliente := TfrmCadCliente.Create(Self);
@@ -182,9 +183,9 @@ procedure TfrmPrincipal.CondicaoPagamento1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadCondPgto);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadCondPgto);
     if temPermissao then
     begin
       frmCadCondPgto := TfrmCadCondPgto.Create(Self);
@@ -199,9 +200,9 @@ procedure TfrmPrincipal.Configuraes1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoConfiguracoes);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoConfiguracoes);
     if temPermissao then
     begin
       frmConfiguracoes := TfrmConfiguracoes.Create(Self);
@@ -216,9 +217,9 @@ procedure TfrmPrincipal.ControleAcesso1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoControleAcesso);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoControleAcesso);
     if temPermissao then
     begin
       frmControleAcesso := TfrmControleAcesso.Create(Self);
@@ -232,16 +233,21 @@ end;
 procedure TfrmPrincipal.este1Click(Sender: TObject);
 begin
   frmlista := Tfrmlista.Create(Self);
-  frmlista.Show;
+
+  try
+    frmlista.Show;
+  finally
+    frmlista.Free;
+  end;
 end;
 
 procedure TfrmPrincipal.FormaPagamento1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadFormaPagamento);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadFormaPagamento);
     if temPermissao then
     begin
       frmCadFormaPagamento := TfrmCadFormaPagamento.Create(Self);
@@ -289,30 +295,41 @@ end;
 
 procedure TfrmPrincipal.GravarVendas1Click(Sender: TObject);
 begin
-  frmGravaArquivo := TfrmGravaArquivo.Create(Self);
-  frmGravaArquivo.ShowModal
+  try
+    frmGravaArquivo := TfrmGravaArquivo.Create(Self);
+    frmGravaArquivo.ShowModal;
+  finally
+    frmGravaArquivo.Free;
+  end;
 end;
 
 
 procedure TfrmPrincipal.hreads1Click(Sender: TObject);
 begin
-  fThreads := TfThreads.Create(Self);
-  fThreads.ShowModal;
+  try
+    fThreads := TfThreads.Create(Self);
+    fThreads.ShowModal;
+  finally
+    fThreads.Free;
+  end;
 end;
 
 procedure TfrmPrincipal.ImportarProdutos1Click(Sender: TObject);
 begin
-  frmImportaDados := TfrmImportaDados.Create(Self);
-  frmImportaDados.Show;
+  try
+    frmImportaDados := TfrmImportaDados.Create(Self);
+    frmImportaDados.Show;
+  finally
+  end;
 end;
 
 procedure TfrmPrincipal.NotaEntrada1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoLancamentoNotaEntrada);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoLancamentoNotaEntrada);
     if temPermissao then
     begin
       frmLancamentoNotaEntrada := TfrmLancamentoNotaEntrada.Create(Self);
@@ -327,9 +344,9 @@ procedure TfrmPrincipal.PedidodeVenda1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoPedidoVenda);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoPedidoVenda);
     if temPermissao then
     begin
       frmPedidoVenda := TfrmPedidoVenda.Create(Self);
@@ -344,9 +361,9 @@ procedure TfrmPrincipal.Produto1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadProduto);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadProduto);
     if temPermissao then
     begin
       frmCadProduto := TfrmCadProduto.Create(Self);
@@ -361,9 +378,9 @@ procedure TfrmPrincipal.Produtos1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoConsultaProdutos);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoConsultaProdutos);
     if temPermissao then
     begin
       frmConsultaProdutos := TfrmConsultaProdutos.Create(Self);
@@ -384,9 +401,9 @@ procedure TfrmPrincipal.TabeladePreo1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaocadTabelaPreco);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaocadTabelaPreco);
     if temPermissao then
     begin
       frmcadTabelaPreco := TfrmcadTabelaPreco.Create(Self);
@@ -409,9 +426,9 @@ procedure TfrmPrincipal.Usurios1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoUsuario);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoUsuario);
     if temPermissao then
     begin
       frmUsuario := TfrmUsuario.Create(Self);
@@ -426,9 +443,9 @@ procedure TfrmPrincipal.VendaDiria1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoRelVendaDiaria);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoRelVendaDiaria);
     if temPermissao then
     begin
       frmRelVendaDiaria := TfrmRelVendaDiaria.Create(Self);
@@ -443,9 +460,9 @@ procedure TfrmPrincipal.VisualizarPedidoVenda1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
-  temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoVisualizaPedidoVenda);
 
   try
+    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoVisualizaPedidoVenda);
     if temPermissao then
     begin
       frmVisualizaPedidoVenda := TfrmVisualizaPedidoVenda.Create(Self);

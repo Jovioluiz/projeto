@@ -25,11 +25,11 @@ type
     btnConexao: TBitBtn;
     procedure btnCancelarClick(Sender: TObject);
     procedure btnEntrarClick(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure edtUsuarioExit(Sender: TObject);
     procedure btnConexaoClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -55,7 +55,11 @@ end;
 procedure TfrmLogin.btnConexaoClick(Sender: TObject);
 begin
   frmConexao := TfrmConexao.Create(Self);
-  frmConexao.ShowModal;
+  try
+    frmConexao.ShowModal;
+  finally
+    frmConexao.Free;
+  end;
 end;
 
 procedure TfrmLogin.btnEntrarClick(Sender: TObject);
@@ -168,6 +172,8 @@ begin
   finally
     versao.Free;
   end;
+
+  ReportMemoryLeaksOnShutdown := True;
 end;
 
 procedure TfrmLogin.FormKeyPress(Sender: TObject; var Key: Char);

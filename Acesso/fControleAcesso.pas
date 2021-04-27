@@ -42,7 +42,6 @@ type
     FRegras: TControleAcessoSistema;
     FEdicao: Boolean;
     { Private declarations }
-    procedure listar;
     procedure excluir;
     function Pesquisar(CdUsuario, CdAcao: Integer): Boolean;
     procedure Salvar;
@@ -248,8 +247,6 @@ begin
 
   if edtUsuario.Text <> '' then
     FRegras.Listar(StrToInt(edtUsuario.Text));
-  //listar;
-
 end;
 
 procedure TfrmControleAcesso.excluir;
@@ -278,7 +275,6 @@ begin
   begin
     Exit;
   end;
-  listar;
   edtUsuario.Clear;
   edtNomeUsuario.Clear;
 end;
@@ -328,15 +324,6 @@ begin
   edtNomeAcao.Clear;
   cbEdicao.ItemIndex := 1;
   FRegras.Dados.cds.EmptyDataSet;
-end;
-
-procedure TfrmControleAcesso.listar;
-begin
-//  dm.queryControleAcesso.Close;
-//  dm.queryControleAcesso.SQL.Clear;
-//  dm.queryControleAcesso.SQL.Add(sql_acao);
-//  dm.queryControleAcesso.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
-//  dm.queryControleAcesso.Open(sql_acao);
 end;
 
 function TfrmControleAcesso.Pesquisar(CdUsuario, CdAcao: Integer): Boolean;
