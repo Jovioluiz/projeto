@@ -254,8 +254,6 @@ begin
 
 //        if not dicionario[qry.FieldByName('id_pedido_venda').AsLargeInt][qry.FieldByName('id_geral').AsLargeInt].Contains(qry.FieldByName('cd_produto').AsString) then
           dicionario[qry.FieldByName('id_pedido_venda').AsLargeInt].Add(qry.FieldByName('id_geral').AsLargeInt, qry.FieldByName('cd_produto').AsString);
-
-
       end);
 
       //não está listando todos

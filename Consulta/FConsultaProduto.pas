@@ -28,6 +28,7 @@ type
     dbGridEstoque: TDBGrid;
     popProduto: TPopupMenu;
     VisualizarProduto1: TMenuItem;
+    VisualizarCdigodeBarras1: TMenuItem;
     procedure btnPesquisarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -35,6 +36,7 @@ type
     procedure dbGridProdutoCellClick(Column: TColumn);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure VisualizarProduto1Click(Sender: TObject);
+    procedure VisualizarCdigodeBarras1Click(Sender: TObject);
   private
     FConsulta: TConsultaProdutos;
     FThread: TThread;
@@ -49,7 +51,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, dtmConsultaProduto, cPRODUTO;
+uses uDataModule, dtmConsultaProduto, cPRODUTO, fVisualizaCodigoBarras;
 
 
 
@@ -112,6 +114,23 @@ begin
   begin
     Key := #0;
     Perform(WM_NEXTDLGCTL,0,0)
+  end;
+end;
+
+procedure TfrmConsultaProdutos.VisualizarCdigodeBarras1Click(Sender: TObject);
+var
+  visualizaCod: TfVisualizaCodBarras;
+begin
+  if FConsulta.Dados.cdsConsultaProduto.RecordCount = 0 then
+    Exit;
+
+  visualizaCod := TfVisualizaCodBarras.Create(nil);
+
+  try
+    visualizaCod.IDItem := FConsulta.Dados.cdsConsultaProduto.FieldByName('id_item').AsInteger;
+    visualizaCod.ShowModal;
+  finally
+    visualizaCod.Free;
   end;
 end;
 

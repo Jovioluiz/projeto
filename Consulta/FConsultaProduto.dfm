@@ -215,5 +215,9 @@ object frmConsultaProdutos: TfrmConsultaProdutos
       Caption = 'Visualizar Produto'
       OnClick = VisualizarProduto1Click
     end
+    object VisualizarCdigodeBarras1: TMenuItem
+      Caption = 'Visualizar C'#243'digos de Barras'
+      OnClick = VisualizarCdigodeBarras1Click
+    end
   end
 end
