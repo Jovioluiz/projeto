@@ -2,7 +2,10 @@ unit uclCtaFormaPagamento;
 
 interface
 
-type TCtaFormaPagamento = class
+uses
+  uInterface;
+
+type TCtaFormaPagamento = class(TInterfacedObject, IInterfaceModelo)
   private
     Ftp_classificacao: Integer;
     Ffl_ativo: Boolean;

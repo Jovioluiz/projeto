@@ -60,9 +60,10 @@ uses
   uControleAcessoSistema in 'Acesso\uControleAcessoSistema.pas',
   dControleAcesso in 'Acesso\dControleAcesso.pas' {dmControleAcesso: TDataModule},
   uConsultaProdutos in 'Consulta\uConsultaProdutos.pas',
-  uThread in 'Outros\uThread.pas' {/dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule},
+  uThread in 'Outros\uThread.pas' {/dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule};},
   fGridsThread in 'Outros\fGridsThread.pas' {fThreads},
-  fVisualizaCodigoBarras in 'Outros\fVisualizaCodigoBarras.pas' {fVisualizaCodBarras};
+  fVisualizaCodigoBarras in 'Outros\fVisualizaCodigoBarras.pas' {fVisualizaCodBarras},
+  uInterface in 'Outros\uInterface.pas';
 
 //dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule};
 

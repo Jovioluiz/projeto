@@ -235,7 +235,7 @@ begin
   frmlista := Tfrmlista.Create(Self);
 
   try
-    frmlista.Show;
+    frmLista.ShowModal;
   finally
     frmlista.Free;
   end;
@@ -316,10 +316,11 @@ end;
 
 procedure TfrmPrincipal.ImportarProdutos1Click(Sender: TObject);
 begin
+  frmImportaDados := TfrmImportaDados.Create(Self);
   try
-    frmImportaDados := TfrmImportaDados.Create(Self);
-    frmImportaDados.Show;
+    frmImportaDados.ShowModal;
   finally
+    frmImportaDados.Free;
   end;
 end;
 

@@ -69,13 +69,20 @@ begin
   FAdicionar := True;
   temPermissao := False;
   cliente := TValidaDados.Create;
-  temPermissao := cliente.validaAcessoAcao(idUsuario, 6);
+  frmCadTabelaPrecoProduto := TfrmCadTabelaPrecoProduto.Create(Self);
 
-  if temPermissao then
-  begin
-    frmCadTabelaPrecoProduto := TfrmCadTabelaPrecoProduto.Create(Self);
-    frmCadTabelaPrecoProduto.edtCodTabela.Text := edtCodTabela.Text;
-    frmCadTabelaPrecoProduto.Show;
+  try
+    temPermissao := cliente.validaAcessoAcao(idUsuario, 6);
+
+    if temPermissao then
+    begin
+      frmCadTabelaPrecoProduto.edtCodTabela.Text := edtCodTabela.Text;
+      frmCadTabelaPrecoProduto.ShowModal;
+    end;
+
+  finally
+    cliente.Free;
+    frmCadTabelaPrecoProduto.Free;
   end;
 end;
 

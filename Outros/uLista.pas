@@ -271,7 +271,6 @@ begin
         cdsPedido.Post;
       end;
 
-
   finally
     qry.Free;
     dicionario.Free;

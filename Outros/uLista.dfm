@@ -109,7 +109,7 @@ object frmLista: TfrmLista
     Left = 113
     Top = 393
     Width = 121
-    Height = 25
+    Height = 21
     TabOrder = 10
     OnChange = edtBuscarChange
   end
