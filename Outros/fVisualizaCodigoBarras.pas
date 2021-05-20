@@ -18,6 +18,7 @@ type
   private
     FIDItem: Integer;
     FDicionarioCod: TDictionary<string, string>;
+    FCDItem: String;
     { Private declarations }
     procedure ListaCodBarras;
     procedure SetIDItem(const Value: Integer);
@@ -25,6 +26,7 @@ type
     { Public declarations }
     property IDItem: Integer read FIDItem write SetIDItem;
     property DicionarioCod: TDictionary<string, string> read FDicionarioCod;
+    property CDItem: String read FCDItem write FCDItem;
   end;
 
 var
@@ -54,6 +56,7 @@ begin
 
   dbGridCodBarras.Columns[0].Title.Caption := StringReplace(cds.FieldDefs[0].Name, '_', ' ',  [rfReplaceAll, rfIgnoreCase]);
   dbGridCodBarras.Columns[1].Title.Caption := StringReplace(cds.FieldDefs[1].Name, '_', ' ',  [rfReplaceAll, rfIgnoreCase]);
+  fVisualizaCodBarras.Caption := Caption + FCDItem;
 
   for var i in FDicionarioCod.Keys do
   begin

@@ -372,8 +372,14 @@ var
   CodProduto: Integer;
 begin
   // TODO: Setup method call parameters
+  CodProduto := 1;
   ReturnValue := FfrmPedidoVenda.ProdutoJaLancado(CodProduto);
-  // TODO: Validate method results
+
+  // espera um valor de retorno falso
+
+  CheckFalse(ReturnValue, 'produto já lançado');
+
+
 end;
 
 procedure TestTfrmPedidoVenda.TestRetornaSequencia;

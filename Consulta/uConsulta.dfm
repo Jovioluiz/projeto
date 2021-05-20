@@ -103,7 +103,10 @@ object frmConsulta: TfrmConsulta
   end
   object cds: TClientDataSet
     Aggregates = <>
+    FieldDefs = <>
+    IndexDefs = <>
     Params = <>
+    StoreDefs = True
     Left = 616
     Top = 184
   end

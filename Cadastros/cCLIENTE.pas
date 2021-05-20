@@ -321,9 +321,15 @@ begin
   consulta := TfrmConsulta.Create(Self);
   if key = VK_F9 then
   begin
-    chamada := 'cntCliente';
-    consulta.MontaDataset(sql);
-    consulta.Show;
+    try
+      chamada := 'cntCliente';
+      consulta.MontaDataset(sql);
+      consulta.ShowModal;
+      edtCLIENTEcd_cliente.Text := CodCliente.ToString;
+      edtCLIENTEcd_clienteExit(Self);
+    finally
+      consulta.Free;
+    end;
   end;
 end;
 

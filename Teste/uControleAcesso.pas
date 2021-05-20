@@ -28,7 +28,6 @@ type
 
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnAddClick(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtCdAcaoChange(Sender: TObject);
     procedure dbGridAcoesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -237,8 +236,6 @@ const
               '   login_usuario '+
               'where id_usuario = :id_usuario';
 begin
-  dm.queryControleAcesso.Close;
-  dm.queryControleAcesso.SQL.Clear;
 
   if edtUsuario.Text = '' then
   begin
@@ -285,12 +282,6 @@ begin
   listar;
   edtUsuario.Clear;
   edtNomeUsuario.Clear;
-end;
-
-procedure TfrmControleAcesso.FormClose(Sender: TObject;
-  var Action: TCloseAction);
-begin
-  dm.queryControleAcesso.Close;
 end;
 
 procedure TfrmControleAcesso.FormCreate(Sender: TObject);
@@ -346,12 +337,18 @@ const
                '    ua.cd_acao = acs.cd_acao '+
                'where cd_usuario = :cd_usuario'+
                '    order by ua.cd_acao ';
+var
+  query: TFDQuery;
 begin
-  dm.queryControleAcesso.Close;
-  dm.queryControleAcesso.SQL.Clear;
-  dm.queryControleAcesso.SQL.Add(sql_acao);
-  dm.queryControleAcesso.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
-  dm.queryControleAcesso.Open(sql_acao);
+  query := TFDQuery.Create(nil);
+  query.Connection := dm.conexaoBanco;
+
+  try
+    query.Open(sql_acao, [StrToInt(edtUsuario.Text)]);
+
+  finally
+    query.Free;
+  end;
 end;
 
 function TfrmControleAcesso.Pesquisar(CdUsuario, CdAcao: Integer): Boolean;

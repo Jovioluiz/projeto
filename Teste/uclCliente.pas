@@ -6,7 +6,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.Comp.Client, FireDAC.DApt,
-  FireDAC.Comp.DataSet;
+  FireDAC.Comp.DataSet, Data.DB;
 
 type TCliente = class
   private
@@ -34,9 +34,11 @@ type TCliente = class
     procedure Setfl_fornecedor(const Value: Boolean);
   public
     function Pesquisar(CdCliente: Integer): Boolean;
+    function GeraCodigoCliente: Integer;
     procedure Atualizar;
     procedure Inserir;
     procedure Excluir;
+    procedure Buscar(CdCliente: Integer);
 
     property cd_cliente: Integer read Fcd_cliente write Setcd_cliente;
     property nome: string read Fnome write Setnome;
@@ -67,9 +69,11 @@ type TClienteEndereco = class
     procedure Setlogradouro(const Value: string);
     procedure Setnumero(const Value: string);
     procedure Setuf(const Value: string);
+
   public
     procedure Atualizar;
     procedure Inserir;
+    procedure Buscar(CdCliente: Integer);
     property cd_cliente: Integer read Fcd_cliente write Setcd_cliente;
     property logradouro: string read Flogradouro write Setlogradouro;
     property numero: string read Fnumero write Setnumero;
@@ -109,6 +113,7 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
+  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -133,13 +138,65 @@ begin
     except
       on E:exception do
       begin
-        dm.transacao.Rollback;
-        ShowMessage('Erro ao gravar os dados do cliente. ' + E.Message);
-        Exit;
+        dm.conexaoBanco.Rollback;
+        raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
       end;
     end;
   finally
     dm.conexaoBanco.Rollback;
+    qry.Free;
+  end;
+end;
+
+procedure TCliente.Buscar(CdCliente: Integer);
+const
+  SQL =
+    'select ' +
+    '    c.cd_cliente, ' +
+    '    c.nome, ' +
+    '    c.tp_pessoa, ' +
+    '    c.fl_ativo, ' +
+    '    c.telefone, ' +
+    '    c.celular, ' +
+    '    c.email, ' +
+    '    c.cpf_cnpj, ' +
+    '    c.rg_ie, ' +
+    '    c.dt_nasc_fundacao, ' +
+    '    c.fl_fornecedor ' +
+    'from ' +
+    '    cliente c ' +
+    'where ' +
+    '    c.cd_cliente = :cd_cliente ';
+var
+  qry: TFDQuery;
+  endereco: TClienteEndereco;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  qry.SQL.Add(SQL);
+  endereco := TClienteEndereco.Create;
+
+  try
+    qry.ParamByName('cd_cliente').AsInteger := CdCliente;
+    qry.Open();
+
+    if not qry.IsEmpty then
+    begin
+      cd_cliente := qry.FieldByName('cd_cliente').AsInteger;
+      nome := qry.FieldByName('nome').AsString;
+      fl_ativo := qry.FieldByName('fl_ativo').AsBoolean;
+      tp_pessoa := qry.FieldByName('tp_pessoa').AsString;
+      telefone := qry.FieldByName('telefone').AsString;
+      celular := qry.FieldByName('celular').AsString;
+      email := qry.FieldByName('email').AsString;
+      cpf_cnpj := qry.FieldByName('cpf_cnpj').AsString;
+      rg_ie := qry.FieldByName('rg_ie').AsString;
+      dt_nasc_fundacao := qry.FieldByName('dt_nasc_fundacao').AsDateTime;
+      fl_fornecedor := qry.FieldByName('fl_fornecedor').AsBoolean;
+    end;
+
+  finally
+    endereco.Free;
     qry.Free;
   end;
 end;
@@ -168,11 +225,31 @@ begin
     except
     on E:exception do
       begin
-        dm.conexaoBanco.Rollback;
-        ShowMessage('Erro ao excluir os dados do cliente ' + Fcd_cliente.ToString +'.' + E.Message);
-        Exit;
+        qry.Connection.Rollback;
+        raise Exception.Create('Erro ao excluir os dados do cliente ' + Fcd_cliente.ToString + E.Message);
       end;
     end;
+  finally
+    dm.conexaoBanco.Rollback;
+    qry.Free;
+  end;
+end;
+
+function TCliente.GeraCodigoCliente: Integer;
+const
+  SQL = 'select nextval(''cliente_seq'') as cod';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  qry.SQL.Add(SQL);
+
+  try
+    qry.Open();
+
+    Result := qry.FieldByName('cod').AsInteger;
+
   finally
     qry.Free;
   end;
@@ -193,8 +270,7 @@ const
   '    email,                 '+
   '    cpf_cnpj,              '+
   '    rg_ie,                 '+
-  '    dt_nasc_fundacao,      '+
-  '    fl_fornecedor)         '+
+  '    dt_nasc_fundacao)      '+
   'values (:cd_cliente,       '+
   ':fl_ativo,                 '+
   ':fl_fornecedor,            '+
@@ -205,8 +281,7 @@ const
   ':email,                    '+
   ':cpf_cnpj,                 '+
   ':rg_ie,                    '+
-  ':dt_nasc_fundacao,         '+
-  ':fl_fornecedor)';
+  ':dt_nasc_fundacao)';
 var
   qry: TFDquery;
 begin
@@ -220,7 +295,7 @@ begin
       qry.ParamByName('cd_cliente').AsInteger := Fcd_cliente;
       qry.ParamByName('nome').AsString := Fnome;
       qry.ParamByName('fl_ativo').AsBoolean := Ffl_ativo;
-      if Ftp_pessoa = 'S' then
+      if Ftp_pessoa = 'F' then
         qry.ParamByName('tp_pessoa').AsString := 'F'
       else
         qry.ParamByName('tp_pessoa').AsString := 'J';
@@ -238,11 +313,11 @@ begin
     on E:exception do
       begin
         dm.conexaoBanco.Rollback;
-        ShowMessage('Erro ao gravar os dados do cliente. ' + E.Message);
-        Exit;
+        raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;
@@ -260,7 +335,6 @@ var
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
 
   try
     qry.SQL.Add(SQL_CLIENTE);
@@ -365,18 +439,58 @@ begin
       qry.ParamByName('cep').AsString := Fcep;
 
       qry.ExecSQL;
-
       dm.conexaoBanco.Commit;
     except
     on E:exception do
       begin
         dm.conexaoBanco.Rollback;
-        ShowMessage('Erro ao gravar os dados do cliente. '+ E.Message);
-        Exit;
+        raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
       end;
     end;
   finally
     dm.conexaoBanco.Rollback;
+    qry.Free;
+  end;
+end;
+
+procedure TClienteEndereco.Buscar(CdCliente: Integer);
+const
+  SQL =
+    'select ' +
+    '    c.cd_cliente, ' +
+    '    c.logradouro, ' +
+    '    c.num, ' +
+    '    c.bairro, ' +
+    '    c.cidade, ' +
+    '    c.uf, ' +
+    '    c.cep ' +
+    'from ' +
+    '    endereco_cliente c ' +
+    'where ' +
+    '    c.cd_cliente = :cd_cliente ';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(nil);
+  qry.Connection := dm.conexaoBanco;
+  qry.SQL.Add(SQL);
+
+  try
+    qry.ParamByName('cd_cliente').AsInteger := CdCliente;
+    qry.Open();
+
+    if not qry.IsEmpty then
+    begin
+      cd_cliente := qry.FieldByName('cd_cliente').AsInteger;
+      logradouro := qry.FieldByName('logradouro').AsString;
+      numero := qry.FieldByName('num').AsString;
+      bairro := qry.FieldByName('bairro').AsString;
+      cidade := qry.FieldByName('cidade').AsString;
+      uf := qry.FieldByName('uf').AsString;
+      cep := qry.FieldByName('cep').AsString;
+    end;
+
+  finally
     qry.Free;
   end;
 end;
@@ -424,12 +538,12 @@ begin
     except
     on E:exception do
       begin
-        dm.conexaoBanco.Rollback;
-        ShowMessage('Erro ao gravar os dados do cliente. '+ E.Message);
-        Exit;
+        qry.Connection.Rollback;
+        raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
       end;
     end;
   finally
+    dm.conexaoBanco.Rollback;
     qry.Free;
   end;
 end;

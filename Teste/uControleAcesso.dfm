@@ -15,7 +15,6 @@ object frmControleAcesso: TfrmControleAcesso
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
-  OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress

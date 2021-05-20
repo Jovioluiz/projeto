@@ -60,12 +60,11 @@ uses
   uControleAcessoSistema in 'Acesso\uControleAcessoSistema.pas',
   dControleAcesso in 'Acesso\dControleAcesso.pas' {dmControleAcesso: TDataModule},
   uConsultaProdutos in 'Consulta\uConsultaProdutos.pas',
-  uThread in 'Outros\uThread.pas' {/dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule};},
+  uThread in 'Outros\uThread.pas',
   fGridsThread in 'Outros\fGridsThread.pas' {fThreads},
   fVisualizaCodigoBarras in 'Outros\fVisualizaCodigoBarras.pas' {fVisualizaCodBarras},
-  uInterface in 'Outros\uInterface.pas';
-
-//dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule};
+  uInterface in 'Outros\uInterface.pas',
+  transferenciaTabelas in 'Outros\transferenciaTabelas.pas';
 
 {$R *.res}
 

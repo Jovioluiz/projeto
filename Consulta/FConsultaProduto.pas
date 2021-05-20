@@ -57,7 +57,11 @@ uses uDataModule, dtmConsultaProduto, cPRODUTO, fVisualizaCodigoBarras;
 
 procedure TfrmConsultaProdutos.btnPesquisarClick(Sender: TObject);
 begin
-  FConsulta.CarregaProdutos(edtPesquisa.Text, cbCodigo.Checked, cbDescricao.Checked, cbAtivo.Checked, cbEstoque.Checked);
+  FConsulta.CarregaProdutos(edtPesquisa.Text,
+                            cbCodigo.Checked,
+                            cbDescricao.Checked,
+                            cbAtivo.Checked,
+                            cbEstoque.Checked);
 end;
 
 procedure TfrmConsultaProdutos.dbGridProdutoCellClick(Column: TColumn);
@@ -128,6 +132,7 @@ begin
 
   try
     visualizaCod.IDItem := FConsulta.Dados.cdsConsultaProduto.FieldByName('id_item').AsInteger;
+    visualizaCod.CDItem := FConsulta.Dados.cdsConsultaProduto.FieldByName('cd_produto').AsString;
     visualizaCod.ShowModal;
   finally
     visualizaCod.Free;

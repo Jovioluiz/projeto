@@ -228,15 +228,16 @@ begin
   lista := TList<string>.Create;
 
   try
-    qry.SQL.Add(sql);
-    qry.ParamByName('cd_cond_pag').AsInteger := CodCond;
-    qry.ParamByName('cd_forma_pag').AsInteger := CodForma;
-    qry.Open(sql);
+    Result := nil;
+    qry.Open(sql, [CodCond, CodForma]);
 
-    nmCond := qry.FieldByName('nm_cond_pag').AsString;
+    if not qry.IsEmpty then
+    begin
+      nmCond := qry.FieldByName('nm_cond_pag').AsString;
 
-    lista.Add(nmCond);
-    Result := lista;
+      lista.Add(nmCond);
+      Result := lista;
+    end;
 
   finally
     qry.Free;

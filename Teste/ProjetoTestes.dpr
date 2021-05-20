@@ -29,11 +29,14 @@ uses
   uclPedidoVenda in '..\Pedido Venda\uclPedidoVenda.pas' {$R *.RES},
   uConfiguracoes in '..\Configuracoes\uConfiguracoes.pas' {frmConfiguracoes},
   TestcCLIENTE in 'TestcCLIENTE.pas',
-  cCLIENTE in '..\Cadastros\cCLIENTE.pas';
+  cCLIENTE in '..\Cadastros\cCLIENTE.pas' {TfrmCadCliente},
+  TestuclPedidoVenda in 'TestuclPedidoVenda.pas',
+  Vcl.Forms;
 
 {$R *.RES}
 
 begin
+  Application.CreateForm(Tdm, dm);
   DUnitTestRunner.RunRegisteredTests;
 end.
 

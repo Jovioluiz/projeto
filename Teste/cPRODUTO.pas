@@ -575,7 +575,7 @@ begin
   memoObservacao.Clear;
   edtUnCodBarras.Clear;
   edtPRODUTOCD_PRODUTO.SetFocus;
-  dm.queryCodBarraProduto.Close;
+//  dm.queryCodBarraProduto.Close;
   imagem.Picture := nil;
   TabSheetCadastroProduto.Show;//se estiver em outra aba, sempre volta para a primeira aba
 

@@ -123,7 +123,7 @@ var
   NomeEndereco: string;
 begin
   // TODO: Setup method call parameters
-  ReturnValue := FfrmCadastroEnderecos.GetIdEndereco(NomeEndereco);
+//  ReturnValue := FfrmCadastroEnderecos.GetIdEndereco(NomeEndereco);
   // TODO: Validate method results
 end;
 

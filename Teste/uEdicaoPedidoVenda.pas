@@ -351,7 +351,7 @@ var
   resposta : Boolean;
 begin
   ValidaQtdade := TPedidoVenda.Create;
-  resposta := ValidaQtdade.ValidaQtdadeItem(StrToInt(edtCdProduto.Text), StrToFloat(edtQtdade.Text));
+  resposta := ValidaQtdade.ValidaQtdadeItem(edtCdProduto.Text, StrToFloat(edtQtdade.Text));
 
   try
     if edtQtdade.Text = '0' then
@@ -410,7 +410,7 @@ begin
   tabela := TPedidoVenda.Create;
 
   try
-    if tabela.ValidaTabelaPreco(StrToInt(edtTabelaPreco.Text), StrToInt(edtCdProduto.Text)) then
+    if tabela.ValidaTabelaPreco(StrToInt(edtTabelaPreco.Text), edtCdProduto.Text) then
     begin
       if (Application.MessageBox('Tabela de Preço não encontrada', 'Atenção', MB_OK) = idOK) then
       begin

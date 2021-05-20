@@ -2,10 +2,10 @@ object fVisualizaCodBarras: TfVisualizaCodBarras
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
-  Caption = 'C'#243'digo de barras item:'
-  ClientHeight = 126
-  ClientWidth = 260
+  BorderStyle = bsSizeToolWin
+  Caption = 'C'#243'digo de barras do item: '
+  ClientHeight = 116
+  ClientWidth = 250
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,8 +22,8 @@ object fVisualizaCodBarras: TfVisualizaCodBarras
   object dbGridCodBarras: TDBGrid
     Left = 0
     Top = 0
-    Width = 260
-    Height = 126
+    Width = 250
+    Height = 116
     Align = alClient
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
