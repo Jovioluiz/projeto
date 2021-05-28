@@ -827,6 +827,8 @@ begin
     //preenche os dados da lista nos campos
     if produto.isCodBarrasProduto(edtCdProduto.Text) then
     begin
+      produto.BuscaProdutoCodBarras(edtCdProduto.Text);
+
       lista := produto.BuscaProduto(edtCdProduto.Text);
       edtCdProduto.Text := lista.FieldByName('cd_produto').AsString;
       edtDescProduto.Text := lista.FieldByName('desc_produto').AsString;

@@ -12,7 +12,15 @@ uses
 
 type TPedidoVenda = class
 
-  private
+  type
+    TInfProdutosCodBarras = record
+      CodItem,
+      DescProduto,
+      UnMedida,
+      DescTabelaPreco: string;
+      CdTabelaPreco: Integer;
+      Valor: Currency;
+    end;
 
   public
     function ValidaQtdadeItem(CdItem: String; QtdPedido: Double): Boolean;
@@ -21,7 +29,7 @@ type TPedidoVenda = class
     function ValidaCliente(CdCliente: Integer): Boolean;
     function ValidaCondPgto(CdCond, CdForma: Integer): Boolean;
     function BuscaProduto(CodProduto: String): TFDQuery;
-    function BuscaProdutoCodBarras(CodBarras: String): TList<String>;
+    procedure BuscaProdutoCodBarras(CodBarras: String);
     function ValidaProduto(CodProduto: String): Boolean;
     function BuscaTabelaPreco(CodTabela: Integer; CodProduto: String): TList<string>;
     function ValidaTabelaPreco(CodTabela: Integer; CodProduto: String): Boolean;
@@ -29,9 +37,13 @@ type TPedidoVenda = class
     function BuscaCondicaoPgto(CodCond, CodForma: Integer): TList<string>;
     function isCodBarrasProduto(Cod: String): Boolean;
     function GetIdItem(CdItem: string): Int64;
+    procedure PreencheDataSet(Info: TArray<TInfProdutosCodBarras>);
 end;
 
 implementation
+
+uses
+  Datasnap.DBClient;
 
 
 { TPedidoVenda }
@@ -276,7 +288,7 @@ begin
   end;
 end;
 
-function TPedidoVenda.BuscaProdutoCodBarras(CodBarras: String): TList<String>;
+procedure TPedidoVenda.BuscaProdutoCodBarras(CodBarras: String);
 const
   sql = 'select ' +
         '    p.cd_produto, ' +
@@ -300,6 +312,8 @@ const
 var
   qry: TFDQuery;
   lista: TList<string>;
+  j: Integer;
+  infoProdutos: TArray<TInfProdutosCodBarras>;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
@@ -310,17 +324,19 @@ begin
     qry.ParamByName('codigo_barras').AsString := CodBarras;
     qry.Open();
 
-    if not qry.IsEmpty then
+    SetLength(infoProdutos, qry.RecordCount);
+
+    for j := 0 to Length(infoProdutos) - 1 do
     begin
-      lista.Add(qry.FieldByName('cd_produto').AsString);
-      lista.Add(qry.FieldByName('desc_produto').AsString);
-      lista.Add(qry.FieldByName('un_medida').AsString);
-      lista.Add(qry.FieldByName('cd_tabela').AsString);
-      lista.Add(qry.FieldByName('nm_tabela').AsString);
-      lista.Add(qry.FieldByName('valor').AsString);
+      infoProdutos[j].CodItem := qry.FieldByName('cd_produto').AsString;
+      infoProdutos[j].DescProduto :=  qry.FieldByName('desc_produto').AsString;
+      infoProdutos[j].UnMedida := qry.FieldByName('un_medida').AsString;
+      infoProdutos[j].CdTabelaPreco := qry.FieldByName('cd_tabela').AsInteger;
+      infoProdutos[j].DescTabelaPreco := qry.FieldByName('nm_tabela').AsString;
+      infoProdutos[j].Valor := qry.FieldByName('valor').AsCurrency;
     end;
 
-    Result := lista;
+    PreencheDataSet(infoProdutos);
 
   finally
     qry.Free;
@@ -351,6 +367,10 @@ begin
 
   Result.SQL.Add(sql);
   Result.Open(sql, [CodProduto]);
+
+  if Result.RecordCount = 0 then
+    raise Exception.Create('Produto não encontrado');
+
 end;
 
 function TPedidoVenda.BuscaTabelaPreco(CodTabela: Integer; CodProduto: String): TList<string>;
@@ -439,6 +459,45 @@ begin
     Result := not qry.IsEmpty;
   finally
     qry.Free;
+  end;
+end;
+
+procedure TPedidoVenda.PreencheDataSet(Info: TArray<TInfProdutosCodBarras>);
+var
+  dataset: TClientDataSet;
+  dataSource: TDataSource;
+begin
+  dataset := TClientDataSet.Create(nil);
+  dataSource := TDataSource.Create(nil);
+
+  //fiz isso somente para praticar
+  try
+    dataSource.DataSet := dataset;
+
+    dataset.FieldDefs.Clear;
+    dataset.FieldDefs.Add('cd_produto', ftString, 50);
+    dataset.FieldDefs.Add('desc_produto', ftString, 50);
+    dataset.FieldDefs.Add('un_medida', ftString, 5);
+    dataset.FieldDefs.Add('cd_tabela', ftInteger);
+    dataset.FieldDefs.Add('nm_tabela', ftString, 50);
+    dataset.FieldDefs.Add('valor', ftCurrency);
+    dataset.CreateDataSet;
+
+    for var i := 0 to Length(Info) - 1 do
+    begin
+      dataset.Append;
+      dataset.FieldByName('cd_produto').AsString := Info[i].CodItem;
+      dataset.FieldByName('desc_produto').AsString := Info[i].DescProduto;
+      dataset.FieldByName('un_medida').AsString := Info[i].UnMedida;
+      dataset.FieldByName('cd_tabela').AsInteger := Info[i].CdTabelaPreco;
+      dataset.FieldByName('nm_tabela').AsString := Info[i].DescTabelaPreco;
+      dataset.FieldByName('valor').AsCurrency := Info[i].Valor;
+      dataset.Post;
+    end;
+
+  finally
+    dataset.Free;
+    dataSource.Free;
   end;
 end;
 
