@@ -201,6 +201,7 @@
         </DCCReference>
         <DCCReference Include="Cadastros\Persistencia\uclCliente.pas"/>
         <DCCReference Include="Cadastros\Persistencia\uclCta_Cond_Pgto.pas"/>
+        <DCCReference Include="Outros\uInterface.pas"/>
         <DCCReference Include="Cadastros\Persistencia\uclCtaFormaPagamento.pas"/>
         <DCCReference Include="Conexao\fConexao.pas">
             <Form>frmConexao</Form>
@@ -241,8 +242,11 @@
         <DCCReference Include="Outros\fVisualizaCodigoBarras.pas">
             <Form>fVisualizaCodBarras</Form>
         </DCCReference>
-        <DCCReference Include="Outros\uInterface.pas"/>
         <DCCReference Include="Outros\transferenciaTabelas.pas"/>
+        <DCCReference Include="WMS\dWMS.pas">
+            <Form>dmWMS</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

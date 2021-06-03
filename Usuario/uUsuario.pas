@@ -211,7 +211,7 @@ begin
         qry.SQL.Add(SQL_UPDATE);
         qry.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
         qry.ParamByName('login').AsString := edtNomeUsuario.Text;
-        qry.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text);
+        qry.ParamByName('senha').AsString := cripto.GetSenhaMD5(edtSenhaUsuario.Text);
         qry.ExecSQL;
       except
         on E:exception do
@@ -227,7 +227,7 @@ begin
         qry.SQL.Add(SQL_INSERT);
         qry.ParamByName('id_usuario').AsInteger := StrToInt(edtIdUsuario.Text);
         qry.ParamByName('login').AsString := edtNomeUsuario.Text;
-        qry.ParamByName('senha').AsString := cripto.criptografaSenha(edtSenhaUsuario.Text);
+        qry.ParamByName('senha').AsString := cripto.GetSenhaMD5(edtSenhaUsuario.Text);
         qry.ExecSQL;
       except
         on E:exception do

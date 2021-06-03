@@ -105,7 +105,7 @@ begin
       begin
         qry.SQL.Clear;
         qry.SQL.Add(SQL_UPDATE);
-        qry.ParamByName('senha').AsString := criptoSenha.criptografaSenha(edtSenha.Text);
+        qry.ParamByName('senha').AsString := criptoSenha.GetSenhaMD5(edtSenha.Text); //gera senha criptografada em md5
         qry.ParamByName('id_usuario').AsInteger := cdUsuario;
         qry.ExecSQL;
       end
@@ -117,7 +117,7 @@ begin
         qry.SQL.Add(SQL);
         qry.ParamByName('id_usuario').AsInteger := qrySeq.FieldByName('codigo').AsInteger;
         qry.ParamByName('login').AsString := edtUsuario.Text;
-        qry.ParamByName('senha').AsString := criptoSenha.criptografaSenha(edtSenha.Text);
+        qry.ParamByName('senha').AsString := criptoSenha.GetSenhaMD5(edtSenha.Text); //gera senha criptografada em md5
         qry.ExecSQL;
       end;
       dm.conexaoBanco.Commit

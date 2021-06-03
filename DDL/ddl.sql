@@ -1310,3 +1310,4 @@ ALTER TABLE public.wms_estoque RENAME COLUMN cd_produto TO id_item;
 alter table wms_estoque add constraint fk_wms_estoque_produto foreign key (id_item) references produto(id_item);
 
 
+ALTER TABLE public.login_usuario ALTER COLUMN senha TYPE varchar(50) USING senha::varchar;

@@ -3,7 +3,7 @@ unit uUtil;
 interface
 
 uses Winapi.Windows, Winapi.Messages, System.SysUtils, System.UITypes, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Data.DB, FireDAC.Stan.Param;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Data.DB, FireDAC.Stan.Param, IdHashMessageDigest;
 
 type TValidaDados = class
   private
@@ -14,8 +14,7 @@ type TValidaDados = class
     function validaCodigo(cod : Integer) : Integer;
     function validaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
     function validaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode editar um cadastro
-    function criptografaSenha(Senha: String): String;
-    function DescriptografaSenha(Senha: string): String;
+    function GetSenhaMD5(Senha: string): string;
 
 end;
 
@@ -41,25 +40,20 @@ implementation
 
 uses uDataModule;
 
-function TValidaDados.criptografaSenha(Senha: String): String;
-var
-  i : Integer;
-begin
-  s := Senha;
-  for i := 1 to ord(s[0]) do
-    c[i] := 23 xor c[i];
 
-  Result := s;
-end;
-
-function TValidaDados.DescriptografaSenha(Senha: string): String;
+function TValidaDados.GetSenhaMD5(Senha: string): string;
 var
-  i : Integer;
+  md5: TIdHashMessageDigest5;
 begin
-  s := Senha;
-  for i := 1 to Length(s) do
-    s[i] := Ansichar(23 Xor ord(c[i]));
-  Result := s;
+  md5 := TIdHashMessageDigest5.Create;
+
+  try
+
+    Result := md5.HashStringAsHex(Senha);
+
+  finally
+    md5.Free;
+  end;
 end;
 
 function TValidaDados.validaAcessoAcao(cdUsuario, cdAcao: Integer): Boolean;
@@ -85,9 +79,7 @@ begin
   if not dm.query.IsEmpty then
     Result := True
   else
-  begin
     raise Exception.Create('Usuário não possui permissão de acesso! Verifique!');
-  end;
 end;
 
 function TValidaDados.validaCodigo(cod: Integer): Integer;
@@ -120,7 +112,7 @@ begin
 
   dm.query.Open();
 
-  if dm.query.FieldByName('fl_permite_edicao').AsBoolean = True then
+  if dm.query.FieldByName('fl_permite_edicao').AsBoolean then
     Result := True;
 end;
 

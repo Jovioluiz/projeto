@@ -3,20 +3,39 @@ unit uEnderecoWMS;
 interface
 
 uses
-  FireDAC.Stan.Param;
+  FireDAC.Stan.Param, dWMS;
 
 type TEnderecoWMS = class
   private
+    FDados: TdmWMS;
+    procedure SetDados(const Value: TdmWMS);
 
   public
     function GetIdItem(CdItem: string): Int64;
     function GetIdEndereco(NomeEndereco: String): Int64;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    property Dados: TdmWMS read FDados write SetDados;
 end;
 
 implementation
 
 uses
   FireDAC.Comp.Client, uDataModule;
+
+constructor TEnderecoWMS.Create;
+begin
+  inherited;
+  FDados := TdmWMS.Create(nil);
+end;
+
+destructor TEnderecoWMS.Destroy;
+begin
+  FDados.Free;
+  inherited;
+end;
 
 function TEnderecoWMS.GetIdEndereco(NomeEndereco: String): Int64;
 const
@@ -25,7 +44,7 @@ const
         'from            ' +
         '   wms_endereco we ' +
         'where               ' +
-        '   concat(cd_deposito, ''-'', ala, ''-'', rua) = :nm_endereco ' +
+        '   concat(cd_deposito, ''-'', ala, ''-'', rua, ''-'', complemento) = :nm_endereco ' +
         'limit 1';
 var
   qry: TFDQuery;
@@ -63,6 +82,11 @@ begin
   finally
     qry.Free;
   end;
+end;
+
+procedure TEnderecoWMS.SetDados(const Value: TdmWMS);
+begin
+  FDados := Value;
 end;
 
 end.

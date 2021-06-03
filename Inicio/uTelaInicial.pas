@@ -394,7 +394,7 @@ end;
 
 procedure TfrmPrincipal.Sair1Click(Sender: TObject);
 begin
-  if (Application.MessageBox('Deseja realmente sair do Sistema?','Atenção', MB_YESNO) = IDYES) then
+//  if (Application.MessageBox('Deseja realmente sair do Sistema?','Atenção', MB_YESNO) = IDYES) then
     Close;
 end;
 

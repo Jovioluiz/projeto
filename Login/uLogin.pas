@@ -102,7 +102,7 @@ begin
     end;
 
     if (Trim(edtUsuario.Text) = usuario)
-        and (Trim(senha) = verificaSenha.DescriptografaSenha(edtSenha.Text)) then
+        and (Trim(senha) = verificaSenha.GetSenhaMD5(edtSenha.Text)) then
       ModalResult := mrOk
     else
     begin

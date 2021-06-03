@@ -43,6 +43,7 @@ uses
   uLista in 'Outros\uLista.pas' {frmLista},
   uclCliente in 'Cadastros\Persistencia\uclCliente.pas',
   uclCta_Cond_Pgto in 'Cadastros\Persistencia\uclCta_Cond_Pgto.pas',
+  uInterface in 'Outros\uInterface.pas',
   uclCtaFormaPagamento in 'Cadastros\Persistencia\uclCtaFormaPagamento.pas',
   fConexao in 'Conexao\fConexao.pas' {frmConexao},
   uclPadrao in 'Outros\uclPadrao.pas',
@@ -63,13 +64,14 @@ uses
   uThread in 'Outros\uThread.pas',
   fGridsThread in 'Outros\fGridsThread.pas' {fThreads},
   fVisualizaCodigoBarras in 'Outros\fVisualizaCodigoBarras.pas' {fVisualizaCodBarras},
-  uInterface in 'Outros\uInterface.pas',
-  transferenciaTabelas in 'Outros\transferenciaTabelas.pas';
+  transferenciaTabelas in 'Outros\transferenciaTabelas.pas',
+  dWMS in 'WMS\dWMS.pas' {dmWMS: TDataModule};
 
 {$R *.res}
 
 begin
   Application.CreateForm(Tdm, dm);
+  Application.CreateForm(TdmWMS, dmWMS);
   frmLogin := TfrmLogin.Create(nil);
   if frmLogin.ShowModal = mrOK then
   begin
