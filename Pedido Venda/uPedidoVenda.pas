@@ -13,6 +13,13 @@ uses
   Xml.xmldom, Xml.XMLIntf, Xml.XMLDoc;
 
 type
+  TAliqItem = record
+    AliqIcms,
+    AliqIpi,
+    AliqPisCofins: Currency
+  end;
+
+type
   TfrmPedidoVenda = class(TForm)
     Panel1: TPanel;
     Label1: TLabel;
@@ -118,6 +125,8 @@ type
     FFIdGeral: Int64;
     { Private declarations }
     procedure SetFIdGeral(const Value: Int64);
+    function GetAliquotasItem(IDItem: Int64): TAliqItem;
+    procedure AtualizaCabecalho;
   public
     { Public declarations }
 
@@ -231,50 +240,21 @@ end;
 
 procedure TfrmPedidoVenda.btnAdicionarClick(Sender: TObject);
 //adiciona os produtos no grid
-const
-  sql = 'select '+
-        '    pt.id_item, '+
-        '    pt.cd_tributacao_icms,'+
-        '    gti.aliquota_icms,'+
-        '    pt.cd_tributacao_ipi,'+
-        '    gtipi.aliquota_ipi,'+
-        '    pt.cd_tributacao_pis_cofins,'+
-        '    gtpc.aliquota_pis_cofins '+
-        'from '+
-        '    produto_tributacao pt '+
-        'join grupo_tributacao_icms gti on '+
-        '    pt.cd_tributacao_icms = gti.cd_tributacao '+
-        'join grupo_tributacao_ipi gtipi on '+
-        '    pt.cd_tributacao_ipi = gtipi.cd_tributacao '+
-        'join grupo_tributacao_pis_cofins gtpc on '+
-        '    pt.cd_tributacao_pis_cofins = gtpc.cd_tributacao '+
-        'where '+
-        '    pt.id_item = :id_item';
  var
   vl_total_itens: Currency;
-  aliq_icms, aliq_ipi, aliq_pis_cofins: Double;
   lancado: Boolean;
-  qry: TFDQuery;
   lancaProduto: TfrmConfiguracoes;
   idItem: TPedidoVenda;
+  aliq: TAliqItem;
 begin
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.conexaoBanco;
   lancaProduto := TfrmConfiguracoes.Create(Self);
   idItem := TPedidoVenda.Create;
   try
-    qry.Close;
-    qry.SQL.Add(sql);
-    qry.ParamByName('id_item').AsLargeInt := idItem.GetIdItem(edtCdProduto.Text);
-    qry.Open(sql);
+     aliq := GetAliquotasItem(idItem.GetIdItem(edtCdProduto.Text));
 
     if ProdutoJaLancado(StrToInt(edtCdProduto.Text))
       and (lancaProduto.cbbLancaItemPedido.ItemIndex = 1) and (not FEdicaoItem) then
       raise Exception.Create('O produto já está lançado');
-
-    aliq_icms := qry.FieldByName('aliquota_icms').AsCurrency;
-    aliq_ipi := qry.FieldByName('aliquota_ipi').AsCurrency;
-    aliq_pis_cofins := qry.FieldByName('aliquota_pis_cofins').AsCurrency;
 
     if FEdicaoItem then
     begin
@@ -302,7 +282,7 @@ begin
       cdsPedidoVenda.FieldByName('vl_total_item').AsCurrency := StrToCurr(edtVlTotal.Text);
     end;
 
-    if aliq_icms = 0 then
+    if aliq.AliqIcms = 0 then
     begin
       cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := 0;
       cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := 0;
@@ -311,10 +291,10 @@ begin
     else
     begin
       cdsPedidoVenda.FieldByName('icms_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-      cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := aliq_icms;
-      cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_icms) / 100;
+      cdsPedidoVenda.FieldByName('icms_pc_aliq').AsFloat := aliq.AliqIcms;
+      cdsPedidoVenda.FieldByName('icms_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq.AliqIcms) / 100;
     end;
-    if aliq_ipi = 0 then
+    if aliq.AliqIpi = 0 then
     begin
       cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := 0;
       cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := 0;
@@ -323,10 +303,10 @@ begin
     else
     begin
       cdsPedidoVenda.FieldByName('ipi_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-      cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := aliq_ipi;
-      cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_ipi) / 100;
+      cdsPedidoVenda.FieldByName('ipi_pc_aliq').AsFloat := aliq.AliqIpi;
+      cdsPedidoVenda.FieldByName('ipi_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq.AliqIpi) / 100;
     end;
-    if aliq_pis_cofins = 0 then
+    if aliq.AliqPisCofins = 0 then
     begin
       cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := 0;
       cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := 0;
@@ -335,8 +315,8 @@ begin
     else
     begin
       cdsPedidoVenda.FieldByName('pis_cofins_vl_base').AsCurrency := StrToCurr(edtVlTotal.Text);
-      cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := aliq_pis_cofins;
-      cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq_pis_cofins) / 100;
+      cdsPedidoVenda.FieldByName('pis_cofins_pc_aliq').AsFloat := aliq.AliqPisCofins;
+      cdsPedidoVenda.FieldByName('pis_cofins_valor').AsCurrency := (StrToCurr(edtVlTotal.Text) * aliq.AliqPisCofins) / 100;
     end;
     cdsPedidoVenda.FieldByName('id_item').AsLargeInt := idItem.GetIdItem(edtCdProduto.Text);
     cdsPedidoVenda.Post;
@@ -360,7 +340,6 @@ begin
     LimpaCampos;
     lancaProduto.Free;
     idItem.Free;
-    qry.Free;
   end;
 end;
 
@@ -381,13 +360,13 @@ const
                          ' vl_acrescimo = :vl_acrescimo, vl_total = :vl_total, fl_orcamento = :fl_orcamento, dt_emissao = :dt_emissao,'+
                          ' fl_cancelado = :fl_cancelado where nr_pedido = :nr_pedido';
 var
-  Tempo : Integer;
+  Tempo: Integer;
   qry: TFDQuery;
   idGeral, idGeralPvi: TGerador;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
+//  dm.conexaoBanco.StartTransaction;
   idGeral := TGerador.Create;
   idGeralPvi := TGerador.Create;
   try
@@ -421,7 +400,7 @@ begin
 
       //setDadosNota;
 
-      dm.conexaoBanco.Commit;
+      qry.Connection.Commit;
 
       ShowMessage('Pedido ' + edtNrPedido.Text + ' Gravado Com Sucesso');
       LimpaDados;
@@ -786,11 +765,56 @@ begin
     qry.Open();
 
     if qry.FieldByName('nr_pedido').AsInteger <> NumeroPedido then
-      SalvaCabecalho;
+      SalvaCabecalho
+    else
+      AtualizaCabecalho;
 
   finally
     qry.Free;
     geraNrPedido.Free;
+  end;
+end;
+
+procedure TfrmPedidoVenda.AtualizaCabecalho;
+const
+  SQL_UPDATE_CABECALHO = 'update pedido_venda set cd_cliente = :cd_cliente,  '+
+                         ' cd_forma_pag = :cd_forma_pag, cd_cond_pag = :cd_cond_pag, vl_desconto_pedido = :vl_desconto_pedido,   '+
+                         ' vl_acrescimo = :vl_acrescimo, vl_total = :vl_total, fl_orcamento = :fl_orcamento, dt_emissao = :dt_emissao,'+
+                         ' fl_cancelado = :fl_cancelado where nr_pedido = :nr_pedido';
+var
+  qry: TFDQuery;
+begin
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    try
+      qry.SQL.Add(SQL_UPDATE_CABECALHO);
+      qry.ParamByName('nr_pedido').AsInteger := StrToInt(edtNrPedido.Text);
+      qry.ParamByName('cd_cliente').AsInteger := StrToInt(edtCdCliente.Text);
+      qry.ParamByName('cd_forma_pag').AsInteger := StrToInt(edtCdFormaPgto.Text);
+      qry.ParamByName('cd_cond_pag').AsInteger := StrToInt(edtCdCondPgto.Text);
+      qry.ParamByName('vl_desconto_pedido').AsCurrency :=  StrToCurr(edtVlDescTotalPedido.Text);
+      qry.ParamByName('vl_acrescimo').AsCurrency := StrToCurr(edtVlAcrescimoTotalPedido.Text);
+      qry.ParamByName('vl_total').AsCurrency := StrToCurr(edtVlTotalPedido.Text);
+      qry.ParamByName('fl_orcamento').AsBoolean := edtFl_orcamento.Checked;
+      qry.ParamByName('dt_emissao').AsDate := StrToDate(edtDataEmissao.Text);
+      qry.ParamByName('fl_cancelado').AsString := 'N';
+      qry.ExecSQL;
+
+      qry.Connection.Commit;
+
+    except
+      on E : exception do
+        begin
+          qry.Connection.Rollback;
+          ShowMessage('Erro ao gravar os dados do pedido ' + edtNrPedido.Text + E.Message);
+          Exit;
+        end;
+    end;
+
+  finally
+    qry.Free;
   end;
 end;
 
@@ -948,6 +972,7 @@ begin
     if edtQtdade.Text <> '' then
       if not qtdadeEstoque.ValidaQtdadeItem(edtCdProduto.Text, StrToFloat(edtQtdade.Text)) then
       begin
+        ShowMessage('Item não possui quantidade. Verifique!');
         edtQtdade.SetFocus;
         Exit;
       end;
@@ -1076,6 +1101,50 @@ begin
   end;
 end;
 
+
+function TfrmPedidoVenda.GetAliquotasItem(IDItem: Int64): TAliqItem;
+const
+  SQL_ALIQ = 'select '+
+        '    pt.cd_tributacao_icms,'+
+        '    gti.aliquota_icms,'+
+        '    gtipi.aliquota_ipi,'+
+        '    gtpc.aliquota_pis_cofins '+
+        'from '+
+        '    produto_tributacao pt '+
+        'join grupo_tributacao_icms gti on '+
+        '    pt.cd_tributacao_icms = gti.cd_tributacao '+
+        'join grupo_tributacao_ipi gtipi on '+
+        '    pt.cd_tributacao_ipi = gtipi.cd_tributacao '+
+        'join grupo_tributacao_pis_cofins gtpc on '+
+        '    pt.cd_tributacao_pis_cofins = gtpc.cd_tributacao '+
+        'where '+
+        '    pt.id_item = :id_item';
+var
+  query: TFDQuery;
+begin
+  query := TFDQuery.Create(Self);
+  query.Connection := dm.conexaoBanco;
+
+  try
+    query.Open(SQL_ALIQ, [IDItem]);
+
+    if not query.IsEmpty then
+    begin
+      Result.AliqIcms := query.FieldByName('aliquota_icms').AsCurrency;
+      Result.AliqIpi := query.FieldByName('aliquota_ipi').AsCurrency;
+      Result.AliqPisCofins := query.FieldByName('aliquota_pis_cofins').AsCurrency;
+    end
+    else
+    begin
+      Result.AliqIcms := 0;
+      Result.AliqIpi := 0;
+      Result.AliqPisCofins := 0;
+    end;
+
+  finally
+    query.Free;
+  end;
+end;
 
 function TfrmPedidoVenda.GetNumeroParcelas(CdCondPgto: Integer): Integer;
 const

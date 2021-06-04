@@ -62,6 +62,7 @@ uses
   dControleAcesso in 'Acesso\dControleAcesso.pas' {dmControleAcesso: TDataModule},
   uConsultaProdutos in 'Consulta\uConsultaProdutos.pas',
   uThread in 'Outros\uThread.pas',
+  dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule},
   fGridsThread in 'Outros\fGridsThread.pas' {fThreads},
   fVisualizaCodigoBarras in 'Outros\fVisualizaCodigoBarras.pas' {fVisualizaCodBarras},
   transferenciaTabelas in 'Outros\transferenciaTabelas.pas',
@@ -71,7 +72,7 @@ uses
 
 begin
   Application.CreateForm(Tdm, dm);
-  Application.CreateForm(TdmWMS, dmWMS);
+  Application.CreateForm(TdmProdutos, dmProdutos);
   frmLogin := TfrmLogin.Create(nil);
   if frmLogin.ShowModal = mrOK then
   begin

@@ -236,6 +236,10 @@
             <Form>/dTabelaPreco in &apos;dTabelaPreco.pas&apos; {dmProdutos</Form>
             <DesignClass>TDataModule};</DesignClass>
         </DCCReference>
+        <DCCReference Include="dTabelaPreco.pas">
+            <Form>dmProdutos</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <DCCReference Include="Outros\fGridsThread.pas">
             <Form>fThreads</Form>
         </DCCReference>
