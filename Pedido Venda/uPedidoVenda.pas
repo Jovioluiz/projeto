@@ -65,9 +65,9 @@ type
     btnConfirmarPedido: TButton;
     btnCancelar: TButton;
     edtFl_orcamento: TCheckBox;
-    edtDataEmissao: TMaskEdit;
     Label19: TLabel;
     document: TXMLDocument;
+    edtDataEmissao: TDateTimePicker;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtCdClienteChange(Sender: TObject);
     procedure edtCdClienteExit(Sender: TObject);
@@ -900,7 +900,8 @@ end;
 procedure TfrmPedidoVenda.FormCreate(Sender: TObject);
 begin
 //seta a data atual na data de emissão
-  edtDataEmissao.Text := DateToStr(Date());
+  edtDataEmissao.Date := Date();
+  edtDataEmissao.Enabled := False;
   seqItem := 1;
   FRegras := TPedidoVenda.Create;
   dbGridProdutos.DataSource := FRegras.Dados.dsPedidoVendaItem;
@@ -1389,7 +1390,7 @@ begin
   FRegras.Dados.cdsPedidoVenda.FieldByName('vl_acrescimo').AsCurrency := StrToCurr(edtVlAcrescimoTotalPedido.Text);
   FRegras.Dados.cdsPedidoVenda.FieldByName('vl_total').AsCurrency := StrToCurr(edtVlTotalPedido.Text);
   FRegras.Dados.cdsPedidoVenda.FieldByName('fl_orcamento').AsBoolean := edtFl_orcamento.Checked;
-  FRegras.Dados.cdsPedidoVenda.FieldByName('dt_emissao').AsDateTime := StrToDate(edtDataEmissao.Text);
+  FRegras.Dados.cdsPedidoVenda.FieldByName('dt_emissao').AsDateTime := edtDataEmissao.Date;
   FRegras.Dados.cdsPedidoVenda.FieldByName('fl_cancelado').AsString := 'N';
   FRegras.Dados.cdsPedidoVenda.Post;
 end;

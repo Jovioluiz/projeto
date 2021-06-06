@@ -250,7 +250,6 @@
         </DCCReference>
         <DCCReference Include="Pedido Venda\dPedidoVenda.pas">
             <Form>dmPedidoVenda</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Release">

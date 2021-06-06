@@ -338,15 +338,14 @@ object frmPedidoVenda: TfrmPedidoVenda
       TabOrder = 15
       OnClick = btnCancelarClick
     end
-    object edtDataEmissao: TMaskEdit
-      Left = 753
+    object edtDataEmissao: TDateTimePicker
+      Left = 733
       Top = 29
-      Width = 70
+      Width = 101
       Height = 21
-      EditMask = '!99/99/0000;1;_'
-      MaxLength = 10
+      Date = 44353.000000000000000000
+      Time = 0.678792071761563400
       TabOrder = 18
-      Text = '  /  /    '
     end
   end
   object edtNrPedido: TEdit

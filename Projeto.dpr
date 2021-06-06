@@ -74,6 +74,7 @@ uses
 begin
   Application.CreateForm(Tdm, dm);
   frmLogin := TfrmLogin.Create(nil);
+
   if frmLogin.ShowModal = mrOK then
   begin
     FreeAndNil(frmLogin);

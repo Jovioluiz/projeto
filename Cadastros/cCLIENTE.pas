@@ -108,14 +108,16 @@ end;
 
 procedure TfrmCadCliente.Salvar;
 var
-  cliente : TValidaDados;
+  cliente: TValidaDados;
   persistencia: TCliente;
   endereco: TClienteEndereco;
 begin
   persistencia := TCliente.Create;
   endereco := TClienteEndereco.Create;
+  cliente := TValidaDados.Create;
+
   try
-    cliente := TValidaDados.Create;
+
     cliente.validaNomeCpf(edtCLIENTENM_CLIENTE.Text, edtCLIENTECPF_CNPJ.Text);
     cliente.validaCodigo(StrToInt(edtCLIENTEcd_cliente.Text));
 
@@ -152,6 +154,7 @@ begin
       LimpaCampos;
     end;
   finally
+    cliente.Free;
     persistencia.Free;
     endereco.Free;
   end;
@@ -299,13 +302,12 @@ begin
 
     end;
 
-    if temPermissaEdicao then
-      Exit
-    else
+    if not temPermissaEdicao then
       DesabilitaCampos;
 
   finally
     persistencia.Free;
+    cliente.Free;
     enderecoPersistencia.Free;
   end;
 end;

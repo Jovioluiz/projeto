@@ -149,15 +149,19 @@ procedure TfrmPrincipal.CadastroEndereo1Click(Sender: TObject);
 begin
   temPermissao := False;
   acesso := TValidaDados.Create;
+  frmCadastroEnderecos := TfrmCadastroEnderecos.Create(Self);
 
   try
     temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoCadastroEndereco);
+
     if temPermissao then
     begin
-      frmCadastroEnderecos := TfrmCadastroEnderecos.Create(Self);
-      frmCadastroEnderecos.Show;
+
+      if frmCadastroEnderecos.ShowModal = mrOk then
+
     end;
   finally
+    frmCadastroEnderecos.Free;
     FreeAndNil(acesso);
   end;
 end;
@@ -261,7 +265,7 @@ end;
 procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   TrayIcon1.Visible := False;
-  frmPrincipal.Free;
+  Action := caFree;
 end;
 
 procedure TfrmPrincipal.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -395,7 +399,12 @@ end;
 procedure TfrmPrincipal.Sair1Click(Sender: TObject);
 begin
 //  if (Application.MessageBox('Deseja realmente sair do Sistema?','Atenção', MB_YESNO) = IDYES) then
-    Close;
+
+  //limpa a conexão do banco
+  if Assigned(dm) then
+    FreeAndNil(dm);
+
+  Close;
 end;
 
 procedure TfrmPrincipal.TabeladePreo1Click(Sender: TObject);

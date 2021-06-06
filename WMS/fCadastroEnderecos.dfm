@@ -40,6 +40,8 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
       ExplicitHeight = 458
       object tbsEndereco: TTabSheet
         Caption = 'Cadastro Endere'#231'o'
+        ExplicitLeft = 0
+        ExplicitTop = 0
         ExplicitWidth = 695
         ExplicitHeight = 430
         object Label1: TLabel
@@ -127,6 +129,8 @@ object frmCadastroEnderecos: TfrmCadastroEnderecos
       object tbsProdutoEndereco: TTabSheet
         Caption = 'Cadastro Produto Endereco'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
         ExplicitWidth = 695
         ExplicitHeight = 430
         object Label5: TLabel

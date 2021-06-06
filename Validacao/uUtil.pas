@@ -65,6 +65,7 @@ var
   query: TFDQuery;
 begin
   query := TFDQuery.Create(nil);
+  query.Connection := dm.conexaoBanco;
 
   try
 
@@ -102,6 +103,7 @@ var
   query: TFDQuery;
 begin
   query := TFDQuery.Create(nil);
+  query.Connection := dm.conexaoBanco;
 
   try
     query.Open(sql, [cdAcao, cdUsuario]);

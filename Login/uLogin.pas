@@ -29,7 +29,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure edtUsuarioExit(Sender: TObject);
     procedure btnConexaoClick(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
   public
@@ -133,6 +133,7 @@ begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
   frmCadastraSenha := TfrmCadastraSenha.Create(Self);
+
   try
     if edtUsuario.Text <> '' then
     begin
@@ -156,11 +157,6 @@ begin
   end;
 end;
 
-procedure TfrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  frmLogin := nil;
-end;
-
 procedure TfrmLogin.FormCreate(Sender: TObject);
 var
   versao: TVersao;
@@ -172,8 +168,11 @@ begin
   finally
     versao.Free;
   end;
+end;
 
-  ReportMemoryLeaksOnShutdown := True;
+procedure TfrmLogin.FormDestroy(Sender: TObject);
+begin
+  //frmLogin := nil;
 end;
 
 procedure TfrmLogin.FormKeyPress(Sender: TObject; var Key: Char);

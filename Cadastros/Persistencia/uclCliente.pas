@@ -92,28 +92,26 @@ uses
 
 procedure TCliente.Atualizar;
 const
-  SQL =
-    'update                                 '+
-    '   cliente                             '+
-    'set                                    '+
-    '  nome = :nome,                        '+
-    '  Fl_ativo = :fl_ativo,                '+
-    '  tp_pessoa = :tp_pessoa,              '+
-    '  telefone = :telefone,                '+
-    '  celular = :celular,                  '+
-    '  email = :email,                      '+
-    '  cpf_cnpj = :cpf_cnpj,                '+
-    '  rg_ie = :rg_ie,                      '+
-    '  dt_nasc_fundacao = :dt_nasc_fundacao,'+
-    '  fl_fornecedor = :fl_fornecedor       '+
-    'where                                  '+
-    '  cd_cliente = :cd_cliente';
+  SQL = 'update                                 '+
+        '   cliente                             '+
+        'set                                    '+
+        '  nome = :nome,                        '+
+        '  Fl_ativo = :fl_ativo,                '+
+        '  tp_pessoa = :tp_pessoa,              '+
+        '  telefone = :telefone,                '+
+        '  celular = :celular,                  '+
+        '  email = :email,                      '+
+        '  cpf_cnpj = :cpf_cnpj,                '+
+        '  rg_ie = :rg_ie,                      '+
+        '  dt_nasc_fundacao = :dt_nasc_fundacao,'+
+        '  fl_fornecedor = :fl_fornecedor       '+
+        'where                                  '+
+        '  cd_cliente = :cd_cliente';
 var
   qry: TFDquery;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -134,39 +132,38 @@ begin
       qry.ParamByName('fl_fornecedor').AsBoolean := Ffl_fornecedor;
 
       qry.ExecSQL;
-      dm.conexaoBanco.Commit;
+      qry.Connection.Commit;
     except
       on E:exception do
       begin
-        dm.conexaoBanco.Rollback;
+        qry.Connection.Rollback;
         raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
       end;
     end;
   finally
-    dm.conexaoBanco.Rollback;
+    qry.Connection.Rollback;
     qry.Free;
   end;
 end;
 
 procedure TCliente.Buscar(CdCliente: Integer);
 const
-  SQL =
-    'select ' +
-    '    c.cd_cliente, ' +
-    '    c.nome, ' +
-    '    c.tp_pessoa, ' +
-    '    c.fl_ativo, ' +
-    '    c.telefone, ' +
-    '    c.celular, ' +
-    '    c.email, ' +
-    '    c.cpf_cnpj, ' +
-    '    c.rg_ie, ' +
-    '    c.dt_nasc_fundacao, ' +
-    '    c.fl_fornecedor ' +
-    'from ' +
-    '    cliente c ' +
-    'where ' +
-    '    c.cd_cliente = :cd_cliente ';
+  SQL = 'select ' +
+        '    c.cd_cliente, ' +
+        '    c.nome, ' +
+        '    c.tp_pessoa, ' +
+        '    c.fl_ativo, ' +
+        '    c.telefone, ' +
+        '    c.celular, ' +
+        '    c.email, ' +
+        '    c.cpf_cnpj, ' +
+        '    c.rg_ie, ' +
+        '    c.dt_nasc_fundacao, ' +
+        '    c.fl_fornecedor ' +
+        'from ' +
+        '    cliente c ' +
+        'where ' +
+        '    c.cd_cliente = :cd_cliente ';
 var
   qry: TFDQuery;
   endereco: TClienteEndereco;
@@ -203,25 +200,23 @@ end;
 
 procedure TCliente.Excluir;
 const
-  SQL =
-  'delete                   '+
-  ' from                    '+
-  'cliente                  '+
-  ' where                   '+
-  'cd_cliente = :cd_cliente';
+  SQL = 'delete                   '+
+        ' from                    '+
+        'cliente                  '+
+        ' where                   '+
+        'cd_cliente = :cd_cliente';
 var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
     try
       qry.ParamByName('cd_cliente').AsInteger := Fcd_cliente;
       qry.ExecSQL;
-      dm.conexaoBanco.Commit;
+      qry.Connection.Commit;
     except
     on E:exception do
       begin
@@ -230,7 +225,7 @@ begin
       end;
     end;
   finally
-    dm.conexaoBanco.Rollback;
+    qry.Connection.Rollback;
     qry.Free;
   end;
 end;
@@ -407,25 +402,23 @@ end;
 
 procedure TClienteEndereco.Atualizar;
 const
-  SQL =
-      'update                          '+
-      '   endereco_cliente             '+
-      'set                             '+
-      '   cd_cliente = :cd_cliente,    '+
-      '   logradouro = :logradouro,    '+
-      '   num = :num,                  '+
-      '   bairro = :bairro,            '+
-      '   cidade = :cidade,            '+
-      '   uf = :uf,                    '+
-      '   cep = :cep                   '+
-      'where                           '+
-      '   cd_cliente = :cd_cliente';
+  SQL = 'update                          '+
+        '   endereco_cliente             '+
+        'set                             '+
+        '   cd_cliente = :cd_cliente,    '+
+        '   logradouro = :logradouro,    '+
+        '   num = :num,                  '+
+        '   bairro = :bairro,            '+
+        '   cidade = :cidade,            '+
+        '   uf = :uf,                    '+
+        '   cep = :cep                   '+
+        'where                           '+
+        '   cd_cliente = :cd_cliente';
 var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -439,45 +432,42 @@ begin
       qry.ParamByName('cep').AsString := Fcep;
 
       qry.ExecSQL;
-      dm.conexaoBanco.Commit;
+      qry.Connection.Commit;
     except
     on E:exception do
       begin
-        dm.conexaoBanco.Rollback;
+        qry.Connection.Rollback;
         raise Exception.Create('Erro ao gravar os dados do cliente' + E.Message);
       end;
     end;
   finally
-    dm.conexaoBanco.Rollback;
+    qry.Connection.Rollback;
     qry.Free;
   end;
 end;
 
 procedure TClienteEndereco.Buscar(CdCliente: Integer);
 const
-  SQL =
-    'select ' +
-    '    c.cd_cliente, ' +
-    '    c.logradouro, ' +
-    '    c.num, ' +
-    '    c.bairro, ' +
-    '    c.cidade, ' +
-    '    c.uf, ' +
-    '    c.cep ' +
-    'from ' +
-    '    endereco_cliente c ' +
-    'where ' +
-    '    c.cd_cliente = :cd_cliente ';
+  SQL = 'select ' +
+        '    c.cd_cliente, ' +
+        '    c.logradouro, ' +
+        '    c.num, ' +
+        '    c.bairro, ' +
+        '    c.cidade, ' +
+        '    c.uf, ' +
+        '    c.cep ' +
+        'from ' +
+        '    endereco_cliente c ' +
+        'where ' +
+        '    c.cd_cliente = :cd_cliente ';
 var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  qry.SQL.Add(SQL);
 
   try
-    qry.ParamByName('cd_cliente').AsInteger := CdCliente;
-    qry.Open();
+    qry.Open(SQL, [CdCliente]);
 
     if not qry.IsEmpty then
     begin
@@ -497,30 +487,28 @@ end;
 
 procedure TClienteEndereco.Inserir;
 const
-  SQL =
-  'insert                     '+
-  '    into                   '+
-  '    endereco_cliente       '+
-  '   (cd_cliente,            '+
-  '    logradouro,            '+
-  '    num,                   '+
-  '    bairro,                '+
-  '    cidade,                '+
-  '    uf,                    '+
-  '    cep)                   '+
-  'values (:cd_cliente,       '+
-  ':logradouro,               '+
-  ':num,                      '+
-  ':bairro,                   '+
-  ':cidade,                   '+
-  ':uf,                       '+
-  ':cep)';
+  SQL = 'insert                     '+
+        '    into                   '+
+        '    endereco_cliente       '+
+        '   (cd_cliente,            '+
+        '    logradouro,            '+
+        '    num,                   '+
+        '    bairro,                '+
+        '    cidade,                '+
+        '    uf,                    '+
+        '    cep)                   '+
+        'values (:cd_cliente,       '+
+        ':logradouro,               '+
+        ':num,                      '+
+        ':bairro,                   '+
+        ':cidade,                   '+
+        ':uf,                       '+
+        ':cep)';
 var
   qry: TFDQuery;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
   qry.SQL.Add(SQL);
 
   try
@@ -534,7 +522,7 @@ begin
       qry.ParamByName('cep').AsString := Fcep;
 
       qry.ExecSQL;
-      dm.conexaoBanco.Commit;
+      qry.Connection.Commit;
     except
     on E:exception do
       begin
@@ -543,7 +531,7 @@ begin
       end;
     end;
   finally
-    dm.conexaoBanco.Rollback;
+    qry.Connection.Rollback;
     qry.Free;
   end;
 end;

@@ -15,8 +15,8 @@ object frmLogin: TfrmLogin
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
-  OnClose = FormClose
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnKeyPress = FormKeyPress
   DesignSize = (
     528
