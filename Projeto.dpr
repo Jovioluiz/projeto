@@ -36,7 +36,7 @@ uses
   uVersao in 'Validacao\uVersao.pas',
   uConsulta in 'Consulta\uConsulta.pas' {frmConsulta},
   uclValidacoesEntrada in 'Entrada\uclValidacoesEntrada.pas',
-  uGerador in 'uGerador.pas' {$R *.res},
+  uGerador in 'Outros\uGerador.pas' {$R *.res},
   fCadastroEnderecos in 'WMS\fCadastroEnderecos.pas' {frmCadastroEnderecos},
   uCadastrarSenha in 'Cadastros\uCadastrarSenha.pas' {frmCadastraSenha},
   uSplash in 'Inicio\uSplash.pas' {frmSplash},
@@ -62,17 +62,17 @@ uses
   dControleAcesso in 'Acesso\dControleAcesso.pas' {dmControleAcesso: TDataModule},
   uConsultaProdutos in 'Consulta\uConsultaProdutos.pas',
   uThread in 'Outros\uThread.pas',
-  dTabelaPreco in 'dTabelaPreco.pas' {dmProdutos: TDataModule},
+  dTabelaPreco in 'Cadastros\dTabelaPreco.pas' {dmProdutosTabelaPreco: TDataModule},
   fGridsThread in 'Outros\fGridsThread.pas' {fThreads},
   fVisualizaCodigoBarras in 'Outros\fVisualizaCodigoBarras.pas' {fVisualizaCodBarras},
   transferenciaTabelas in 'Outros\transferenciaTabelas.pas',
-  dWMS in 'WMS\dWMS.pas' {dmWMS: TDataModule};
+  dWMS in 'WMS\dWMS.pas' {dmWMS: TDataModule},
+  dPedidoVenda in 'Pedido Venda\dPedidoVenda.pas' {dmPedidoVenda: TDataModule};
 
 {$R *.res}
 
 begin
   Application.CreateForm(Tdm, dm);
-  Application.CreateForm(TdmProdutos, dmProdutos);
   frmLogin := TfrmLogin.Create(nil);
   if frmLogin.ShowModal = mrOK then
   begin

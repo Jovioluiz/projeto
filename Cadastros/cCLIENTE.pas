@@ -242,7 +242,7 @@ var
 begin
   temCep := False;
   cliente := TValidaDados.Create;
-  temPermissaEdicao := cliente.validaEdicaoAcao(IdUsuario, 1);
+  temPermissaEdicao := cliente.ValidaEdicaoAcao(IdUsuario, 1);
   persistencia := TCliente.Create;
   enderecoPersistencia := TClienteEndereco.Create;
 

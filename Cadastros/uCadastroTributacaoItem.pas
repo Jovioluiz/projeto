@@ -86,7 +86,7 @@ var
   icms : TValidaDados;
 begin
   icms := TValidaDados.Create;
-  temPermissaoEdicao := icms.validaEdicaoAcao(IdUsuario, 13);
+  temPermissaoEdicao := icms.ValidaEdicaoAcao(IdUsuario, 13);
 
   if edtCdGrupoTributacaoICMS.Text = EmptyStr then
   begin

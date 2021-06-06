@@ -72,14 +72,14 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object Label5: TLabel
       Left = 24
-      Top = 136
+      Top = 111
       Width = 87
       Height = 13
       Caption = 'Forma Pagamento'
     end
     object Label6: TLabel
       Left = 494
-      Top = 136
+      Top = 111
       Width = 86
       Height = 13
       Caption = 'Cond. Pagamento'
@@ -177,7 +177,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtCdFormaPgto: TEdit
       Left = 24
-      Top = 155
+      Top = 130
       Width = 87
       Height = 21
       TabOrder = 1
@@ -186,7 +186,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtCdCondPgto: TEdit
       Left = 494
-      Top = 155
+      Top = 130
       Width = 87
       Height = 21
       TabOrder = 2
@@ -195,7 +195,7 @@ object frmPedidoVenda: TfrmPedidoVenda
     end
     object edtNomeCondPgto: TEdit
       Left = 587
-      Top = 155
+      Top = 130
       Width = 236
       Height = 21
       Enabled = False
@@ -273,7 +273,6 @@ object frmPedidoVenda: TfrmPedidoVenda
       Top = 288
       Width = 831
       Height = 271
-      DataSource = dsPedidoVenda
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       ReadOnly = True
       TabOrder = 17
@@ -385,7 +384,7 @@ object frmPedidoVenda: TfrmPedidoVenda
   end
   object edtNomeFormaPgto: TEdit
     Left = 119
-    Top = 157
+    Top = 132
     Width = 329
     Height = 21
     Enabled = False
@@ -406,217 +405,6 @@ object frmPedidoVenda: TfrmPedidoVenda
     Height = 17
     Caption = 'Or'#231'amento'
     TabOrder = 7
-  end
-  object cdsPedidoVenda: TClientDataSet
-    PersistDataPacket.Data = {
-      AF0200009619E0BD010000001800000013000000000003000000AF020A63645F
-      70726F6475746F01004900000001000557494454480200020014000964657363
-      726963616F0100490000000100055749445448020002001400097174645F7665
-      6E646108000400000000000F63645F746162656C615F707265636F0400010000
-      00000009756E5F6D656469646101004900000001000557494454480200020014
-      000B766C5F756E69746172696F08000400000001000753554254595045020049
-      0006004D6F6E6579000B766C5F646573636F6E746F0800040000000100075355
-      42545950450200490006004D6F6E6579000D766C5F746F74616C5F6974656D08
-      0004000000010007535542545950450200490006004D6F6E6579000C69636D73
-      5F766C5F62617365080004000000010007535542545950450200490006004D6F
-      6E6579000C69636D735F70635F616C6971080004000000010007535542545950
-      450200490006004D6F6E6579000A69636D735F76616C6F720800040000000100
-      07535542545950450200490006004D6F6E6579000B6970695F766C5F62617365
-      080004000000010007535542545950450200490006004D6F6E6579000B697069
-      5F70635F616C6971080004000000010007535542545950450200490006004D6F
-      6E657900096970695F76616C6F72080004000000010007535542545950450200
-      490006004D6F6E657900127069735F636F66696E735F766C5F62617365080004
-      000000010007535542545950450200490006004D6F6E657900127069735F636F
-      66696E735F70635F616C69710800040000000100075355425459504502004900
-      06004D6F6E657900107069735F636F66696E735F76616C6F7208000400000001
-      0007535542545950450200490006004D6F6E6579000373657104000100000000
-      000769645F6974656D08000100000000000000}
-    Active = True
-    Aggregates = <>
-    FieldDefs = <
-      item
-        Name = 'cd_produto'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'descricao'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'qtd_venda'
-        DataType = ftFloat
-      end
-      item
-        Name = 'cd_tabela_preco'
-        DataType = ftInteger
-      end
-      item
-        Name = 'un_medida'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'vl_unitario'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'vl_desconto'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'vl_total_item'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'icms_vl_base'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'icms_pc_aliq'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'icms_valor'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'ipi_vl_base'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'ipi_pc_aliq'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'ipi_valor'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'pis_cofins_vl_base'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'pis_cofins_pc_aliq'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'pis_cofins_valor'
-        DataType = ftCurrency
-      end
-      item
-        Name = 'seq'
-        DataType = ftInteger
-      end
-      item
-        Name = 'id_item'
-        DataType = ftLargeint
-      end>
-    IndexDefs = <>
-    Params = <>
-    StoreDefs = True
-    Left = 336
-    Top = 408
-    object intgrfldPedidoVendaseq: TIntegerField
-      DisplayLabel = 'Seq.'
-      DisplayWidth = 4
-      FieldName = 'seq'
-    end
-    object cdsPedidoVendacd_produto: TStringField
-      DisplayLabel = 'C'#243'd. Produto'
-      DisplayWidth = 20
-      FieldName = 'cd_produto'
-    end
-    object cdsPedidoVendadescricao: TStringField
-      DisplayLabel = 'Descri'#231#227'o'
-      DisplayWidth = 29
-      FieldName = 'descricao'
-    end
-    object cdsPedidoVendaqtd_venda: TFloatField
-      DisplayLabel = 'Qtdade'
-      DisplayWidth = 7
-      FieldName = 'qtd_venda'
-    end
-    object intgrfldPedidoVendacd_tabela_preco: TIntegerField
-      DisplayLabel = 'Tabela Preco'
-      DisplayWidth = 11
-      FieldName = 'cd_tabela_preco'
-    end
-    object cdsPedidoVendaun_medida: TStringField
-      DisplayLabel = 'UN Medida'
-      DisplayWidth = 8
-      FieldName = 'un_medida'
-    end
-    object cdsPedidoVendavl_unitario: TCurrencyField
-      DisplayLabel = 'Valor Unit'#225'rio'
-      DisplayWidth = 10
-      FieldName = 'vl_unitario'
-    end
-    object cdsPedidoVendavl_desconto: TCurrencyField
-      DisplayLabel = 'Desconto'
-      DisplayWidth = 7
-      FieldName = 'vl_desconto'
-    end
-    object cdsPedidoVendavl_total_item: TCurrencyField
-      DisplayLabel = 'Total Item'
-      DisplayWidth = 10
-      FieldName = 'vl_total_item'
-    end
-    object cdsPedidoVendaicms_vl_base: TCurrencyField
-      DisplayLabel = 'Base ICMS'
-      DisplayWidth = 10
-      FieldName = 'icms_vl_base'
-    end
-    object cdsPedidoVendaicms_pc_aliq: TCurrencyField
-      DisplayLabel = 'ICMS Aliq.'
-      DisplayWidth = 8
-      FieldName = 'icms_pc_aliq'
-    end
-    object cdsPedidoVendaicms_valor: TCurrencyField
-      DisplayLabel = 'ICMS Valor'
-      DisplayWidth = 10
-      FieldName = 'icms_valor'
-    end
-    object cdsPedidoVendaipi_vl_base: TCurrencyField
-      DisplayLabel = 'IPI Base'
-      DisplayWidth = 7
-      FieldName = 'ipi_vl_base'
-    end
-    object cdsPedidoVendaipi_pc_aliq: TCurrencyField
-      DisplayLabel = 'IPI Aliq.'
-      DisplayWidth = 6
-      FieldName = 'ipi_pc_aliq'
-    end
-    object cdsPedidoVendaipi_valor: TCurrencyField
-      DisplayLabel = 'IPI Valor'
-      DisplayWidth = 7
-      FieldName = 'ipi_valor'
-    end
-    object cdsPedidoVendapis_cofins_vl_base: TCurrencyField
-      DisplayLabel = 'PIS/COFINS Base'
-      DisplayWidth = 15
-      FieldName = 'pis_cofins_vl_base'
-    end
-    object cdsPedidoVendapis_cofins_pc_aliq: TCurrencyField
-      DisplayLabel = 'PIS/COFINS Aliq.'
-      DisplayWidth = 13
-      FieldName = 'pis_cofins_pc_aliq'
-    end
-    object cdsPedidoVendapis_cofins_valor: TCurrencyField
-      DisplayLabel = 'PIS/COFINS Valor'
-      DisplayWidth = 14
-      FieldName = 'pis_cofins_valor'
-    end
-    object cdsPedidoVendaid_item: TLargeintField
-      FieldName = 'id_item'
-      Visible = False
-    end
-  end
-  object dsPedidoVenda: TDataSource
-    DataSet = cdsPedidoVenda
-    Left = 248
-    Top = 408
   end
   object document: TXMLDocument
     Left = 544

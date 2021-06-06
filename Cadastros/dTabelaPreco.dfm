@@ -39,8 +39,8 @@ object dmProdutosTabelaPreco: TdmProdutosTabelaPreco
     IndexDefs = <>
     Params = <>
     StoreDefs = True
-    Left = 112
-    Top = 56
+    Left = 120
+    Top = 48
     object cdsProdutoscd_produto: TStringField
       DisplayLabel = 'C'#243'd Produto'
       FieldName = 'cd_produto'

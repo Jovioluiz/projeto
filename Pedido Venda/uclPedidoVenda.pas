@@ -3,12 +3,12 @@ unit uclPedidoVenda;
 interface
 
 uses
-  uPedidoVenda, uDataModule, Winapi.Windows, Winapi.Messages, System.SysUtils,
+  uDataModule, Winapi.Windows, Winapi.Messages, System.SysUtils,
   System.UITypes, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls,
   Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Data.DB, FireDAC.Stan.Param,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, System.Generics.Collections;
+  FireDAC.Comp.Client, System.Generics.Collections, dPedidoVenda;
 
 type TPedidoVenda = class
 
@@ -21,6 +21,9 @@ type TPedidoVenda = class
       CdTabelaPreco: Integer;
       Valor: Currency;
     end;
+  private
+    FDados: TdmPedidoVenda;
+    procedure SetDados(const Value: TdmPedidoVenda);
 
   public
     function ValidaQtdadeItem(CdItem: String; QtdPedido: Double): Boolean;
@@ -38,6 +41,11 @@ type TPedidoVenda = class
     function isCodBarrasProduto(Cod: String): Boolean;
     function GetIdItem(CdItem: string): Int64;
     procedure PreencheDataSet(Info: TArray<TInfProdutosCodBarras>);
+
+    property Dados: TdmPedidoVenda read FDados write SetDados;
+
+    constructor Create;
+    destructor Destroy; override;
 end;
 
 implementation
@@ -311,13 +319,11 @@ const
         'limit 1 ';
 var
   qry: TFDQuery;
-  lista: TList<string>;
   j: Integer;
   infoProdutos: TArray<TInfProdutosCodBarras>;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  lista := TList<string>.Create;
 
   try
     qry.SQL.Add(sql);
@@ -415,6 +421,17 @@ begin
   Result := valorUnitario * qtdadeItem;
 end;
 
+constructor TPedidoVenda.Create;
+begin
+  FDados := TdmPedidoVenda.Create(nil);
+end;
+
+destructor TPedidoVenda.Destroy;
+begin
+  FDados.Free;
+  inherited;
+end;
+
 function TPedidoVenda.GetIdItem(CdItem: string): Int64;
 const
   SQL = 'select id_item from produto where cd_produto = :cd_produto';
@@ -499,6 +516,11 @@ begin
     dataset.Free;
     dataSource.Free;
   end;
+end;
+
+procedure TPedidoVenda.SetDados(const Value: TdmPedidoVenda);
+begin
+  FDados := Value;
 end;
 
 function TPedidoVenda.ValidaQtdadeItem(CdItem: String; QtdPedido: Double): Boolean;

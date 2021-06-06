@@ -267,10 +267,8 @@ var
   qry: TFDquery;
   produto: TProduto;
 begin
-  Result := False;
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
   produto := TProduto.Create;
 
   try
@@ -292,19 +290,20 @@ begin
       end
       );
 
-      dm.conexaoBanco.Commit;
+      qry.Connection.Commit;
       ShowMessage('Dados gravados com Sucesso');
       Result := True;
+
     except
       on e:Exception do
       begin
-        dm.conexaoBanco.Rollback;
+        qry.Connection.Rollback;
         raise Exception.Create('Erro ao gravar os Dados ' + #13 + e.Message);
       end;
     end;
 
   finally
-    dm.conexaoBanco.Rollback;
+    qry.Connection.Rollback;
     qry.Free;
     produto.Free;
   end;

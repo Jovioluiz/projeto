@@ -133,7 +133,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadastraTributacaoItem);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoCadastraTributacaoItem);
     if temPermissao then
     begin
       frmCadastraTributacaoItem := TfrmCadastraTributacaoItem.Create(Self);
@@ -151,7 +151,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadastroEndereco);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoCadastroEndereco);
     if temPermissao then
     begin
       frmCadastroEnderecos := TfrmCadastroEnderecos.Create(Self);
@@ -168,7 +168,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadCliente);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoCadCliente);
     if temPermissao then
     begin
       frmCadCliente := TfrmCadCliente.Create(Self);
@@ -185,7 +185,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadCondPgto);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoCadCondPgto);
     if temPermissao then
     begin
       frmCadCondPgto := TfrmCadCondPgto.Create(Self);
@@ -202,7 +202,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoConfiguracoes);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoConfiguracoes);
     if temPermissao then
     begin
       frmConfiguracoes := TfrmConfiguracoes.Create(Self);
@@ -219,7 +219,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoControleAcesso);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoControleAcesso);
     if temPermissao then
     begin
       frmControleAcesso := TfrmControleAcesso.Create(Self);
@@ -247,7 +247,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadFormaPagamento);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoCadFormaPagamento);
     if temPermissao then
     begin
       frmCadFormaPagamento := TfrmCadFormaPagamento.Create(Self);
@@ -330,7 +330,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoLancamentoNotaEntrada);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoLancamentoNotaEntrada);
     if temPermissao then
     begin
       frmLancamentoNotaEntrada := TfrmLancamentoNotaEntrada.Create(Self);
@@ -347,7 +347,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoPedidoVenda);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoPedidoVenda);
     if temPermissao then
     begin
       frmPedidoVenda := TfrmPedidoVenda.Create(Self);
@@ -364,7 +364,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoCadProduto);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoCadProduto);
     if temPermissao then
     begin
       frmCadProduto := TfrmCadProduto.Create(Self);
@@ -381,7 +381,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoConsultaProdutos);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoConsultaProdutos);
     if temPermissao then
     begin
       frmConsultaProdutos := TfrmConsultaProdutos.Create(Self);
@@ -404,7 +404,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaocadTabelaPreco);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaocadTabelaPreco);
     if temPermissao then
     begin
       frmcadTabelaPreco := TfrmcadTabelaPreco.Create(Self);
@@ -429,7 +429,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoUsuario);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoUsuario);
     if temPermissao then
     begin
       frmUsuario := TfrmUsuario.Create(Self);
@@ -446,7 +446,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoRelVendaDiaria);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoRelVendaDiaria);
     if temPermissao then
     begin
       frmRelVendaDiaria := TfrmRelVendaDiaria.Create(Self);
@@ -463,7 +463,7 @@ begin
   acesso := TValidaDados.Create;
 
   try
-    temPermissao := acesso.validaAcessoAcao(idUsuario, cdAcaoVisualizaPedidoVenda);
+    temPermissao := acesso.ValidaAcessoAcao(idUsuario, cdAcaoVisualizaPedidoVenda);
     if temPermissao then
     begin
       frmVisualizaPedidoVenda := TfrmVisualizaPedidoVenda.Create(Self);

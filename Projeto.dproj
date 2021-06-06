@@ -184,7 +184,7 @@
             <Form>frmConsulta</Form>
         </DCCReference>
         <DCCReference Include="Entrada\uclValidacoesEntrada.pas"/>
-        <DCCReference Include="uGerador.pas">
+        <DCCReference Include="Outros\uGerador.pas">
             <Form>$R *.res</Form>
         </DCCReference>
         <DCCReference Include="WMS\fCadastroEnderecos.pas">
@@ -232,12 +232,9 @@
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="Consulta\uConsultaProdutos.pas"/>
-        <DCCReference Include="Outros\uThread.pas">
-            <Form>/dTabelaPreco in &apos;dTabelaPreco.pas&apos; {dmProdutos</Form>
-            <DesignClass>TDataModule};</DesignClass>
-        </DCCReference>
-        <DCCReference Include="dTabelaPreco.pas">
-            <Form>dmProdutos</Form>
+        <DCCReference Include="Outros\uThread.pas"/>
+        <DCCReference Include="Cadastros\dTabelaPreco.pas">
+            <Form>dmProdutosTabelaPreco</Form>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="Outros\fGridsThread.pas">
@@ -249,6 +246,11 @@
         <DCCReference Include="Outros\transferenciaTabelas.pas"/>
         <DCCReference Include="WMS\dWMS.pas">
             <Form>dmWMS</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Pedido Venda\dPedidoVenda.pas">
+            <Form>dmPedidoVenda</Form>
+            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Release">

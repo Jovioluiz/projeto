@@ -271,7 +271,7 @@ begin
     qry.ParamByName('cd_produto').AsString := edtPRODUTOCD_PRODUTO.Text;
     qry.Open(sql);
 
-    if (not produto.validaEdicaoAcao(idUsuario, 2)) and (qry.IsEmpty) then
+    if (not produto.ValidaEdicaoAcao(idUsuario, 2)) and (qry.IsEmpty) then
     begin
       MessageDlg('Usuário não possui Permissão para realizar Cadastro', mtInformation, [mbOK], 0);
       edtPRODUTOCD_PRODUTO.SetFocus;
@@ -311,7 +311,7 @@ begin
 
     listarCodBarras;
 
-    if produto.validaEdicaoAcao(idUsuario, 2) then
+    if produto.ValidaEdicaoAcao(idUsuario, 2) then
       Exit
     else
       desabilitaCampos;

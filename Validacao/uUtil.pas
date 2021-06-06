@@ -12,8 +12,8 @@ type TValidaDados = class
 
     function validaNomeCpf(nome : String; cpf : String) : String;
     function validaCodigo(cod : Integer) : Integer;
-    function validaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
-    function validaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode editar um cadastro
+    function ValidaAcessoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode acessar a ação
+    function ValidaEdicaoAcao(cdUsuario : Integer; cdAcao : Integer) : Boolean; //valida se o usuário pode editar um cadastro
     function GetSenhaMD5(Senha: string): string;
 
 end;
@@ -30,15 +30,11 @@ type TDataSetHelper = class helper for TDataSet
     procedure Loop(Procedimento: TProc); overload;
 end;
 
-var
-  s: string[255];
-  c: array[0..255] of Byte absolute s;
-
 implementation
 
 { TValidaDados }
 
-uses uDataModule;
+uses uDataModule, FireDAC.Comp.Client;
 
 
 function TValidaDados.GetSenhaMD5(Senha: string): string;
@@ -56,7 +52,7 @@ begin
   end;
 end;
 
-function TValidaDados.validaAcessoAcao(cdUsuario, cdAcao: Integer): Boolean;
+function TValidaDados.ValidaAcessoAcao(cdUsuario, cdAcao: Integer): Boolean;
 const
   sql = 'select '+
          '  fl_permite_acesso '+
@@ -65,21 +61,22 @@ const
          ' where '+
          '  cd_acao = :cd_acao and '+
          '  cd_usuario = :cd_usuario';
+var
+  query: TFDQuery;
 begin
-  Result := False;
+  query := TFDQuery.Create(nil);
 
-  dm.query.Close;
-  dm.query.SQL.Clear;
-  dm.query.SQL.Add(sql);
-  dm.query.ParamByName('cd_acao').AsInteger := cdAcao;
-  dm.query.ParamByName('cd_usuario').AsInteger := cdUsuario;
+  try
 
-  dm.query.Open();
+    query.Open(sql, [cdAcao, cdUsuario]);
 
-  if not dm.query.IsEmpty then
-    Result := True
-  else
-    raise Exception.Create('Usuário não possui permissão de acesso! Verifique!');
+    if query.IsEmpty then
+      raise Exception.Create('Usuário não possui permissão de acesso! Verifique!');
+
+    Result := True;
+  finally
+    query.Free;
+  end;
 end;
 
 function TValidaDados.validaCodigo(cod: Integer): Integer;
@@ -92,7 +89,7 @@ begin
   Result := 0;
 end;
 
-function TValidaDados.validaEdicaoAcao(cdUsuario, cdAcao: Integer): Boolean;
+function TValidaDados.ValidaEdicaoAcao(cdUsuario, cdAcao: Integer): Boolean;
 const
   sql = 'select '+
          '  fl_permite_edicao '+
@@ -101,19 +98,19 @@ const
          ' where '+
          '  cd_acao = :cd_acao and '+
          '  cd_usuario = :cd_usuario';
+var
+  query: TFDQuery;
 begin
-  Result := False;
+  query := TFDQuery.Create(nil);
 
-  dm.query.Close;
-  dm.query.SQL.Clear;
-  dm.query.SQL.Add(sql);
-  dm.query.ParamByName('cd_acao').AsInteger := cdAcao;
-  dm.query.ParamByName('cd_usuario').AsInteger := cdUsuario;
+  try
+    query.Open(sql, [cdAcao, cdUsuario]);
 
-  dm.query.Open();
+    Result := query.FieldByName('fl_permite_edicao').AsBoolean;
 
-  if dm.query.FieldByName('fl_permite_edicao').AsBoolean then
-    Result := True;
+  finally
+    query.Free;
+  end;
 end;
 
 function TValidaDados.validaNomeCpf(nome: String; cpf : String): String;

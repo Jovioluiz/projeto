@@ -39,16 +39,16 @@ type
   private
     { Private declarations }
     FAdicionar: Boolean;
-    FDados: TdmProdutos;
+    FDados: TdmProdutosTabelaPreco;
     procedure limpaCampos;
     procedure Salvar;
     procedure Excluir;
     function GetIdItem(CdItem: string): Int64;
-    procedure SetDados(const Value: TdmProdutos);
+    procedure SetDados(const Value: TdmProdutosTabelaPreco);
   public
     { Public declarations }
 
-    property Dados: TdmProdutos read FDados write SetDados;
+    property Dados: TdmProdutosTabelaPreco read FDados write SetDados;
 
   end;
 
@@ -72,7 +72,7 @@ begin
   frmCadTabelaPrecoProduto := TfrmCadTabelaPrecoProduto.Create(Self);
 
   try
-    temPermissao := cliente.validaAcessoAcao(idUsuario, 6);
+    temPermissao := cliente.ValidaAcessoAcao(idUsuario, 6);
 
     if temPermissao then
     begin
@@ -291,7 +291,7 @@ end;
 
 procedure TfrmcadTabelaPreco.FormCreate(Sender: TObject);
 begin
-  FDados := TdmProdutos.Create(Self);
+  FDados := TdmProdutosTabelaPreco.Create(Self);
   DBGridProduto.DataSource := FDados.dsProdutos;
 end;
 
@@ -353,7 +353,7 @@ begin
   end
 end;
 
-procedure TfrmcadTabelaPreco.SetDados(const Value: TdmProdutos);
+procedure TfrmcadTabelaPreco.SetDados(const Value: TdmProdutosTabelaPreco);
 begin
   FDados := Value;
 end;
