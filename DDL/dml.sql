@@ -45,3 +45,6 @@ INSERT INTO public.configuracao (cd_configuracao, nm_configuracao, descricao_con
 INSERT INTO public.modelo_nota_fiscal (cd_modelo, nm_modelo) VALUES('01', 'Nota Fiscal');
 INSERT INTO public.operacao (cd_operacao, nm_operacao, fl_ent_sai, cd_modelo_nota_fiscal) VALUES(1, 'Compra', 'E', '01');
 INSERT INTO public.serie_nf (cd_serie, nr_serie, descricao, cd_modelo_nota_fiscal) VALUES(1, '1', 'Serie', NULL);
+
+
+update usuario_acao set fl_permite_edicao = 'S';

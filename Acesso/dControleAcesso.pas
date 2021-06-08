@@ -11,9 +11,8 @@ type
     cds: TClientDataSet;
     cdscd_acao: TIntegerField;
     cdsnm_acao: TStringField;
-    cdsfl_permite_acesso: TBooleanField;
-    cdsfl_permite_edicao: TBooleanField;
     cdscd_usuario: TIntegerField;
+    cdsfl_permite_edicao: TStringField;
   private
     { Private declarations }
   public

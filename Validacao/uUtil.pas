@@ -55,7 +55,7 @@ end;
 function TValidaDados.ValidaAcessoAcao(cdUsuario, cdAcao: Integer): Boolean;
 const
   sql = 'select '+
-         '  fl_permite_acesso '+
+         '  1 '+
          'from '+
          '  usuario_acao '+
          ' where '+
@@ -75,6 +75,7 @@ begin
       raise Exception.Create('Usuário não possui permissão de acesso! Verifique!');
 
     Result := True;
+
   finally
     query.Free;
   end;

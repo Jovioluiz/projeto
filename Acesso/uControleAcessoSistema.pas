@@ -15,6 +15,7 @@ type TControleAcessoSistema = class
 
   procedure Listar(CdUsuario: Integer);
   procedure Excluir(CdAcao, CdUsuario: Integer);
+  procedure AddAcaoGrid(CodAcao, CdUsuario: Integer; NomeAcao: String; ehEdicao, PermiteEdicao: Boolean);
   constructor Create;
   destructor Destroy; override;
   property Dados: TdmControleAcesso read FDados write SetDados;
@@ -24,9 +25,34 @@ end;
 implementation
 
 uses
-  FireDAC.Comp.Client, uDataModule, System.SysUtils, Vcl.Dialogs, System.Math;
+  FireDAC.Comp.Client, uDataModule, System.SysUtils, Vcl.Dialogs, System.Math,
+  System.Variants;
 
 { TControleAcessoSistema }
+
+procedure TControleAcessoSistema.AddAcaoGrid(CodAcao, CdUsuario: Integer; NomeAcao: String; EhEdicao, PermiteEdicao: Boolean);
+begin
+  if Dados.cds.Locate('cd_acao', VarArrayOf([CodAcao]), [])
+       and (not EhEdicao) then
+      raise Exception.Create('Usuário já possui a ação cadastrada');
+
+  if EhEdicao then
+    Dados.cds.Edit
+  else
+  begin
+    Dados.cds.Append;
+    Dados.cds.FieldByName('cd_acao').AsInteger := CodAcao;
+    Dados.cds.FieldByName('nm_acao').AsString := NomeAcao;
+  end;
+
+  Dados.cds.FieldByName('cd_usuario').AsInteger := CdUsuario;
+  if PermiteEdicao then
+    Dados.cds.FieldByName('fl_permite_edicao').AsString := 'S'
+  else
+    Dados.cds.FieldByName('fl_permite_edicao').AsString := 'N';
+
+  Dados.cds.Post;
+end;
 
 constructor TControleAcessoSistema.Create;
 begin
@@ -75,7 +101,6 @@ const
            '  ua.cd_usuario, '+
            '  acs.cd_acao, '+
            '  acs.nm_acao, '+
-           '  fl_permite_acesso, '+
            '  fl_permite_edicao '+
            'from '+
            '  usuario_acao ua '+
@@ -85,6 +110,7 @@ const
            '  order by ua.cd_acao ';
 var
   qry: TFDQuery;
+  book: TBookmark;
 begin
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
@@ -100,18 +126,23 @@ begin
       qry.loop(
       procedure
       begin
+        if (FDados.cds.Active) and (FDados.cds.RecordCount = 1) then
+          book := FDados.cds.GetBookmark;
+
         FDados.cds.Append;
         FDados.cds.FieldByName('cd_acao').AsInteger := qry.FieldByName('cd_acao').AsInteger;
         FDados.cds.FieldByName('cd_usuario').AsInteger := qry.FieldByName('cd_usuario').AsInteger;
         FDados.cds.FieldByName('nm_acao').AsString := qry.FieldByName('nm_acao').AsString;
-        FDados.cds.FieldByName('fl_permite_acesso').AsBoolean := qry.FieldByName('fl_permite_acesso').AsBoolean;
-        FDados.cds.FieldByName('fl_permite_edicao').AsBoolean := qry.FieldByName('fl_permite_edicao').AsBoolean;
+        FDados.cds.FieldByName('fl_permite_edicao').AsString := qry.FieldByName('fl_permite_edicao').AsString;
         FDados.cds.Post;
       end
       );
     end;
 
   finally
+    if FDados.cds.BookmarkValid(book) then
+      FDados.cds.GotoBookmark(book);
+    FDados.cds.FreeBookmark(book);
     qry.Free;
   end;
 end;

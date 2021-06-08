@@ -1311,3 +1311,7 @@ alter table wms_estoque add constraint fk_wms_estoque_produto foreign key (id_it
 
 
 ALTER TABLE public.login_usuario ALTER COLUMN senha TYPE varchar(50) USING senha::varchar;
+
+ALTER TABLE usuario_acao drop column fl_permite_acesso;
+
+alter table usuario_acao ALTER COLUMN fl_permite_edicao TYPE varchar(5) USING fl_permite_edicao::varchar;

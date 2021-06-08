@@ -36,8 +36,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure dbGridAcoesDblClick(Sender: TObject);
     procedure edtUsuarioChange(Sender: TObject);
-    procedure dbGridAcoesDrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumn; State: TGridDrawState);
   private
     FRegras: TControleAcessoSistema;
     FEdicao: Boolean;
@@ -69,13 +67,6 @@ uses
 
 
 procedure TfrmControleAcesso.btnAddClick(Sender: TObject);
-const
-  SQL_ACAO = 'select '+
-             '  nm_acao '+
-             'from       '+
-             '  acoes_sistema '+
-             'where            '+
-             '  cd_acao = :cd_acao';
 begin
   if edtCdAcao.Text = EmptyStr then
   begin
@@ -83,34 +74,7 @@ begin
     Exit;
   end;
 
-  if FRegras.Dados.cds.Locate('cd_acao', VarArrayOf([StrToInt(edtCdAcao.Text)]), [])
-     and (not FEdicao) then
-    raise Exception.Create('Usuário já possui a ação cadastrada');
-
-  if FEdicao then
-  begin
-    FRegras.Dados.cds.Edit;
-    if cbEdicao.ItemIndex = 0 then
-      FRegras.Dados.cds.FieldByName('fl_permite_edicao').AsBoolean := True
-    else
-      FRegras.Dados.cds.FieldByName('fl_permite_edicao').AsBoolean := False;
-
-    FRegras.Dados.cds.Post;
-  end
-  else
-  begin
-    FRegras.Dados.cds.Append;
-    FRegras.Dados.cds.FieldByName('cd_acao').AsInteger := StrToInt(edtCdAcao.Text);
-    FRegras.Dados.cds.FieldByName('nm_acao').AsString := edtNomeAcao.Text;
-    FRegras.Dados.cds.FieldByName('fl_permite_acesso').AsBoolean := True;
-
-    if cbEdicao.ItemIndex = 0 then
-      FRegras.Dados.cds.FieldByName('fl_permite_edicao').AsBoolean := True
-    else
-      FRegras.Dados.cds.FieldByName('fl_permite_edicao').AsBoolean := False;
-
-    FRegras.Dados.cds.Post;
-  end;
+  FRegras.AddAcaoGrid(StrToInt(edtCdAcao.Text), StrToInt(edtUsuario.Text) , edtNomeAcao.Text, FEdicao, cbEdicao.ItemIndex = 0);
 
   edtCdAcao.Clear;
   edtNomeAcao.Clear;
@@ -123,52 +87,12 @@ procedure TfrmControleAcesso.dbGridAcoesDblClick(Sender: TObject);
 begin
   edtCdAcao.Text := dbGridAcoes.Fields[0].AsString;
   edtNomeAcao.Text := dbGridAcoes.Fields[1].AsString;
-  if dm.dsControleAcesso.DataSet.FieldByName('fl_permite_edicao').AsBoolean = True then
+  if FRegras.Dados.cds.FieldByName('fl_permite_edicao').AsString = 'S' then
     cbEdicao.ItemIndex := 0
   else
     cbEdicao.ItemIndex := 1;
 
   FEdicao := True;
-end;
-
-procedure TfrmControleAcesso.dbGridAcoesDrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
-var
-  Check: Integer;
-  R: TRect;
-begin
-  inherited;
-
-  if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
-    Exit;
-
-  // Desenha um checkbox no dbgrid
-  if (Column.FieldName = 'fl_permite_acesso') or (Column.FieldName = 'fl_permite_edicao') then
-  begin
-    if (Column.FieldName = 'fl_permite_acesso') then
-    begin
-      TDBGrid(Sender).Canvas.FillRect(Rect);
-
-      if ((Sender as TDBGrid).DataSource.Dataset.FieldByName('fl_permite_acesso').AsBoolean) then
-        Check := DFCS_CHECKED
-      else
-        Check := 0;
-    end;
-
-    if (Column.FieldName = 'fl_permite_edicao') then
-    begin
-      if ((Sender as TDBGrid).DataSource.Dataset.FieldByName('fl_permite_edicao').AsBoolean) then
-        Check := DFCS_CHECKED
-      else
-        Check := 0;
-    end;
-
-    R := Rect;
-    InflateRect(R, -2, -2); { Diminue o tamanho do CheckBox }
-    DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON,
-      DFCS_BUTTONCHECK or Check);
-  end;
-
 end;
 
 procedure TfrmControleAcesso.dbGridAcoesKeyDown(Sender: TObject; var Key: Word;
@@ -360,17 +284,14 @@ const
               '    into ' +
               '    usuario_acao (cd_usuario, ' +
               '    cd_acao, ' +
-              '    fl_permite_acesso, ' +
               '    fl_permite_edicao) ' +
               'values(:cd_usuario, ' +
               ':cd_acao, ' +
-              ':fl_permite_acesso, ' +
               ':fl_permite_edicao)';
 
   SQL_UPDATE = 'update ' +
               '    usuario_acao ' +
               'set ' +
-              '    fl_permite_acesso = :fl_permite_acesso, ' +
               '    fl_permite_edicao = :fl_permite_edicao ' +
               'where ' +
               '    cd_usuario = :cd_usuario ' +
@@ -380,7 +301,6 @@ var
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
-  dm.conexaoBanco.StartTransaction;
 
   try
     try
@@ -395,33 +315,29 @@ begin
 
         qry.ParamByName('cd_usuario').AsInteger := FRegras.Dados.cds.FieldByName('cd_usuario').AsInteger;
         qry.ParamByName('cd_acao').AsInteger := FRegras.Dados.cds.FieldByName('cd_acao').AsInteger;
-        if FRegras.Dados.cds.FieldByName('fl_permite_acesso').AsInteger = 1 then
-          qry.ParamByName('fl_permite_acesso').AsBoolean := True
+
+        if FRegras.Dados.cds.FieldByName('fl_permite_edicao').AsString = 'S' then
+          qry.ParamByName('fl_permite_edicao').AsString := 'S'
         else
-          qry.ParamByName('fl_permite_acesso').AsBoolean := False;
-        if FRegras.Dados.cds.FieldByName('fl_permite_edicao').AsInteger = 1 then
-          qry.ParamByName('fl_permite_edicao').AsBoolean := True
-        else
-          qry.ParamByName('fl_permite_edicao').AsBoolean := False;
+          qry.ParamByName('fl_permite_edicao').AsString := 'N';
         qry.ExecSQL;
         qry.SQL.Clear;
       end
       );
 
-      dm.conexaoBanco.Commit;
-
+      qry.Connection.Commit;
+      limpaCampos;
     except
       on E : exception do
       begin
-        dm.conexaoBanco.Rollback;
+        qry.Connection.Rollback;
         ShowMessage('Erro ao gravar os dados ' + E.Message);
         Exit;
       end;
     end;
   finally
-    dm.conexaoBanco.Rollback;
+    qry.Connection.Rollback;
     qry.Free;
-    limpaCampos;
   end;
 end;
 
