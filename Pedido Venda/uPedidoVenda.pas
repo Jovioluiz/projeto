@@ -433,7 +433,7 @@ begin
 //valida se não foi encontrado nenhum cliente
 procedure TfrmPedidoVenda.edtCdClienteExit(Sender: TObject);
 var
-  cliente: TPedidoVenda;
+  cliente: TPedidoVenda;    //usar a property FRegras
   resposta : Boolean;
 begin
   if not edtCdCliente.isEmpty then
@@ -456,7 +456,7 @@ end;
 //busca a condição de pgto
 procedure TfrmPedidoVenda.edtCdCondPgtoChange(Sender: TObject);
 var
-  condicao: TPedidoVenda;
+  condicao: TPedidoVenda;  //usar a property FRegras
   lista: TList<String>;
 begin
   if edtCdCondPgto.Text = EmptyStr then
@@ -480,7 +480,7 @@ end;
 //valida se não foi encontrado nenhuma condição de pagamento
 procedure TfrmPedidoVenda.edtCdCondPgtoExit(Sender: TObject);
 var
-  condPgto: TPedidoVenda;
+  condPgto: TPedidoVenda;  //usar a property FRegras
   resposta : Boolean;
 begin
   if not edtCdCondPgto.isEmpty then
@@ -503,7 +503,7 @@ end;
 //busca a forma pgto
 procedure TfrmPedidoVenda.edtCdFormaPgtoChange(Sender: TObject);
 var
-  forma: TPedidoVenda;
+  forma: TPedidoVenda;//usar a property FRegras
   lista: TList<String>;
 begin
   forma := TPedidoVenda.Create;
@@ -527,7 +527,7 @@ end;
 //valida se não foi encontrado nenhuma forma de pagamento
 procedure TfrmPedidoVenda.edtCdFormaPgtoExit(Sender: TObject);
 var
-  formaPgto: TPedidoVenda;
+  formaPgto: TPedidoVenda; //usar a property FRegras
   resposta : Boolean;
 begin
   if not edtCdFormaPgto.isEmpty then
@@ -643,7 +643,7 @@ end;
 
 procedure TfrmPedidoVenda.edtCdProdutoExit(Sender: TObject);
 var
-  produto: TPedidoVenda;
+  produto: TPedidoVenda; //usar a property FRegras
   resposta: Boolean;
   lista: TFDQuery;
 begin
@@ -703,7 +703,7 @@ end;
 //busca a tabela de preço
 procedure TfrmPedidoVenda.edtCdtabelaPrecoChange(Sender: TObject);
 var
-  tabela: TPedidoVenda;
+  tabela: TPedidoVenda; //usar a property FRegras
   lista: TList<String>;
 begin
   tabela := TPedidoVenda.Create;
@@ -729,7 +729,7 @@ end;
 
 procedure TfrmPedidoVenda.edtCdtabelaPrecoExit(Sender: TObject);
 var
-  tabela: TPedidoVenda;
+  tabela: TPedidoVenda; //usar a property FRegras
   resposta : Boolean;
 begin
   if not edtCdtabelaPreco.isEmpty then
@@ -759,7 +759,7 @@ end;
 //calcula o valor total do item ao alterar a quantidade
 procedure TfrmPedidoVenda.edtQtdadeChange(Sender: TObject);
 var
-  pv: TPedidoVenda;
+  pv: TPedidoVenda; //usar a property FRegras
 begin
   pv := TPedidoVenda.Create;
 
@@ -781,7 +781,7 @@ end;
 
 procedure TfrmPedidoVenda.edtQtdadeExit(Sender: TObject);
 var
-  qtdadeEstoque: TPedidoVenda;
+  qtdadeEstoque: TPedidoVenda;//usar a property FRegras
 begin
   qtdadeEstoque := TPedidoVenda.Create;
 
@@ -1233,7 +1233,7 @@ procedure TfrmPedidoVenda.LancaItem;
   vl_total_itens: Currency;
   lancado: Boolean;
   lancaProduto: TfrmConfiguracoes;
-  item: TPedidoVenda;
+  item: TPedidoVenda;  //usar a property FRegras
   aliq: TAliqItem;
 begin
   lancaProduto := TfrmConfiguracoes.Create(Self);

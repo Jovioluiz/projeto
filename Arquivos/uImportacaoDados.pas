@@ -111,6 +111,7 @@ procedure TImportacaoDados.ListaProdutos(Caminho: String);
 var
   linhas, temp: TStringList;
   i, j: integer;
+  delimiter: TArray<string>;
 begin
   linhas := TStringList.Create;
   temp := TStringList.Create;
@@ -125,17 +126,21 @@ begin
     for i := 0 to Pred(linhas.Count) do
     begin
       ParseDelimited(temp, linhas[i], ';');
+
+      delimiter := linhas.Strings[i].Split([';']);
+
       //se o código do produto já está no banco, não mostra no grid
       if FListaProdutos.Contains(temp[0]) then
         Continue;
+
       Dados.cdsProdutos.Append;
       Dados.cdsProdutos.FieldByName('seq').AsInteger := j + 1;
-      Dados.cdsProdutos.FieldByName('cd_produto').AsInteger := StrToInt(temp[0]);
-      Dados.cdsProdutos.FieldByName('desc_produto').AsString := temp[1];
-      Dados.cdsProdutos.FieldByName('un_medida').AsString := temp[2];
-      Dados.cdsProdutos.FieldByName('fator_conversao').AsInteger := StrToInt(temp[3]);
-      Dados.cdsProdutos.FieldByName('peso_liquido').AsFloat := StrToFloat(temp[4]);
-      Dados.cdsProdutos.FieldByName('peso_bruto').AsFloat := StrToFloat(temp[5]);
+      Dados.cdsProdutos.FieldByName('cd_produto').AsInteger := StrToInt(delimiter[0]);
+      Dados.cdsProdutos.FieldByName('desc_produto').AsString := delimiter[1];
+      Dados.cdsProdutos.FieldByName('un_medida').AsString := delimiter[2];
+      Dados.cdsProdutos.FieldByName('fator_conversao').AsInteger := StrToInt(delimiter[3]);
+      Dados.cdsProdutos.FieldByName('peso_liquido').AsFloat := StrToFloat(delimiter[4]);
+      Dados.cdsProdutos.FieldByName('peso_bruto').AsFloat := StrToFloat(delimiter[5]);
       Dados.cdsProdutos.Post;
     end;
   finally

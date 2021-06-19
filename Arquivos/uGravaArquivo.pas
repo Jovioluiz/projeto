@@ -12,12 +12,16 @@ uses
 
 type
   TfrmGravaArquivo = class(TForm)
-    btnPedidoVenda: TButton;
+    btnGerar: TButton;
     edtDataIni: TDateTimePicker;
     edtDataFim: TDateTimePicker;
-    opArquivo: TOpenTextFileDialog;
-    procedure btnPedidoVendaClick(Sender: TObject);
+    odArquivo: TOpenTextFileDialog;
+    Label1: TLabel;
+    edtArquivo: TEdit;
+    btnCaminho: TSpeedButton;
+    procedure btnGerarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure btnCaminhoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -31,11 +35,19 @@ var
 implementation
 
 uses
-  uDataModule, uThread;
+  uDataModule, uThread, FileCtrl;
 
 {$R *.dfm}
 
-procedure TfrmGravaArquivo.btnPedidoVendaClick(Sender: TObject);
+procedure TfrmGravaArquivo.btnCaminhoClick(Sender: TObject);
+var
+  dir: string;
+begin
+  if SelectDirectory(ExtractFilePath(odArquivo.FileName), 'C:\', dir) then
+    edtArquivo.Text := dir + '\' + 'relatorio.txt';
+end;
+
+procedure TfrmGravaArquivo.btnGerarClick(Sender: TObject);
 const
   sql = 'select                                                 ' +
 '             pv.nr_pedido,                                      ' +
@@ -71,10 +83,10 @@ const
 '             order by pv.nr_pedido, pv.dt_emissao asc  ';
 var
   qry: TFDQuery;
-  thread: TThreadTeste;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
+
   qry.Close;
   qry.SQL.Clear;
   qry.SQL.Add(sql);
@@ -82,7 +94,7 @@ begin
   qry.ParamByName('dt_final').AsDate := edtDataFim.Date;
   qry.Open(sql);
 
-  thread := TThreadTeste.Create(qry);
+  TThreadTeste.Create(qry, edtArquivo.Text);
 
   ShowMessage('Gravação Concluída');
 end;

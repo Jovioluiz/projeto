@@ -1315,3 +1315,35 @@ ALTER TABLE public.login_usuario ALTER COLUMN senha TYPE varchar(50) USING senha
 ALTER TABLE usuario_acao drop column fl_permite_acesso;
 
 alter table usuario_acao ALTER COLUMN fl_permite_edicao TYPE varchar(5) USING fl_permite_edicao::varchar;
+
+CREATE TABLE public.backup_registros (
+	id_geral int8 NOT NULL,
+	operacao varchar(20) null,
+	tabela varchar(50) not null,
+	usuario text NOT NULL,
+	"data" timestamp NOT NULL,
+	valor text NOT NULL
+);
+
+CREATE OR REPLACE FUNCTION auditoria_registros() RETURNS TRIGGER AS $auditoria_registros$
+    BEGIN
+        IF (TG_OP = 'DELETE') THEN
+            INSERT INTO backup_registros SELECT func_id_geral(), TG_OP, TG_RELNAME, user, now(), old;
+            RETURN OLD;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            INSERT INTO backup_registros SELECT func_id_geral(), TG_OP, TG_RELNAME, user, now(), old;
+            RETURN NEW;
+        END IF;
+        RETURN NULL; 
+    END;
+$auditoria_registros$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_backup_registros
+before UPDATE OR DELETE ON cliente
+    FOR EACH ROW EXECUTE PROCEDURE auditoria_registros();
+
+
+ALTER TABLE public.nfc DROP COLUMN valor_produto;
+ALTER TABLE public.nfc DROP COLUMN valor_total_nota;
+
+ALTER TABLE public.nfi ADD valor_total numeric(12,4) NULL DEFAULT 0;

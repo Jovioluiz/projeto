@@ -39,7 +39,7 @@ implementation
 
 uses
   uDataModule, cCLIENTE, System.Math, System.UITypes,
-  System.Generics.Collections;
+  System.Generics.Collections, transferenciaTabelas;
 
 {$R *.dfm}
 
@@ -49,7 +49,7 @@ procedure TfrmConsulta.dbgrd1DblClick(Sender: TObject);
 begin
   if chamada = 'cntCliente' then
   begin
-    CodCliente := cdsConsulta.FieldByName('cd_cliente').AsInteger;
+    CodCliente := cds.FieldByName('cd_cliente').AsInteger;
     Close;
     chamada := '';
   end;
@@ -121,6 +121,7 @@ var
   qry: TFDQuery;
   campo: TField;
   tamanhoCampo: Integer;
+  colunas: TDBGridColumns;
 begin
   qry := TFDQuery.Create(Self);
   qry.Connection := dm.conexaoBanco;
@@ -129,26 +130,28 @@ begin
     qry.SQL.Add(consulta);
     qry.Open();
 
-  campo := TField.Create(cds);
-    for var i := 0 to Pred(qry.FieldCount) do
-    begin
-      //monta os fields de acordo com os campos da consulta
-      campo.FieldName := qry.Fields[i].FieldName;
+    CloneDatasets(qry, cds);
 
-      case qry.Fields[i].DataType of
-        ftString: tamanhoCampo := 30;
-        ftInteger: tamanhoCampo := 0;
-        ftFloat: tamanhoCampo := 0;
-        ftCurrency: tamanhoCampo := 0;
-        ftWideString: tamanhoCampo := 30;
-        ftBCD: tamanhoCampo := 0;
-        ftWideMemo: tamanhoCampo := 100;
-      end;
-      campo.SetFieldType(qry.Fields[i].DataType);
-      cds.FieldDefs.Add(UpperCase(campo.FieldName), qry.Fields[i].DataType, tamanhoCampo, false);
-    end;
-
-    cds.CreateDataSet;
+//    campo := TField.Create(cds);
+//    for var i := 0 to Pred(qry.FieldCount) do
+//    begin
+//      //monta os fields de acordo com os campos da consulta
+//      campo.FieldName := qry.Fields[i].FieldName;
+//
+//      case qry.Fields[i].DataType of
+//        ftString: tamanhoCampo := 30;
+//        ftInteger: tamanhoCampo := 0;
+//        ftFloat: tamanhoCampo := 0;
+//        ftCurrency: tamanhoCampo := 0;
+//        ftWideString: tamanhoCampo := 30;
+//        ftBCD: tamanhoCampo := 0;
+//        ftWideMemo: tamanhoCampo := 100;
+//      end;
+//      campo.SetFieldType(qry.Fields[i].DataType);
+//      cds.FieldDefs.Add(UpperCase(campo.FieldName), qry.Fields[i].DataType, tamanhoCampo, false);
+//    end;
+//
+//    cds.CreateDataSet;
 
 //  for i := 0 to Pred(cds.FieldCount) do
 //  begin
@@ -162,19 +165,22 @@ begin
 //    end;
 //  end;
 
-    qry.First;
-      cds.First;
-    for linha := 0 to cds.Fields.Count do
-    begin
-      for coluna := 0 to qry.RecordCount -1 do
-      begin
-        cds.Append;
-        cds.Fields[linha].Value := qry.Fields[coluna].Value;
-        cds.Post;
-      end;
-      qry.Next;
-      cds.Next;
-    end;
+//    cds.First;
+//    for linha := 0 to Pred(cds.Fields.Count) do
+//    begin
+//      cds.FieldDefs[linha].DataType := qry.Fields[linha].DataType;
+//      cds.FieldDefs[linha].Name := qry.Fields[linha].FieldName;
+//      cds.FieldDefs[linha].Size := qry.Fields[linha].Size;
+//      cds.Next;
+//    end;
+
+//    qry.First;
+//    for var j := 0 to Pred(cds.Fields.Count) do
+//    begin
+//      dbgrd1.Columns[j].Title.Caption := StringReplace(qry.FieldDefs[j].Name.ToUpper, '_', ' ', []);
+//      dbgrd1.Columns[j].FieldName := qry.FieldDefs[j].Name;
+//      qry.Next;
+//    end;
 
   finally
     qry.Free;

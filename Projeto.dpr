@@ -35,7 +35,7 @@ uses
   uGravaArquivo in 'Arquivos\uGravaArquivo.pas' {frmGravaArquivo},
   uVersao in 'Validacao\uVersao.pas',
   uConsulta in 'Consulta\uConsulta.pas' {frmConsulta},
-  uclValidacoesEntrada in 'Entrada\uclValidacoesEntrada.pas',
+  uclNotaEntrada in 'Entrada\uclNotaEntrada.pas',
   uGerador in 'Outros\uGerador.pas' {$R *.res},
   fCadastroEnderecos in 'WMS\fCadastroEnderecos.pas' {frmCadastroEnderecos},
   uCadastrarSenha in 'Cadastros\uCadastrarSenha.pas' {frmCadastraSenha},
@@ -67,12 +67,15 @@ uses
   fVisualizaCodigoBarras in 'Outros\fVisualizaCodigoBarras.pas' {fVisualizaCodBarras},
   transferenciaTabelas in 'Outros\transferenciaTabelas.pas',
   dWMS in 'WMS\dWMS.pas' {dmWMS: TDataModule},
-  dPedidoVenda in 'Pedido Venda\dPedidoVenda.pas' {dmPedidoVenda: TDataModule};
+  dPedidoVenda in 'Pedido Venda\dPedidoVenda.pas' {dmPedidoVenda: TDataModule},
+  dNotaEntrada in 'Entrada\dNotaEntrada.pas' {dmNotaEntrada: TDataModule},
+  uMovimentacaoEstoque in 'Estoque\uMovimentacaoEstoque.pas';
 
 {$R *.res}
 
 begin
   Application.CreateForm(Tdm, dm);
+  Application.CreateForm(TdmNotaEntrada, dmNotaEntrada);
   frmLogin := TfrmLogin.Create(nil);
 
   if frmLogin.ShowModal = mrOK then

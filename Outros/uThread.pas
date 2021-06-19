@@ -10,13 +10,14 @@ type
   private
     FArquivo: TStringList;
     FQuery: TFDQuery;
+    FCaminho: string;
   protected
     procedure Execute; override;
 
   public
 
     procedure GravaArquivo;
-    constructor Create(const Query: TFDQuery);
+    constructor Create(const Query: TFDQuery; Caminho: String);
   end;
 
 implementation
@@ -26,9 +27,10 @@ uses
 
 { TThread }
 
-constructor TThreadTeste.Create(const Query: TFDQuery);
+constructor TThreadTeste.Create(const Query: TFDQuery; Caminho: String);
 begin
   FQuery := Query;
+  FCaminho := Caminho;
   inherited Create(False);
 end;
 
@@ -54,6 +56,7 @@ begin
     begin
       while not FQuery.Eof do
       begin
+
         FArquivo.Add(FQuery.FieldByName('nr_pedido').AsString +
                     '|' + FQuery.FieldByName('nome').AsString +
                     '|'+ FormatCurr('#,##0.00', FQuery.FieldByName('vl_total').AsCurrency) +
@@ -79,7 +82,7 @@ begin
         FQuery.Next;
       end;
 
-      FArquivo.SaveToFile(GetCurrentDir + '\rel\' + FormatDateTime('dd-MM-yyyy', Now) + '_' + 'rel.text');
+      FArquivo.SaveToFile(FCaminho);
     end;
   finally
     FArquivo.Free;
