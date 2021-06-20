@@ -341,6 +341,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 13
       Text = '0,00'
+      OnExit = edtBaseIcmsExit
     end
     object edtValorIcms: TEdit
       Left = 316
@@ -349,6 +350,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 14
       Text = '0,00'
+      OnExit = edtValorIcmsExit
     end
     object edtValorFrete: TEdit
       Left = 412
@@ -375,6 +377,7 @@ object frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada
       Height = 21
       TabOrder = 17
       Text = '0,00'
+      OnExit = edtValorISSExit
     end
     object edtValorDesconto: TEdit
       Left = 24

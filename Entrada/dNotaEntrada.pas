@@ -56,6 +56,8 @@ type
     cdsNficd_produto: TStringField;
     cdsNfidescricao: TStringField;
     cdsNfifator_conversao: TIntegerField;
+    cdsNfiqtd_total: TFloatField;
+    cdsNfcvalor_servico: TCurrencyField;
   private
     { Private declarations }
   public

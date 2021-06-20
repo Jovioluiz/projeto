@@ -1309,7 +1309,6 @@ alter table wms_mvto_estoque add constraint fk_wms_mvto_estoque_produto foreign 
 ALTER TABLE public.wms_estoque RENAME COLUMN cd_produto TO id_item;
 alter table wms_estoque add constraint fk_wms_estoque_produto foreign key (id_item) references produto(id_item);
 
-
 ALTER TABLE public.login_usuario ALTER COLUMN senha TYPE varchar(50) USING senha::varchar;
 
 ALTER TABLE usuario_acao drop column fl_permite_acesso;
@@ -1347,3 +1346,4 @@ ALTER TABLE public.nfc DROP COLUMN valor_produto;
 ALTER TABLE public.nfc DROP COLUMN valor_total_nota;
 
 ALTER TABLE public.nfi ADD valor_total numeric(12,4) NULL DEFAULT 0;
+ALTER TABLE public.nfc ADD valor_total numeric(12,4) NULL DEFAULT 0;
