@@ -3,7 +3,6 @@ object fVisualizaCodBarras: TfVisualizaCodBarras
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
-  Caption = 'C'#243'digo de barras do item: '
   ClientHeight = 116
   ClientWidth = 250
   Color = clBtnFace
@@ -25,6 +24,7 @@ object fVisualizaCodBarras: TfVisualizaCodBarras
     Width = 250
     Height = 116
     Align = alClient
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText

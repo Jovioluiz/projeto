@@ -26,6 +26,7 @@ object frmVisualizaPedidoVenda: TfrmVisualizaPedidoVenda
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13

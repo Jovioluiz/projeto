@@ -15,9 +15,9 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
-  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -364,8 +364,8 @@ object frmEdicaoPedidoVenda: TfrmEdicaoPedidoVenda
       Top = 31
       Width = 105
       Height = 21
-      Enabled = False
       TabOrder = 0
+      OnEnter = edtNrPedidoEnter
     end
     object btnAdicionarItem: TButton
       Left = 806

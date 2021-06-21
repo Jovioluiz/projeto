@@ -133,6 +133,7 @@ begin
   try
     visualizaCod.IDItem := FConsulta.Dados.cdsConsultaProduto.FieldByName('id_item').AsInteger;
     visualizaCod.CDItem := FConsulta.Dados.cdsConsultaProduto.FieldByName('cd_produto').AsString;
+    visualizaCod.Caption := 'Código de barras do item: ' + FConsulta.Dados.cdsConsultaProduto.FieldByName('cd_produto').AsString;
     visualizaCod.ShowModal;
   finally
     visualizaCod.Free;

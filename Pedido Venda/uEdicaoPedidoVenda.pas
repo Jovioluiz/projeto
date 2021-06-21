@@ -79,7 +79,6 @@ type
     cdsItenspis_cofins_valor: TCurrencyField;
     cdsItensdescricao: TStringField;
     intgrfldItenscd_tabela_preco: TIntegerField;
-    procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure dbGridProdutosDblClick(Sender: TObject);
@@ -100,12 +99,17 @@ type
     procedure edtCdCondPgtoChange(Sender: TObject);
     procedure edtQtdadeExit(Sender: TObject);
     procedure btnConfirmarClick(Sender: TObject);
+    procedure edtNrPedidoEnter(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     edicao : Boolean;
+    FNumeroPedido: Integer;
     procedure limpaCampos;
+    procedure SetNumeroPedido(const Value: Integer);
   public
     { Public declarations }
+    property NumeroPedido: Integer read FNumeroPedido write SetNumeroPedido;
 
   end;
 
@@ -319,6 +323,131 @@ begin
   query.Open();
   edtDescTabPreco.Text:= query.FieldByName('nm_tabela').AsString;
   edtVlUnitario.Text := CurrToStr(query.FieldByName('valor').AsCurrency);
+end;
+
+procedure TfrmEdicaoPedidoVenda.edtNrPedidoEnter(Sender: TObject);
+const
+  SQL_PEDIDO = 'select                                             '+
+                'pv.nr_pedido,                                  '+
+                'pv.fl_orcamento,                               '+
+                'pv.cd_cliente,                                 '+
+                'c.nome,                                        '+
+                'e.cidade,                                      '+
+                'e.uf,                                          '+
+                'pv.cd_forma_pag,                               '+
+                'cfp.nm_forma_pag,                              '+
+                'pv.cd_cond_pag,                                '+
+                'ccp.nm_cond_pag,                               '+
+                'p.cd_produto,                                  '+
+                'p.desc_produto,                                '+
+                'pvi.qtd_venda,                                 '+
+                'pvi.cd_tabela_preco,                           '+
+                'p.un_medida,                                   '+
+                'pvi.vl_unitario,                               '+
+                'pvi.vl_desconto,                               '+
+                'pvi.vl_total_item,                             '+
+                'pvi.vl_total_item as icms_vl_base,             '+
+                'pvi.icms_pc_aliq,                              '+
+                '((pvi.vl_total_item * pvi.icms_pc_aliq) / 100) as icms_valor, '+
+                'pvi.vl_total_item as ipi_vl_base,              '+
+                'pvi.ipi_pc_aliq,                               '+
+                '((pvi.vl_total_item * pvi.ipi_pc_aliq) / 100) as ipi_valor,   '+
+                'pvi.vl_total_item as pis_cofins_vl_base,       '+
+                'pvi.pis_cofins_pc_aliq,                        '+
+                '((pvi.vl_total_item * pvi.pis_cofins_pc_aliq) / 100) as pis_cofins_valor, '+
+                'pvi.vl_total_item,                             '+
+                'pv.vl_desconto_pedido,                         '+
+                'pv.vl_acrescimo,                               '+
+                'pv.vl_total                                    '+
+            'from                                               '+
+             '   pedido_venda pv                                '+
+            'join pedido_venda_item pvi on                      '+
+             '   pv.id_geral = pvi.id_pedido_venda              '+
+             'join cta_forma_pagamento cfp on                   '+
+                'pv.cd_forma_pag = cfp.cd_forma_pag             '+
+            'join cta_cond_pagamento ccp on                     '+
+                'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento  '+
+            'join cliente c on                                  '+
+             '   pv.cd_cliente = c.cd_cliente                   '+
+             'join endereco_cliente e on                        '+
+                'c.cd_cliente = e.cd_cliente                    '+
+            'join produto p on                                  '+
+             '   pvi.id_item = p.id_item                        '+
+            'where                                              '+
+             '   pv.nr_pedido = :nr_pedido';
+
+var
+  tempC, tempU: String;
+  editarPedido: TfrmConfiguracoes;
+  qry: TFDQuery;
+begin
+  editarPedido := TfrmConfiguracoes.Create(Self);
+  qry := TFDQuery.Create(Self);
+  qry.Connection := dm.conexaoBanco;
+
+  try
+    cdsItens.EmptyDataSet;
+
+    qry.SQL.Add(SQL_PEDIDO);
+
+    qry.ParamByName('nr_pedido').AsInteger := FNumeroPedido;
+    qry.Open();
+
+    edtNrPedido.Text := IntToStr(qry.FieldByName('nr_pedido').AsInteger);
+    edtFl_orcamento.Checked := qry.FieldByName('fl_orcamento').AsBoolean;
+    if editarPedido.cbConfigAlteraCliPv.ItemIndex = 0 then
+    begin
+      edtCdCliente.Enabled := True;
+      //edtCdCliente.SetFocus;
+    end
+    else
+      edtCdCliente.Enabled := False;
+
+    edtCdCliente.Text := IntToStr(qry.FieldByName('cd_cliente').AsInteger);
+    edtNomeCliente.Text := qry.FieldByName('nome').AsString;
+    tempC := qry.FieldByName('cidade').Text;
+    tempU := qry.FieldByName('uf').Text;
+    edtCidadeCliente.Text := Concat(tempC + ' / ' + tempU);
+    edtCdFormaPgto.Text := IntToStr(qry.FieldByName('cd_forma_pag').AsInteger);
+    edtNomeFormaPgto.Text := qry.FieldByName('nm_forma_pag').AsString;
+    edtCdCondPgto.Text := IntToStr(qry.FieldByName('cd_cond_pag').AsInteger);
+    edtNomeCondPgto.Text := qry.FieldByName('nm_cond_pag').AsString;
+
+    edtVlDescTotalPedido.Text := CurrToStr(qry.FieldByName('vl_desconto_pedido').AsCurrency);
+    edtVlAcrescimoTotalPedido.Text := CurrToStr(qry.FieldByName('vl_acrescimo').AsCurrency);
+    edtVlTotalPedido.Text := CurrToStr(qry.FieldByName('vl_total').AsCurrency);
+    edtDataEmissao.Text := DateToStr(Date());
+
+    qry.First;
+
+    while not qry.Eof do
+    begin
+      cdsItens.Append;
+      cdsItens.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
+      cdsItens.FieldByName('descricao').AsString := qry.FieldByName('desc_produto').AsString;
+      cdsItens.FieldByName('qtd_venda').AsFloat := qry.FieldByName('qtd_venda').AsFloat;
+      cdsItens.FieldByName('cd_tabela_preco').AsInteger := qry.FieldByName('cd_tabela_preco').AsInteger;
+      cdsItens.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
+      cdsItens.FieldByName('vl_unitario').AsCurrency := qry.FieldByName('vl_unitario').AsCurrency;
+      cdsItens.FieldByName('vl_desconto').AsCurrency := qry.FieldByName('vl_desconto').AsCurrency;
+      cdsItens.FieldByName('vl_total_item').AsCurrency := qry.FieldByName('vl_total_item').AsCurrency;
+      cdsItens.FieldByName('icms_vl_base').AsCurrency := qry.FieldByName('icms_vl_base').AsCurrency;
+      cdsItens.FieldByName('icms_pc_aliq').AsFloat := qry.FieldByName('icms_pc_aliq').AsCurrency;
+      cdsItens.FieldByName('icms_valor').AsCurrency := qry.FieldByName('icms_valor').AsCurrency;
+      cdsItens.FieldByName('ipi_vl_base').AsCurrency := qry.FieldByName('ipi_vl_base').AsCurrency;
+      cdsItens.FieldByName('ipi_pc_aliq').AsFloat := qry.FieldByName('ipi_pc_aliq').AsCurrency;
+      cdsItens.FieldByName('ipi_valor').AsCurrency := qry.FieldByName('ipi_valor').AsCurrency;
+      cdsItens.FieldByName('pis_cofins_vl_base').AsCurrency := qry.FieldByName('pis_cofins_vl_base').AsCurrency;
+      cdsItens.FieldByName('pis_cofins_pc_aliq').AsFloat := qry.FieldByName('pis_cofins_pc_aliq').AsCurrency;
+      cdsItens.FieldByName('pis_cofins_valor').AsCurrency := qry.FieldByName('pis_cofins_valor').AsCurrency;
+      cdsItens.Post;
+      qry.Next;
+    end;
+
+  finally
+    editarPedido.Free;
+    qry.Free;
+  end;
 end;
 
 procedure TfrmEdicaoPedidoVenda.edtQtdadeChange(Sender: TObject);
@@ -541,131 +670,6 @@ begin
   frmEdicaoPedidoVenda := nil;
 end;
 
-procedure TfrmEdicaoPedidoVenda.FormCreate(Sender: TObject);
-const
-  SQL_PEDIDO = 'select                                             '+
-                'pv.nr_pedido,                                  '+
-                'pv.fl_orcamento,                               '+
-                'pv.cd_cliente,                                 '+
-                'c.nome,                                        '+
-                'e.cidade,                                      '+
-                'e.uf,                                          '+
-                'pv.cd_forma_pag,                               '+
-                'cfp.nm_forma_pag,                              '+
-                'pv.cd_cond_pag,                                '+
-                'ccp.nm_cond_pag,                               '+
-                'pvi.cd_produto,                                '+
-                'p.desc_produto,                                '+
-                'pvi.qtd_venda,                                 '+
-                'pvi.cd_tabela_preco,                           '+
-                'p.un_medida,                                   '+
-                'pvi.vl_unitario,                               '+
-                'pvi.vl_desconto,                               '+
-                'pvi.vl_total_item,                             '+
-                'pvi.vl_total_item as icms_vl_base,             '+
-                'pvi.icms_pc_aliq,                              '+
-                '((pvi.vl_total_item * pvi.icms_pc_aliq) / 100) as icms_valor, '+
-                'pvi.vl_total_item as ipi_vl_base,              '+
-                'pvi.ipi_pc_aliq,                               '+
-                '((pvi.vl_total_item * pvi.ipi_pc_aliq) / 100) as ipi_valor,   '+
-                'pvi.vl_total_item as pis_cofins_vl_base,       '+
-                'pvi.pis_cofins_pc_aliq,                        '+
-                '((pvi.vl_total_item * pvi.pis_cofins_pc_aliq) / 100) as pis_cofins_valor, '+
-                'pvi.vl_total_item,                             '+
-                'pv.vl_desconto_pedido,                         '+
-                'pv.vl_acrescimo,                               '+
-                'pv.vl_total                                    '+
-            'from                                               '+
-             '   pedido_venda pv                                '+
-            'join pedido_venda_item pvi on                      '+
-             '   pv.id_geral = pvi.id_pedido_venda              '+
-             'join cta_forma_pagamento cfp on                   '+
-                'pv.cd_forma_pag = cfp.cd_forma_pag             '+
-            'join cta_cond_pagamento ccp on                     '+
-                'cfp.cd_forma_pag = ccp.cd_cta_forma_pagamento  '+
-            'join cliente c on                                  '+
-             '   pv.cd_cliente = c.cd_cliente                   '+
-             'join endereco_cliente e on                        '+
-                'c.cd_cliente = e.cd_cliente                    '+
-            'join produto p on                                  '+
-             '   pvi.id_item = p.id_item                        '+
-            'where                                              '+
-             '   pv.nr_pedido = :nr_pedido';
-
-var
-  tempC, tempU: String;
-  editarPedido: TfrmConfiguracoes;
-  qry: TFDQuery;
-begin
-  editarPedido := TfrmConfiguracoes.Create(Self);
-  qry := TFDQuery.Create(Self);
-  qry.Connection := dm.conexaoBanco;
-
-  try
-    cdsItens.EmptyDataSet;
-
-    qry.SQL.Add(SQL_PEDIDO);
-
-    qry.ParamByName('nr_pedido').AsInteger := StrToInt(uVisualizaPedidoVenda.frmVisualizaPedidoVenda.edtNrPedido.Text);
-    qry.Open();
-
-    edtNrPedido.Text := IntToStr(qry.FieldByName('nr_pedido').AsInteger);
-    edtFl_orcamento.Checked := qry.FieldByName('fl_orcamento').AsBoolean;
-    if editarPedido.cbConfigAlteraCliPv.ItemIndex = 0 then
-    begin
-      edtCdCliente.Enabled := True;
-      //edtCdCliente.SetFocus;
-    end
-    else
-      edtCdCliente.Enabled := False;
-
-    edtCdCliente.Text := IntToStr(qry.FieldByName('cd_cliente').AsInteger);
-    edtNomeCliente.Text := qry.FieldByName('nome').AsString;
-    tempC := qry.FieldByName('cidade').Text;
-    tempU := qry.FieldByName('uf').Text;
-    edtCidadeCliente.Text := Concat(tempC + ' / ' + tempU);
-    edtCdFormaPgto.Text := IntToStr(qry.FieldByName('cd_forma_pag').AsInteger);
-    edtNomeFormaPgto.Text := qry.FieldByName('nm_forma_pag').AsString;
-    edtCdCondPgto.Text := IntToStr(qry.FieldByName('cd_cond_pag').AsInteger);
-    edtNomeCondPgto.Text := qry.FieldByName('nm_cond_pag').AsString;
-
-    edtVlDescTotalPedido.Text := CurrToStr(qry.FieldByName('vl_desconto_pedido').AsCurrency);
-    edtVlAcrescimoTotalPedido.Text := CurrToStr(qry.FieldByName('vl_acrescimo').AsCurrency);
-    edtVlTotalPedido.Text := CurrToStr(qry.FieldByName('vl_total').AsCurrency);
-    edtDataEmissao.Text := DateToStr(Date());
-
-    qry.First;
-
-    while not qry.Eof do
-    begin
-      cdsItens.Append;
-      cdsItens.FieldByName('cd_produto').AsString := qry.FieldByName('cd_produto').AsString;
-      cdsItens.FieldByName('descricao').AsString := qry.FieldByName('desc_produto').AsString;
-      cdsItens.FieldByName('qtd_venda').AsFloat := qry.FieldByName('qtd_venda').AsFloat;
-      cdsItens.FieldByName('cd_tabela_preco').AsInteger := qry.FieldByName('cd_tabela_preco').AsInteger;
-      cdsItens.FieldByName('un_medida').AsString := qry.FieldByName('un_medida').AsString;
-      cdsItens.FieldByName('vl_unitario').AsCurrency := qry.FieldByName('vl_unitario').AsCurrency;
-      cdsItens.FieldByName('vl_desconto').AsCurrency := qry.FieldByName('vl_desconto').AsCurrency;
-      cdsItens.FieldByName('vl_total_item').AsCurrency := qry.FieldByName('vl_total_item').AsCurrency;
-      cdsItens.FieldByName('icms_vl_base').AsCurrency := qry.FieldByName('icms_vl_base').AsCurrency;
-      cdsItens.FieldByName('icms_pc_aliq').AsFloat := qry.FieldByName('icms_pc_aliq').AsCurrency;
-      cdsItens.FieldByName('icms_valor').AsCurrency := qry.FieldByName('icms_valor').AsCurrency;
-      cdsItens.FieldByName('ipi_vl_base').AsCurrency := qry.FieldByName('ipi_vl_base').AsCurrency;
-      cdsItens.FieldByName('ipi_pc_aliq').AsFloat := qry.FieldByName('ipi_pc_aliq').AsCurrency;
-      cdsItens.FieldByName('ipi_valor').AsCurrency := qry.FieldByName('ipi_valor').AsCurrency;
-      cdsItens.FieldByName('pis_cofins_vl_base').AsCurrency := qry.FieldByName('pis_cofins_vl_base').AsCurrency;
-      cdsItens.FieldByName('pis_cofins_pc_aliq').AsFloat := qry.FieldByName('pis_cofins_pc_aliq').AsCurrency;
-      cdsItens.FieldByName('pis_cofins_valor').AsCurrency := qry.FieldByName('pis_cofins_valor').AsCurrency;
-      cdsItens.Post;
-      qry.Next;
-    end;
-
-  finally
-    editarPedido.Free;
-    qry.Free;
-  end;
-end;
-
 procedure TfrmEdicaoPedidoVenda.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -685,6 +689,11 @@ begin
   end;
 end;
 
+procedure TfrmEdicaoPedidoVenda.FormShow(Sender: TObject);
+begin
+  edtNrPedido.SetFocus;
+end;
+
 procedure TfrmEdicaoPedidoVenda.limpaCampos;
 begin
   edtCdProduto.Clear;
@@ -698,6 +707,11 @@ begin
   edtCdProduto.SetFocus;
   //edtVlDescTotalPedido.Text := '0,00';
   //edtVlAcrescimoTotalPedido.Text := '0,00';
+end;
+
+procedure TfrmEdicaoPedidoVenda.SetNumeroPedido(const Value: Integer);
+begin
+  FNumeroPedido := Value;
 end;
 
 procedure TfrmEdicaoPedidoVenda.btnAdicionarItemClick(Sender: TObject);

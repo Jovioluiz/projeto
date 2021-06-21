@@ -2,6 +2,9 @@ unit uMovimentacaoEstoque;
 
 interface
 
+uses
+  FireDAC.Stan.Param;
+
 type TMovimentacaoEstoque = class
 
   type

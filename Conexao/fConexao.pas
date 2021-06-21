@@ -63,11 +63,14 @@ begin
 
     dm.conexaoBanco.Connected := True;
     if dm.conexaoBanco.Connected then
+    begin
       memo.Lines.Add('Conexão OK');
+      btnSalvar.Enabled := True;
+    end;
   except
     on e:Exception do
     begin
-      msg := 'Erro ao conectar no banco de dados ' + edtBanco.Text;
+      msg := 'Erro ao conectar no banco de dados ' + edtBanco.Text + e.Message;
       memo.Lines.Add(msg);
     end;
   end;
@@ -107,6 +110,7 @@ begin
   arquivoIni.WriteString('configuracoes', 'senha', edtSenha.Text);
   memo.Clear;
   memo.Lines.Add('Salvo!');
+  btnSalvar.Enabled := False;
 end;
 
 end.

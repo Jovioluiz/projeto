@@ -220,11 +220,14 @@ const
         '        and p.id_item = :id_item)';
 var
   qry: TFDQuery;
+  book: TBookmark;
 begin
   FDados.cdsUltimasEntradas.EmptyDataSet;
 
   qry := TFDQuery.Create(nil);
   qry.Connection := dm.conexaoBanco;
+
+  FDados.cdsUltimasEntradas.DisableControls;
 
   try
     qry.Open(sql, [FDados.cdsConsultaProduto.FieldByName('id_item').AsLargeInt]);
@@ -236,6 +239,8 @@ begin
       qry.Loop(
       procedure
       begin
+        if (FDados.cdsUltimasEntradas.Active) and (FDados.cdsUltimasEntradas.RecordCount = 1) then
+          book := FDados.cdsConsultaProduto.GetBookmark;
         FDados.cdsUltimasEntradas.Append;
         FDados.cdsUltimasEntradas.FieldByName('dcto_numero').AsInteger := qry.FieldByName('dcto_numero').AsInteger;
         FDados.cdsUltimasEntradas.FieldByName('fornecedor').AsString := qry.FieldByName('fornecedor').AsString;
@@ -248,6 +253,10 @@ begin
       );
     end;
   finally
+    if FDados.cdsUltimasEntradas.BookmarkValid(book) then
+      FDados.cdsUltimasEntradas.GotoBookmark(book);
+    FDados.cdsUltimasEntradas.EnableControls;
+    FDados.cdsUltimasEntradas.FreeBookmark(book);
     qry.Free;
   end;
 end;

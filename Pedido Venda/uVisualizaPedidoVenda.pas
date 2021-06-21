@@ -71,6 +71,7 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure btnImprimirClick(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -113,6 +114,7 @@ begin
     else
     begin
       frmEdicaoPedidoVenda := TfrmEdicaoPedidoVenda.Create(Self);
+      frmEdicaoPedidoVenda.NumeroPedido := StrToInt(edtNrPedido.Text);
       frmEdicaoPedidoVenda.ShowModal;
     end;
   finally
@@ -163,7 +165,7 @@ const
                 'cfp.nm_forma_pag,                              '+
                 'pv.cd_cond_pag,                                '+
                 'ccp.nm_cond_pag,                               '+
-                'pvi.cd_produto,                                '+
+                'p.cd_produto,                                  '+
                 'p.desc_produto,                                '+
                 'pvi.qtd_venda,                                 '+
                 'pvi.cd_tabela_preco,                           '+
@@ -289,6 +291,11 @@ procedure TfrmVisualizaPedidoVenda.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   frmVisualizaPedidoVenda := nil;
+end;
+
+procedure TfrmVisualizaPedidoVenda.FormCreate(Sender: TObject);
+begin
+  lblStatus.Visible := False;
 end;
 
 procedure TfrmVisualizaPedidoVenda.FormKeyPress(Sender: TObject; var Key: Char);

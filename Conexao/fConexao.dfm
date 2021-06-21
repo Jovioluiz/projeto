@@ -12,6 +12,7 @@ object frmConexao: TfrmConexao
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
@@ -127,6 +128,7 @@ object frmConexao: TfrmConexao
     Width = 75
     Height = 25
     Caption = 'Salvar'
+    Enabled = False
     TabOrder = 5
     OnClick = btnSalvarClick
   end
@@ -146,6 +148,7 @@ object frmConexao: TfrmConexao
     Height = 89
     Lines.Strings = (
       '')
+    ScrollBars = ssVertical
     TabOrder = 7
   end
 end

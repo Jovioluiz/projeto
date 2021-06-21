@@ -161,7 +161,6 @@ type
 var
   frmLancamentoNotaEntrada: TfrmLancamentoNotaEntrada;
   seq : Integer = 1; //sequencia dos itens lançados na nota
-  aliqIcms, aliqIpi, aliqPisCofins : Double; //guardar as aliquotas dos itens e mostrar no grid
 
 implementation
 
@@ -170,7 +169,7 @@ uses
 
 {$R *.dfm}
 
-//busca o fornecedor/cliente
+
 procedure TfrmLancamentoNotaEntrada.edtBaseIcmsExit(Sender: TObject);
 begin
   edtBaseIcms.Text := FormatCurr('#,##0.00', StrToCurr(edtBaseIcms.Text));
@@ -263,14 +262,14 @@ end;
 
 procedure TfrmLancamentoNotaEntrada.edtCodProdutoEnter(Sender: TObject);
 begin
-  edtOperacao.Enabled := false;
-  edtModelo.Enabled := false;
-  edtCdFornecedor.Enabled := false;
-  edtSerie.Enabled := false;
-  edtNroNota.Enabled := false;
-  edtDataEmissao.Enabled := false;
-  edtDataRecebimento.Enabled := false;
-  edtDataLancamento.Enabled := false;
+  edtOperacao.Enabled := False;
+  edtModelo.Enabled := False;
+  edtCdFornecedor.Enabled := False;
+  edtSerie.Enabled := False;
+  edtNroNota.Enabled := False;
+  edtDataEmissao.Enabled := False;
+  edtDataRecebimento.Enabled := False;
+  edtDataLancamento.Enabled := False;
 end;
 
 procedure TfrmLancamentoNotaEntrada.edtCodProdutoExit(Sender: TObject);
