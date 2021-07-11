@@ -17,18 +17,19 @@ type TMovimentacaoEstoque = class
 
 
   public
-    procedure InsereWmsMvto(IdItem: Integer; UnMedida: string; Qtdade: Double);
-    procedure AtualizaEstoque(IdItem: Integer; Qtdade: Double);
+    procedure InsereWmsMvto(IdItem: Integer; UnMedida: string; Qtdade: Double; EntSai: string);
+    procedure AtualizaEstoque(IdItem: Integer; Qtdade: Double; EntradaSaida: string);
 end;
 
 implementation
 
 uses
-  FireDAC.Comp.Client, uGerador, uDataModule, System.SysUtils, Vcl.Dialogs;
+  FireDAC.Comp.Client, uGerador, uDataModule, System.SysUtils, Vcl.Dialogs,
+  System.StrUtils;
 
 { TMovimentacaoEstoque }
 
-procedure TMovimentacaoEstoque.AtualizaEstoque(IdItem: Integer; Qtdade: Double);
+procedure TMovimentacaoEstoque.AtualizaEstoque(IdItem: Integer; Qtdade: Double; EntradaSaida: string);
 const
   SQL_UPDATE = 'update '+
                     'wms_estoque '+
@@ -57,7 +58,10 @@ begin
       qry.Open(SQL, [IdItem]);
       id := qry.FieldByName('id_wms_endereco_produto').AsLargeInt;
       qtEstoque := qry.FieldByName('qt_estoque').AsFloat;//quantidade no banco
-      qttotal := qtEstoque + Qtdade;
+      if EntradaSaida.Equals('E') then
+        qttotal := qtEstoque + Qtdade
+      else
+        qttotal := qtEstoque - Qtdade;
 
       qry.SQL.Clear;
 
@@ -72,7 +76,7 @@ begin
       on E : exception do
       begin
         qry.Connection.Rollback;
-        raise Exception.Create('Erro ao gravar os dados do produto ' + E.Message);
+        raise Exception.Create('Erro ao atualizar o estoque dos produtos ' + E.Message);
       end;
     end;
   finally
@@ -81,7 +85,7 @@ begin
   end;
 end;
 
-procedure TMovimentacaoEstoque.InsereWmsMvto(IdItem: Integer; UnMedida: string; Qtdade: Double);
+procedure TMovimentacaoEstoque.InsereWmsMvto(IdItem: Integer; UnMedida: string; Qtdade: Double; EntSai: string);
 const
   SQL_INSERT =  'insert into ' +
                 'wms_mvto_estoque(id_geral, '+
@@ -130,7 +134,7 @@ begin
       qry.ParamByName('id_item').AsLargeInt := IdItem;
       qry.ParamByName('qt_estoque').AsFloat := Qtdade;
       qry.ParamByName('un_estoque').AsString := UnMedida;
-      qry.ParamByName('fl_entrada_saida').AsString := 'E';
+      qry.ParamByName('fl_entrada_saida').AsString := EntSai;
 
       qry.ExecSQL;
       qry.Connection.Commit;
@@ -149,7 +153,6 @@ begin
     qrySelect.Free;
     FreeAndNil(IdGeral);
   end;
-
 end;
 
 end.

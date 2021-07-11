@@ -40,7 +40,7 @@ type
     FRegras: TControleAcessoSistema;
     FEdicao: Boolean;
     { Private declarations }
-    procedure excluir;
+    procedure Excluir;
     function Pesquisar(CdUsuario, CdAcao: Integer): Boolean;
     procedure Salvar;
     procedure limpaCampos;
@@ -61,9 +61,6 @@ uses
   System.Math;
 
 {$R *.dfm}
-
-
-//realizar as validações de edição nos formulários de cadastro
 
 
 procedure TfrmControleAcesso.btnAddClick(Sender: TObject);
@@ -110,6 +107,15 @@ begin
 end;
 
 procedure TfrmControleAcesso.edtCdAcaoChange(Sender: TObject);
+const
+  SQL = 'select '+
+        ' nm_acao '+
+        'from       '+
+        ' acoes_sistema '+
+        'where            '+
+        ' cd_acao = :cd_acao';
+var
+  query: TFDQuery;
 begin
   if edtCdAcao.Text = EmptyStr then
   begin
@@ -117,18 +123,17 @@ begin
     edtCdAcao.SetFocus;
   end;
 
-  dm.query.Close;
-  dm.query.SQL.Clear;
-  dm.query.SQL.Text := 'select '+
-                       ' nm_acao '+
-                       'from       '+
-                       ' acoes_sistema '+
-                       'where            '+
-                       ' cd_acao = :cd_acao';
-  dm.query.ParamByName('cd_acao').AsInteger := StrToInt(edtCdAcao.Text);
-  dm.query.Open();
+  query := TFDQuery.Create(Self);
+  query.Connection := dm.conexaoBanco;
 
-  edtNomeAcao.Text := dm.query.FieldByName('nm_acao').AsString;
+  try
+    query.Open(SQL, [StrToInt(edtCdAcao.Text)]);
+
+    edtNomeAcao.Text := query.FieldByName('nm_acao').AsString;
+
+  finally
+    query.Free;
+  end;
 end;
 
 procedure TfrmControleAcesso.edtUsuarioChange(Sender: TObject);
@@ -173,34 +178,38 @@ begin
     FRegras.Listar(StrToInt(edtUsuario.Text));
 end;
 
-procedure TfrmControleAcesso.excluir;
+procedure TfrmControleAcesso.Excluir;
+const
+  SQL_DEL = 'delete '+
+            '  from '+
+            'usuario_acao '+
+            '  where '+
+            'cd_usuario = :cd_usuario';
+var
+  query: TFDQuery;
 begin
-  if (Application.MessageBox('Deseja Excluir os dados do Usuário?','Atenção', MB_YESNO) = IDYES) then
-    begin
+  if (Application.MessageBox('Deseja Excluir os dados do Usuário?', 'Atenção', MB_YESNO) = IDYES) then
+  begin
+    query := TFDQuery.Create(Self);
+    query.Connection := dm.conexaoBanco;
+
+    try
       try
-        dm.query.Close;
-        dm.query.SQL.Clear;
-        dm.query.SQL.Text := 'delete '+
-                             '  from '+
-                             'usuario_acao '+
-                             '  where '+
-                             'cd_usuario = :cd_usuario';
-        dm.query.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
-        dm.query.ExecSQL;
+        query.ParamByName('cd_usuario').AsInteger := StrToInt(edtUsuario.Text);
+        query.ExecSQL;
         edtUsuario.SetFocus;
+        edtUsuario.Clear;
+        edtNomeUsuario.Clear;
       except
         on E:exception do
         begin
           ShowMessage('Erro ao excluir os dados' + E.Message);
         end;
       end;
-    end
-  else
-  begin
-    Exit;
+    finally
+      query.Free;
+    end;
   end;
-  edtUsuario.Clear;
-  edtNomeUsuario.Clear;
 end;
 
 procedure TfrmControleAcesso.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -224,7 +233,7 @@ begin
   else if key = VK_F3 then //F3
     limpaCampos
   else if key = VK_F4 then    //F4
-    excluir
+    Excluir
   else if key = VK_ESCAPE then //ESC
     if (Application.MessageBox('Deseja Fechar?','Atenção', MB_YESNO) = IDYES) then
       Close;
@@ -267,10 +276,7 @@ begin
   qry.Connection := dm.conexaoBanco;
 
   try
-    qry.SQL.Add(SQL);
-    qry.ParamByName('cd_usuario').AsInteger := CdUsuario;
-    qry.ParamByName('cd_acao').AsInteger := CdAcao;
-    qry.Open();
+    qry.Open(SQL, [CdUsuario, CdAcao]);
 
     Result := not qry.IsEmpty;
   finally

@@ -46,5 +46,56 @@ INSERT INTO public.modelo_nota_fiscal (cd_modelo, nm_modelo) VALUES('01', 'Nota 
 INSERT INTO public.operacao (cd_operacao, nm_operacao, fl_ent_sai, cd_modelo_nota_fiscal) VALUES(1, 'Compra', 'E', '01');
 INSERT INTO public.serie_nf (cd_serie, nr_serie, descricao, cd_modelo_nota_fiscal) VALUES(1, '1', 'Serie', NULL);
 
-
 update usuario_acao set fl_permite_edicao = 'S';
+
+INSERT INTO public.wms_endereco
+(id_geral, cd_deposito, ala, rua, complemento, dt_atz)
+VALUES(func_id_geral(), 1, '1', '1', '', now());
+
+insert
+	into
+	wms_endereco_produto 
+select
+	func_id_geral(),
+	we.id_geral,
+	concat(we.cd_deposito||'-'||we.ala||'-'||we.rua),
+	p.id_item,
+	now(),
+	0
+	from wms_endereco we 
+	join produto p on true
+where id_item not in (select id_item from wms_endereco_produto);
+
+insert
+	into
+	wms_estoque 
+select
+func_id_geral(),
+	wep.id_geral,
+	p.id_item,
+	100,
+	un_medida,
+	now()
+from
+	produto p
+join wms_endereco_produto wep on
+	wep.id_item = p.id_item;
+
+insert
+	into
+	tabela_preco_produto 
+select
+	1,
+	id_item,
+	(id_item + 0.99),
+	un_medida
+from
+	produto
+where
+	id_item not in (
+	select
+		id_item
+	from
+		tabela_preco_produto tpp);
+
+update produto set cd_produto = id_item;

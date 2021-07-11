@@ -123,7 +123,6 @@ begin
     2: tipo := 'Outro';
   end;
 
-
   Regra.Dados.cdsBarras.AppendRecord([edtUnCodBarras.Text, tipo, edtCodigoBarras.Text]);
 
   cbTipoCodBarras.ItemIndex := -1;
@@ -134,9 +133,7 @@ end;
 procedure TfrmCadProduto.btnCarregarImagemClick(Sender: TObject);
 begin
   if dlgImagem.Execute then
-  begin
     imagem.Picture.LoadFromFile(dlgImagem.FileName);
-  end;
 end;
 
 procedure TfrmCadProduto.btnPRODUTOCANCELARClick(Sender: TObject);

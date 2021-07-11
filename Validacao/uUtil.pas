@@ -44,9 +44,7 @@ begin
   md5 := TIdHashMessageDigest5.Create;
 
   try
-
     Result := md5.HashStringAsHex(Senha);
-
   finally
     md5.Free;
   end;

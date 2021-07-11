@@ -308,6 +308,16 @@ end;
 
 //busca o modelo da nota
 procedure TfrmLancamentoNotaEntrada.edtModeloChange(Sender: TObject);
+const
+  SQL = 'select '                    +
+        '    cd_modelo, '            +
+        '    nm_modelo '             +
+        'from '                      +
+        '    modelo_nota_fiscal mfn '+
+        'where '                     +
+        '    cd_modelo = :cd_modelo';
+var
+  query: TFDQuery;
 begin
   if edtModelo.Text = EmptyStr then
   begin
@@ -315,18 +325,15 @@ begin
     Exit;
   end;
 
-  sqlCabecalho.Close;
-  sqlCabecalho.SQL.Text := 'select '                                     +
-                          '    cd_modelo, '                              +
-                          '    nm_modelo '                               +
-                          'from '                                        +
-                          '    modelo_nota_fiscal mfn '                  +
-                          'where '                                       +
-                          '    cd_modelo = :cd_modelo';
+  query := TFDQuery.Create(Self);
+  query.Connection := dm.conexaoBanco;
 
-  sqlCabecalho.ParamByName('cd_modelo').AsString := edtModelo.Text;
-  sqlCabecalho.Open();
-  edtNomeModelo.Text := sqlCabecalho.FieldByName('nm_modelo').AsString;
+  try
+    query.Open(SQL, [edtModelo.Text]);
+    edtNomeModelo.Text := query.FieldByName('nm_modelo').AsString;
+  finally
+    query.Free;
+  end;
 end;
 
 procedure TfrmLancamentoNotaEntrada.edtModeloExit(Sender: TObject);
@@ -834,10 +841,12 @@ begin
           //insere na wms_mvto e atualiza a quantidade em estoque
           estoque.InsereWmsMvto(FRegras.DadosNota.cdsNfi.FieldByName('id_item').AsInteger,
                                 FRegras.DadosNota.cdsNfi.FieldByName('un_medida').AsString,
-                                FRegras.DadosNota.cdsNfi.FieldByName('qtd_estoque').AsCurrency);
+                                FRegras.DadosNota.cdsNfi.FieldByName('qtd_estoque').AsCurrency,
+                                'E');
 
           estoque.AtualizaEstoque(FRegras.DadosNota.cdsNfi.FieldByName('id_item').AsInteger,
-                                  FRegras.DadosNota.cdsNfi.FieldByName('qtd_estoque').AsCurrency);
+                                  FRegras.DadosNota.cdsNfi.FieldByName('qtd_estoque').AsCurrency,
+                                  'E');
         end
         );
       end;

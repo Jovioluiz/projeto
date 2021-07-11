@@ -100,7 +100,9 @@ begin
         edtCTACONDPGTONR_PARCELAS.Text := ''
       else
         edtCTACONDPGTONR_PARCELAS.Text := IntToStr(qry.FieldByName('nr_parcelas').AsInteger);
-    end;
+    end
+    else
+      edtCTACONDPGTOFL_ATIVO.SetFocus;
   finally
     qry.Free;
   end;

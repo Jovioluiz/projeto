@@ -10,11 +10,12 @@ type TImportacaoDados = class
   private
     FDados: TdmImportaDados;
     FListaProdutos: TList<String>;
-    procedure ParseDelimited(const sl: TStrings; const value, delimiter: string);
+
 
   public
 
   constructor Create;
+  procedure ParseDelimited(const sl: TStrings; const value, delimiter: string);
   function SalvarProduto(Caminho: String): Boolean;
   procedure ListaProdutos(Caminho: String);
   procedure SalvarCliente(Caminho: String);

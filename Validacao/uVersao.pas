@@ -45,7 +45,7 @@ begin
     FreeMem(VerInfo, VerInfoSize);
     Result := Format('%d.%d.%d.%d', [v1, v2, v3, v4]);
   except
-   Result := '1.0.0';
+    Result := '1.0.0';
   end;
 end;
 
